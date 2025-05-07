@@ -1,34 +1,36 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+#include "Ember/AI/BaseAI.h"
+#include "kismet/GameplayStatics.h"
 
 
-#include "AI/BaseAI.h"
-
-// Sets default values
 ABaseAI::ABaseAI()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 }
 
-// Called when the game starts or when spawned
 void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
-void ABaseAI::Tick(float DeltaTime)
+float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
+                          AActor* DamageCauser)
 {
-	Super::Tick(DeltaTime);
+	if (!HasAuthority()) return 0;
 
+	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	if (ActualDamage > 0 && !bIsDie)
+	{
+		CurrentHP -= ActualDamage;
+		if (CurrentHP <= 0.f) OnDeath();
+	}
+	return ActualDamage;
 }
 
-// Called to bind functionality to input
-void ABaseAI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ABaseAI::Attack(AActor* Target)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	UGameplayStatics::ApplyDamage(Target, AttackPower, GetController(), this, UDamageType::StaticClass());
 }
 
+void ABaseAI::OnDeath()
+{
+}

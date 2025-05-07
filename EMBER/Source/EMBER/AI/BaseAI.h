@@ -1,10 +1,19 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "BaseAI.generated.h"
+
+
+UENUM(BlueprintType)
+enum class AISoundCategory : uint8
+{
+	MoveSound    UMETA(DisplayName = "Move"),
+	AttackSound  UMETA(DisplayName = "Attack"),
+	HitSound     UMETA(DisplayName = "Hit"),
+	DeathSound   UMETA(DisplayName = "Death")
+};
+
 
 UCLASS()
 class EMBER_API ABaseAI : public ACharacter
@@ -12,18 +21,28 @@ class EMBER_API ABaseAI : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ABaseAI();
 
-protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	float MaxHP;
+	float CurrentHP;
+	float Speed;
+	bool bIsDie;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat")
+	float AttackPower;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat")
+	float MoveSpeed;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
+	UFUNCTION(BlueprintCallable, Category = "AI")
+	virtual void Attack(AActor* Target);
+	
+	UFUNCTION(BlueprintCallable, Category = "AI")
+	virtual void OnDeath();
+
+	
 };
