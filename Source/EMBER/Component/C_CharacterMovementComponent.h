@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFlag.h"
 #include "C_CharacterMovementComponent.generated.h"
 
 // 델리게이트 선언: FVector2D를 파라미터로 받는 동적 멀티캐스트 델리게이트
@@ -20,6 +21,8 @@ private:
 	class UStateComponent* State;
 	UPROPERTY(EditAnywhere, category = "Base")
 	class ACharacter* OnwerCharacter;
+	UPROPERTY(EditAnywhere, category = "Move")
+	ESpeedType SpeedType;
 protected:	//	재정의
 	virtual void BeginPlay() override;
 	virtual float GetMaxSpeed() const override;
