@@ -281,7 +281,7 @@ Plugins/*/Intermediate/*
 DerivedDataCache/*
 
 # Content folder for download content from Marketplace
-Content/*
+#Content/*
 !Content/Characters
 !Content/FirstPersonBP
 !Content/Levels
