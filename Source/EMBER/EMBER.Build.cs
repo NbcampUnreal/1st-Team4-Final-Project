@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -9,8 +9,19 @@ public class EMBER : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
-
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+        PublicIncludePaths.AddRange(
+                    new string[]
+                    {
+						ModuleDirectory, // 기본 모듈 디렉토리
+						// 새 폴더 추가
+						System.IO.Path.Combine(ModuleDirectory, "GameInfo"), 
+						System.IO.Path.Combine(ModuleDirectory, "AI"),
+						System.IO.Path.Combine(ModuleDirectory, "Component"),
+						System.IO.Path.Combine(ModuleDirectory, "Character"),
+                        System.IO.Path.Combine(ModuleDirectory, "Item")                        
+                    }
+                );
+        PrivateDependencyModuleNames.AddRange(new string[] {  });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
