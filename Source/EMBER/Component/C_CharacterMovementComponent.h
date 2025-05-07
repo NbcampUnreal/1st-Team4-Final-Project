@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFlag.h"
+#include "InputActionValue.h"
 #include "C_CharacterMovementComponent.generated.h"
 
 // 델리게이트 선언: FVector2D를 파라미터로 받는 동적 멀티캐스트 델리게이트
