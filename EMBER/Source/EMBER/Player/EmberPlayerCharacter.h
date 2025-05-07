@@ -9,6 +9,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 
+struct FInputActionValue;
 UCLASS()
 class EMBER_API AEmberPlayerCharacter : public ACharacter
 {
@@ -26,6 +27,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComp;
 
+
+	UFUNCTION()
+	void Move(const FInputActionValue& value);
+	UFUNCTION()
+	void Look(const FInputActionValue& value);
+	UFUNCTION()
+	void StartSprint(const FInputActionValue& value);
+	UFUNCTION()
+	void StopSprint(const FInputActionValue& value);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
