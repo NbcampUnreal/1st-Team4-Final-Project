@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "C_CameraComponent.h"
 #include "EmberPlayerCharacter.generated.h"
 
 class USpringArmComponent;
@@ -28,6 +29,9 @@ protected:
 	UCameraComponent* CameraComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UC_CharacterMovementComponent* MovementComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UC_CameraComponent* CameraLogicComp;
+
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 	UFUNCTION()

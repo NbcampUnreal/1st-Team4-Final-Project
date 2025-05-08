@@ -2,6 +2,8 @@
 
 
 #include "EmberPlayerCharacter.h"
+
+#include "C_CameraComponent.h"
 #include "C_CharacterMovementComponent.h"
 #include "EmberPlayerController.h"
 #include "EnhancedInputComponent.h"
@@ -20,9 +22,12 @@ AEmberPlayerCharacter::AEmberPlayerCharacter()
 	SpringArmComp->TargetArmLength = 300.0f;  
 	SpringArmComp->bUsePawnControlRotation = true;  
 
+    CameraLogicComp = CreateDefaultSubobject<UC_CameraComponent>(TEXT("CameraLogic"));
+    
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;
+    
 }
 
 
@@ -92,9 +97,9 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
 {
 
-    MovementComponent->OnMove(value);
+    //MovementComponent->OnMove(value);
     
-    /*
+    
     if (!Controller) return;
     const FVector2D MoveInput = value.Get<FVector2D>();
     if (!FMath::IsNearlyZero(MoveInput.X))
@@ -106,15 +111,12 @@ void AEmberPlayerCharacter::Move(const FInputActionValue& value)
     {
         AddMovementInput(GetActorRightVector(), MoveInput.Y);
     }
-    */
+    
 }
 
 void AEmberPlayerCharacter::Look(const FInputActionValue& value)
 {   
-    FVector2D LookInput = value.Get<FVector2D>();
-
-    AddControllerYawInput(LookInput.X);
-    AddControllerPitchInput(LookInput.Y);
+    CameraLogicComp->OnLook(value);
 }
 
 void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
