@@ -3,10 +3,16 @@
 
 #include "System/EmberAssetManager.h"
 
+UEmberAssetManager::UEmberAssetManager()
+{
+}
+
 void UEmberAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
-	
+
+	GetUIData();
+	GetItemData();
 }
 
 UEmberAssetManager& UEmberAssetManager::Get()
@@ -18,13 +24,17 @@ UEmberAssetManager& UEmberAssetManager::Get()
 		return *Singleton;
 	}
 	
-	// 이 코드는 실행되지 않아야 합니다.
 	return *NewObject<UEmberAssetManager>();
 }
 
 const UEmberUIData& UEmberAssetManager::GetUIData()
 {
 	return GetOrLoadTypedGameData<UEmberUIData>(UIDataPath);
+}
+
+const UEmberItemData& UEmberAssetManager::GetItemData()
+{
+	return GetOrLoadTypedGameData<UEmberItemData>(ItemDataPath);
 }
 
 UPrimaryDataAsset* UEmberAssetManager::LoadGameDataOfClass(TSubclassOf<UPrimaryDataAsset> DataClass, const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath, FPrimaryAssetType PrimaryAssetType)
@@ -45,8 +55,6 @@ UPrimaryDataAsset* UEmberAssetManager::LoadGameDataOfClass(TSubclassOf<UPrimaryD
 		if (Handle.IsValid())
 		{
 			Handle->WaitUntilComplete(0.0f, false);
-
-			// This should always work
 			Asset = Cast<UPrimaryDataAsset>(Handle->GetLoadedAsset());
 		}
 	}

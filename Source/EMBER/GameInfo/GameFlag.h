@@ -47,3 +47,67 @@ enum class EEffectType : uint8
 	Niagara,
 	Particle
 };
+
+UENUM(BlueprintType)
+enum class EItemRarity : uint8
+{
+	Poor,
+	Common,
+	Uncommon,
+	Rare,
+	Legendary,
+
+	Count	UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class EEquipmentType : uint8
+{
+	Armor,
+	Weapon,
+	Utility,
+	
+	Count	UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class EUtilityType : uint8
+{
+	Drink,
+	LightSource,
+
+	Count	UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class EItemHandType : uint8
+{
+	LeftHand,
+	RightHand,
+	TwoHand,
+
+	Count	UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class EEquipmentSlotType : uint8
+{
+	Primary_LeftHand,
+	Primary_RightHand,
+	Primary_TwoHand,
+	
+	Armor,
+	
+	Count	UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	Unarmed,
+	OneHandSword,
+	TwoHandSword,
+	Shield,
+
+	Count	UMETA(Hidden)
+};
