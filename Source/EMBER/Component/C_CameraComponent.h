@@ -12,6 +12,7 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class EMBER_API UC_CameraComponent : public UActorComponent
 {
 	GENERATED_BODY()
+	friend class AEmberPlayerCharacter;
 private:
 	UPROPERTY(EditAnywhere, Category = "CameraSpeed")
 	float HorizontalLook = 45.0f;

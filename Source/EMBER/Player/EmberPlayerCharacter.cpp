@@ -1,5 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "EmberPlayerCharacter.h"
+#include "C_CameraComponent.h"
 #include "EmberPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -16,6 +17,8 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     SpringArmComp->SetupAttachment(RootComponent);
     SpringArmComp->TargetArmLength = 300.0f;
     SpringArmComp->bUsePawnControlRotation = true;
+
+    CameraLogicComp = CreateDefaultSubobject<UC_CameraComponent>(TEXT("CameraLogic"));
 
     CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     CameraComponent->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
@@ -91,16 +94,29 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
 
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
 {
+
+    //MovementComponent->OnMove(value);
+    
+    /*
+    if (!Controller) return;
+    const FVector2D MoveInput = value.Get<FVector2D>();
+    if (!FMath::IsNearlyZero(MoveInput.X))
+    {
+        AddMovementInput(GetActorForwardVector(), MoveInput.X);
+    }
+
+    if (!FMath::IsNearlyZero(MoveInput.Y))
+    {
+        AddMovementInput(GetActorRightVector(), MoveInput.Y);
+    }
+    */
     if(MovementComponent)
         MovementComponent->OnMove(value);
 }
 
 void AEmberPlayerCharacter::Look(const FInputActionValue& value)
 {   
-    FVector2D LookInput = value.Get<FVector2D>();
-
-    AddControllerYawInput(LookInput.X);
-    AddControllerPitchInput(LookInput.Y);
+    CameraLogicComp->OnLook(value);
 }
 
 void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
