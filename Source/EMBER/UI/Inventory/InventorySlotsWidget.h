@@ -28,9 +28,8 @@ protected:
 	virtual void NativeDestruct() override;
 	//~End of UUserWidget Overrides
 
-	UFUNCTION(BlueprintCallable)
+private:
 	void ConstructUI();
-	
 	void DestructUI();
 	
 public:
