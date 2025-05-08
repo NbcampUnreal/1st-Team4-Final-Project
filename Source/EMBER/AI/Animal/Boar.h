@@ -2,16 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "AI/BaseAI.h"
-#include "C_Boar.generated.h"
+#include "Boar.generated.h"
 
 
 UCLASS()
-class EMBER_API AC_Boar : public ABaseAI
+class EMBER_API ABoar : public ABaseAI
 {
 	GENERATED_BODY()
 
 public:
-	AC_Boar();
-	
-	
+	ABoar();
+
 };

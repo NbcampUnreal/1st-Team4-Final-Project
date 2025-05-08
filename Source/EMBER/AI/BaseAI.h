@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Perception/AISenseConfig_Sight.h"
 #include "BaseAI.generated.h"
 
 
@@ -44,5 +45,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	virtual void OnDeath();
 
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	UAIPerceptionComponent* AIPerception;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	UAISenseConfig_Sight* SightConfig;
+
+	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 };
