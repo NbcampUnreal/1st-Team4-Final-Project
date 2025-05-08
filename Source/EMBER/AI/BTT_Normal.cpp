@@ -1,17 +1,5 @@
-#include "EMBER/AI/BTT_Normal.h"
-#include "EMBER/AI/BaseAIController.h"
+// Fill out your copyright notice in the Description page of Project Settings.
 
-UBTT_Normal::UBTT_Normal()
-{
-	NodeName = "NormalState";
-}
 
-EBTNodeResult::Type UBTT_Normal::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
-{
-	
-	ABaseAIController* AIController = Cast<ABaseAIController>(OwnerComp.GetAIOwner());
-	
+#include "AI/BTT_Normal.h"
 
-	
-	return Super::ExecuteTask(OwnerComp, NodeMemory);
-}

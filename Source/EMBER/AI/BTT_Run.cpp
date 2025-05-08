@@ -1,7 +1,5 @@
-#include "AI/BTT_Run.h"
-#include "EMBER/AI/BaseAIController.h"
+// Fill out your copyright notice in the Description page of Project Settings.
 
-UBTT_Run::UBTT_Run()
-{
-	NodeName = "RunState";
-}
+
+#include "AI/BTT_Run.h"
+

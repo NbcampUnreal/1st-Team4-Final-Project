@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTT_Normal.generated.h"
+#include "AI/BaseAI.h"
+#include "Deer.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EMBER_API UBTT_Normal : public UBTTask_BlackboardBase
+class EMBER_API ADeer : public ABaseAI
 {
 	GENERATED_BODY()
 	

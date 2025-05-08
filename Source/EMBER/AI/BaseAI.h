@@ -51,5 +51,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	UAISenseConfig_Sight* SightConfig;
 
+	UFUNCTION(BlueprintCallable, Category = "AI")
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 };
