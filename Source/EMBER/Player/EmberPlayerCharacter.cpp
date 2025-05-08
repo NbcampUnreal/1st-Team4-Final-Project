@@ -1,37 +1,40 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "EmberPlayerCharacter.h"
-#include "C_CharacterMovementComponent.h"
+#include "C_CameraComponent.h"
 #include "EmberPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "C_CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
-// Sets default values
-AEmberPlayerCharacter::AEmberPlayerCharacter()
+AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
+    : Super(Init.SetDefaultSubobjectClass<UC_CharacterMovementComponent>
+    (ACharacter::CharacterMovementComponentName))
 {
-    
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArmComp->SetupAttachment(RootComponent);
-	SpringArmComp->TargetArmLength = 300.0f;  
-	SpringArmComp->bUsePawnControlRotation = true;  
+    PrimaryActorTick.bCanEverTick = false;
+    SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+    SpringArmComp->SetupAttachment(RootComponent);
+    SpringArmComp->TargetArmLength = 300.0f;
+    SpringArmComp->bUsePawnControlRotation = true;
 
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	CameraComponent->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
-	CameraComponent->bUsePawnControlRotation = false;
+    CameraLogicComp = CreateDefaultSubobject<UC_CameraComponent>(TEXT("CameraLogic"));
+
+    CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+    CameraComponent->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
+    CameraComponent->bUsePawnControlRotation = false;
 }
-
-
 
 // Called when the game starts or when spawned
 void AEmberPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+}
+
+void AEmberPlayerCharacter::PostInitializeComponents()
+{
+    Super::PostInitializeComponents();
+    MovementComponent = Cast<UC_CharacterMovementComponent>(GetCharacterMovement());
 }
 
 // Called every frame
@@ -92,7 +95,7 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
 {
 
-    MovementComponent->OnMove(value);
+    //MovementComponent->OnMove(value);
     
     /*
     if (!Controller) return;
@@ -107,22 +110,21 @@ void AEmberPlayerCharacter::Move(const FInputActionValue& value)
         AddMovementInput(GetActorRightVector(), MoveInput.Y);
     }
     */
+    if(MovementComponent)
+        MovementComponent->OnMove(value);
 }
 
 void AEmberPlayerCharacter::Look(const FInputActionValue& value)
 {   
-    FVector2D LookInput = value.Get<FVector2D>();
-
-    AddControllerYawInput(LookInput.X);
-    AddControllerPitchInput(LookInput.Y);
+    CameraLogicComp->OnLook(value);
 }
 
 void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
 {
     if (GetCharacterMovement())
-{
-    //GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-}
+    {
+        //GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+    }
 }
 
 void AEmberPlayerCharacter::StopSprint(const FInputActionValue& value)
