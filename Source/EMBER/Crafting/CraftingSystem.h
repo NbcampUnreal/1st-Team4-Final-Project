@@ -5,8 +5,6 @@
 #include "Player/EmberPlayerCharacter.h"
 #include "CraftingSystem.generated.h"
 
-class AEmberPlayerCharacter;
-
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class EMBER_API UCraftingSystem : public UActorComponent
 {
@@ -33,3 +31,4 @@ private:
 	// 플레이어 주변 상자에서 재료 검색
 	TMap<FString, int32> SearchNearChestsIngredients(AEmberPlayerCharacter* Player);
 };
+
