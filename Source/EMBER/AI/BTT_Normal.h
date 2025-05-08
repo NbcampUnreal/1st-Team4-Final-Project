@@ -4,8 +4,6 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTT_Normal.generated.h"
 
-class AC_AnimalController;
-
 UCLASS()
 class EMBER_API UBTT_Normal : public UBTTaskNode
 {
