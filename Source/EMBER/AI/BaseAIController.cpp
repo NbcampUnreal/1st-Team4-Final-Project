@@ -1,6 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "BaseAIController.h"
-#include "BaseAI.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
 
+
+void ABaseAIController::BeginPlay()
+{
+	Super::BeginPlay();
+	
+		RunBehaviorTree(BehaviorTree);
+}
