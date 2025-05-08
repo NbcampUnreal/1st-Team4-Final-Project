@@ -2,8 +2,10 @@
 
 #pragma once
 
-#include "UI/Data/EmberUIData.h"
 #include "Engine/AssetManager.h"
+#include "UI/Data/EmberItemData.h"
+#include "UI/Data/EmberUIData.h"
+
 #include "EmberAssetManager.generated.h"
 
 /**
@@ -14,6 +16,9 @@ class EMBER_API UEmberAssetManager : public UAssetManager
 {
 	GENERATED_BODY()
 
+public:
+	UEmberAssetManager();
+	
 protected:
 	//~UAssetManager Overrides
 	virtual void StartInitialLoading() override;
@@ -23,6 +28,7 @@ public:
 	static UEmberAssetManager& Get();
 	
 	const UEmberUIData& GetUIData();
+	const UEmberItemData& GetItemData();
 
 protected:
 	UPrimaryDataAsset* LoadGameDataOfClass(TSubclassOf<UPrimaryDataAsset> DataClass, const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath, FPrimaryAssetType PrimaryAssetType);
@@ -41,6 +47,9 @@ protected:
 protected:
 	UPROPERTY(Config)
 	TSoftObjectPtr<UEmberUIData> UIDataPath;
+
+	UPROPERTY(Config)
+	TSoftObjectPtr<UEmberItemData> ItemDataPath;
 
 	UPROPERTY(Transient)
 	TMap<TObjectPtr<UClass>, TObjectPtr<UPrimaryDataAsset>> GameDataMap;
