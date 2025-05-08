@@ -1,4 +1,5 @@
 ﻿#include "C_CharacterMovementComponent.h"
+#include "C_StateComponent.h"
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
 
@@ -6,6 +7,9 @@ void UC_CharacterMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	OwnerCharacter = GetCharacterOwner();
+
+	UC_StateComponent* StateCom = Cast<UC_StateComponent>(GetOwner()->FindComponentByClass<UC_StateComponent>());
+	State = StateCom;
 }
 
 void UC_CharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
