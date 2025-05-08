@@ -1,12 +1,15 @@
 ﻿#include "C_CharacterMovementComponent.h"
+#include "C_StateComponent.h"
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
 
 void UC_CharacterMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	OwnerCharacter = GetCharacterOwner();
 
-	OnwerCharacter = GetCharacterOwner();
+	UC_StateComponent* StateCom = Cast<UC_StateComponent>(GetOwner()->FindComponentByClass<UC_StateComponent>());
+	State = StateCom;
 }
 
 void UC_CharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -56,7 +59,6 @@ void UC_CharacterMovementComponent::OnMove(const FInputActionValue& Value)
 		// 이동 입력 적용
 		AddInputVector(ForwardDirection * MoveVector.Y);
 		AddInputVector(RightDirection * MoveVector.X);
-
-		OnMoveDelegate.Broadcast(MoveVector);
+		//OnMoveDelegate.Broadcast(MoveVector);
 	}
 }

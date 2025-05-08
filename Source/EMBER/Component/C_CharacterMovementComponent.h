@@ -19,9 +19,9 @@ private:
 	UPROPERTY(EditAnywhere, category = "Move")
 	bool bIsDash;
 	//UPROPERTY(EditAnywhere, category = "State")
-	class UStateComponent* State;
+	class UC_StateComponent* State;
 	UPROPERTY(EditAnywhere, category = "Base")
-	class ACharacter* OnwerCharacter;
+	class ACharacter* OwnerCharacter;
 	UPROPERTY(EditAnywhere, category = "Move")
 	ESpeedType SpeedType;
 protected:	//	재정의
