@@ -3,17 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTTaskNode.h"
-#include "BTT_Guard.generated.h"
+#include "Animation/AnimInstance.h"
+#include "AnimInstance_Boar.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EMBER_API UBTT_Guard : public UBTTaskNode
+class EMBER_API UAnimInstance_Boar : public UAnimInstance
 {
 	GENERATED_BODY()
-
-public:
-	UBTT_Guard();
+	
 };
