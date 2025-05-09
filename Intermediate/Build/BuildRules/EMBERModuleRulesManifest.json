@@ -1,9 +1,0 @@
-{
-	"SourceFiles": [
-		"C:\\code\\NBCamp\\1st-Team4-Final-Project\\Source\\EMBER\\EMBER.Build.cs",
-		"C:\\code\\NBCamp\\1st-Team4-Final-Project\\Plugins\\UEGitPlugin-3.16\\Source\\GitSourceControl\\GitSourceControl.Build.cs",
-		"C:\\code\\NBCamp\\1st-Team4-Final-Project\\Source\\EMBER.Target.cs",
-		"C:\\code\\NBCamp\\1st-Team4-Final-Project\\Source\\EMBEREditor.Target.cs"
-	],
-	"EngineVersion": "5.5.3"
-}

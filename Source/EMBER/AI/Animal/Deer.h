@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,4 +11,7 @@ class EMBER_API ADeer : public ABaseAI
 
 public:
 	ADeer();
+virtual void BeginPlay() override;
+
+	
 };
