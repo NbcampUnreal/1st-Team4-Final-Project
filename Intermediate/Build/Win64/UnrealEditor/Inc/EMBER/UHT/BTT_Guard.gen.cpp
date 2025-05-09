@@ -5,7 +5,7 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "EMBER/AI/BTT_Guard.h"
+#include "EMBER/AI/Task/BTT_Guard.h"
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeBTT_Guard() {}
 
@@ -29,8 +29,8 @@ struct Z_Construct_UClass_UBTT_Guard_Statics
 {
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
-		{ "IncludePath", "AI/BTT_Guard.h" },
-		{ "ModuleRelativePath", "AI/BTT_Guard.h" },
+		{ "IncludePath", "AI/Task/BTT_Guard.h" },
+		{ "ModuleRelativePath", "AI/Task/BTT_Guard.h" },
 	};
 #endif // WITH_METADATA
 	static UObject* (*const DependentSingletons[])();
@@ -76,14 +76,14 @@ UBTT_Guard::~UBTT_Guard() {}
 // End Class UBTT_Guard
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Guard_h_Statics
+struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Task_BTT_Guard_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UBTT_Guard, UBTT_Guard::StaticClass, TEXT("UBTT_Guard"), &Z_Registration_Info_UClass_UBTT_Guard, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTT_Guard), 1472496326U) },
+		{ Z_Construct_UClass_UBTT_Guard, UBTT_Guard::StaticClass, TEXT("UBTT_Guard"), &Z_Registration_Info_UClass_UBTT_Guard, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTT_Guard), 3140759967U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Guard_h_1252947950(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Guard_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Guard_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Task_BTT_Guard_h_2484939927(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Task_BTT_Guard_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Task_BTT_Guard_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

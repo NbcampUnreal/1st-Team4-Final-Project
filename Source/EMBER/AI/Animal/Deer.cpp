@@ -9,11 +9,4 @@ ADeer::ADeer()
 void ADeer::BeginPlay()
 {
 	Super::BeginPlay();
-	AIControllerClass = ABaseAIController::StaticClass();
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	
 }
-
-
-
-

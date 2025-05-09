@@ -1,6 +1,7 @@
 #include "BaseAI.h"
 #include "BaseAIController.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "kismet/GameplayStatics.h"
 
 
@@ -11,8 +12,8 @@ ABaseAI::ABaseAI()
 
 	if (SightConfig)
 	{
-		SightConfig->SightRadius = 1000.f;
-		SightConfig->LoseSightRadius = 1200.f;
+		SightConfig->SightRadius = 2000.f;
+		SightConfig->LoseSightRadius = 2400.f;
 		SightConfig->PeripheralVisionAngleDegrees = 90.f; //시야각
 		SightConfig->SetMaxAge(5.f); //기억시간
 		SightConfig->AutoSuccessRangeFromLastSeenLocation = 500.f; //AI가 마지막으로 본 위치에서 500이내에 있을 경우, 자동으로 감지 성공으로 처리
@@ -22,14 +23,17 @@ ABaseAI::ABaseAI()
 
 		AIPerception->ConfigureSense(*SightConfig); //컴포넌트에 시각감각 추가
 	}
+
+	AIControllerClass = ABaseAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
-	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); //여러 감각중 시각 우선 사용
-	AIPerception->OnPerceptionUpdated.AddDynamic(this, &ABaseAI::OnPerceptionUpdated); //감각 업데이트시 OnPerceptionUpdated 함수 호출
 }
 
 void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
+	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); //여러 감각중 시각 우선 사용
+	AIPerception->OnPerceptionUpdated.AddDynamic(this, &ABaseAI::OnPerceptionUpdated); //감각 업데이트시 OnPerceptionUpdated 함수 호출
 }
 
 float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
@@ -38,9 +42,7 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	if (!HasAuthority()) return 0;
 
 	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-
-<<<<<<< Updated upstream
-=======
+	
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (AIController)
 	{
@@ -53,7 +55,7 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 		}
 	}
 	
->>>>>>> Stashed changes
+
 	if (ActualDamage > 0 && !bIsDie)
 	{
 		CurrentHP -= ActualDamage;
@@ -73,10 +75,5 @@ void ABaseAI::OnDeath()
 
 void ABaseAI::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 {
-	// 감지된 객체 처리 로직 추가 가능
-	for (AActor* Actor : UpdatedActors)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Boar perceived: %s"), *Actor->GetName());
-	}
-
 }
+
