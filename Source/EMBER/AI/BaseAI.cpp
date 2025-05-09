@@ -39,6 +39,21 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 
 	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
+<<<<<<< Updated upstream
+=======
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (AIController)
+	{
+		UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
+		if (BlackboardComponent)
+		{
+			BlackboardComponent->SetValueAsBool("IsHit", true);
+			BlackboardComponent->SetValueAsObject("TargetActor", DamageCauser);
+			BlackboardComponent->SetValueAsVector("OriginLocation", GetActorLocation());
+		}
+	}
+	
+>>>>>>> Stashed changes
 	if (ActualDamage > 0 && !bIsDie)
 	{
 		CurrentHP -= ActualDamage;

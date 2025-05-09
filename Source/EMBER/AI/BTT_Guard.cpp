@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/BTT_Guard.h"
+#include "BTT_Guard.h"
 
 UBTT_Guard::UBTT_Guard()
 {
