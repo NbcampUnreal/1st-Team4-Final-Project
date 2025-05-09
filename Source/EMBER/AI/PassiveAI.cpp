@@ -5,7 +5,7 @@
 APassiveAI::APassiveAI()
 {
 	RunPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("RunPerception"));
-	RunSightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
+	RunSightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("RunSightConfig"));
 
 
 	if (RunSightConfig)
@@ -32,6 +32,7 @@ void APassiveAI::BeginPlay()
 
 void APassiveAI::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 {
+	Super::OnPerceptionUpdated(UpdatedActors);
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (!AIController) return;
 

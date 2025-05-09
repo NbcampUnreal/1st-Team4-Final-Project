@@ -80,10 +80,10 @@ ADeer::~ADeer() {}
 struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Deer_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ADeer, ADeer::StaticClass, TEXT("ADeer"), &Z_Registration_Info_UClass_ADeer, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ADeer), 372136556U) },
+		{ Z_Construct_UClass_ADeer, ADeer::StaticClass, TEXT("ADeer"), &Z_Registration_Info_UClass_ADeer, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ADeer), 2784519585U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Deer_h_505420520(TEXT("/Script/EMBER"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Deer_h_107612527(TEXT("/Script/EMBER"),
 	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Deer_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Deer_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);

@@ -1,6 +1,7 @@
 #include "BaseAI.h"
 #include "BaseAIController.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "kismet/GameplayStatics.h"
 
 
@@ -41,9 +42,7 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	if (!HasAuthority()) return 0;
 
 	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-
-<<<<<<< Updated upstream
-=======
+	
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (AIController)
 	{
@@ -56,7 +55,7 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 		}
 	}
 	
->>>>>>> Stashed changes
+
 	if (ActualDamage > 0 && !bIsDie)
 	{
 		CurrentHP -= ActualDamage;

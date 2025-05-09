@@ -13,7 +13,6 @@ public:
 	APassiveAI();
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
 	virtual void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors) override;
 
 	UFUNCTION()

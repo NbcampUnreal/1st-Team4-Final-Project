@@ -9,9 +9,4 @@ ADeer::ADeer()
 void ADeer::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
-
-
-
-

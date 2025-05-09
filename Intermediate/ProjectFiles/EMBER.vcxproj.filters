@@ -170,34 +170,10 @@
     <ClCompile Include="..\..\Source\EMBER\AI\BaseAIController.h">
       <Filter>Source\EMBER\AI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BaseAnimInstance.cpp">
+    <ClCompile Include="..\..\Source\EMBER\AI\PassiveAI.cpp">
       <Filter>Source\EMBER\AI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BaseAnimInstance.h">
-      <Filter>Source\EMBER\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BTT_Guard.cpp">
-      <Filter>Source\EMBER\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BTT_Guard.h">
-      <Filter>Source\EMBER\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BTT_Normal.cpp">
-      <Filter>Source\EMBER\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BTT_Normal.h">
-      <Filter>Source\EMBER\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BTT_Patrol.cpp">
-      <Filter>Source\EMBER\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BTT_Patrol.h">
-      <Filter>Source\EMBER\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BTT_Run.cpp">
-      <Filter>Source\EMBER\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BTT_Run.h">
+    <ClCompile Include="..\..\Source\EMBER\AI\PassiveAI.h">
       <Filter>Source\EMBER\AI</Filter>
     </ClCompile>
     <Filter Include="Source\EMBER\AI\Animal">
@@ -214,6 +190,48 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\EMBER\AI\Animal\Deer.h">
       <Filter>Source\EMBER\AI\Animal</Filter>
+    </ClCompile>
+    <Filter Include="Source\EMBER\AI\Decorator">
+      <UniqueIdentifier>{3BE45B80-F6C1-3649-9353-E8874A00830B}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\EMBER\AI\Decorator\BTD_IsWithinOriginArea.cpp">
+      <Filter>Source\EMBER\AI\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Decorator\BTD_IsWithinOriginArea.h">
+      <Filter>Source\EMBER\AI\Decorator</Filter>
+    </ClCompile>
+    <Filter Include="Source\EMBER\AI\Task">
+      <UniqueIdentifier>{84BA75B0-5536-3DA2-AEAB-E315C7EA0CDC}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Attack.cpp">
+      <Filter>Source\EMBER\AI\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Attack.h">
+      <Filter>Source\EMBER\AI\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Guard.cpp">
+      <Filter>Source\EMBER\AI\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Guard.h">
+      <Filter>Source\EMBER\AI\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Normal.cpp">
+      <Filter>Source\EMBER\AI\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Normal.h">
+      <Filter>Source\EMBER\AI\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Patrol.cpp">
+      <Filter>Source\EMBER\AI\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Patrol.h">
+      <Filter>Source\EMBER\AI\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Run.cpp">
+      <Filter>Source\EMBER\AI\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Run.h">
+      <Filter>Source\EMBER\AI\Task</Filter>
     </ClCompile>
     <Filter Include="Source\EMBER\Component">
       <UniqueIdentifier>{11AC3DCC-C34D-3236-B68D-90B7DC72CE71}</UniqueIdentifier>
