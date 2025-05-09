@@ -79,14 +79,14 @@ UBTT_Run::~UBTT_Run() {}
 // End Class UBTT_Run
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Run_h_Statics
+struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Run_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
 		{ Z_Construct_UClass_UBTT_Run, UBTT_Run::StaticClass, TEXT("UBTT_Run"), &Z_Registration_Info_UClass_UBTT_Run, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTT_Run), 2824347603U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Run_h_3103766088(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Run_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Run_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Run_h_3103766088(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Run_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Run_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

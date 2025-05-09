@@ -21,6 +21,14 @@ public:
 
 	virtual void BeginPlay() override;
 
+	// 블랙보드 데이터 (에디터에서 설정)
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	UBlackboardData* BlackboardAsset;
+
+	// 블랙보드 컴포넌트 (UseBlackboard()를 통해 참조)
+	UPROPERTY(VisibleAnywhere, Category = "AI")
+	UBlackboardComponent* BlackboardComp;
+	
 	EAnimalType AnimalType;
 
 	UPROPERTY(EditAnywhere, Category = "AI")

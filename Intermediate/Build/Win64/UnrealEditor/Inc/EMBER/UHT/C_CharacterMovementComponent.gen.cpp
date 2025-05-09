@@ -384,14 +384,14 @@ UC_CharacterMovementComponent::~UC_CharacterMovementComponent() {}
 // End Class UC_CharacterMovementComponent
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_Component_C_CharacterMovementComponent_h_Statics
+struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Component_C_CharacterMovementComponent_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
 		{ Z_Construct_UClass_UC_CharacterMovementComponent, UC_CharacterMovementComponent::StaticClass, TEXT("UC_CharacterMovementComponent"), &Z_Registration_Info_UClass_UC_CharacterMovementComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UC_CharacterMovementComponent), 4188285000U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_Component_C_CharacterMovementComponent_h_36742646(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_Component_C_CharacterMovementComponent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_Component_C_CharacterMovementComponent_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Component_C_CharacterMovementComponent_h_36742646(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Component_C_CharacterMovementComponent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Component_C_CharacterMovementComponent_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

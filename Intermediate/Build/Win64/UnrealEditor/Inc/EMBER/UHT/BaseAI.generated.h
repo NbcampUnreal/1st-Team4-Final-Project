@@ -15,13 +15,13 @@ class AActor;
 #endif
 #define EMBER_BaseAI_generated_h
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_24_RPC_WRAPPERS_NO_PURE_DECLS \
 	DECLARE_FUNCTION(execOnPerceptionUpdated); \
 	DECLARE_FUNCTION(execOnDeath); \
 	DECLARE_FUNCTION(execAttack);
 
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_INCLASS_NO_PURE_DECLS \
+#define FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_24_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesABaseAI(); \
 	friend struct Z_Construct_UClass_ABaseAI_Statics; \
@@ -30,7 +30,7 @@ public: \
 	DECLARE_SERIALIZER(ABaseAI)
 
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_ENHANCED_CONSTRUCTORS \
+#define FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_24_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	ABaseAI(ABaseAI&&); \
@@ -42,13 +42,13 @@ public: \
 	NO_API virtual ~ABaseAI();
 
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_20_PROLOG
-#define FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_GENERATED_BODY \
+#define FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_21_PROLOG
+#define FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_24_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_INCLASS_NO_PURE_DECLS \
-	FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_ENHANCED_CONSTRUCTORS \
+	FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_24_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_24_INCLASS_NO_PURE_DECLS \
+	FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_24_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -56,7 +56,7 @@ PRAGMA_ENABLE_DEPRECATION_WARNINGS
 template<> EMBER_API UClass* StaticClass<class ABaseAI>();
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h
+#define CURRENT_FILE_ID FID_PJ_Ember_Source_EMBER_AI_BaseAI_h
 
 
 #define FOREACH_ENUM_AISOUNDCATEGORY(op) \

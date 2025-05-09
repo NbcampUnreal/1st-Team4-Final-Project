@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "EMBER/AI/BaseAIController.h"
+#include "Engine/TargetPoint.h"
 #include "BaseAI.generated.h"
 
 
@@ -56,4 +57,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AI)
+	TArray<ATargetPoint*> patrolpoint;
 };

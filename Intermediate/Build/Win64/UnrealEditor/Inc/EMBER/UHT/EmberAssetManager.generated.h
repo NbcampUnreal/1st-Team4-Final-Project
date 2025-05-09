@@ -14,7 +14,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define EMBER_EmberAssetManager_generated_h
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_System_EmberAssetManager_h_17_INCLASS_NO_PURE_DECLS \
+#define FID_PJ_Ember_Source_EMBER_System_EmberAssetManager_h_18_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUEmberAssetManager(); \
 	friend struct Z_Construct_UClass_UEmberAssetManager_Statics; \
@@ -25,7 +25,7 @@ public: \
 
 
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_System_EmberAssetManager_h_17_ENHANCED_CONSTRUCTORS \
+#define FID_PJ_Ember_Source_EMBER_System_EmberAssetManager_h_18_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	UEmberAssetManager(UEmberAssetManager&&); \
@@ -37,12 +37,12 @@ public: \
 	NO_API virtual ~UEmberAssetManager();
 
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_System_EmberAssetManager_h_14_PROLOG
-#define FID_1st_Team4_Final_Project_Source_EMBER_System_EmberAssetManager_h_17_GENERATED_BODY \
+#define FID_PJ_Ember_Source_EMBER_System_EmberAssetManager_h_15_PROLOG
+#define FID_PJ_Ember_Source_EMBER_System_EmberAssetManager_h_18_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_1st_Team4_Final_Project_Source_EMBER_System_EmberAssetManager_h_17_INCLASS_NO_PURE_DECLS \
-	FID_1st_Team4_Final_Project_Source_EMBER_System_EmberAssetManager_h_17_ENHANCED_CONSTRUCTORS \
+	FID_PJ_Ember_Source_EMBER_System_EmberAssetManager_h_18_INCLASS_NO_PURE_DECLS \
+	FID_PJ_Ember_Source_EMBER_System_EmberAssetManager_h_18_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -50,7 +50,7 @@ PRAGMA_ENABLE_DEPRECATION_WARNINGS
 template<> EMBER_API UClass* StaticClass<class UEmberAssetManager>();
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_1st_Team4_Final_Project_Source_EMBER_System_EmberAssetManager_h
+#define CURRENT_FILE_ID FID_PJ_Ember_Source_EMBER_System_EmberAssetManager_h
 
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

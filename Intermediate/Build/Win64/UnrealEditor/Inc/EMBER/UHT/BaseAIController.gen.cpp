@@ -12,6 +12,8 @@ void EmptyLinkFunctionForGeneratedCodeBaseAIController() {}
 // Begin Cross Module References
 AIMODULE_API UClass* Z_Construct_UClass_AAIController();
 AIMODULE_API UClass* Z_Construct_UClass_UBehaviorTree_NoRegister();
+AIMODULE_API UClass* Z_Construct_UClass_UBlackboardComponent_NoRegister();
+AIMODULE_API UClass* Z_Construct_UClass_UBlackboardData_NoRegister();
 EMBER_API UClass* Z_Construct_UClass_ABaseAIController();
 EMBER_API UClass* Z_Construct_UClass_ABaseAIController_NoRegister();
 EMBER_API UEnum* Z_Construct_UEnum_EMBER_EAnimalType();
@@ -92,6 +94,27 @@ struct Z_Construct_UClass_ABaseAIController_Statics
 		{ "IncludePath", "AI/BaseAIController.h" },
 		{ "ModuleRelativePath", "AI/BaseAIController.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_BlackboardAsset_MetaData[] = {
+		{ "Category", "AI" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// \xeb\xb8\x94\xeb\x9e\x99\xeb\xb3\xb4\xeb\x93\x9c \xeb\x8d\xb0\xec\x9d\xb4\xed\x84\xb0 (\xec\x97\x90\xeb\x94\x94\xed\x84\xb0\xec\x97\x90\xec\x84\x9c \xec\x84\xa4\xec\xa0\x95)\n" },
+#endif
+		{ "ModuleRelativePath", "AI/BaseAIController.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "\xeb\xb8\x94\xeb\x9e\x99\xeb\xb3\xb4\xeb\x93\x9c \xeb\x8d\xb0\xec\x9d\xb4\xed\x84\xb0 (\xec\x97\x90\xeb\x94\x94\xed\x84\xb0\xec\x97\x90\xec\x84\x9c \xec\x84\xa4\xec\xa0\x95)" },
+#endif
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_BlackboardComp_MetaData[] = {
+		{ "Category", "AI" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// \xeb\xb8\x94\xeb\x9e\x99\xeb\xb3\xb4\xeb\x93\x9c \xec\xbb\xb4\xed\x8f\xac\xeb\x84\x8c\xed\x8a\xb8 (UseBlackboard()\xeb\xa5\xbc \xed\x86\xb5\xed\x95\xb4 \xec\xb0\xb8\xec\xa1\xb0)\n" },
+#endif
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "AI/BaseAIController.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "\xeb\xb8\x94\xeb\x9e\x99\xeb\xb3\xb4\xeb\x93\x9c \xec\xbb\xb4\xed\x8f\xac\xeb\x84\x8c\xed\x8a\xb8 (UseBlackboard()\xeb\xa5\xbc \xed\x86\xb5\xed\x95\xb4 \xec\xb0\xb8\xec\xa1\xb0)" },
+#endif
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PassiveBT_MetaData[] = {
 		{ "Category", "AI" },
 		{ "ModuleRelativePath", "AI/BaseAIController.h" },
@@ -105,6 +128,8 @@ struct Z_Construct_UClass_ABaseAIController_Statics
 		{ "ModuleRelativePath", "AI/BaseAIController.h" },
 	};
 #endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_BlackboardAsset;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_BlackboardComp;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_PassiveBT;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_DefensiveBT;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_AggressiveBT;
@@ -115,10 +140,14 @@ struct Z_Construct_UClass_ABaseAIController_Statics
 	};
 	static const UECodeGen_Private::FClassParams ClassParams;
 };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ABaseAIController_Statics::NewProp_BlackboardAsset = { "BlackboardAsset", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAIController, BlackboardAsset), Z_Construct_UClass_UBlackboardData_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_BlackboardAsset_MetaData), NewProp_BlackboardAsset_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ABaseAIController_Statics::NewProp_BlackboardComp = { "BlackboardComp", nullptr, (EPropertyFlags)0x00100000000a0009, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAIController, BlackboardComp), Z_Construct_UClass_UBlackboardComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_BlackboardComp_MetaData), NewProp_BlackboardComp_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ABaseAIController_Statics::NewProp_PassiveBT = { "PassiveBT", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAIController, PassiveBT), Z_Construct_UClass_UBehaviorTree_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PassiveBT_MetaData), NewProp_PassiveBT_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ABaseAIController_Statics::NewProp_DefensiveBT = { "DefensiveBT", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAIController, DefensiveBT), Z_Construct_UClass_UBehaviorTree_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DefensiveBT_MetaData), NewProp_DefensiveBT_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ABaseAIController_Statics::NewProp_AggressiveBT = { "AggressiveBT", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAIController, AggressiveBT), Z_Construct_UClass_UBehaviorTree_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AggressiveBT_MetaData), NewProp_AggressiveBT_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_ABaseAIController_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAIController_Statics::NewProp_BlackboardAsset,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAIController_Statics::NewProp_BlackboardComp,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAIController_Statics::NewProp_PassiveBT,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAIController_Statics::NewProp_DefensiveBT,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAIController_Statics::NewProp_AggressiveBT,
@@ -162,18 +191,18 @@ ABaseAIController::~ABaseAIController() {}
 // End Class ABaseAIController
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_Statics
+struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAIController_h_Statics
 {
 	static constexpr FEnumRegisterCompiledInInfo EnumInfo[] = {
 		{ EAnimalType_StaticEnum, TEXT("EAnimalType"), &Z_Registration_Info_UEnum_EAnimalType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 324055089U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ABaseAIController, ABaseAIController::StaticClass, TEXT("ABaseAIController"), &Z_Registration_Info_UClass_ABaseAIController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ABaseAIController), 376812693U) },
+		{ Z_Construct_UClass_ABaseAIController, ABaseAIController::StaticClass, TEXT("ABaseAIController"), &Z_Registration_Info_UClass_ABaseAIController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ABaseAIController), 1097048262U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_1740071254(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAIController_h_3613580968(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAIController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAIController_h_Statics::ClassInfo),
 	nullptr, 0,
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_Statics::EnumInfo));
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAIController_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAIController_h_Statics::EnumInfo));
 // End Registration
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

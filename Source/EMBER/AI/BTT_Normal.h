@@ -4,9 +4,7 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTT_Normal.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class EMBER_API UBTT_Normal : public UBTTask_BlackboardBase
 {

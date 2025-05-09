@@ -16,7 +16,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #define EMBER_GameFlag_generated_h
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameFlag_h
+#define CURRENT_FILE_ID FID_PJ_Ember_Source_EMBER_GameInfo_GameFlag_h
 
 
 #define FOREACH_ENUM_ESPEEDTYPE(op) \
@@ -133,5 +133,14 @@ template<> EMBER_API UEnum* StaticEnum<EEquipmentSlotType>();
 enum class EWeaponType : uint8;
 template<> struct TIsUEnumClass<EWeaponType> { enum { Value = true }; };
 template<> EMBER_API UEnum* StaticEnum<EWeaponType>();
+
+#define FOREACH_ENUM_ESLOTSTATE(op) \
+	op(ESlotState::Default) \
+	op(ESlotState::Invalid) \
+	op(ESlotState::Valid) 
+
+enum class ESlotState : uint8;
+template<> struct TIsUEnumClass<ESlotState> { enum { Value = true }; };
+template<> EMBER_API UEnum* StaticEnum<ESlotState>();
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
