@@ -13,5 +13,7 @@ UCLASS()
 class EMBER_API UBTT_Run : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	UBTT_Run();
 };

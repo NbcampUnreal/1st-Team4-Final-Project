@@ -3,14 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/BaseAI.h"
-#include "Deer.generated.h"
+#include "Animation/AnimInstance.h"
+#include "BaseAnimInstance.generated.h"
+
 
 UCLASS()
-class EMBER_API ADeer : public ABaseAI
+class EMBER_API UBaseAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
 public:
-	ADeer();
+
+	
 };

@@ -3,3 +3,7 @@
 
 #include "AI/BTT_Guard.h"
 
+UBTT_Guard::UBTT_Guard()
+{
+	NodeName = "GuardState";
+}

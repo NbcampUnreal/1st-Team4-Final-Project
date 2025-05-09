@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "EMBER/AI/BaseAIController.h"
 #include "BaseAI.generated.h"
 
 
@@ -23,8 +24,10 @@ class EMBER_API ABaseAI : public ACharacter
 
 public:
 	ABaseAI();
-
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	EAnimalType AnimalType;
 
 	float MaxHP;
 	float CurrentHP;
