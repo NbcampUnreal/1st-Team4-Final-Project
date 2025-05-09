@@ -80,14 +80,14 @@ UItemFragment_Equipable::~UItemFragment_Equipable() {}
 // End Class UItemFragment_Equipable
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_Item_Fragments_ItemFragment_Equipable_h_Statics
+struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Item_Fragments_ItemFragment_Equipable_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
 		{ Z_Construct_UClass_UItemFragment_Equipable, UItemFragment_Equipable::StaticClass, TEXT("UItemFragment_Equipable"), &Z_Registration_Info_UClass_UItemFragment_Equipable, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UItemFragment_Equipable), 2459729731U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_Item_Fragments_ItemFragment_Equipable_h_3436051864(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_Item_Fragments_ItemFragment_Equipable_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_Item_Fragments_ItemFragment_Equipable_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Item_Fragments_ItemFragment_Equipable_h_3436051864(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Item_Fragments_ItemFragment_Equipable_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Item_Fragments_ItemFragment_Equipable_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

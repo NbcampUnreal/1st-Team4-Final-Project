@@ -15,14 +15,14 @@ struct FInputActionValue;
 #endif
 #define EMBER_EmberPlayerCharacter_generated_h
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_17_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_17_RPC_WRAPPERS_NO_PURE_DECLS \
 	DECLARE_FUNCTION(execStopSprint); \
 	DECLARE_FUNCTION(execStartSprint); \
 	DECLARE_FUNCTION(execLook); \
 	DECLARE_FUNCTION(execMove);
 
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_17_INCLASS_NO_PURE_DECLS \
+#define FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_17_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesAEmberPlayerCharacter(); \
 	friend struct Z_Construct_UClass_AEmberPlayerCharacter_Statics; \
@@ -31,7 +31,7 @@ public: \
 	DECLARE_SERIALIZER(AEmberPlayerCharacter)
 
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_17_ENHANCED_CONSTRUCTORS \
+#define FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_17_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	AEmberPlayerCharacter(AEmberPlayerCharacter&&); \
@@ -43,13 +43,13 @@ public: \
 	NO_API virtual ~AEmberPlayerCharacter();
 
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_14_PROLOG
-#define FID_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_17_GENERATED_BODY \
+#define FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_14_PROLOG
+#define FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_17_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_17_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_17_INCLASS_NO_PURE_DECLS \
-	FID_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_17_ENHANCED_CONSTRUCTORS \
+	FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_17_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_17_INCLASS_NO_PURE_DECLS \
+	FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_17_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -57,7 +57,7 @@ PRAGMA_ENABLE_DEPRECATION_WARNINGS
 template<> EMBER_API UClass* StaticClass<class AEmberPlayerCharacter>();
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h
+#define CURRENT_FILE_ID FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h
 
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

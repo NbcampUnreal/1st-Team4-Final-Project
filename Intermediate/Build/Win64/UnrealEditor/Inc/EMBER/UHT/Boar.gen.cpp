@@ -77,14 +77,14 @@ ABoar::~ABoar() {}
 // End Class ABoar
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_Animal_Boar_h_Statics
+struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Boar_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ABoar, ABoar::StaticClass, TEXT("ABoar"), &Z_Registration_Info_UClass_ABoar, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ABoar), 3572378569U) },
+		{ Z_Construct_UClass_ABoar, ABoar::StaticClass, TEXT("ABoar"), &Z_Registration_Info_UClass_ABoar, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ABoar), 1178752141U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_Animal_Boar_h_826567031(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_Animal_Boar_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_Animal_Boar_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Boar_h_1312843124(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Boar_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Boar_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

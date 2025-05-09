@@ -739,7 +739,7 @@ UScriptStruct* Z_Construct_UScriptStruct_FCharacterStatus()
 // End ScriptStruct FCharacterStatus
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameData_h_Statics
+struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameData_h_Statics
 {
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
 		{ FEffectData::StaticStruct, Z_Construct_UScriptStruct_FEffectData_Statics::NewStructOps, TEXT("EffectData"), &Z_Registration_Info_UScriptStruct_EffectData, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FEffectData), 1233497073U) },
@@ -751,9 +751,9 @@ struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_GameInfo_G
 		{ FCharacterStatus::StaticStruct, Z_Construct_UScriptStruct_FCharacterStatus_Statics::NewStructOps, TEXT("CharacterStatus"), &Z_Registration_Info_UScriptStruct_CharacterStatus, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FCharacterStatus), 3677320349U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameData_h_2356651681(TEXT("/Script/EMBER"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameData_h_2356651681(TEXT("/Script/EMBER"),
 	nullptr, 0,
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameData_h_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameData_h_Statics::ScriptStructInfo),
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameData_h_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameData_h_Statics::ScriptStructInfo),
 	nullptr, 0);
 // End Registration
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

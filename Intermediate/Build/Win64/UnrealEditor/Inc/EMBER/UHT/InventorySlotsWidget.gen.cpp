@@ -13,6 +13,7 @@ void EmptyLinkFunctionForGeneratedCodeInventorySlotsWidget() {}
 EMBER_API UClass* Z_Construct_UClass_UInventorySlotsWidget();
 EMBER_API UClass* Z_Construct_UClass_UInventorySlotsWidget_NoRegister();
 EMBER_API UClass* Z_Construct_UClass_UInventorySlotWidget_NoRegister();
+EMBER_API UClass* Z_Construct_UClass_UInventoryValidWidget_NoRegister();
 UMG_API UClass* Z_Construct_UClass_UCanvasPanel_NoRegister();
 UMG_API UClass* Z_Construct_UClass_UOverlay_NoRegister();
 UMG_API UClass* Z_Construct_UClass_UTextBlock_NoRegister();
@@ -21,9 +22,43 @@ UMG_API UClass* Z_Construct_UClass_UUserWidget();
 UPackage* Z_Construct_UPackage__Script_EMBER();
 // End Cross Module References
 
+// Begin Class UInventorySlotsWidget Function ConstructUI
+struct Z_Construct_UFunction_UInventorySlotsWidget_ConstructUI_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "UI/Inventory/InventorySlotsWidget.h" },
+	};
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UInventorySlotsWidget_ConstructUI_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UInventorySlotsWidget, nullptr, "ConstructUI", nullptr, nullptr, nullptr, 0, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04040401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UInventorySlotsWidget_ConstructUI_Statics::Function_MetaDataParams), Z_Construct_UFunction_UInventorySlotsWidget_ConstructUI_Statics::Function_MetaDataParams) };
+UFunction* Z_Construct_UFunction_UInventorySlotsWidget_ConstructUI()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UInventorySlotsWidget_ConstructUI_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UInventorySlotsWidget::execConstructUI)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->ConstructUI();
+	P_NATIVE_END;
+}
+// End Class UInventorySlotsWidget Function ConstructUI
+
 // Begin Class UInventorySlotsWidget
 void UInventorySlotsWidget::StaticRegisterNativesUInventorySlotsWidget()
 {
+	UClass* Class = UInventorySlotsWidget::StaticClass();
+	static const FNameNativePtrPair Funcs[] = {
+		{ "ConstructUI", &UInventorySlotsWidget::execConstructUI },
+	};
+	FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
 }
 IMPLEMENT_CLASS_NO_AUTO_REGISTRATION(UInventorySlotsWidget);
 UClass* Z_Construct_UClass_UInventorySlotsWidget_NoRegister()
@@ -46,6 +81,10 @@ struct Z_Construct_UClass_UInventorySlotsWidget_Statics
 		{ "ModuleRelativePath", "UI/Inventory/InventorySlotsWidget.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SlotWidgets_MetaData[] = {
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "UI/Inventory/InventorySlotsWidget.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ValidWidgets_MetaData[] = {
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "UI/Inventory/InventorySlotsWidget.h" },
 	};
@@ -78,6 +117,8 @@ struct Z_Construct_UClass_UInventorySlotsWidget_Statics
 	static const UECodeGen_Private::FTextPropertyParams NewProp_TitleText;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_SlotWidgets_Inner;
 	static const UECodeGen_Private::FArrayPropertyParams NewProp_SlotWidgets;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_ValidWidgets_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_ValidWidgets;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_Text_Title;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_Overlay_Slots;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_GridPanel_Slots;
@@ -85,6 +126,10 @@ struct Z_Construct_UClass_UInventorySlotsWidget_Statics
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_GridPanel_ValidSlots;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 	static UObject* (*const DependentSingletons[])();
+	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
+		{ &Z_Construct_UFunction_UInventorySlotsWidget_ConstructUI, "ConstructUI" }, // 4042149216
+	};
+	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UInventorySlotsWidget>::IsAbstract,
 	};
@@ -93,6 +138,8 @@ struct Z_Construct_UClass_UInventorySlotsWidget_Statics
 const UECodeGen_Private::FTextPropertyParams Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_TitleText = { "TitleText", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Text, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlotsWidget, TitleText), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TitleText_MetaData), NewProp_TitleText_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_SlotWidgets_Inner = { "SlotWidgets", nullptr, (EPropertyFlags)0x0104000000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_UInventorySlotWidget_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_SlotWidgets = { "SlotWidgets", nullptr, (EPropertyFlags)0x0144008000000008, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlotsWidget, SlotWidgets), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SlotWidgets_MetaData), NewProp_SlotWidgets_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_ValidWidgets_Inner = { "ValidWidgets", nullptr, (EPropertyFlags)0x0104000000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_UInventoryValidWidget_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_ValidWidgets = { "ValidWidgets", nullptr, (EPropertyFlags)0x0144008000000008, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlotsWidget, ValidWidgets), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ValidWidgets_MetaData), NewProp_ValidWidgets_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_Text_Title = { "Text_Title", nullptr, (EPropertyFlags)0x0144000000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlotsWidget, Text_Title), Z_Construct_UClass_UTextBlock_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Text_Title_MetaData), NewProp_Text_Title_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_Overlay_Slots = { "Overlay_Slots", nullptr, (EPropertyFlags)0x0144000000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlotsWidget, Overlay_Slots), Z_Construct_UClass_UOverlay_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Overlay_Slots_MetaData), NewProp_Overlay_Slots_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_GridPanel_Slots = { "GridPanel_Slots", nullptr, (EPropertyFlags)0x0144000000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlotsWidget, GridPanel_Slots), Z_Construct_UClass_UUniformGridPanel_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_GridPanel_Slots_MetaData), NewProp_GridPanel_Slots_MetaData) };
@@ -102,6 +149,8 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UInventor
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_TitleText,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_SlotWidgets_Inner,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_SlotWidgets,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_ValidWidgets_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_ValidWidgets,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_Text_Title,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_Overlay_Slots,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlotsWidget_Statics::NewProp_GridPanel_Slots,
@@ -119,11 +168,11 @@ const UECodeGen_Private::FClassParams Z_Construct_UClass_UInventorySlotsWidget_S
 	nullptr,
 	&StaticCppClassTypeInfo,
 	DependentSingletons,
-	nullptr,
+	FuncInfo,
 	Z_Construct_UClass_UInventorySlotsWidget_Statics::PropPointers,
 	nullptr,
 	UE_ARRAY_COUNT(DependentSingletons),
-	0,
+	UE_ARRAY_COUNT(FuncInfo),
 	UE_ARRAY_COUNT(Z_Construct_UClass_UInventorySlotsWidget_Statics::PropPointers),
 	0,
 	0x00B010A0u,
@@ -146,14 +195,14 @@ UInventorySlotsWidget::~UInventorySlotsWidget() {}
 // End Class UInventorySlotsWidget
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics
+struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UInventorySlotsWidget, UInventorySlotsWidget::StaticClass, TEXT("UInventorySlotsWidget"), &Z_Registration_Info_UClass_UInventorySlotsWidget, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UInventorySlotsWidget), 200785792U) },
+		{ Z_Construct_UClass_UInventorySlotsWidget, UInventorySlotsWidget::StaticClass, TEXT("UInventorySlotsWidget"), &Z_Registration_Info_UClass_UInventorySlotsWidget, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UInventorySlotsWidget), 1586283717U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_62879054(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_1565407115(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

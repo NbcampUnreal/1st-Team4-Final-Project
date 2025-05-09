@@ -18,6 +18,7 @@ EMBER_API UEnum* Z_Construct_UEnum_EMBER_AISoundCategory();
 EMBER_API UEnum* Z_Construct_UEnum_EMBER_EAnimalType();
 ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
 ENGINE_API UClass* Z_Construct_UClass_ACharacter();
+ENGINE_API UClass* Z_Construct_UClass_ATargetPoint_NoRegister();
 UPackage* Z_Construct_UPackage__Script_EMBER();
 // End Cross Module References
 
@@ -248,6 +249,10 @@ struct Z_Construct_UClass_ABaseAI_Statics
 		{ "Category", "AI" },
 		{ "ModuleRelativePath", "AI/BaseAI.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_patrolpoint_MetaData[] = {
+		{ "Category", "AI" },
+		{ "ModuleRelativePath", "AI/BaseAI.h" },
+	};
 #endif // WITH_METADATA
 	static const UECodeGen_Private::FBytePropertyParams NewProp_AnimalType_Underlying;
 	static const UECodeGen_Private::FEnumPropertyParams NewProp_AnimalType;
@@ -255,6 +260,8 @@ struct Z_Construct_UClass_ABaseAI_Statics
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_MoveSpeed;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_AIPerception;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_SightConfig;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_patrolpoint_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_patrolpoint;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
@@ -274,6 +281,8 @@ const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_ABaseAI_Statics
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_ABaseAI_Statics::NewProp_MoveSpeed = { "MoveSpeed", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAI, MoveSpeed), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MoveSpeed_MetaData), NewProp_MoveSpeed_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ABaseAI_Statics::NewProp_AIPerception = { "AIPerception", nullptr, (EPropertyFlags)0x00100000000a001d, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAI, AIPerception), Z_Construct_UClass_UAIPerceptionComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AIPerception_MetaData), NewProp_AIPerception_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ABaseAI_Statics::NewProp_SightConfig = { "SightConfig", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAI, SightConfig), Z_Construct_UClass_UAISenseConfig_Sight_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SightConfig_MetaData), NewProp_SightConfig_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ABaseAI_Statics::NewProp_patrolpoint_Inner = { "patrolpoint", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_ATargetPoint_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_ABaseAI_Statics::NewProp_patrolpoint = { "patrolpoint", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAI, patrolpoint), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_patrolpoint_MetaData), NewProp_patrolpoint_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_ABaseAI_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_AnimalType_Underlying,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_AnimalType,
@@ -281,6 +290,8 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_ABaseAI_S
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_MoveSpeed,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_AIPerception,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_SightConfig,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_patrolpoint_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_patrolpoint,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_ABaseAI_Statics::PropPointers) < 2048);
 UObject* (*const Z_Construct_UClass_ABaseAI_Statics::DependentSingletons[])() = {
@@ -320,18 +331,18 @@ ABaseAI::~ABaseAI() {}
 // End Class ABaseAI
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_Statics
+struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_Statics
 {
 	static constexpr FEnumRegisterCompiledInInfo EnumInfo[] = {
 		{ AISoundCategory_StaticEnum, TEXT("AISoundCategory"), &Z_Registration_Info_UEnum_AISoundCategory, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 2822768623U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ABaseAI, ABaseAI::StaticClass, TEXT("ABaseAI"), &Z_Registration_Info_UClass_ABaseAI, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ABaseAI), 1186590469U) },
+		{ Z_Construct_UClass_ABaseAI, ABaseAI::StaticClass, TEXT("ABaseAI"), &Z_Registration_Info_UClass_ABaseAI, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ABaseAI), 1694454372U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_2574957200(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_1302840939(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_Statics::ClassInfo),
 	nullptr, 0,
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_Statics::EnumInfo));
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BaseAI_h_Statics::EnumInfo));
 // End Registration
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

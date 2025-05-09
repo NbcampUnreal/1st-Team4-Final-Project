@@ -14,7 +14,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define EMBER_ItemFragment_Equipable_Utility_generated_h
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_15_INCLASS_NO_PURE_DECLS \
+#define FID_PJ_Ember_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_15_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUItemFragment_Equipable_Utility(); \
 	friend struct Z_Construct_UClass_UItemFragment_Equipable_Utility_Statics; \
@@ -23,7 +23,7 @@ public: \
 	DECLARE_SERIALIZER(UItemFragment_Equipable_Utility)
 
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_15_ENHANCED_CONSTRUCTORS \
+#define FID_PJ_Ember_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_15_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	UItemFragment_Equipable_Utility(UItemFragment_Equipable_Utility&&); \
@@ -35,12 +35,12 @@ public: \
 	NO_API virtual ~UItemFragment_Equipable_Utility();
 
 
-#define FID_1st_Team4_Final_Project_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_12_PROLOG
-#define FID_1st_Team4_Final_Project_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_15_GENERATED_BODY \
+#define FID_PJ_Ember_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_12_PROLOG
+#define FID_PJ_Ember_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_15_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_1st_Team4_Final_Project_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_15_INCLASS_NO_PURE_DECLS \
-	FID_1st_Team4_Final_Project_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_15_ENHANCED_CONSTRUCTORS \
+	FID_PJ_Ember_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_15_INCLASS_NO_PURE_DECLS \
+	FID_PJ_Ember_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h_15_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -48,7 +48,7 @@ PRAGMA_ENABLE_DEPRECATION_WARNINGS
 template<> EMBER_API UClass* StaticClass<class UItemFragment_Equipable_Utility>();
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_1st_Team4_Final_Project_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h
+#define CURRENT_FILE_ID FID_PJ_Ember_Source_EMBER_Item_Fragments_ItemFragment_Equipable_Utility_h
 
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

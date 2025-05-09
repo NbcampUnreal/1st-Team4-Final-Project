@@ -1,9 +1,9 @@
 {
 	"SourceFiles": [
-		"D:\\1st-Team4-Final-Project\\Source\\EMBER\\EMBER.Build.cs",
-		"D:\\1st-Team4-Final-Project\\Plugins\\UEGitPlugin-3.16\\Source\\GitSourceControl\\GitSourceControl.Build.cs",
-		"D:\\1st-Team4-Final-Project\\Source\\EMBER.Target.cs",
-		"D:\\1st-Team4-Final-Project\\Source\\EMBEREditor.Target.cs"
+		"D:\\Git Fork\\PJ_Ember\\Source\\EMBER\\EMBER.Build.cs",
+		"D:\\Git Fork\\PJ_Ember\\Plugins\\UEGitPlugin-3.16\\Source\\GitSourceControl\\GitSourceControl.Build.cs",
+		"D:\\Git Fork\\PJ_Ember\\Source\\EMBER.Target.cs",
+		"D:\\Git Fork\\PJ_Ember\\Source\\EMBEREditor.Target.cs"
 	],
 	"EngineVersion": "5.5.4"
 }

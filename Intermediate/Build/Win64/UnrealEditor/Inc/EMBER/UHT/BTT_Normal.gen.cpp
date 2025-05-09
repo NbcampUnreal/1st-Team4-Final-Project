@@ -29,9 +29,6 @@ struct Z_Construct_UClass_UBTT_Normal_Statics
 {
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
-#if !UE_BUILD_SHIPPING
-		{ "Comment", "/**\n * \n */" },
-#endif
 		{ "IncludePath", "AI/BTT_Normal.h" },
 		{ "ModuleRelativePath", "AI/BTT_Normal.h" },
 	};
@@ -79,14 +76,14 @@ UBTT_Normal::~UBTT_Normal() {}
 // End Class UBTT_Normal
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_Statics
+struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Normal_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UBTT_Normal, UBTT_Normal::StaticClass, TEXT("UBTT_Normal"), &Z_Registration_Info_UClass_UBTT_Normal, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTT_Normal), 3807918471U) },
+		{ Z_Construct_UClass_UBTT_Normal, UBTT_Normal::StaticClass, TEXT("UBTT_Normal"), &Z_Registration_Info_UClass_UBTT_Normal, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTT_Normal), 26972882U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_855702686(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Normal_h_99132161(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Normal_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_BTT_Normal_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

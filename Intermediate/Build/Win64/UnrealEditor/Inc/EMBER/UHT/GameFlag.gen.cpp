@@ -16,6 +16,7 @@ EMBER_API UEnum* Z_Construct_UEnum_EMBER_EEquipmentSlotType();
 EMBER_API UEnum* Z_Construct_UEnum_EMBER_EEquipmentType();
 EMBER_API UEnum* Z_Construct_UEnum_EMBER_EItemHandType();
 EMBER_API UEnum* Z_Construct_UEnum_EMBER_EItemRarity();
+EMBER_API UEnum* Z_Construct_UEnum_EMBER_ESlotState();
 EMBER_API UEnum* Z_Construct_UEnum_EMBER_ESoundCategory();
 EMBER_API UEnum* Z_Construct_UEnum_EMBER_ESpeedType();
 EMBER_API UEnum* Z_Construct_UEnum_EMBER_EStateType();
@@ -672,8 +673,62 @@ UEnum* Z_Construct_UEnum_EMBER_EWeaponType()
 }
 // End Enum EWeaponType
 
+// Begin Enum ESlotState
+static FEnumRegistrationInfo Z_Registration_Info_UEnum_ESlotState;
+static UEnum* ESlotState_StaticEnum()
+{
+	if (!Z_Registration_Info_UEnum_ESlotState.OuterSingleton)
+	{
+		Z_Registration_Info_UEnum_ESlotState.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_EMBER_ESlotState, (UObject*)Z_Construct_UPackage__Script_EMBER(), TEXT("ESlotState"));
+	}
+	return Z_Registration_Info_UEnum_ESlotState.OuterSingleton;
+}
+template<> EMBER_API UEnum* StaticEnum<ESlotState>()
+{
+	return ESlotState_StaticEnum();
+}
+struct Z_Construct_UEnum_EMBER_ESlotState_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "Default.Name", "ESlotState::Default" },
+		{ "Invalid.Name", "ESlotState::Invalid" },
+		{ "ModuleRelativePath", "GameInfo/GameFlag.h" },
+		{ "Valid.Name", "ESlotState::Valid" },
+	};
+#endif // WITH_METADATA
+	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
+		{ "ESlotState::Default", (int64)ESlotState::Default },
+		{ "ESlotState::Invalid", (int64)ESlotState::Invalid },
+		{ "ESlotState::Valid", (int64)ESlotState::Valid },
+	};
+	static const UECodeGen_Private::FEnumParams EnumParams;
+};
+const UECodeGen_Private::FEnumParams Z_Construct_UEnum_EMBER_ESlotState_Statics::EnumParams = {
+	(UObject*(*)())Z_Construct_UPackage__Script_EMBER,
+	nullptr,
+	"ESlotState",
+	"ESlotState",
+	Z_Construct_UEnum_EMBER_ESlotState_Statics::Enumerators,
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	UE_ARRAY_COUNT(Z_Construct_UEnum_EMBER_ESlotState_Statics::Enumerators),
+	EEnumFlags::None,
+	(uint8)UEnum::ECppForm::EnumClass,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_EMBER_ESlotState_Statics::Enum_MetaDataParams), Z_Construct_UEnum_EMBER_ESlotState_Statics::Enum_MetaDataParams)
+};
+UEnum* Z_Construct_UEnum_EMBER_ESlotState()
+{
+	if (!Z_Registration_Info_UEnum_ESlotState.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_ESlotState.InnerSingleton, Z_Construct_UEnum_EMBER_ESlotState_Statics::EnumParams);
+	}
+	return Z_Registration_Info_UEnum_ESlotState.InnerSingleton;
+}
+// End Enum ESlotState
+
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameFlag_h_Statics
+struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameFlag_h_Statics
 {
 	static constexpr FEnumRegisterCompiledInInfo EnumInfo[] = {
 		{ ESpeedType_StaticEnum, TEXT("ESpeedType"), &Z_Registration_Info_UEnum_ESpeedType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1406011391U) },
@@ -687,11 +742,12 @@ struct Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_GameInfo_G
 		{ EItemHandType_StaticEnum, TEXT("EItemHandType"), &Z_Registration_Info_UEnum_EItemHandType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3043355517U) },
 		{ EEquipmentSlotType_StaticEnum, TEXT("EEquipmentSlotType"), &Z_Registration_Info_UEnum_EEquipmentSlotType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3890792377U) },
 		{ EWeaponType_StaticEnum, TEXT("EWeaponType"), &Z_Registration_Info_UEnum_EWeaponType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 638223766U) },
+		{ ESlotState_StaticEnum, TEXT("ESlotState"), &Z_Registration_Info_UEnum_ESlotState, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 2916718651U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameFlag_h_1695884684(TEXT("/Script/EMBER"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameFlag_h_3362215031(TEXT("/Script/EMBER"),
 	nullptr, 0,
 	nullptr, 0,
-	Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameFlag_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameFlag_h_Statics::EnumInfo));
+	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameFlag_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameFlag_h_Statics::EnumInfo));
 // End Registration
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
