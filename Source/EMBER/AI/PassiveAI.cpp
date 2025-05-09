@@ -27,7 +27,7 @@ void APassiveAI::BeginPlay()
 {
 	Super::BeginPlay();
 	RunPerception->SetDominantSense(RunSightConfig->GetSenseImplementation());
-	RunPerception->OnPerceptionUpdated.AddDynamic(this, &APassiveAI::OnRunPerceptionUpdate);
+	//RunPerception->OnPerceptionUpdated.AddDynamic(this, &APassiveAI::OnRunPerceptionUpdate);
 }
 
 void APassiveAI::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)

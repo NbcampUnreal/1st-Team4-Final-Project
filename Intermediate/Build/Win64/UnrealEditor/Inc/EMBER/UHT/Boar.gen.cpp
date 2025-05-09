@@ -80,10 +80,10 @@ ABoar::~ABoar() {}
 struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Boar_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ABoar, ABoar::StaticClass, TEXT("ABoar"), &Z_Registration_Info_UClass_ABoar, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ABoar), 4066399770U) },
+		{ Z_Construct_UClass_ABoar, ABoar::StaticClass, TEXT("ABoar"), &Z_Registration_Info_UClass_ABoar, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ABoar), 2016275152U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Boar_h_34924973(TEXT("/Script/EMBER"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Boar_h_432379280(TEXT("/Script/EMBER"),
 	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Boar_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Boar_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
