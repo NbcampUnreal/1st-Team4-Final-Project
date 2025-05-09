@@ -16,7 +16,7 @@ public:
 	virtual void OnInstanceCreated(UItemInstance* Instance) const { }
 };
 
-UCLASS(Blueprintable, Const, Abstract)
+UCLASS(Abstract, Blueprintable, Const)
 class EMBER_API UItemTemplate : public UObject
 {
 	GENERATED_BODY()

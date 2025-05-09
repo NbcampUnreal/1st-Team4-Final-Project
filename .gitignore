@@ -284,3 +284,7 @@ DerivedDataCache/*
 
 # Local content that should not be checked in
 LocalContent/*
+
+# Compiled source files for the engine to use
+Intermediate/*
+Plugins/**/Intermediate/*
