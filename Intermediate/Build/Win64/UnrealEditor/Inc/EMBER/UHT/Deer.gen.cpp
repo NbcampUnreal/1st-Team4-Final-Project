@@ -77,14 +77,14 @@ ADeer::~ADeer() {}
 // End Class ADeer
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Deer_h_Statics
+struct Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_AI_Animal_Deer_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
 		{ Z_Construct_UClass_ADeer, ADeer::StaticClass, TEXT("ADeer"), &Z_Registration_Info_UClass_ADeer, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ADeer), 2784519585U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Deer_h_107612527(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Deer_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_AI_Animal_Deer_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_AI_Animal_Deer_h_107612527(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_AI_Animal_Deer_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_AI_Animal_Deer_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

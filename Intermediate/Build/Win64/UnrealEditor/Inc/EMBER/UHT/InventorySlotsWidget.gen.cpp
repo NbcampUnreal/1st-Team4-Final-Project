@@ -195,14 +195,14 @@ UInventorySlotsWidget::~UInventorySlotsWidget() {}
 // End Class UInventorySlotsWidget
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics
+struct Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
 		{ Z_Construct_UClass_UInventorySlotsWidget, UInventorySlotsWidget::StaticClass, TEXT("UInventorySlotsWidget"), &Z_Registration_Info_UClass_UInventorySlotsWidget, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UInventorySlotsWidget), 1586283717U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_1565407115(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_1565407115(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_UI_Inventory_InventorySlotsWidget_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

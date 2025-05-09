@@ -164,6 +164,12 @@
     <ClCompile Include="..\..\Source\EMBER\AI\BaseAI.h">
       <Filter>Source\EMBER\AI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\BaseAIAnimInstance.cpp">
+      <Filter>Source\EMBER\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\BaseAIAnimInstance.h">
+      <Filter>Source\EMBER\AI</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\EMBER\AI\BaseAIController.cpp">
       <Filter>Source\EMBER\AI</Filter>
     </ClCompile>

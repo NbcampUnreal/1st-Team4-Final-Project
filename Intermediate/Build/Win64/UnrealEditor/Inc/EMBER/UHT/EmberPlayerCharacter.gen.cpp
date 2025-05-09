@@ -315,14 +315,14 @@ AEmberPlayerCharacter::~AEmberPlayerCharacter() {}
 // End Class AEmberPlayerCharacter
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_Statics
+struct Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
 		{ Z_Construct_UClass_AEmberPlayerCharacter, AEmberPlayerCharacter::StaticClass, TEXT("AEmberPlayerCharacter"), &Z_Registration_Info_UClass_AEmberPlayerCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AEmberPlayerCharacter), 1243605553U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_846947555(TEXT("/Script/EMBER"),
-	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_Player_EmberPlayerCharacter_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_846947555(TEXT("/Script/EMBER"),
+	Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Player_EmberPlayerCharacter_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

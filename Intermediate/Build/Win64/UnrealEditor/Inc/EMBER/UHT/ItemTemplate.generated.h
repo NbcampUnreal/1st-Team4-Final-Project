@@ -15,7 +15,7 @@ class UItemFragment;
 #endif
 #define EMBER_ItemTemplate_generated_h
 
-#define FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_13_INCLASS_NO_PURE_DECLS \
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_13_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUItemFragment(); \
 	friend struct Z_Construct_UClass_UItemFragment_Statics; \
@@ -24,7 +24,7 @@ public: \
 	DECLARE_SERIALIZER(UItemFragment)
 
 
-#define FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_13_ENHANCED_CONSTRUCTORS \
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_13_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UItemFragment(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
 private: \
@@ -38,23 +38,23 @@ public: \
 	NO_API virtual ~UItemFragment();
 
 
-#define FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_10_PROLOG
-#define FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_13_GENERATED_BODY \
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_10_PROLOG
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_13_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_13_INCLASS_NO_PURE_DECLS \
-	FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_13_ENHANCED_CONSTRUCTORS \
+	FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_13_INCLASS_NO_PURE_DECLS \
+	FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_13_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
 template<> EMBER_API UClass* StaticClass<class UItemFragment>();
 
-#define FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_22_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_22_RPC_WRAPPERS_NO_PURE_DECLS \
 	DECLARE_FUNCTION(execFindFragmentByClass);
 
 
-#define FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_22_INCLASS_NO_PURE_DECLS \
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_22_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUItemTemplate(); \
 	friend struct Z_Construct_UClass_UItemTemplate_Statics; \
@@ -63,7 +63,7 @@ public: \
 	DECLARE_SERIALIZER(UItemTemplate)
 
 
-#define FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_22_ENHANCED_CONSTRUCTORS \
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_22_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	UItemTemplate(UItemTemplate&&); \
@@ -75,13 +75,13 @@ public: \
 	NO_API virtual ~UItemTemplate();
 
 
-#define FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_19_PROLOG
-#define FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_22_GENERATED_BODY \
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_19_PROLOG
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_22_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_22_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_22_INCLASS_NO_PURE_DECLS \
-	FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h_22_ENHANCED_CONSTRUCTORS \
+	FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_22_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_22_INCLASS_NO_PURE_DECLS \
+	FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h_22_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -89,7 +89,7 @@ PRAGMA_ENABLE_DEPRECATION_WARNINGS
 template<> EMBER_API UClass* StaticClass<class UItemTemplate>();
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_PJ_Ember_Source_EMBER_Item_ItemTemplate_h
+#define CURRENT_FILE_ID FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Item_ItemTemplate_h
 
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

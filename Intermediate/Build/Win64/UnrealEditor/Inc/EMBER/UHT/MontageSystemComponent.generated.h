@@ -15,7 +15,7 @@ class UAnimMontage;
 #endif
 #define EMBER_MontageSystemComponent_generated_h
 
-#define FID_PJ_Ember_Source_EMBER_Component_MontageSystemComponent_h_14_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Component_MontageSystemComponent_h_14_RPC_WRAPPERS_NO_PURE_DECLS \
 	virtual void MulticastPlayMontage_Implementation(UAnimMontage* Montage, float PlayRate, FName SectionName); \
 	virtual bool ServerPlayMontage_Validate(UAnimMontage* , float , FName ); \
 	virtual void ServerPlayMontage_Implementation(UAnimMontage* Montage, float PlayRate, FName SectionName); \
@@ -24,8 +24,8 @@ class UAnimMontage;
 	DECLARE_FUNCTION(execRequestPlayMontage);
 
 
-#define FID_PJ_Ember_Source_EMBER_Component_MontageSystemComponent_h_14_CALLBACK_WRAPPERS
-#define FID_PJ_Ember_Source_EMBER_Component_MontageSystemComponent_h_14_INCLASS_NO_PURE_DECLS \
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Component_MontageSystemComponent_h_14_CALLBACK_WRAPPERS
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Component_MontageSystemComponent_h_14_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUMontageSystemComponent(); \
 	friend struct Z_Construct_UClass_UMontageSystemComponent_Statics; \
@@ -40,7 +40,7 @@ public: \
 	NO_API virtual void ValidateGeneratedRepEnums(const TArray<struct FRepRecord>& ClassReps) const override;
 
 
-#define FID_PJ_Ember_Source_EMBER_Component_MontageSystemComponent_h_14_ENHANCED_CONSTRUCTORS \
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Component_MontageSystemComponent_h_14_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	UMontageSystemComponent(UMontageSystemComponent&&); \
@@ -52,14 +52,14 @@ public: \
 	NO_API virtual ~UMontageSystemComponent();
 
 
-#define FID_PJ_Ember_Source_EMBER_Component_MontageSystemComponent_h_11_PROLOG
-#define FID_PJ_Ember_Source_EMBER_Component_MontageSystemComponent_h_14_GENERATED_BODY \
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Component_MontageSystemComponent_h_11_PROLOG
+#define FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Component_MontageSystemComponent_h_14_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_PJ_Ember_Source_EMBER_Component_MontageSystemComponent_h_14_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_PJ_Ember_Source_EMBER_Component_MontageSystemComponent_h_14_CALLBACK_WRAPPERS \
-	FID_PJ_Ember_Source_EMBER_Component_MontageSystemComponent_h_14_INCLASS_NO_PURE_DECLS \
-	FID_PJ_Ember_Source_EMBER_Component_MontageSystemComponent_h_14_ENHANCED_CONSTRUCTORS \
+	FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Component_MontageSystemComponent_h_14_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Component_MontageSystemComponent_h_14_CALLBACK_WRAPPERS \
+	FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Component_MontageSystemComponent_h_14_INCLASS_NO_PURE_DECLS \
+	FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Component_MontageSystemComponent_h_14_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -67,7 +67,7 @@ PRAGMA_ENABLE_DEPRECATION_WARNINGS
 template<> EMBER_API UClass* StaticClass<class UMontageSystemComponent>();
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_PJ_Ember_Source_EMBER_Component_MontageSystemComponent_h
+#define CURRENT_FILE_ID FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_Component_MontageSystemComponent_h
 
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

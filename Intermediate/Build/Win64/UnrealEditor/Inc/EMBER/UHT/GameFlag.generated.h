@@ -16,7 +16,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #define EMBER_GameFlag_generated_h
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_PJ_Ember_Source_EMBER_GameInfo_GameFlag_h
+#define CURRENT_FILE_ID FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameFlag_h
 
 
 #define FOREACH_ENUM_ESPEEDTYPE(op) \

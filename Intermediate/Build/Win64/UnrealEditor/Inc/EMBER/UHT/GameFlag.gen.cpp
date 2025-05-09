@@ -728,7 +728,7 @@ UEnum* Z_Construct_UEnum_EMBER_ESlotState()
 // End Enum ESlotState
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameFlag_h_Statics
+struct Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameFlag_h_Statics
 {
 	static constexpr FEnumRegisterCompiledInInfo EnumInfo[] = {
 		{ ESpeedType_StaticEnum, TEXT("ESpeedType"), &Z_Registration_Info_UEnum_ESpeedType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1406011391U) },
@@ -745,9 +745,9 @@ struct Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameFlag_h_Stati
 		{ ESlotState_StaticEnum, TEXT("ESlotState"), &Z_Registration_Info_UEnum_ESlotState, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 2916718651U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameFlag_h_3362215031(TEXT("/Script/EMBER"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameFlag_h_3362215031(TEXT("/Script/EMBER"),
 	nullptr, 0,
 	nullptr, 0,
-	Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameFlag_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_PJ_Ember_Source_EMBER_GameInfo_GameFlag_h_Statics::EnumInfo));
+	Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameFlag_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_code_NBCamp_1st_Team4_Final_Project_Source_EMBER_GameInfo_GameFlag_h_Statics::EnumInfo));
 // End Registration
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
