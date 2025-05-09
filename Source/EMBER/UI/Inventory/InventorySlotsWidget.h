@@ -6,6 +6,7 @@
 #include "InventorySlotsWidget.generated.h"
 
 class UInventorySlotWidget;
+class UInventoryValidWidget;
 class UTextBlock;
 class UOverlay;
 class UUniformGridPanel;
@@ -29,6 +30,7 @@ protected:
 	//~End of UUserWidget Overrides
 
 private:
+	UFUNCTION(BlueprintCallable)
 	void ConstructUI();
 	void DestructUI();
 	
@@ -40,6 +42,9 @@ private:
 	UPROPERTY()
 	TArray<TObjectPtr<UInventorySlotWidget>> SlotWidgets;
 
+	UPROPERTY()
+	TArray<TObjectPtr<UInventoryValidWidget>> ValidWidgets;
+	
 private:
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UTextBlock> Text_Title;

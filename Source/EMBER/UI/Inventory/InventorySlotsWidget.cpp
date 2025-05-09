@@ -3,10 +3,14 @@
 
 #include "UI/Inventory/InventorySlotsWidget.h"
 
+#include "UI/Data/EmberUIData.h"
 #include "InventorySlotWidget.h"
+#include "InventoryValidWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/UniformGridPanel.h"
-#include "UI/Data/EmberUIData.h"
+
+class UItemInstance;
+struct FInventoryEntry;
 
 UInventorySlotsWidget::UInventorySlotsWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -31,6 +35,7 @@ void UInventorySlotsWidget::ConstructUI()
 	const FIntPoint& InventorySlotCount = FIntPoint(10, 5);
 	const int32 InventorySlotNum = InventorySlotCount.X * InventorySlotCount.Y;
 	SlotWidgets.SetNum(InventorySlotNum);
+	ValidWidgets.SetNum(InventorySlotNum);
 	
 	for (int32 y = 0; y < InventorySlotCount.Y; y++)
 	{
@@ -40,6 +45,11 @@ void UInventorySlotsWidget::ConstructUI()
 			UInventorySlotWidget* SlotWidget = CreateWidget<UInventorySlotWidget>(GetOwningPlayer(), SlotWidgetClass);
 			SlotWidgets[y * InventorySlotCount.X + x] = SlotWidget;
 			GridPanel_Slots->AddChildToUniformGrid(SlotWidget, y, x);
+
+			TSubclassOf<UInventoryValidWidget> ValidWidgetClass = UEmberUIData::Get().InventoryValidWidgetClass;
+			UInventoryValidWidget* ValidWidget = CreateWidget<UInventoryValidWidget>(GetOwningPlayer(), ValidWidgetClass);
+			ValidWidgets[y * InventorySlotCount.X + x] = ValidWidget;
+			GridPanel_ValidSlots->AddChildToUniformGrid(ValidWidget, y, x);
 		}
 	}
 }
