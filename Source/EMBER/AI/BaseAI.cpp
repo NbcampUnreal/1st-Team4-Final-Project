@@ -27,13 +27,14 @@ ABaseAI::ABaseAI()
 	AIControllerClass = ABaseAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
+	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); //여러 감각중 시각 우선 사용
+	AIPerception->OnPerceptionUpdated.AddDynamic(this, &ABaseAI::OnPerceptionUpdated); //감각 업데이트시 OnPerceptionUpdated 함수 호출
 }
 
 void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
-	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); //여러 감각중 시각 우선 사용
-	AIPerception->OnPerceptionUpdated.AddDynamic(this, &ABaseAI::OnPerceptionUpdated); //감각 업데이트시 OnPerceptionUpdated 함수 호출
+
 }
 
 float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
