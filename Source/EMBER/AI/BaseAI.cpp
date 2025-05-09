@@ -5,29 +5,27 @@
 
 
 ABaseAI::ABaseAI()
-{ AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
+{
+	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 
 	if (SightConfig)
 	{
 		SightConfig->SightRadius = 1000.f;
 		SightConfig->LoseSightRadius = 1200.f;
-		SightConfig->PeripheralVisionAngleDegrees = 90.f;
-		SightConfig->SetMaxAge(5.f);
-		SightConfig->AutoSuccessRangeFromLastSeenLocation = 500.f;
-		SightConfig->DetectionByAffiliation.bDetectEnemies = true;
-		SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
-		SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
+		SightConfig->PeripheralVisionAngleDegrees = 90.f; //시야각
+		SightConfig->SetMaxAge(5.f); //기억시간
+		SightConfig->AutoSuccessRangeFromLastSeenLocation = 500.f; //AI가 마지막으로 본 위치에서 500이내에 있을 경우, 자동으로 감지 성공으로 처리
+		SightConfig->DetectionByAffiliation.bDetectEnemies = true; //AI가 적을 감지가능
+		SightConfig->DetectionByAffiliation.bDetectNeutrals = true; //AI가 중립을 감지가능
+		SightConfig->DetectionByAffiliation.bDetectFriendlies = true; //AI가 아군을 감지가능
 
-		AIPerception->ConfigureSense(*SightConfig);
+		AIPerception->ConfigureSense(*SightConfig); //컴포넌트에 시각감각 추가
 	}
-
-	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
-	AIPerception->OnPerceptionUpdated.AddDynamic(this, &ABaseAI::OnPerceptionUpdated);
+	
+	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); //여러 감각중 시각 우선 사용
+	AIPerception->OnPerceptionUpdated.AddDynamic(this, &ABaseAI::OnPerceptionUpdated); //감각 업데이트시 OnPerceptionUpdated 함수 호출
 }
-
-
-
 
 void ABaseAI::BeginPlay()
 {

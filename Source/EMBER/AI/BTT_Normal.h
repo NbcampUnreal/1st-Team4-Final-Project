@@ -1,18 +1,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTT_Normal.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class EMBER_API UBTT_Normal : public UBTTaskNode
+class EMBER_API UBTT_Normal : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-	
-	public:
 
+public:
 	UBTT_Normal();
-	
-	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };
