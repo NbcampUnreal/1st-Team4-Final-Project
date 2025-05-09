@@ -24,6 +24,12 @@ public:
 #if WITH_EDITORONLY_DATA
 	virtual void PreSave(FObjectPreSaveContext SaveContext) override;
 #endif
+
+public:
+	const UItemTemplate& FindItemTemplateByID(int32 ItemTemplateID) const;
+	int32 FindItemTemplateIDByClass(TSubclassOf<UItemTemplate> ItemTemplateClass) const;
+	
+	void GetAllItemTemplateClasses(TArray<TSubclassOf<UItemTemplate>>& OutItemTemplateClasses) const;
 	
 private:
 	UPROPERTY(EditDefaultsOnly)
