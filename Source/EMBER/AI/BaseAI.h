@@ -56,7 +56,7 @@ public:
 	UAISenseConfig_Sight* SightConfig;
 
 	UFUNCTION(BlueprintCallable, Category = "AI")
-	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+	virtual void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AI)
 	TArray<ATargetPoint*> patrolpoint;
