@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,5 +11,9 @@ UCLASS()
 class EMBER_API UBTT_Normal : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	UBTT_Normal();
+
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

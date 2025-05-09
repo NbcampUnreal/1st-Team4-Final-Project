@@ -3,3 +3,7 @@
 
 #include "AI/BTT_Run.h"
 
+UBTT_Run::UBTT_Run()
+{
+	NodeName = "RunState";
+}
