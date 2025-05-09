@@ -1,5 +1,6 @@
 #include "BaseAI.h"
 #include "BaseAIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "kismet/GameplayStatics.h"
 
@@ -30,15 +31,30 @@ ABaseAI::ABaseAI()
 void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AIControllerClass = ABaseAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
-float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
+float ABaseAI::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
                           AActor* DamageCauser)
 {
 	if (!HasAuthority()) return 0;
 
-	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (AIController)
+	{
+		UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
+		if (BlackboardComponent)
+		{
+			BlackboardComponent->SetValueAsBool("IsAttacked", true);
+			BlackboardComponent->SetValueAsObject("Attacker", DamageCauser);
+			BlackboardComponent->SetValueAsVector("OriginLocation", GetActorLocation());
+		}
+	}
+	
 	if (ActualDamage > 0 && !bIsDie)
 	{
 		CurrentHP -= ActualDamage;

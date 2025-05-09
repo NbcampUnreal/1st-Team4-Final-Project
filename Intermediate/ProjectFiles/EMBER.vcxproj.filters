@@ -14,6 +14,7 @@
     <None Include="..\..\.gitattributes" />
     <None Include="..\..\.gitignore" />
     <None Include="..\..\.vsconfig" />
+    <None Include="..\..\my_stash_backup.patch" />
     <Filter Include="Config">
       <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
     </Filter>
@@ -170,10 +171,10 @@
     <ClCompile Include="..\..\Source\EMBER\AI\BaseAIController.h">
       <Filter>Source\EMBER\AI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BaseAnimInstance.cpp">
+    <ClCompile Include="..\..\Source\EMBER\AI\BTT_Attack.cpp">
       <Filter>Source\EMBER\AI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BaseAnimInstance.h">
+    <ClCompile Include="..\..\Source\EMBER\AI\BTT_Attack.h">
       <Filter>Source\EMBER\AI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\EMBER\AI\BTT_Guard.cpp">
@@ -183,9 +184,6 @@
       <Filter>Source\EMBER\AI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\EMBER\AI\BTT_Normal.cpp">
-      <Filter>Source\EMBER\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\EMBER\AI\BTT_Normal.h">
       <Filter>Source\EMBER\AI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\EMBER\AI\BTT_Run.cpp">
@@ -208,6 +206,24 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\EMBER\AI\Animal\Deer.h">
       <Filter>Source\EMBER\AI\Animal</Filter>
+    </ClCompile>
+    <Filter Include="Source\EMBER\AI\Decorator">
+      <UniqueIdentifier>{3BE45B80-F6C1-3649-9353-E8874A00830B}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\EMBER\AI\Decorator\BTD_IsWithinOriginArea.cpp">
+      <Filter>Source\EMBER\AI\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Decorator\BTD_IsWithinOriginArea.h">
+      <Filter>Source\EMBER\AI\Decorator</Filter>
+    </ClCompile>
+    <Filter Include="Source\EMBER\AI\Task">
+      <UniqueIdentifier>{84BA75B0-5536-3DA2-AEAB-E315C7EA0CDC}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Attack.cpp">
+      <Filter>Source\EMBER\AI\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\AI\Task\BTT_Attack.h">
+      <Filter>Source\EMBER\AI\Task</Filter>
     </ClCompile>
     <Filter Include="Source\EMBER\Component">
       <UniqueIdentifier>{11AC3DCC-C34D-3236-B68D-90B7DC72CE71}</UniqueIdentifier>
@@ -314,6 +330,15 @@
     <ClCompile Include="..\..\Source\EMBER\Item\Fragments\ItemFragment_Equipable_Weapon.h">
       <Filter>Source\EMBER\Item\Fragments</Filter>
     </ClCompile>
+    <Filter Include="Source\EMBER\Item\Managers">
+      <UniqueIdentifier>{54C6F225-6B81-3B82-A048-F7BB47F7E146}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\EMBER\Item\Managers\InventoryManagerComponent.cpp">
+      <Filter>Source\EMBER\Item\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\Item\Managers\InventoryManagerComponent.h">
+      <Filter>Source\EMBER\Item\Managers</Filter>
+    </ClCompile>
     <Filter Include="Source\EMBER\Player">
       <UniqueIdentifier>{2226ED5D-9121-3A2C-B048-3193F17460A0}</UniqueIdentifier>
     </Filter>
@@ -353,9 +378,36 @@
     <Filter Include="Source\EMBER\UI">
       <UniqueIdentifier>{B21AA21A-0515-3361-951C-6DDD4B9ECF65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\EMBER\UI\Cheat">
+      <UniqueIdentifier>{CF5378B3-AB6A-38AB-91BC-D678D2080BC9}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\EMBER\UI\Cheat\CheatEntryWidget.cpp">
+      <Filter>Source\EMBER\UI\Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\UI\Cheat\CheatEntryWidget.h">
+      <Filter>Source\EMBER\UI\Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\UI\Cheat\CheatListWidget.cpp">
+      <Filter>Source\EMBER\UI\Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\UI\Cheat\CheatListWidget.h">
+      <Filter>Source\EMBER\UI\Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\UI\Cheat\CheatMenuWidget.cpp">
+      <Filter>Source\EMBER\UI\Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\UI\Cheat\CheatMenuWidget.h">
+      <Filter>Source\EMBER\UI\Cheat</Filter>
+    </ClCompile>
     <Filter Include="Source\EMBER\UI\Data">
       <UniqueIdentifier>{13B2564C-1669-3CF6-AD8D-275510DC0FA4}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\EMBER\UI\Data\EmberAssetData.cpp">
+      <Filter>Source\EMBER\UI\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\UI\Data\EmberAssetData.h">
+      <Filter>Source\EMBER\UI\Data</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\EMBER\UI\Data\EmberItemData.cpp">
       <Filter>Source\EMBER\UI\Data</Filter>
     </ClCompile>
@@ -381,6 +433,12 @@
       <Filter>Source\EMBER\UI\Inventory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\EMBER\UI\Inventory\InventorySlotWidget.h">
+      <Filter>Source\EMBER\UI\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\UI\Inventory\InventoryValidWidget.cpp">
+      <Filter>Source\EMBER\UI\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EMBER\UI\Inventory\InventoryValidWidget.h">
       <Filter>Source\EMBER\UI\Inventory</Filter>
     </ClCompile>
   </ItemGroup>
