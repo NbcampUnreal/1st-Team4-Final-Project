@@ -6,12 +6,92 @@
 #include "GameFlag.h"
 #include "ItemTemplate.h"
 #include "ItemInstance.h"
+#include "Engine/ActorChannel.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/Data/EmberItemData.h"
+
+UItemInstance* FInventoryEntry::Init(int32 InItemTemplateID, int32 InItemCount, EItemRarity InItemRarity)
+{
+	check(InItemTemplateID > 0 && InItemCount > 0 && InItemRarity != EItemRarity::Count);
+	
+	UItemInstance* NewItemInstance = NewObject<UItemInstance>();
+	NewItemInstance->Init(InItemTemplateID, InItemRarity);
+	Init(NewItemInstance, InItemCount);
+	
+	return NewItemInstance;
+}
+
+void FInventoryEntry::Init(UItemInstance* InItemInstance, int32 InItemCount)
+{
+	check(InItemInstance && InItemCount > 0);
+	
+	ItemInstance = InItemInstance;
+	
+	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemInstance->GetItemTemplateID());
+	ItemCount = FMath::Clamp(InItemCount, 1, ItemTemplate.MaxStackCount);
+}
+
+bool FInventoryList::NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams)
+{
+	return FFastArraySerializer::FastArrayDeltaSerialize<FInventoryEntry, FInventoryList>(Entries, DeltaParams, *this);
+}
+
+void FInventoryList::PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize)
+{
+	const FIntPoint& InventorySlotCount = InventoryManager->GetInventorySlotCount();
+
+	for (int32 AddedIndex : AddedIndices)
+	{
+		FInventoryEntry& Entry = Entries[AddedIndex];
+		if (Entry.ItemInstance)
+		{
+			const FIntPoint ItemSlotPos = FIntPoint(AddedIndex % InventorySlotCount.X, AddedIndex / InventorySlotCount.X);
+			BroadcastChangedMessage(ItemSlotPos, Entry.ItemInstance, Entry.ItemCount);
+		}
+	}
+}
+
+void FInventoryList::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)
+{
+	TArray<int32> AddedIndices;
+	AddedIndices.Reserve(FinalSize);
+
+	const FIntPoint& InventorySlotCount = InventoryManager->GetInventorySlotCount();
+	
+	for (int32 ChangedIndex : ChangedIndices)
+	{
+		FInventoryEntry& Entry = Entries[ChangedIndex];
+		if (Entry.ItemInstance)
+		{
+			AddedIndices.Add(ChangedIndex);
+		}
+		else
+		{
+			const FIntPoint ItemSlotPos = FIntPoint(ChangedIndex % InventorySlotCount.X, ChangedIndex / InventorySlotCount.X);
+			BroadcastChangedMessage(ItemSlotPos, nullptr, 0);
+		}
+	}
+
+	for (int32 AddedIndex : AddedIndices)
+	{
+		FInventoryEntry& Entry = Entries[AddedIndex];
+		const FIntPoint ItemSlotPos = FIntPoint(AddedIndex % InventorySlotCount.X, AddedIndex / InventorySlotCount.X);
+		BroadcastChangedMessage(ItemSlotPos, Entry.ItemInstance, Entry.ItemCount);
+	}
+}
+
+void FInventoryList::BroadcastChangedMessage(const FIntPoint& ItemSlotPos, UItemInstance* ItemInstance, int32 ItemCount)
+{
+	if (InventoryManager->OnInventoryEntryChanged.IsBound())
+	{
+		InventoryManager->OnInventoryEntryChanged.Broadcast(ItemSlotPos, ItemInstance, ItemCount);
+	}
+}
 
 UInventoryManagerComponent::UInventoryManagerComponent(const FObjectInitializer& FObjectInitializer) : Super(FObjectInitializer), InventoryList(this)
 {
 	bWantsInitializeComponent = true;
+	SetIsReplicatedByDefault(true);
 }
 
 void UInventoryManagerComponent::InitializeComponent()
@@ -38,6 +118,39 @@ void UInventoryManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 
 	DOREPLIFETIME(ThisClass, InventoryList);
 	DOREPLIFETIME(ThisClass, SlotChecks);
+}
+
+bool UInventoryManagerComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	bool bWroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	
+	for (FInventoryEntry& Entry : InventoryList.Entries)
+	{
+		UItemInstance* ItemInstance = Entry.ItemInstance;
+		if (IsValid(ItemInstance))
+		{
+			bWroteSomething |= Channel->ReplicateSubobject(ItemInstance, *Bunch, *RepFlags);
+		}
+	}
+	
+	return bWroteSomething;
+}
+
+void UInventoryManagerComponent::ReadyForReplication()
+{
+	Super::ReadyForReplication();
+	
+	if (IsUsingRegisteredSubObjectList())
+	{
+		for (const FInventoryEntry& Entry : InventoryList.Entries)
+		{
+			UItemInstance* ItemInstance = Entry.GetItemInstance();
+			if (IsValid(ItemInstance))
+			{
+				AddReplicatedSubObject(ItemInstance);
+			}
+		}
+	}
 }
 
 
@@ -134,8 +247,45 @@ int32 UInventoryManagerComponent::TryAddItemByRarity(TSubclassOf<UItemTemplate> 
 	TArray<int32> ToItemCounts;
 
 	int32 AddableItemCount = CanAddItem(ItemTemplateID, ItemRarity, ItemCount, ToItemSlotPoses, ToItemCounts);
-	
-	return ItemCount;
+	if (AddableItemCount > 0)
+	{
+		TArray<UItemInstance*> AddedItemInstances;
+		
+		for (int32 i = 0; i < ToItemSlotPoses.Num(); i++)
+		{
+			const FIntPoint& ToItemSlotPos = ToItemSlotPoses[i];
+			const int32 ToItemCount = ToItemCounts[i];
+
+			const int32 ToIndex = ToItemSlotPos.Y * InventorySlotCount.X + ToItemSlotPos.X;
+			FInventoryEntry& ToEntry = InventoryList.Entries[ToIndex];
+
+			if (ToEntry.ItemInstance)
+			{
+				ToEntry.ItemCount += ToItemCount;
+				InventoryList.MarkItemDirty(ToEntry);
+			}
+			else
+			{
+				AddedItemInstances.Add(ToEntry.Init(ItemTemplateID, ToItemCount, ItemRarity));
+				MarkSlotChecks(true, ToItemSlotPos, ItemTemplate.SlotCount);
+				InventoryList.MarkItemDirty(ToEntry);
+			}
+		}
+
+		if (IsUsingRegisteredSubObjectList() && IsReadyForReplication())
+		{
+			for (UItemInstance* AddedItemInstance : AddedItemInstances)
+			{
+				if (AddedItemInstance)
+				{
+					AddReplicatedSubObject(AddedItemInstance);
+				}
+			}
+		}
+		return AddableItemCount;
+	}
+
+	return 0;
 }
 
 bool UInventoryManagerComponent::IsEmpty(const TArray<bool>& InSlotChecks, const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount) const
@@ -189,4 +339,9 @@ void UInventoryManagerComponent::MarkSlotChecks(TArray<bool>& InSlotChecks, bool
 			}
 		}
 	}
+}
+
+void UInventoryManagerComponent::MarkSlotChecks(bool bIsUsing, const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount)
+{
+	MarkSlotChecks(SlotChecks, bIsUsing, ItemSlotPos, ItemSlotCount);
 }

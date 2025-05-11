@@ -3,11 +3,14 @@
 
 #include "CheatEntryWidget.h"
 
+#include "GameFlag.h"
 #include "ItemTemplate.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
+#include "Managers/InventoryManagerComponent.h"
+#include "Player/EmberPlayerState.h"
 
 UCheatEntryWidget::UCheatEntryWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -45,5 +48,8 @@ void UCheatEntryWidget::InitializeUI(ECheatEntryType InCheatEntryType, TSubclass
 
 void UCheatEntryWidget::OnButtonClicked()
 {
-	
+	if (AEmberPlayerState* EmberPlayerState = Cast<AEmberPlayerState>(GetOwningPlayerState()))
+	{
+		EmberPlayerState->Server_AddInventoryItem(ItemTemplateClass, EItemRarity::Poor, 1);
+	}
 }

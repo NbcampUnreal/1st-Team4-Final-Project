@@ -22,6 +22,13 @@ public:
 	int32 GetItemCount() const { return ItemCount; }
 
 private:
+	UItemInstance* Init(int32 InItemTemplateID, int32 InItemCount, EItemRarity InItemRarity);
+	void Init(UItemInstance* InItemInstance, int32 InItemCount);
+	
+private:
+	friend class UInventoryManagerComponent;
+	friend struct FInventoryList;
+	
 	UPROPERTY()
 	TObjectPtr<UItemInstance> ItemInstance;
 
@@ -42,11 +49,21 @@ public:
 	FInventoryList(UInventoryManagerComponent* InOwnerComponent) : InventoryManager(InOwnerComponent) {}
 
 public:
+	//~FFastArraySerializer 
+	bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams);
+	void PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize);
+	void PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize);
+	//~End of FFastArraySerializer
+
+private:
+	void BroadcastChangedMessage(const FIntPoint& ItemSlotPos, UItemInstance* ItemInstance, int32 ItemCount);
+	
+public:
 	const TArray<FInventoryEntry>& GetAllEntries() const { return Entries; }
 	
 private:
 	friend class UInventoryManagerComponent;
-	
+
 	UPROPERTY()
 	TArray<FInventoryEntry> Entries;
 	
@@ -54,10 +71,19 @@ private:
 	TObjectPtr<UInventoryManagerComponent> InventoryManager;
 };
 
+template<>
+struct TStructOpsTypeTraits<FInventoryList> : public TStructOpsTypeTraitsBase2<FInventoryList>
+{
+	enum
+	{
+		WithNetDeltaSerializer = true
+	};
+};
+
 /////////////////
 /////////////////
 
-UCLASS(BlueprintType, Blueprintable)
+UCLASS(BlueprintType, Blueprintable, meta=(BlueprintSpawnableComponent))
 class UInventoryManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -69,6 +95,8 @@ protected:
 	//~UActorComponent Overrides
 	virtual void InitializeComponent() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
+	virtual void ReadyForReplication() override;
 	//~End of UActorComponent Overrides
 	
 public:
@@ -82,9 +110,11 @@ public:
 	bool IsEmpty(const TArray<bool>& InSlotChecks, const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount) const;
 	
 	const TArray<FInventoryEntry>& GetAllEntries() const;
-
+	FIntPoint GetInventorySlotCount() const { return InventorySlotCount; }
+	
 private:
 	void MarkSlotChecks(TArray<bool>& InSlotChecks, bool bIsUsing, const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount) const;
+	void MarkSlotChecks(bool bIsUsing, const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount);
 	
 public:
 	FOnInventoryEntryChanged OnInventoryEntryChanged;

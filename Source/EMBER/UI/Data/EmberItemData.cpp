@@ -15,6 +15,7 @@ const UEmberItemData& UEmberItemData::Get()
 	return UEmberAssetManager::Get().GetItemData();
 }
 
+#if WITH_EDITORONLY_DATA
 void UEmberItemData::PreSave(FObjectPreSaveContext SaveContext)
 {
 	Super::PreSave(SaveContext);
@@ -44,6 +45,7 @@ void UEmberItemData::PreSave(FObjectPreSaveContext SaveContext)
 		}
 	}
 }
+#endif // WITH_EDITORONLY_DATA
 
 const UItemTemplate& UEmberItemData::FindItemTemplateByID(int32 ItemTemplateID) const
 {

@@ -113,6 +113,18 @@ enum class EWeaponType : uint8
 };
 
 UENUM(BlueprintType)
+enum class EArmorType : uint8
+{
+	Helmet,
+	Chest,
+	Legs,
+	Hands,
+	Foot,
+
+	Count	UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
 enum class ESlotState : uint8
 {
 	Default,
