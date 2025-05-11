@@ -20,7 +20,15 @@ public:
 public:
 	//~UObject overrides
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual bool IsSupportedForNetworking() const override { return true; }
 	//~End of UObject Overrides
+
+public:
+	void Init(int32 InItemTemplateID, EItemRarity InItemRarity);
+
+public:
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	void AddOrRemoveStatTagStack(FGameplayTag StatTag, int32 StackCount);
 	
 public:
 	UFUNCTION(BlueprintCallable)
