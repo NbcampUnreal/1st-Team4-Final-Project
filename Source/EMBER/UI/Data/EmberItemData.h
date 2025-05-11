@@ -8,9 +8,6 @@
 
 class UItemTemplate;
 
-/**
- * 
- */
 UCLASS(BlueprintType, Const)
 class EMBER_API UEmberItemData : public UPrimaryDataAsset
 {
