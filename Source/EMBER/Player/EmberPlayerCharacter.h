@@ -32,7 +32,8 @@ protected:
 	UC_CharacterMovementComponent* MovementComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UC_CameraComponent* CameraLogicComp;
-
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	FVector2D PitchRange = FVector2D(-50, 50);
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 	UFUNCTION()
