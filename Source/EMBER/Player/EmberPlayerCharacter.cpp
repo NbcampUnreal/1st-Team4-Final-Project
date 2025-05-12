@@ -19,16 +19,19 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     SpringArmComp->bUsePawnControlRotation = true;
 
     CameraLogicComp = CreateDefaultSubobject<UC_CameraComponent>(TEXT("CameraLogic"));
-
     CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     CameraComponent->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
-    CameraComponent->bUsePawnControlRotation = false;
+    
+
+    
 }
 
 // Called when the game starts or when spawned
 void AEmberPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+    
+    CameraLogicComp->DisableControlRotation();
 }
 
 void AEmberPlayerCharacter::PostInitializeComponents()
@@ -94,27 +97,14 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
 
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
 {
-
-    //MovementComponent->OnMove(value);
     
-    /*
-    if (!Controller) return;
-    const FVector2D MoveInput = value.Get<FVector2D>();
-    if (!FMath::IsNearlyZero(MoveInput.X))
-    {
-        AddMovementInput(GetActorForwardVector(), MoveInput.X);
-    }
-
-    if (!FMath::IsNearlyZero(MoveInput.Y))
-    {
-        AddMovementInput(GetActorRightVector(), MoveInput.Y);
-    }
-    */
     if(MovementComponent)
+    {
         MovementComponent->OnMove(value);
+    }
 }
 
-void AEmberPlayerCharacter::Look(const FInputActionValue& value)
+void AEmberPlayerCharacter::Look(const FInputActionValue& value) 
 {   
     CameraLogicComp->OnLook(value);
 }

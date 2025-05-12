@@ -19,7 +19,7 @@ public class EMBER : ModuleRules
 						System.IO.Path.Combine(ModuleDirectory, "GameInfo"), 
 						System.IO.Path.Combine(ModuleDirectory, "AI"),
 						System.IO.Path.Combine(ModuleDirectory, "Component"),
-						System.IO.Path.Combine(ModuleDirectory, "Character"),
+						System.IO.Path.Combine(ModuleDirectory, "Player"),
                         System.IO.Path.Combine(ModuleDirectory, "Item")                        
                     }
                 );
