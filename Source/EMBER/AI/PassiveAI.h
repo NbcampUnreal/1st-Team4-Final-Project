@@ -12,14 +12,22 @@ class EMBER_API APassiveAI : public ABaseAI
 public:
 	APassiveAI();
 	virtual void BeginPlay() override;
-
 	virtual void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors) override;
+	void UpdateClosestActorTimer();
 
 	UFUNCTION()
 	void OnRunPerceptionUpdate(const TArray<AActor*>& UpdatedActors);
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	UAISenseConfig_Sight* RunSightConfig;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	UAIPerceptionComponent* RunPerception;
+
+	UBlackboardComponent* BlackboardComp;
+	TArray<AActor*> EnemyActors;
+	AActor* ClosestActor;
+
+	FTimerHandle UpdateDistanceTimer;
 };
+
+
