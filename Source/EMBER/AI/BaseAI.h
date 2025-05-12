@@ -17,7 +17,6 @@ enum class AISoundCategory : uint8
 	DeathSound   UMETA(DisplayName = "Death")
 };
 
-
 UCLASS()
 class EMBER_API ABaseAI : public ACharacter
 {
@@ -26,38 +25,51 @@ class EMBER_API ABaseAI : public ACharacter
 public:
 	ABaseAI();
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	EAnimalType AnimalType;
-
-	float MaxHP;
-	float CurrentHP;
-	float Speed;
-	bool bIsDie;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat")
-	float AttackPower;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat")
-	float MoveSpeed;
-
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-	
-	UFUNCTION(BlueprintCallable, Category = "AI")
-	virtual void Attack(AActor* Target);
-	
-	UFUNCTION(BlueprintCallable, Category = "AI")
+
+	// AI Animation
+	UFUNCTION(BlueprintCallable, Category = "AI|Animation")
+	virtual void PlayAttackAnimation();
+
+	// AI State
+	UFUNCTION(BlueprintCallable, Category = "AI|State")
 	virtual void OnDeath();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
-	UAIPerceptionComponent* AIPerception;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	UAISenseConfig_Sight* SightConfig;
-
+	// AI Perception
 	UFUNCTION()
 	virtual void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AI)
+	// Getter
+	virtual float GetAttackPower() const { return AttackPower; }
+
+protected:
+	// AI 기본 정보
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Type")
+	EAnimalType AnimalType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	float MaxHP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	float CurrentHP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	float AttackPower;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	float Speed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|State")
+	bool bIsDie;
+
+	// AI Perception
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Perception")
+	UAIPerceptionComponent* AIPerception;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Perception")
+	UAISenseConfig_Sight* SightConfig;
+
+	// AI Patrol
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Patrol")
 	TArray<ATargetPoint*> patrolpoint;
 };

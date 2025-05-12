@@ -10,6 +10,9 @@ class EMBER_API UBaseAIAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 public:
-	//UFUNCTION(BlueprintNativeEvent)
-	//void PlayAttackMontage();
+	virtual void PlayAttackMontage();
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UAnimMontage* AttackMontage;
 };

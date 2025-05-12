@@ -3,3 +3,10 @@
 
 #include "AI/BaseAIAnimInstance.h"
 
+void UBaseAIAnimInstance::PlayAttackMontage()
+{
+	if (AttackMontage)
+	{
+		Montage_Play(AttackMontage);
+	}
+}

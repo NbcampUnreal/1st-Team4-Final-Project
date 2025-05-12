@@ -1,4 +1,6 @@
 #include "BaseAI.h"
+
+#include "BaseAIAnimInstance.h"
 #include "BaseAIController.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -44,30 +46,32 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 
 	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	
-	AAIController* AIController = Cast<AAIController>(GetController());
-	if (AIController)
+	if (AAIController* AIController = Cast<AAIController>(GetController()))
 	{
-		UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
-		if (BlackboardComponent)
+		
+		if (UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent())
 		{
 			BlackboardComponent->SetValueAsBool("IsHit", true);
 			BlackboardComponent->SetValueAsObject("TargetActor", DamageCauser);
 			BlackboardComponent->SetValueAsVector("OriginLocation", GetActorLocation());
 		}
 	}
-	
 
 	if (ActualDamage > 0 && !bIsDie)
 	{
 		CurrentHP -= ActualDamage;
 		if (CurrentHP <= 0.f) OnDeath();
 	}
+	
 	return ActualDamage;
 }
 
-void ABaseAI::Attack(AActor* Target)
+void ABaseAI::PlayAttackAnimation()
 {
-	UGameplayStatics::ApplyDamage(Target, AttackPower, GetController(), this, UDamageType::StaticClass());
+	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		AnimInstance->PlayAttackMontage();
+	}
 }
 
 void ABaseAI::OnDeath()
