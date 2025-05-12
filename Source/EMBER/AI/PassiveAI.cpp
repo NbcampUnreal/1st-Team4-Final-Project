@@ -88,6 +88,7 @@ void APassiveAI::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 
 void APassiveAI::OnRunPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
 {
+	Super::OnPerceptionUpdated(UpdatedActors);
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (!AIController) return;
 
