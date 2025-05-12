@@ -16,7 +16,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #define EMBER_CraftingRecipe_generated_h
 
 #define FID_Git_1st_Team4_Final_Project_Source_EMBER_Crafting_CraftingRecipe_h_10_RPC_WRAPPERS_NO_PURE_DECLS \
-	DECLARE_FUNCTION(execbCanCraft);
+	DECLARE_FUNCTION(execCanCombine);
 
 
 #define FID_Git_1st_Team4_Final_Project_Source_EMBER_Crafting_CraftingRecipe_h_10_INCLASS_NO_PURE_DECLS \

@@ -14,7 +14,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define EMBER_BaseAIController_generated_h
 
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_15_INCLASS_NO_PURE_DECLS \
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_18_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesABaseAIController(); \
 	friend struct Z_Construct_UClass_ABaseAIController_Statics; \
@@ -23,7 +23,7 @@ public: \
 	DECLARE_SERIALIZER(ABaseAIController)
 
 
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_15_ENHANCED_CONSTRUCTORS \
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_18_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API ABaseAIController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
 private: \
@@ -37,12 +37,12 @@ public: \
 	NO_API virtual ~ABaseAIController();
 
 
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_12_PROLOG
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_15_GENERATED_BODY \
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_15_PROLOG
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_18_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_15_INCLASS_NO_PURE_DECLS \
-	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_15_ENHANCED_CONSTRUCTORS \
+	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_18_INCLASS_NO_PURE_DECLS \
+	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h_18_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -52,5 +52,14 @@ template<> EMBER_API UClass* StaticClass<class ABaseAIController>();
 #undef CURRENT_FILE_ID
 #define CURRENT_FILE_ID FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAIController_h
 
+
+#define FOREACH_ENUM_EANIMALTYPE(op) \
+	op(EAnimalType::Passive) \
+	op(EAnimalType::Defensive) \
+	op(EAnimalType::Aggressive) 
+
+enum class EAnimalType : uint8;
+template<> struct TIsUEnumClass<EAnimalType> { enum { Value = true }; };
+template<> EMBER_API UEnum* StaticEnum<EAnimalType>();
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

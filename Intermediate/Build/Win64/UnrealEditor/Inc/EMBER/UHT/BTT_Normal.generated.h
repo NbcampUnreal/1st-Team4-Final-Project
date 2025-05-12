@@ -14,16 +14,16 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define EMBER_BTT_Normal_generated_h
 
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_10_INCLASS_NO_PURE_DECLS \
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_13_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUBTT_Normal(); \
 	friend struct Z_Construct_UClass_UBTT_Normal_Statics; \
 public: \
-	DECLARE_CLASS(UBTT_Normal, UBTTaskNode, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/EMBER"), NO_API) \
+	DECLARE_CLASS(UBTT_Normal, UBTTask_BlackboardBase, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/EMBER"), NO_API) \
 	DECLARE_SERIALIZER(UBTT_Normal)
 
 
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_10_ENHANCED_CONSTRUCTORS \
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_13_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	UBTT_Normal(UBTT_Normal&&); \
@@ -35,12 +35,12 @@ public: \
 	NO_API virtual ~UBTT_Normal();
 
 
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_7_PROLOG
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_10_GENERATED_BODY \
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_10_PROLOG
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_13_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_10_INCLASS_NO_PURE_DECLS \
-	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_10_ENHANCED_CONSTRUCTORS \
+	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_13_INCLASS_NO_PURE_DECLS \
+	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Normal_h_13_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

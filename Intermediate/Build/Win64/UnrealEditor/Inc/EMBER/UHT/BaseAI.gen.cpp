@@ -15,6 +15,7 @@ AIMODULE_API UClass* Z_Construct_UClass_UAISenseConfig_Sight_NoRegister();
 EMBER_API UClass* Z_Construct_UClass_ABaseAI();
 EMBER_API UClass* Z_Construct_UClass_ABaseAI_NoRegister();
 EMBER_API UEnum* Z_Construct_UEnum_EMBER_AISoundCategory();
+EMBER_API UEnum* Z_Construct_UEnum_EMBER_EAnimalType();
 ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
 ENGINE_API UClass* Z_Construct_UClass_ACharacter();
 UPackage* Z_Construct_UPackage__Script_EMBER();
@@ -153,6 +154,55 @@ DEFINE_FUNCTION(ABaseAI::execOnDeath)
 }
 // End Class ABaseAI Function OnDeath
 
+// Begin Class ABaseAI Function OnPerceptionUpdated
+struct Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics
+{
+	struct BaseAI_eventOnPerceptionUpdated_Parms
+	{
+		TArray<AActor*> UpdatedActors;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "AI" },
+		{ "ModuleRelativePath", "AI/BaseAI.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_UpdatedActors_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_UpdatedActors_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_UpdatedActors;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::NewProp_UpdatedActors_Inner = { "UpdatedActors", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::NewProp_UpdatedActors = { "UpdatedActors", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(BaseAI_eventOnPerceptionUpdated_Parms, UpdatedActors), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_UpdatedActors_MetaData), NewProp_UpdatedActors_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::NewProp_UpdatedActors_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::NewProp_UpdatedActors,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ABaseAI, nullptr, "OnPerceptionUpdated", nullptr, nullptr, Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::PropPointers), sizeof(Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::BaseAI_eventOnPerceptionUpdated_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04420401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::Function_MetaDataParams), Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::Function_MetaDataParams) };
+static_assert(sizeof(Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::BaseAI_eventOnPerceptionUpdated_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(ABaseAI::execOnPerceptionUpdated)
+{
+	P_GET_TARRAY_REF(AActor*,Z_Param_Out_UpdatedActors);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->OnPerceptionUpdated(Z_Param_Out_UpdatedActors);
+	P_NATIVE_END;
+}
+// End Class ABaseAI Function OnPerceptionUpdated
+
 // Begin Class ABaseAI
 void ABaseAI::StaticRegisterNativesABaseAI()
 {
@@ -160,6 +210,7 @@ void ABaseAI::StaticRegisterNativesABaseAI()
 	static const FNameNativePtrPair Funcs[] = {
 		{ "Attack", &ABaseAI::execAttack },
 		{ "OnDeath", &ABaseAI::execOnDeath },
+		{ "OnPerceptionUpdated", &ABaseAI::execOnPerceptionUpdated },
 	};
 	FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
 }
@@ -174,6 +225,10 @@ struct Z_Construct_UClass_ABaseAI_Statics
 	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
 		{ "HideCategories", "Navigation" },
 		{ "IncludePath", "AI/BaseAI.h" },
+		{ "ModuleRelativePath", "AI/BaseAI.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AnimalType_MetaData[] = {
+		{ "Category", "AI" },
 		{ "ModuleRelativePath", "AI/BaseAI.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AttackPower_MetaData[] = {
@@ -194,6 +249,8 @@ struct Z_Construct_UClass_ABaseAI_Statics
 		{ "ModuleRelativePath", "AI/BaseAI.h" },
 	};
 #endif // WITH_METADATA
+	static const UECodeGen_Private::FBytePropertyParams NewProp_AnimalType_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_AnimalType;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_AttackPower;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_MoveSpeed;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_AIPerception;
@@ -203,6 +260,7 @@ struct Z_Construct_UClass_ABaseAI_Statics
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_ABaseAI_Attack, "Attack" }, // 4248190397
 		{ &Z_Construct_UFunction_ABaseAI_OnDeath, "OnDeath" }, // 3871829049
+		{ &Z_Construct_UFunction_ABaseAI_OnPerceptionUpdated, "OnPerceptionUpdated" }, // 3479290691
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
@@ -210,11 +268,15 @@ struct Z_Construct_UClass_ABaseAI_Statics
 	};
 	static const UECodeGen_Private::FClassParams ClassParams;
 };
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_ABaseAI_Statics::NewProp_AnimalType_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_ABaseAI_Statics::NewProp_AnimalType = { "AnimalType", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAI, AnimalType), Z_Construct_UEnum_EMBER_EAnimalType, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AnimalType_MetaData), NewProp_AnimalType_MetaData) }; // 324055089
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_ABaseAI_Statics::NewProp_AttackPower = { "AttackPower", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAI, AttackPower), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AttackPower_MetaData), NewProp_AttackPower_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_ABaseAI_Statics::NewProp_MoveSpeed = { "MoveSpeed", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAI, MoveSpeed), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MoveSpeed_MetaData), NewProp_MoveSpeed_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ABaseAI_Statics::NewProp_AIPerception = { "AIPerception", nullptr, (EPropertyFlags)0x00100000000a001d, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAI, AIPerception), Z_Construct_UClass_UAIPerceptionComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AIPerception_MetaData), NewProp_AIPerception_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ABaseAI_Statics::NewProp_SightConfig = { "SightConfig", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ABaseAI, SightConfig), Z_Construct_UClass_UAISenseConfig_Sight_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SightConfig_MetaData), NewProp_SightConfig_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_ABaseAI_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_AnimalType_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_AnimalType,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_AttackPower,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_MoveSpeed,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ABaseAI_Statics::NewProp_AIPerception,
@@ -264,10 +326,10 @@ struct Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_Bas
 		{ AISoundCategory_StaticEnum, TEXT("AISoundCategory"), &Z_Registration_Info_UEnum_AISoundCategory, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 2822768623U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ABaseAI, ABaseAI::StaticClass, TEXT("ABaseAI"), &Z_Registration_Info_UClass_ABaseAI, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ABaseAI), 334834510U) },
+		{ Z_Construct_UClass_ABaseAI, ABaseAI::StaticClass, TEXT("ABaseAI"), &Z_Registration_Info_UClass_ABaseAI, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ABaseAI), 1186590469U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_3914767104(TEXT("/Script/EMBER"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_2574957200(TEXT("/Script/EMBER"),
 	Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_Statics::ClassInfo),
 	nullptr, 0,
 	Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_Statics::EnumInfo));

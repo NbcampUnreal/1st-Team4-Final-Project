@@ -15,12 +15,13 @@ class AActor;
 #endif
 #define EMBER_BaseAI_generated_h
 
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_22_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execOnPerceptionUpdated); \
 	DECLARE_FUNCTION(execOnDeath); \
 	DECLARE_FUNCTION(execAttack);
 
 
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_22_INCLASS_NO_PURE_DECLS \
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesABaseAI(); \
 	friend struct Z_Construct_UClass_ABaseAI_Statics; \
@@ -29,7 +30,7 @@ public: \
 	DECLARE_SERIALIZER(ABaseAI)
 
 
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_22_ENHANCED_CONSTRUCTORS \
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	ABaseAI(ABaseAI&&); \
@@ -41,13 +42,13 @@ public: \
 	NO_API virtual ~ABaseAI();
 
 
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_19_PROLOG
-#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_22_GENERATED_BODY \
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_20_PROLOG
+#define FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_22_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_22_INCLASS_NO_PURE_DECLS \
-	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_22_ENHANCED_CONSTRUCTORS \
+	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_INCLASS_NO_PURE_DECLS \
+	FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BaseAI_h_23_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

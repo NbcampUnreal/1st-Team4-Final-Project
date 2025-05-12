@@ -10,7 +10,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeBTT_Guard() {}
 
 // Begin Cross Module References
-AIMODULE_API UClass* Z_Construct_UClass_UBTTaskNode();
+AIMODULE_API UClass* Z_Construct_UClass_UBTTask_BlackboardBase();
 EMBER_API UClass* Z_Construct_UClass_UBTT_Guard();
 EMBER_API UClass* Z_Construct_UClass_UBTT_Guard_NoRegister();
 UPackage* Z_Construct_UPackage__Script_EMBER();
@@ -29,9 +29,6 @@ struct Z_Construct_UClass_UBTT_Guard_Statics
 {
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
-#if !UE_BUILD_SHIPPING
-		{ "Comment", "/**\n * \n */" },
-#endif
 		{ "IncludePath", "AI/BTT_Guard.h" },
 		{ "ModuleRelativePath", "AI/BTT_Guard.h" },
 	};
@@ -43,7 +40,7 @@ struct Z_Construct_UClass_UBTT_Guard_Statics
 	static const UECodeGen_Private::FClassParams ClassParams;
 };
 UObject* (*const Z_Construct_UClass_UBTT_Guard_Statics::DependentSingletons[])() = {
-	(UObject* (*)())Z_Construct_UClass_UBTTaskNode,
+	(UObject* (*)())Z_Construct_UClass_UBTTask_BlackboardBase,
 	(UObject* (*)())Z_Construct_UPackage__Script_EMBER,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UBTT_Guard_Statics::DependentSingletons) < 16);
@@ -82,10 +79,10 @@ UBTT_Guard::~UBTT_Guard() {}
 struct Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Guard_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UBTT_Guard, UBTT_Guard::StaticClass, TEXT("UBTT_Guard"), &Z_Registration_Info_UClass_UBTT_Guard, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTT_Guard), 661231125U) },
+		{ Z_Construct_UClass_UBTT_Guard, UBTT_Guard::StaticClass, TEXT("UBTT_Guard"), &Z_Registration_Info_UClass_UBTT_Guard, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTT_Guard), 1472496326U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Guard_h_1868601712(TEXT("/Script/EMBER"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Guard_h_1252947950(TEXT("/Script/EMBER"),
 	Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Guard_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Git_1st_Team4_Final_Project_Source_EMBER_AI_BTT_Guard_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
