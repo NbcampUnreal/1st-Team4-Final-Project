@@ -16,7 +16,7 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& Comp, uint8
 {
 	ABaseAIController* AIController = Cast<ABaseAIController>(Comp.GetAIOwner());
 	
-	if (ABaseAI* AICharacter = Cast<ABaseAI>(AIController ? AIController->GetCharacter() : nullptr);)
+	if (ABaseAI* AICharacter = Cast<ABaseAI>(AIController ? AIController->GetCharacter() : nullptr))
 	{
 		AICharacter->PlayAttackAnimation();
 		

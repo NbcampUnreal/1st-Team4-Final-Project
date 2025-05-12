@@ -13,12 +13,12 @@ class EMBER_API ADefensiveAI : public ABaseAI
 public:
 	ADefensiveAI();
 	virtual void BeginPlay() override;
+
+	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	// UAIPerceptionComponent* AIPerception;
+	//
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	// UAISenseConfig_Sight* SightConfig;
+
 	virtual void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors) override;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
-	UAIPerceptionComponent* AIPerception;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	UAISenseConfig_Sight* SightConfig;
-
 };
