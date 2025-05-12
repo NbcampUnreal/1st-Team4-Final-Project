@@ -32,6 +32,12 @@ void AEmberPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
     
     CameraLogicComp->DisableControlRotation();
+    APlayerController* playerController = Cast<APlayerController>(GetController());
+    if(playerController != nullptr)
+    {
+        playerController->PlayerCameraManager->ViewPitchMin = PitchRange.X;
+        playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
+    }
 }
 
 void AEmberPlayerCharacter::PostInitializeComponents()
