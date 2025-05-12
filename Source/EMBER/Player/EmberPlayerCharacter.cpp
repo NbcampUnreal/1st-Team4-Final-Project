@@ -1,10 +1,13 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "EmberPlayerCharacter.h"
+
+#include "AbilitySystemComponent.h"
 #include "C_CameraComponent.h"
 #include "EmberPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "C_CharacterMovementComponent.h"
+#include "EmberPlayerState.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -35,6 +38,28 @@ void AEmberPlayerCharacter::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
     MovementComponent = Cast<UC_CharacterMovementComponent>(GetCharacterMovement());
+}
+
+void AEmberPlayerCharacter::PossessedBy(AController* NewController)
+{
+    Super::PossessedBy(NewController);
+    
+    InitAbilityActorInfo();
+}
+
+void AEmberPlayerCharacter::OnRep_PlayerState()
+{
+    Super::OnRep_PlayerState();
+    
+    InitAbilityActorInfo();
+}
+
+void AEmberPlayerCharacter::InitAbilityActorInfo()
+{
+    AEmberPlayerState* EmberPlayerState = GetPlayerState<AEmberPlayerState>();
+    check(EmberPlayerState);
+    EmberPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(EmberPlayerState, this);
+    AbilitySystemComponent = EmberPlayerState->GetAbilitySystemComponent();
 }
 
 // Called every frame

@@ -10,6 +10,8 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UC_CharacterMovementComponent;
+class UAbilitySystemComponent;
+
 struct FInputActionValue;
 UCLASS()
 class EMBER_API AEmberPlayerCharacter : public ACharacter
@@ -24,6 +26,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	USpringArmComponent* SpringArmComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -41,6 +44,7 @@ protected:
 	void StartSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -48,4 +52,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+	void InitAbilityActorInfo();
+	
+private:
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 };
