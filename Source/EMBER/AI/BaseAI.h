@@ -27,6 +27,10 @@ public:
 	virtual void BeginPlay() override;
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	// AI 기본정보
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Type")
+	EAnimalType AnimalType;
+	
 	// AI Animation
 	UFUNCTION(BlueprintCallable, Category = "AI|Animation")
 	virtual void PlayAttackAnimation();
@@ -39,14 +43,15 @@ public:
 	UFUNCTION()
 	virtual void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 
+	// AI Patrol
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Patrol")
+	TArray<ATargetPoint*> PatrolPoint;
+
 	// Getter
 	virtual float GetAttackPower() const { return AttackPower; }
 
 protected:
 	// AI 기본 정보
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Type")
-	EAnimalType AnimalType;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	float MaxHP;
 
@@ -55,9 +60,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	float AttackPower;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
-	float Speed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|State")
 	bool bIsDie;
@@ -68,8 +70,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Perception")
 	UAISenseConfig_Sight* SightConfig;
-
-	// AI Patrol
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Patrol")
-	TArray<ATargetPoint*> PatrolPoint;
 };

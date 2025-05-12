@@ -29,7 +29,7 @@ EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 		UE_LOG(LogTemp, Warning, TEXT("Miss Animal"));
 		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Failed);
 	}
-	if (ControlledAnimal->patrolpoint.Num() == 0)
+	if (ControlledAnimal->PatrolPoint.Num() == 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("empty PatrolPoint"));
 		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Failed);
@@ -38,10 +38,10 @@ EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed =  ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed/2;//속도조절
 	
 	int32 CurrentIndex = BlackboardComp->GetValueAsInt("PatrolIndex"); //현재 위치인덱스
-	CurrentIndex = (CurrentIndex + 1) % ControlledAnimal->patrolpoint.Num(); //다음이동인덱스 업데이트
+	CurrentIndex = (CurrentIndex + 1) % ControlledAnimal->PatrolPoint.Num(); //다음이동인덱스 업데이트
 
 	BlackboardComp->SetValueAsInt("PatrolIndex", CurrentIndex); //블랙보드에 인덱스 업데이트
-	ATargetPoint* NextPoint = ControlledAnimal->patrolpoint[CurrentIndex]; //이동할액터위치 설정
+	ATargetPoint* NextPoint = ControlledAnimal->PatrolPoint[CurrentIndex]; //이동할액터위치 설정
 
 	AIController->MoveToActor(NextPoint);
 	if (NextPoint != nullptr)
