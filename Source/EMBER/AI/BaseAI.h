@@ -71,5 +71,5 @@ protected:
 
 	// AI Patrol
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Patrol")
-	TArray<ATargetPoint*> patrolpoint;
+	TArray<ATargetPoint*> PatrolPoint;
 };
