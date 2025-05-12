@@ -28,7 +28,7 @@
 		},
 		{
 			"Name": "GitSourceControl",
-			"Enabled": false
+			"Enabled": true
 		}
 	]
 }

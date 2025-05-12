@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "EquipmentBase.generated.h"
 
+class UBoxComponent;
 class UArrowComponent;
 
 UCLASS(Abstract, BlueprintType)
@@ -32,6 +33,9 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USkeletalMeshComponent> MeshComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UBoxComponent> TraceDebugCollision;
 	
 protected:
 	UPROPERTY(ReplicatedUsing=OnRep_ItemTemplateID)

@@ -13,6 +13,7 @@ void UEmberAssetManager::StartInitialLoading()
 
 	GetUIData();
 	GetItemData();
+	GetAssetData();
 }
 
 UEmberAssetManager& UEmberAssetManager::Get()
@@ -35,6 +36,11 @@ const UEmberUIData& UEmberAssetManager::GetUIData()
 const UEmberItemData& UEmberAssetManager::GetItemData()
 {
 	return GetOrLoadTypedGameData<UEmberItemData>(ItemDataPath);
+}
+
+const UEmberAssetData& UEmberAssetManager::GetAssetData()
+{
+	return GetOrLoadTypedGameData<UEmberAssetData>(AssetDataPath);
 }
 
 UPrimaryDataAsset* UEmberAssetManager::LoadGameDataOfClass(TSubclassOf<UPrimaryDataAsset> DataClass, const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath, FPrimaryAssetType PrimaryAssetType)
@@ -65,4 +71,31 @@ UPrimaryDataAsset* UEmberAssetManager::LoadGameDataOfClass(TSubclassOf<UPrimaryD
 	}
 
 	return Asset;
+}
+
+UObject* UEmberAssetManager::SynchronousLoadAsset(const FSoftObjectPath& AssetPath)
+{
+	if (AssetPath.IsValid())
+	{
+		TUniquePtr<FScopeLogTime> LogTimePtr;
+
+		if (UAssetManager::IsInitialized())
+		{
+			return UAssetManager::GetStreamableManager().LoadSynchronous(AssetPath, false);
+		}
+
+		// Use LoadObject if asset manager isn't ready yet.
+		return AssetPath.TryLoad();
+	}
+
+	return nullptr;
+}
+
+void UEmberAssetManager::AddLoadedAsset(const UObject* Asset)
+{
+	if (ensureAlways(Asset))
+	{
+		FScopeLock LoadedAssetsLock(&LoadedAssetsCritical);
+		LoadedAssets.Add(Asset);
+	}
 }
