@@ -32,7 +32,6 @@ void APassiveAI::BeginPlay()
 {
 	Super::BeginPlay();
 	RunPerception->OnPerceptionUpdated.AddDynamic(this, &APassiveAI::OnRunPerceptionUpdate);
-	GetWorld()->GetTimerManager().SetTimer(UpdateDistanceTimer, this, &APassiveAI::UpdateClosestActorTimer, 1.0f, true);
 }
 
 void APassiveAI::UpdateClosestActorTimer()
@@ -71,19 +70,26 @@ void APassiveAI::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 	EnemyActors = UpdatedActors;
 	if (UpdatedActors.Num() == 0)
 	{
+		bIsDetect = false;
 		ClosestActor = nullptr;
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), nullptr);
 		BlackboardComp->SetValueAsBool(TEXT("IsDetected"), false);
 		return;
 	}
-	AAIController* AIController = Cast<AAIController>(GetController());
-	if (!AIController) return;
+	
+	if (UpdatedActors[UpdatedActors.Num() - 1]->Tags.Contains(FName("Player"))) //플레이어인지 확인
+	{
+		AAIController* AIController = Cast<AAIController>(GetController());
+		if (!AIController) return;
 
-	BlackboardComp = AIController->GetBlackboardComponent();
-	if (!BlackboardComp) return;
+		BlackboardComp = AIController->GetBlackboardComponent();
+		if (!BlackboardComp) return;
 
-	BlackboardComp->SetValueAsObject(TEXT("TargetActor"), ClosestActor);
-	BlackboardComp->SetValueAsBool(TEXT("IsDetected"), true);
+		bIsDetect = true;
+		CheckDetection();
+		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), ClosestActor);
+		BlackboardComp->SetValueAsBool(TEXT("IsDetected"), true);
+	}
 }
 
 void APassiveAI::OnRunPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
@@ -96,4 +102,21 @@ void APassiveAI::OnRunPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
 	if (!BlackboardComp) return;
 
 	BlackboardComp->SetValueAsBool(TEXT("IsNear"), true);
+}
+
+void APassiveAI::CheckDetection()
+{
+	if (bIsDetect)
+	{
+		if (!GetWorld()->GetTimerManager().IsTimerActive(UpdateDistanceTimer))
+		{
+			GetWorld()->GetTimerManager().SetTimer(UpdateDistanceTimer, this, &APassiveAI::UpdateClosestActorTimer, 1.0f, true);
+			UE_LOG(LogTemp, Warning, TEXT("Timer Started"));
+		}
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().ClearTimer(UpdateDistanceTimer);
+		UE_LOG(LogTemp, Warning, TEXT("Timer Stopped"));
+	}
 }

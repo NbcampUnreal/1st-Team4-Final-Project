@@ -43,7 +43,7 @@ EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	BlackboardComp->SetValueAsInt("PatrolIndex", CurrentIndex); //블랙보드에 인덱스 업데이트
 	ATargetPoint* NextPoint = ControlledAnimal->PatrolPoint[CurrentIndex]; //이동할액터위치 설정
 
-	AIController->MoveToActor(NextPoint);
+	AIController->MoveToActor(NextPoint,100.0f);
 	if (NextPoint != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Moving to: %s"), *NextPoint->GetName());
