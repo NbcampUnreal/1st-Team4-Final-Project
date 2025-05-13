@@ -10,6 +10,7 @@
 #include "EmberPlayerState.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Managers/EquipmentManagerComponent.h"
 
 AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     : Super(Init.SetDefaultSubobjectClass<UC_CharacterMovementComponent>
@@ -26,6 +27,9 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     CameraComponent->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
     CameraComponent->bUsePawnControlRotation = false;
+
+    EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManager"));
+    CharacterInputComponent = CreateDefaultSubobject<UCharacterInputComponent>(TEXT("CharacterInput"));
 }
 
 // Called when the game starts or when spawned
@@ -58,7 +62,7 @@ void AEmberPlayerCharacter::InitAbilityActorInfo()
 {
     AEmberPlayerState* EmberPlayerState = GetPlayerState<AEmberPlayerState>();
     check(EmberPlayerState);
-    EmberPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(EmberPlayerState, this);
+    EmberPlayerState->InitAbilitySystemComponent();
     AbilitySystemComponent = EmberPlayerState->GetAbilitySystemComponent();
 }
 
@@ -66,7 +70,6 @@ void AEmberPlayerCharacter::InitAbilityActorInfo()
 void AEmberPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -112,9 +115,20 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
                     this, 
                     &AEmberPlayerCharacter::StopSprint
                 );
-            }    
+            }
+            if (PlayerController->AttackAction)
+            {
+                EnhancedInput->BindAction(
+                    PlayerController->AttackAction,
+                    ETriggerEvent::Started, 
+                    this, 
+                    &AEmberPlayerCharacter::Attack
+                );
+            }
         }
     }
+
+    CharacterInputComponent->InitializePlayerInput(PlayerInputComponent);
 }
 
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
@@ -158,4 +172,15 @@ void AEmberPlayerCharacter::StopSprint(const FInputActionValue& value)
     {
         //GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
     }
+}
+
+void AEmberPlayerCharacter::Attack(const FInputActionValue& value)
+{
+    // EquipmentComponent에서 현재 무기 타입 가져오기
+    if (UAnimMontage* AttackMontage = EquipmentManagerComponent->GetAttackAnimMontage())
+    {
+        PlayAnimMontage(AttackMontage);
+    }
+    
+    // AnimationComponent에서 현재 재생할 몽타주 가져오기
 }

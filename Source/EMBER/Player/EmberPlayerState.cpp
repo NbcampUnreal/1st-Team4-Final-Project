@@ -6,6 +6,8 @@
 #include "EmberPlayerCharacter.h"
 #include "Managers/InventoryManagerComponent.h"
 #include "System/AbilitySystem/EmberAbilitySystemComponent.h"
+#include "System/AbilitySystem/Data/EmberAbilitySet.h"
+#include "UI/Data/EmberPawnData.h"
 
 
 AEmberPlayerState::AEmberPlayerState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -26,6 +28,18 @@ void AEmberPlayerState::PostInitializeComponents()
 UAbilitySystemComponent* AEmberPlayerState::GetAbilitySystemComponent() const
 {
 	return GetEmberAbilitySystemComponent();
+}
+
+void AEmberPlayerState::InitAbilitySystemComponent()
+{
+	AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
+	for (const UEmberAbilitySet* AbilitySet : UEmberPawnData::Get().AbilitySets)
+	{
+		if (AbilitySet)
+		{
+			AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr);
+		}
+	}
 }
 
 

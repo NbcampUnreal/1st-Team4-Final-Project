@@ -5,12 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "C_CameraComponent.h"
+#include "Input/CharacterInputComponent.h"
 #include "EmberPlayerCharacter.generated.h"
 
+class UEquipmentManagerComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UC_CharacterMovementComponent;
 class UAbilitySystemComponent;
+class UCharacterInputComponent;
 
 struct FInputActionValue;
 UCLASS()
@@ -44,6 +47,8 @@ protected:
 	void StartSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
+	UFUNCTION()
+	void Attack(const FInputActionValue& value);
 
 public:	
 	// Called every frame
@@ -58,5 +63,12 @@ protected:
 	void InitAbilityActorInfo();
 	
 private:
+	UPROPERTY()
+	TObjectPtr<UCharacterInputComponent> CharacterInputComponent;
+
+	UPROPERTY()
+	TObjectPtr<UEquipmentManagerComponent> EquipmentManagerComponent;
+	
+	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 };

@@ -24,7 +24,10 @@ public class EMBER : ModuleRules
 						"GameplayMessageRuntime",
 						"GameplayTags",
 						"GameplayTasks",
-						"GameplayAbilities"
+						"GameplayAbilities",
+						"ModularGameplay",
+						"CommonUI",
+						"CommonInput"
 					});
         PublicIncludePaths.AddRange(
                     new string[]

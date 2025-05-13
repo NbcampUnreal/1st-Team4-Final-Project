@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerState.h"
 #include "EmberPlayerState.generated.h"
 
+class UItemTemplate;
 class UEmberAbilitySystemComponent;
 
 UCLASS()
@@ -28,10 +29,12 @@ public:
 	//~End of IAbilitySystemInterface Overrides
 	UEmberAbilitySystemComponent* GetEmberAbilitySystemComponent() const { return AbilitySystemComponent; }
 
-	
 public:
 	UFUNCTION(Server, Reliable)
 	void Server_AddInventoryItem(TSubclassOf<UItemTemplate> InItemTemplateClass, EItemRarity InItemRarity, int32 InItemCount);
+
+public:
+	void InitAbilitySystemComponent();
 	
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Ember|PlayerState")
