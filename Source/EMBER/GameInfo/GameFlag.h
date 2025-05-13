@@ -131,3 +131,12 @@ enum class ESlotState : uint8
 	Invalid,
 	Valid
 };
+
+UENUM(BlueprintType)
+enum class EWeaponSlotType : uint8
+{
+	Primary,
+	Secondary,
+
+	Count	UMETA(Hidden)
+};

@@ -14,6 +14,7 @@ void UEmberAssetManager::StartInitialLoading()
 	GetUIData();
 	GetItemData();
 	GetAssetData();
+	GetPawnData();
 }
 
 UEmberAssetManager& UEmberAssetManager::Get()
@@ -41,6 +42,11 @@ const UEmberItemData& UEmberAssetManager::GetItemData()
 const UEmberAssetData& UEmberAssetManager::GetAssetData()
 {
 	return GetOrLoadTypedGameData<UEmberAssetData>(AssetDataPath);
+}
+
+const UEmberPawnData& UEmberAssetManager::GetPawnData()
+{
+	return GetOrLoadTypedGameData<UEmberPawnData>(PawnDataPath);
 }
 
 UPrimaryDataAsset* UEmberAssetManager::LoadGameDataOfClass(TSubclassOf<UPrimaryDataAsset> DataClass, const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath, FPrimaryAssetType PrimaryAssetType)

@@ -42,3 +42,13 @@ void UItemInstance::AddOrRemoveStatTagStack(FGameplayTag StatTag, int32 StackCou
 {
 	
 }
+
+const UItemFragment* UItemInstance::FindFragmentByClass(TSubclassOf<UItemFragment> FragmentClass) const
+{
+	if (ItemTemplateID > INDEX_NONE && FragmentClass)
+	{
+		const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemTemplateID);
+		return ItemTemplate.FindFragmentByClass(FragmentClass);
+	}
+	return nullptr;
+}

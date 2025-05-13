@@ -22,6 +22,7 @@ void UCheatMenuWidget::NativeOnInitialized()
 	Button_Exit->OnClicked.AddUniqueDynamic(this, &ThisClass::OnExitButtonClicked);
 }
 
+PRAGMA_DISABLE_OPTIMIZATION
 void UCheatMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -48,15 +49,18 @@ void UCheatMenuWidget::NativeConstruct()
 				CheatEntryWidget->InitializeUI(ECheatEntryType::Utility, ItemTemplateClass, nullptr);
 				CheatList_Utility->AddEntry(CheatEntryWidget);
 			}
+			
 			else if (EquippableFragment->EquipmentType == EEquipmentType::Armor)
 			{
 				UCheatEntryWidget* CheatEntryWidget = CreateWidget<UCheatEntryWidget>(GetOwningPlayer(), CheatEntryWidgetClass);
 				CheatEntryWidget->InitializeUI(ECheatEntryType::Armor, ItemTemplateClass, nullptr);
 				CheatList_Armor->AddEntry(CheatEntryWidget);
 			}
+			//UE_LOG(LogTemp, Warning, L"%d" EquippableFragment->EquipmentType);
 		}
 	}
 }
+PRAGMA_ENABLE_OPTIMIZATION
 
 void UCheatMenuWidget::OnExitButtonClicked()
 {

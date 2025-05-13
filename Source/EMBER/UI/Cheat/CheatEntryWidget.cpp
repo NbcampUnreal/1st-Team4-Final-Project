@@ -10,7 +10,10 @@
 #include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
 #include "Managers/InventoryManagerComponent.h"
+#include "Player/EmberPlayerController.h"
 #include "Player/EmberPlayerState.h"
+
+class AEmberPlayerController;
 
 UCheatEntryWidget::UCheatEntryWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -48,8 +51,18 @@ void UCheatEntryWidget::InitializeUI(ECheatEntryType InCheatEntryType, TSubclass
 
 void UCheatEntryWidget::OnButtonClicked()
 {
-	if (AEmberPlayerState* EmberPlayerState = Cast<AEmberPlayerState>(GetOwningPlayerState()))
+	AEmberPlayerController* EmberPlayerController = GetOwningPlayer<AEmberPlayerController>();
+	if (EmberPlayerController == nullptr)
+		return;
+
+	switch (CheatEntryType)
 	{
-		EmberPlayerState->Server_AddInventoryItem(ItemTemplateClass, EItemRarity::Poor, 1);
+		case ECheatEntryType::PrimaryWeapon:
+		case ECheatEntryType::Utility:
+			EmberPlayerController->Server_EquipWeapon(EWeaponSlotType::Primary, ItemTemplateClass);
+			break;
+		case ECheatEntryType::Armor:
+			EmberPlayerController->Server_EquipWeapon(EWeaponSlotType::Primary, ItemTemplateClass);
+			break;
 	}
 }
