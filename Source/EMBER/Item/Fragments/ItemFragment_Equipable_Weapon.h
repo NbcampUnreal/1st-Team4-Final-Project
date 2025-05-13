@@ -22,5 +22,8 @@ public:
 	EWeaponType WeaponType = EWeaponType::Count;
 
 	UPROPERTY(EditDefaultsOnly)
+	TSoftObjectPtr<UAnimMontage> AttackMontage;
+	
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USoundBase> AttackSwingSound;
 };

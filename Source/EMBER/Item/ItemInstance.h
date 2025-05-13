@@ -36,6 +36,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	EItemRarity GetItemRarity() const { return ItemRarity; }
+
+public:
+	UFUNCTION(BlueprintCallable, BlueprintPure="false", meta=(DeterminesOutputType="FragmentClass"))
+	const UItemFragment* FindFragmentByClass(TSubclassOf<UItemFragment> FragmentClass) const;
+
+	template <typename FragmentClass>
+	const FragmentClass* FindFragmentByClass() const
+	{
+		return (FragmentClass*)FindFragmentByClass(FragmentClass::StaticClass());
+	}
 	
 private:
 	UPROPERTY(Replicated)
