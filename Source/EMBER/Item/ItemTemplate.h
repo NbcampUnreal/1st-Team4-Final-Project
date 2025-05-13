@@ -29,7 +29,7 @@ public:
 	const UItemFragment* FindFragmentByClass(TSubclassOf<UItemFragment> FragmentClass) const;
 	
 	template <typename FragmentClass>
-	const FragmentClass* FindFragmentByClass() const
+	FragmentClass* FindFragmentByClass() const
 	{
 		return (FragmentClass*)FindFragmentByClass(FragmentClass::StaticClass());
 	}
