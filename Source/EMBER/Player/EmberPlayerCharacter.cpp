@@ -132,6 +132,15 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
                     &AEmberPlayerCharacter::Attack
                 );
             }
+            if (PlayerController->MoveAction)
+            {
+                EnhancedInput->BindAction(
+                    PlayerController->JumpAction,
+                    ETriggerEvent::Started,
+                    this,
+                    &AEmberPlayerCharacter::Jump
+                );
+            }
         }
     }
 
@@ -177,4 +186,9 @@ void AEmberPlayerCharacter::Attack(const FInputActionValue& value)
     }
     
     // AnimationComponent에서 현재 재생할 몽타주 가져오기
+}
+
+void AEmberPlayerCharacter::StartJump(const FInputActionValue& value)
+{
+    Jump();
 }
