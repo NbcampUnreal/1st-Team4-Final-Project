@@ -11,7 +11,7 @@
 #include "Net/UnrealNetwork.h"
 #include "System/EmberAssetManager.h"
 #include "UI/Data/EmberItemData.h"
-
+#include "MontageSystemComponent.h"
 UEquipmentManagerComponent::UEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	SetIsReplicatedByDefault(true);
@@ -63,11 +63,17 @@ void UEquipmentManagerComponent::AddEquipment(EWeaponSlotType WeaponSlotType, TS
 			SpawnedWeapon->SetActorRelativeTransform(AttachInfo.AttachTransform);
 			SpawnedWeapon->AttachToComponent(CharacterMeshComponent, FAttachmentTransformRules::KeepRelativeTransform, AttachInfo.AttachSocket);
 			SpawnedWeapon->FinishSpawning(FTransform::Identity, true);
-		}
 
-		// 서버 애니메이션 몽타주 재생
-		UAnimMontage* EquipMontage = UEmberAssetManager::GetAssetByPath<UAnimMontage>(AttachmentFragment->EquipMontage);
-		OwnerCharacter->PlayAnimMontage(EquipMontage);
+			FEquipment Data = AttachmentFragment->GetEquipmentInfo();
+
+			if (Data.DrawMontage)
+			{
+				if (UMontageSystemComponent* MontageComp = OwnerCharacter->FindComponentByClass<UMontageSystemComponent>())
+				{
+					MontageComp->PlayMontage(Data.DrawMontage);
+				}
+			}
+		}
 	}
 
 	ItemTemplateID = NewItemTemplateID;
@@ -90,22 +96,32 @@ void UEquipmentManagerComponent::OnRep_ItemTemplateID(int32 PrevItemTemplateID)
 
 	if (const UItemFragment_Equipable_Attachment* AttachmentFragment = ItemTemplate.FindFragmentByClass<UItemFragment_Equipable_Attachment>())
 	{
-		UAnimMontage* EquipMontage = UEmberAssetManager::GetAssetByPath<UAnimMontage>(AttachmentFragment->EquipMontage);
-		OwnerCharacter->PlayAnimMontage(EquipMontage);
+		FEquipment Data = AttachmentFragment->GetEquipmentInfo();
+
+		if (Data.DrawMontage)
+		{
+			if (UMontageSystemComponent* MontageComp = OwnerCharacter->FindComponentByClass<UMontageSystemComponent>())
+			{
+				MontageComp->PlayMontage(Data.DrawMontage);
+			}
+		}
 	}
 }
 
-UAnimMontage* UEquipmentManagerComponent::GetAttackAnimMontage()
+FAttackData UEquipmentManagerComponent::GetAttackInfo() const
 {
+	FAttackData AttackInfo;
+
 	if (ItemTemplateID == INDEX_NONE)
-		return nullptr;
+		return AttackInfo;
 	
 	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemTemplateID);
 
-	if (const UItemFragment_Equipable_Weapon* WeaponFragment = ItemTemplate.FindFragmentByClass<UItemFragment_Equipable_Weapon>())
+	if (UItemFragment_Equipable_Weapon* WeaponFragment = ItemTemplate.FindFragmentByClass<UItemFragment_Equipable_Weapon>())
 	{
-		return UEmberAssetManager::GetAssetByPath<UAnimMontage>(WeaponFragment->AttackMontage);
+		AttackInfo = WeaponFragment->GetAttackInfo();
+		WeaponFragment->IncrementMontageIndex();
 	}
 
-	return nullptr;
+	return AttackInfo;
 }

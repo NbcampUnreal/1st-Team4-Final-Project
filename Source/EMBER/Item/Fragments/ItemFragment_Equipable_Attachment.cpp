@@ -6,3 +6,8 @@
 UItemFragment_Equipable_Attachment::UItemFragment_Equipable_Attachment(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
+
+FEquipment UItemFragment_Equipable_Attachment::GetEquipmentInfo() const
+{
+    return EquipmentInfo;
+}
