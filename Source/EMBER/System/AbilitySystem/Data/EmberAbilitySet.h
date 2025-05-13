@@ -53,7 +53,7 @@ public:
 	UEmberAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
-	void GiveToAbilitySystem(UEmberAbilitySystemComponent* LyraASC, FEmberAbilitySet_GrantedHandles* OutGrantedHandles, UObject* SourceObject = nullptr) const;
+	void GiveToAbilitySystem(UEmberAbilitySystemComponent* EmberASC, FEmberAbilitySet_GrantedHandles* OutGrantedHandles, UObject* SourceObject = nullptr) const;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities")

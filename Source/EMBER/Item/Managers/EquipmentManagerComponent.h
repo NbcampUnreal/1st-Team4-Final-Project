@@ -8,6 +8,7 @@
 enum class EWeaponSlotType : uint8;
 class UItemTemplate;
 class UItemInstance;
+class AEquipmentBase;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class EMBER_API UEquipmentManagerComponent : public UActorComponent
@@ -32,4 +33,7 @@ private:
 	
 	UPROPERTY(ReplicatedUsing=OnRep_ItemTemplateID)
 	int32 ItemTemplateID = INDEX_NONE;
+
+	UPROPERTY()
+	AEquipmentBase* SpawnedWeapon;
 };

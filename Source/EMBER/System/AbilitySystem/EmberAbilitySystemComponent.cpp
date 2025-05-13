@@ -69,8 +69,8 @@ void UEmberAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGa
 		{
 			if (AbilitySpec->Ability && !AbilitySpec->IsActive())
 			{
-				const UEmberGameplayAbility* LyraAbilityCDO = Cast<UEmberGameplayAbility>(AbilitySpec->Ability);
-				if (LyraAbilityCDO && LyraAbilityCDO->GetActivationPolicy() == EEmberAbilityActivationPolicy::WhileInputActive)
+				const UEmberGameplayAbility* EmberAbilityCDO = Cast<UEmberGameplayAbility>(AbilitySpec->Ability);
+				if (EmberAbilityCDO && EmberAbilityCDO->GetActivationPolicy() == EEmberAbilityActivationPolicy::WhileInputActive)
 				{
 					AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
 				}
@@ -93,9 +93,9 @@ void UEmberAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGa
 				}
 				else
 				{
-					const UEmberGameplayAbility* LyraAbilityCDO = Cast<UEmberGameplayAbility>(AbilitySpec->Ability);
+					const UEmberGameplayAbility* EmberAbilityCDO = Cast<UEmberGameplayAbility>(AbilitySpec->Ability);
 
-					if (LyraAbilityCDO && LyraAbilityCDO->GetActivationPolicy() == EEmberAbilityActivationPolicy::OnInputTriggered)
+					if (EmberAbilityCDO && EmberAbilityCDO->GetActivationPolicy() == EEmberAbilityActivationPolicy::OnInputTriggered)
 					{
 						AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
 					}

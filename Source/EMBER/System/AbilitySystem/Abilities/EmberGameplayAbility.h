@@ -33,16 +33,16 @@ public:
 	UEmberGameplayAbility(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Lyra|Ability")
+	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
 	AEmberPlayerCharacter* GetEmberCharacterFromActorInfo() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Lyra|Ability")
+	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
 	AEmberPlayerController* GetEmberPlayerControllerFromActorInfo() const;
 	
 	EEmberAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
 	
 protected:
 	// Defines how this ability is meant to activate.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Lyra|Ability Activation")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ember|Ability Activation")
 	EEmberAbilityActivationPolicy ActivationPolicy;
 };

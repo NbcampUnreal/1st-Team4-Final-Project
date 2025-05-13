@@ -8,7 +8,12 @@
 
 UEmberGameplayAbility::UEmberGameplayAbility(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	ActivationPolicy = EEmberAbilityActivationPolicy::OnInputTriggered;	
+	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateNo;
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
+	NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ClientOrServer;
+	
+	ActivationPolicy = EEmberAbilityActivationPolicy::OnInputTriggered;
 }
 
 AEmberPlayerCharacter* UEmberGameplayAbility::GetEmberCharacterFromActorInfo() const

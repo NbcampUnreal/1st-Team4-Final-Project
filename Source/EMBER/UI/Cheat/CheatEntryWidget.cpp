@@ -58,6 +58,7 @@ void UCheatEntryWidget::OnButtonClicked()
 	switch (CheatEntryType)
 	{
 		case ECheatEntryType::PrimaryWeapon:
+		case ECheatEntryType::Utility:
 			EmberPlayerController->Server_EquipWeapon(EWeaponSlotType::Primary, ItemTemplateClass);
 			break;
 	}

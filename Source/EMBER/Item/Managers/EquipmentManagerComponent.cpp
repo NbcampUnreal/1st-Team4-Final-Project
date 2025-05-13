@@ -33,10 +33,6 @@ void UEquipmentManagerComponent::AddEquipment(EWeaponSlotType WeaponSlotType, TS
 	if (ItemTemplate == nullptr)
 		return;
 	
-	const UItemFragment_Equipable_Weapon* WeaponFragment = ItemTemplate->FindFragmentByClass<UItemFragment_Equipable_Weapon>();
-	if (WeaponFragment == nullptr)
-		return;
-
 	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
 	if (OwnerCharacter == nullptr)
 		return;
@@ -44,22 +40,34 @@ void UEquipmentManagerComponent::AddEquipment(EWeaponSlotType WeaponSlotType, TS
 	USkeletalMeshComponent* CharacterMeshComponent = OwnerCharacter->GetMesh();
 	if (CharacterMeshComponent == nullptr)
 		return;
+
+	if (SpawnedWeapon)
+	{
+		SpawnedWeapon->Destroy();
+	}
 	
 	UItemInstance* ItemInstance = NewObject<UItemInstance>();
 	int32 NewItemTemplateID = UEmberItemData::Get().FindItemTemplateIDByClass(ItemTemplateClass);
 	EItemRarity RandomItemRarity = (EItemRarity)FMath::RandRange(0, (int32)EItemRarity::Count - 1);
 	ItemInstance->Init(NewItemTemplateID, RandomItemRarity);
 
-	// 아이템 스폰
-	const UItemFragment_Equipable_Attachment* AttachmentFragment = ItemInstance->FindFragmentByClass<UItemFragment_Equipable_Attachment>();
-	const FItemAttachInfo& AttachInfo = AttachmentFragment->ItemAttachInfo;
-	if (AttachInfo.SpawnEquipmentClass)
+	
+	if (const UItemFragment_Equipable_Attachment* AttachmentFragment = ItemInstance->FindFragmentByClass<UItemFragment_Equipable_Attachment>())
 	{
-		UWorld* World = GetWorld();
-		AEquipmentBase* NewWeaponActor = World->SpawnActorDeferred<AEquipmentBase>(AttachInfo.SpawnEquipmentClass, FTransform::Identity, OwnerCharacter);
-		NewWeaponActor->SetActorRelativeTransform(AttachInfo.AttachTransform);
-		NewWeaponActor->AttachToComponent(CharacterMeshComponent, FAttachmentTransformRules::KeepRelativeTransform, AttachInfo.AttachSocket);
-		NewWeaponActor->FinishSpawning(FTransform::Identity, true);
+		// 아이템 스폰
+		const FItemAttachInfo& AttachInfo = AttachmentFragment->ItemAttachInfo;
+		if (AttachInfo.SpawnEquipmentClass)
+		{
+			UWorld* World = GetWorld();
+			SpawnedWeapon = World->SpawnActorDeferred<AEquipmentBase>(AttachInfo.SpawnEquipmentClass, FTransform::Identity, OwnerCharacter);
+			SpawnedWeapon->SetActorRelativeTransform(AttachInfo.AttachTransform);
+			SpawnedWeapon->AttachToComponent(CharacterMeshComponent, FAttachmentTransformRules::KeepRelativeTransform, AttachInfo.AttachSocket);
+			SpawnedWeapon->FinishSpawning(FTransform::Identity, true);
+		}
+
+		// 서버 애니메이션 몽타주 재생
+		UAnimMontage* EquipMontage = UEmberAssetManager::GetAssetByPath<UAnimMontage>(AttachmentFragment->EquipMontage);
+		OwnerCharacter->PlayAnimMontage(EquipMontage);
 	}
 
 	ItemTemplateID = NewItemTemplateID;
