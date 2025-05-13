@@ -18,7 +18,8 @@ AEmberPlayerController::AEmberPlayerController()
 	: InputMappingContext(nullptr),
 	  MoveAction(nullptr),
 	  LookAction(nullptr),
-	  SprintAction(nullptr)
+	  SprintAction(nullptr),
+      JumpAction(nullptr)
 {
 }
 
