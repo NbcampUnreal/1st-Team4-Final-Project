@@ -48,6 +48,11 @@ void UEquipmentManagerComponent::AddEquipment(EWeaponSlotType WeaponSlotType, TS
 	
 	UItemInstance* ItemInstance = NewObject<UItemInstance>();
 	int32 NewItemTemplateID = UEmberItemData::Get().FindItemTemplateIDByClass(ItemTemplateClass);
+
+	//TODO id 가져오기
+	//연결 const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemTemplateID);
+	//UAnimMontage* UEquipmentManagerComponent::GetAttackAnimMontage() 응용해서 만들면 됨
+
 	EItemRarity RandomItemRarity = (EItemRarity)FMath::RandRange(0, (int32)EItemRarity::Count - 1);
 	ItemInstance->Init(NewItemTemplateID, RandomItemRarity);
 
