@@ -34,6 +34,16 @@ float UC_CharacterMovementComponent::GetCurrentSpeed() const
 	return Speed.Length();
 }
 
+void UC_CharacterMovementComponent::EnableMove()
+{
+	bCanMove = true;
+}
+
+void UC_CharacterMovementComponent::DisableMove()
+{
+	bCanMove = false;
+}
+
 float UC_CharacterMovementComponent::GetMaxSpeed() const
 {	
 	return Super::GetMaxSpeed();
@@ -41,6 +51,8 @@ float UC_CharacterMovementComponent::GetMaxSpeed() const
 
 void UC_CharacterMovementComponent::OnMove(const FInputActionValue& Value)
 {
+	if (bCanMove == false)
+		return;
 	FVector2D MoveVector = Value.Get<FVector2D>();
 
 	if (MoveVector.IsNearlyZero())

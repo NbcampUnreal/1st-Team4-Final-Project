@@ -61,5 +61,8 @@ void UCheatEntryWidget::OnButtonClicked()
 		case ECheatEntryType::Utility:
 			EmberPlayerController->Server_EquipWeapon(EWeaponSlotType::Primary, ItemTemplateClass);
 			break;
+		case ECheatEntryType::Armor:
+			EmberPlayerController->Server_EquipWeapon(EWeaponSlotType::Primary, ItemTemplateClass);
+			break;
 	}
 }
