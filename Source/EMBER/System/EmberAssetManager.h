@@ -3,9 +3,11 @@
 #pragma once
 
 #include "Engine/AssetManager.h"
+#include "Input/Data/EmberInputConfig.h"
 #include "UI/Data/EmberAssetData.h"
 #include "UI/Data/EmberItemData.h"
 #include "UI/Data/EmberUIData.h"
+#include "UI/Data/EmberPawnData.h"
 
 #include "EmberAssetManager.generated.h"
 
@@ -29,6 +31,10 @@ public:
 	static UEmberAssetManager& Get();
 
 	template<typename AssetType>
+	static AssetType* GetAssetByPath(const TSoftObjectPtr<AssetType>& AssetPointer, bool bKeepInMemory = true);
+
+	
+	template<typename AssetType>
 	static TSubclassOf<AssetType> GetSubclassByPath(const TSoftClassPtr<AssetType>& AssetPointer, bool bKeepInMemory = true);
 	
 	template<typename AssetType>
@@ -37,7 +43,8 @@ public:
 	const UEmberUIData& GetUIData();
 	const UEmberItemData& GetItemData();
 	const UEmberAssetData& GetAssetData();
-
+	const UEmberPawnData& GetPawnData();
+	
 protected:
 	UPrimaryDataAsset* LoadGameDataOfClass(TSubclassOf<UPrimaryDataAsset> DataClass, const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath, FPrimaryAssetType PrimaryAssetType);
 	
@@ -66,6 +73,13 @@ protected:
 
 	UPROPERTY(Config)
 	TSoftObjectPtr<UEmberAssetData> AssetDataPath;
+
+	UPROPERTY(Config)
+	TSoftObjectPtr<UEmberInputConfig> InputConfigPath;
+
+	UPROPERTY(Config)
+	TSoftObjectPtr<UEmberPawnData> PawnDataPath;
+	
 	
 	UPROPERTY(Transient)
 	TMap<TObjectPtr<UClass>, TObjectPtr<UPrimaryDataAsset>> GameDataMap;
@@ -78,6 +92,32 @@ private:
 	// Used for a scope lock when modifying the list of load assets.
 	FCriticalSection LoadedAssetsCritical;
 };
+
+template <typename AssetType>
+AssetType* UEmberAssetManager::GetAssetByPath(const TSoftObjectPtr<AssetType>& AssetPointer, bool bKeepInMemory)
+{
+	AssetType* LoadedAsset = nullptr;
+
+	const FSoftObjectPath& AssetPath = AssetPointer.ToSoftObjectPath();
+
+	if (AssetPath.IsValid())
+	{
+		LoadedAsset = AssetPointer.Get();
+		if (!LoadedAsset)
+		{
+			LoadedAsset = Cast<AssetType>(SynchronousLoadAsset(AssetPath));
+			ensureAlwaysMsgf(LoadedAsset, TEXT("Failed to load asset [%s]"), *AssetPointer.ToString());
+		}
+
+		if (LoadedAsset && bKeepInMemory)
+		{
+			// Added to loaded asset list.
+			Get().AddLoadedAsset(Cast<UObject>(LoadedAsset));
+		}
+	}
+
+	return LoadedAsset;
+}
 
 template <typename AssetType>
 TSubclassOf<AssetType> UEmberAssetManager::GetSubclassByPath(const TSoftClassPtr<AssetType>& AssetPointer, bool bKeepInMemory)

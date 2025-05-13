@@ -1,17 +1,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/BaseAI.h"
+#include "AI/PassiveAI.h"
 #include "Deer.generated.h"
 
+
 UCLASS()
-class EMBER_API ADeer : public ABaseAI
+class EMBER_API ADeer : public APassiveAI
 {
 	GENERATED_BODY()
-
-public:
-	ADeer();
-virtual void BeginPlay() override;
-
 	
 };
