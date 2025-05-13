@@ -53,9 +53,9 @@ void UC_CharacterMovementComponent::OnMove(const FInputActionValue& Value)
 		const FRotator Rotation = CharacterOwner->GetControlRotation();
 		const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
-		const FVector ForwardDirection = CharacterOwner->GetActorForwardVector();
-		const FVector RightDirection = CharacterOwner->GetActorRightVector();
-
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		
 		// 이동 입력 적용
 		AddInputVector(ForwardDirection * MoveVector.Y);
 		AddInputVector(RightDirection * MoveVector.X);

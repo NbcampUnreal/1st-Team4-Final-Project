@@ -3,8 +3,6 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "EMBER/AI/BaseAI.h"
 
-
-
 void ABaseAIController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -34,6 +32,4 @@ void ABaseAIController::BeginPlay()
 
 		RunBehaviorTree(SelectedBT);
 	}
-	
 }
-
