@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
+#include "EMBER.h"
 #include "CoreMinimal.h"
 #include "ItemFragment_Equipable.h"
 #include "ItemFragment_Equipable_Attachment.generated.h"
@@ -34,7 +34,9 @@ class EMBER_API UItemFragment_Equipable_Attachment : public UItemFragment_Equipa
 
 public:
 	UItemFragment_Equipable_Attachment(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	FEquipment EquipmentInfo;
 public:
 	UPROPERTY(EditDefaultsOnly)
 	EItemHandType ItemHandType = EItemHandType::Count;
@@ -45,6 +47,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UAnimInstance> AnimInstanceClass;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSoftObjectPtr<UAnimMontage> EquipMontage;
+public:
+	UFUNCTION(BlueprintCallable)
+	FEquipment GetEquipmentInfo() const;
 };
