@@ -6,9 +6,11 @@
 #include "GameFramework/PlayerController.h"
 #include "EmberPlayerController.generated.h"
 
+enum class EWeaponSlotType : uint8;
+class UEmberAbilitySystemComponent;
 class UInputMappingContext; 
 class UInputAction; 
-
+class UItemTemplate;
 
 UCLASS()
 class EMBER_API AEmberPlayerController : public APlayerController
@@ -17,6 +19,18 @@ class EMBER_API AEmberPlayerController : public APlayerController
 public:
 	AEmberPlayerController();
 
+protected:
+	//~APlayerController Overrides
+	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
+	//~End of APlayerController Overrides
+	
+private:
+	UEmberAbilitySystemComponent* GetEmberAbilitySystemComponent() const;
+	
+public:
+	UFUNCTION(Server, Reliable)
+	void Server_EquipWeapon(EWeaponSlotType WeaponSlotType, TSubclassOf<UItemTemplate> ItemTemplateClass);
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input")
 	UInputMappingContext* InputMappingContext;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input")
@@ -25,6 +39,11 @@ public:
 	UInputAction* LookAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* SprintAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* JumpAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* AttackAction;
 	virtual void BeginPlay() override;
+	
 };
 

@@ -2,13 +2,24 @@
 
 
 #include "EmberPlayerController.h"
+
+#include "EmberPlayerCharacter.h"
+#include "EmberPlayerState.h"
 #include "EnhancedInputSubsystems.h"
+#include "ItemTemplate.h"
+#include "ItemInstance.h"
+#include "Managers/EquipmentManagerComponent.h"
+#include "System/AbilitySystem/EmberAbilitySystemComponent.h"
+#include "UI/Data/EmberItemData.h"
+
+class AEmberPlayerState;
 
 AEmberPlayerController::AEmberPlayerController()
 	: InputMappingContext(nullptr),
 	  MoveAction(nullptr),
 	  LookAction(nullptr),
-	  SprintAction(nullptr)
+	  SprintAction(nullptr),
+      JumpAction(nullptr)
 {
 }
 
@@ -26,4 +37,33 @@ void AEmberPlayerController::BeginPlay()
 			}
 		}
 	}
+}
+
+void AEmberPlayerController::Server_EquipWeapon_Implementation(EWeaponSlotType WeaponSlotType, TSubclassOf<UItemTemplate> ItemTemplateClass)
+{
+	AEmberPlayerCharacter* EmberCharacter = Cast<AEmberPlayerCharacter>(GetPawn());
+	if (EmberCharacter == nullptr)
+		return;
+
+	UEquipmentManagerComponent* EquipmentManager = EmberCharacter->FindComponentByClass<UEquipmentManagerComponent>();
+	if (EquipmentManager == nullptr)
+		return;
+
+	EquipmentManager->AddEquipment(WeaponSlotType, ItemTemplateClass);
+}
+
+void AEmberPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
+{
+	if (UEmberAbilitySystemComponent* EmberASC = GetEmberAbilitySystemComponent())
+	{
+		EmberASC->ProcessAbilityInput(DeltaTime, bGamePaused);
+	}
+	
+	Super::PostProcessInput(DeltaTime, bGamePaused);
+}
+
+UEmberAbilitySystemComponent* AEmberPlayerController::GetEmberAbilitySystemComponent() const
+{
+	const AEmberPlayerState* EmberPS = CastChecked<AEmberPlayerState>(PlayerState, ECastCheckedType::NullAllowed);
+	return (EmberPS ? EmberPS->GetEmberAbilitySystemComponent() : nullptr);
 }

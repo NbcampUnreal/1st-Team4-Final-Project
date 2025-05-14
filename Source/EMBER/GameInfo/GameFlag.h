@@ -111,3 +111,32 @@ enum class EWeaponType : uint8
 
 	Count	UMETA(Hidden)
 };
+
+UENUM(BlueprintType)
+enum class EArmorType : uint8
+{
+	Helmet,
+	Chest,
+	Legs,
+	Hands,
+	Foot,
+
+	Count	UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class ESlotState : uint8
+{
+	Default,
+	Invalid,
+	Valid
+};
+
+UENUM(BlueprintType)
+enum class EWeaponSlotType : uint8
+{
+	Primary,
+	Secondary,
+
+	Count	UMETA(Hidden)
+};

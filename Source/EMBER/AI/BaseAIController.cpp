@@ -3,8 +3,6 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "EMBER/AI/BaseAI.h"
 
-
-
 void ABaseAIController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -25,10 +23,13 @@ void ABaseAIController::BeginPlay()
 		SelectedBT = AggressiveBT;
 		break;
 	}
-
-	if (SelectedBT)
+	
+	if (UseBlackboard(BlackboardAsset, BlackboardComp) && SelectedBT)
 	{
+		// 패트롤 포인트를 블랙보드에 저장
+		BlackboardComp->SetValueAsObject("PatrolPoint", ControlledAnimal);
+		BlackboardComp->SetValueAsInt("PatrolIndex", 0);
+
 		RunBehaviorTree(SelectedBT);
 	}
 }
-

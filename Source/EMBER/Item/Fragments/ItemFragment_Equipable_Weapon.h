@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EMBER.h"
 #include "ItemFragment_Equipable_Attachment.h"
 #include "ItemFragment_Equipable_Weapon.generated.h"
 
@@ -21,6 +22,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	EWeaponType WeaponType = EWeaponType::Count;
 
+protected:
 	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<USoundBase> AttackSwingSound;
+	FAttackData AttackInfo;
+
+public:
+	void IncrementMontageIndex();
+	FAttackData GetAttackInfo() const;
 };

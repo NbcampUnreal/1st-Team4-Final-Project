@@ -34,6 +34,16 @@ float UC_CharacterMovementComponent::GetCurrentSpeed() const
 	return Speed.Length();
 }
 
+void UC_CharacterMovementComponent::EnableMove()
+{
+	bCanMove = true;
+}
+
+void UC_CharacterMovementComponent::DisableMove()
+{
+	bCanMove = false;
+}
+
 float UC_CharacterMovementComponent::GetMaxSpeed() const
 {	
 	return Super::GetMaxSpeed();
@@ -41,6 +51,8 @@ float UC_CharacterMovementComponent::GetMaxSpeed() const
 
 void UC_CharacterMovementComponent::OnMove(const FInputActionValue& Value)
 {
+	if (bCanMove == false)
+		return;
 	FVector2D MoveVector = Value.Get<FVector2D>();
 
 	if (MoveVector.IsNearlyZero())
@@ -53,9 +65,10 @@ void UC_CharacterMovementComponent::OnMove(const FInputActionValue& Value)
 		const FRotator Rotation = CharacterOwner->GetControlRotation();
 		const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
-		const FVector ForwardDirection = CharacterOwner->GetActorForwardVector();
-		const FVector RightDirection = CharacterOwner->GetActorRightVector();
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
+		
 		// 이동 입력 적용
 		AddInputVector(ForwardDirection * MoveVector.Y);
 		AddInputVector(RightDirection * MoveVector.X);

@@ -6,6 +6,8 @@
 #include "EmberUIData.generated.h"
 
 class UInventorySlotWidget;
+class UInventoryValidWidget;
+class UInventoryEntryWidget;
 
 UCLASS()
 class EMBER_API UEmberUIData : public UPrimaryDataAsset
@@ -18,6 +20,12 @@ public:
 public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UInventorySlotWidget> InventorySlotWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UInventoryValidWidget> InventoryValidWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UInventoryEntryWidget> InventoryEntryWidgetClass;
 	
 	UPROPERTY(EditDefaultsOnly)
 	FIntPoint UnitInventorySlotSize = FIntPoint::ZeroValue;

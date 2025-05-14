@@ -16,7 +16,7 @@ public:
 	virtual void OnInstanceCreated(UItemInstance* Instance) const { }
 };
 
-UCLASS(Blueprintable, Const, Abstract)
+UCLASS(Abstract, Blueprintable, Const)
 class EMBER_API UItemTemplate : public UObject
 {
 	GENERATED_BODY()
@@ -29,7 +29,7 @@ public:
 	const UItemFragment* FindFragmentByClass(TSubclassOf<UItemFragment> FragmentClass) const;
 	
 	template <typename FragmentClass>
-	const FragmentClass* FindFragmentByClass() const
+	FragmentClass* FindFragmentByClass() const
 	{
 		return (FragmentClass*)FindFragmentByClass(FragmentClass::StaticClass());
 	}

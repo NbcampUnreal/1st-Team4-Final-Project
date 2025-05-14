@@ -4,6 +4,7 @@
 #include "EquipmentBase.h"
 
 #include "Components/ArrowComponent.h"
+#include "Components/BoxComponent.h"
 #include "Net/UnrealNetwork.h"
 
 AEquipmentBase::AEquipmentBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -23,6 +24,12 @@ AEquipmentBase::AEquipmentBase(const FObjectInitializer& ObjectInitializer) : Su
 	MeshComponent->SetupAttachment(GetRootComponent());
 	MeshComponent->PrimaryComponentTick.bStartWithTickEnabled = false;
 	MeshComponent->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
+
+	TraceDebugCollision = CreateDefaultSubobject<UBoxComponent>("TraceDebugCollision");
+	TraceDebugCollision->SetCollisionProfileName("NoCollision");
+	TraceDebugCollision->SetGenerateOverlapEvents(false);
+	TraceDebugCollision->SetupAttachment(GetRootComponent());
+	TraceDebugCollision->PrimaryComponentTick.bStartWithTickEnabled = false;
 }
 
 void AEquipmentBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
