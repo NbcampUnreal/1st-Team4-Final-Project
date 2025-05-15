@@ -13,5 +13,5 @@ class EMBER_API UBTT_Guard : public UBTTask_BlackboardBase
 public:
 	UBTT_Guard();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	
 };
+

@@ -15,12 +15,15 @@ void ABaseAIController::BeginPlay()
 	{
 	case EAnimalType::Passive:
 		SelectedBT = PassiveBT;
+		CurrentBT = PassiveBT;
 		break;
 	case EAnimalType::Defensive:
 		SelectedBT = DefensiveBT;
+		CurrentBT = DefensiveBT;
 		break;
 	case EAnimalType::Aggressive:
 		SelectedBT = AggressiveBT;
+		CurrentBT = AggressiveBT;
 		break;
 	}
 	
