@@ -15,7 +15,7 @@ struct FRarityStat
 
 public:
 	UPROPERTY(VisibleDefaultsOnly)
-	EItemRarity Rarity = EItemRarity::Poor;
+	EItemRarity Rarity = EItemRarity::Common;
 
 	UPROPERTY(EditDefaultsOnly)
 	int32 Value = 0;
@@ -44,7 +44,7 @@ struct FRarityStatRange
 
 public:
 	UPROPERTY(VisibleDefaultsOnly)
-	EItemRarity Rarity = EItemRarity::Poor;
+	EItemRarity Rarity = EItemRarity::Common;
 	
 	UPROPERTY(EditDefaultsOnly)
 	int32 MinValue = 0;

@@ -52,5 +52,5 @@ private:
 	int32 ItemTemplateID = INDEX_NONE;
 
 	UPROPERTY(Replicated)
-	EItemRarity ItemRarity = EItemRarity::Poor;
+	EItemRarity ItemRarity = EItemRarity::Common;
 };
