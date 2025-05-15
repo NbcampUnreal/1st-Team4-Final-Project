@@ -9,6 +9,7 @@
 class UItemInstance;
 class UImage;
 class UTextBlock;
+class UItemHoverWidget;
 
 UCLASS()
 class EMBER_API UItemEntryWidget : public UUserWidget
@@ -23,6 +24,8 @@ protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	//~End of UUserWidget Overrides
 
 public:
@@ -38,6 +41,9 @@ protected:
 	
 	UPROPERTY()
 	int32 ItemCount = 0;
+
+	UPROPERTY()
+	TObjectPtr<UItemHoverWidget> HoverWidget;
 	
 protected:
 	UPROPERTY(meta=(BindWidget))

@@ -8,6 +8,7 @@
 class UInventorySlotWidget;
 class UInventoryValidWidget;
 class UInventoryEntryWidget;
+class UItemHoverWidget;
 
 UCLASS()
 class EMBER_API UEmberUIData : public UPrimaryDataAsset
@@ -26,6 +27,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UInventoryEntryWidget> InventoryEntryWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UItemHoverWidget> ItemHoverWidgetClass;
 	
 	UPROPERTY(EditDefaultsOnly)
 	FIntPoint UnitInventorySlotSize = FIntPoint::ZeroValue;
