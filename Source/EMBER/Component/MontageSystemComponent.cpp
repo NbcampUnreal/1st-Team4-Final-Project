@@ -1,6 +1,7 @@
 ﻿#include "MontageSystemComponent.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Net/UnrealNetwork.h"
 
 UMontageSystemComponent::UMontageSystemComponent()
 {
@@ -10,74 +11,67 @@ UMontageSystemComponent::UMontageSystemComponent()
 
 void UMontageSystemComponent::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
-	if (AActor* Owner = GetOwner())
-	{
-		if (APawn* Pawn = Cast<APawn>(Owner))
-		{
-			if (USkeletalMeshComponent* MeshComp = Owner->FindComponentByClass<USkeletalMeshComponent>())
-			{
-				AnimInstance = MeshComp->GetAnimInstance();
-				if (AnimInstance)
-				{
-					FOnMontageEnded EndDelegate;
-					EndDelegate.BindUObject(this, &UMontageSystemComponent::OnMontageEnded);
-					AnimInstance->OnMontageEnded.AddDynamic(this, &UMontageSystemComponent::OnMontageEnded);
-				}
-			}
-		}
-	}
+    if (AActor* Owner = GetOwner())
+    {
+        MeshComp = Owner->FindComponentByClass<USkeletalMeshComponent>();
+        if (MeshComp)
+        {
+            AnimInstance = MeshComp->GetAnimInstance();
+        }
+    }
 }
-void UMontageSystemComponent::RequestPlayMontage(UAnimMontage* Montage, float PlayRate, FName SectionName)
+
+void UMontageSystemComponent::MulticastPlayMontage_Implementation(UAnimMontage* Montage, float PlayRate, FName SectionName)
 {
-	if (ValidateRequestPlayMontage(Montage, PlayRate, SectionName))
-	{
-		ServerPlayMontage(Montage, PlayRate, SectionName);
-	}
+    if (AnimInstance)
+    {
+        float Duration = AnimInstance->Montage_Play(Montage,PlayRate);
+
+        if (Duration > 0.f)
+        {
+            // Start at a given Section.
+            if (SectionName != NAME_None)
+            {
+                AnimInstance->Montage_JumpToSection(SectionName, Montage);
+            }
+        }
+    }
 }
 
 void UMontageSystemComponent::ServerPlayMontage_Implementation(UAnimMontage* Montage, float PlayRate, FName SectionName)
 {
-	if (!Montage) return;
-
-	// 서버에서 재생 승인 후
-	MulticastPlayMontage(Montage, PlayRate, SectionName);
+    if (AnimInstance)
+    {
+        MulticastPlayMontage(Montage, PlayRate);
+    }
 }
+
 bool UMontageSystemComponent::ServerPlayMontage_Validate(UAnimMontage* Montage, float PlayRate, FName SectionName)
 {
-	return true;
+    return true;  // 여기에 검증 로직 추가 가능
 }
 
-void UMontageSystemComponent::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+void UMontageSystemComponent::PlayMontage(UAnimMontage* Montage, float PlayRate, FName SectionName)
 {
-	if (Montage && Montage == CurrentMontage)
-	{
-		// 재생 종료 처리
-		CurrentMontage = nullptr;
-	}
-}
+    if (!Montage)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Montage is null!"));
+        return;
+    }
 
-bool UMontageSystemComponent::ValidateRequestPlayMontage(UAnimMontage* Montage, float PlayRate, FName SectionName)
-{
-	return Montage != nullptr && GetOwner()->HasAuthority() == false; // 클라이언트에서만 호출
-}
-void UMontageSystemComponent::MulticastPlayMontage_Implementation(UAnimMontage* Montage, float PlayRate, FName SectionName)
-{
-	if (AnimInstance && Montage)
-	{
-		CurrentMontage = Montage;
-		AnimInstance->Montage_Play(Montage, PlayRate);
-		if (SectionName != NAME_None)
-		{
-			AnimInstance->Montage_JumpToSection(SectionName, Montage);
-		}
-	}
-}
-void UMontageSystemComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(UMontageSystemComponent, CurrentMontage);
-	// 필요시 다른 변수들도 등록
+    if (AActor* Owner = GetOwner())
+    {
+        if (Owner->HasAuthority())
+        {
+            // 서버인 경우 바로 호출
+            MulticastPlayMontage(Montage, PlayRate, SectionName);
+        }
+        else
+        {
+            // 클라이언트인 경우 서버에 요청
+            ServerPlayMontage(Montage, PlayRate, SectionName);
+        }
+    }
 }

@@ -28,6 +28,10 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 
     EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManager"));
     CharacterInputComponent = CreateDefaultSubobject<UCharacterInputComponent>(TEXT("CharacterInput"));
+
+    MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("MontageComponent"));
+
+    Tags.Add("Player");
 }
 
 // Called when the game starts or when spawned
@@ -132,6 +136,15 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
                     &AEmberPlayerCharacter::Attack
                 );
             }
+            if (PlayerController->MoveAction)
+            {
+                EnhancedInput->BindAction(
+                    PlayerController->JumpAction,
+                    ETriggerEvent::Started,
+                    this,
+                    &AEmberPlayerCharacter::Jump
+                );
+            }
         }
     }
 
@@ -171,10 +184,15 @@ void AEmberPlayerCharacter::StopSprint(const FInputActionValue& value)
 void AEmberPlayerCharacter::Attack(const FInputActionValue& value)
 {
     // EquipmentComponent에서 현재 무기 타입 가져오기
-    if (UAnimMontage* AttackMontage = EquipmentManagerComponent->GetAttackAnimMontage())
+    FAttackData Data = EquipmentManagerComponent->GetAttackInfo();
+
+    if (!Data.Montages.IsEmpty())
     {
-        PlayAnimMontage(AttackMontage);
+        MontageComponent->PlayMontage(Data.Montages[Data.MontageIndex]);
     }
-    
-    // AnimationComponent에서 현재 재생할 몽타주 가져오기
+}
+
+void AEmberPlayerCharacter::StartJump(const FInputActionValue& value)
+{
+    Jump();
 }

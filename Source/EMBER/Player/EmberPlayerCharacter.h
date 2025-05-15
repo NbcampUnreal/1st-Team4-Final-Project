@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "C_CameraComponent.h"
 #include "Input/CharacterInputComponent.h"
+#include "Component/MontageSystemComponent.h"
 #include "EmberPlayerCharacter.generated.h"
 
 class UEquipmentManagerComponent;
@@ -23,7 +24,7 @@ class EMBER_API AEmberPlayerCharacter : public ACharacter
 
 public:
 	// Sets default values for this character's properties
-	AEmberPlayerCharacter(const FObjectInitializer& Init);
+	AEmberPlayerCharacter(const FObjectInitializer& Init);	
 
 protected:
 	// Called when the game starts or when spawned
@@ -50,6 +51,8 @@ protected:
 	void StopSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void Attack(const FInputActionValue& value);
+	UFUNCTION()
+	void StartJump(const FInputActionValue& value);
 
 public:	
 	// Called every frame
@@ -72,4 +75,7 @@ private:
 	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY()
+	TObjectPtr<UMontageSystemComponent> MontageComponent;
 };
