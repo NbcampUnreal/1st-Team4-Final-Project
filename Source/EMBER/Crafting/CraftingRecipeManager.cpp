@@ -1,5 +1,4 @@
 #include "CraftingRecipeManager.h"
-#include "Engine/Engine.h"
 
 UCraftingRecipe* UCraftingRecipeManager::GetRecipeByName(const FString& RecipeName) const
 {

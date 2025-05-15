@@ -2,37 +2,49 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "CraftingRecipe.h" 
-#include "Player/EmberPlayerCharacter.h"  
+#include "CraftingRecipeManager.h"
+#include "Player/EmberPlayerCharacter.h"
+#include "../GameInfo/GameFlag.h"
 #include "CraftingSystem.generated.h"
+
+UENUM(BlueprintType)
+enum class EStationType : uint8
+{
+    CraftingTable UMETA(DisplayName = "Crafting Table"),
+    Furnace       UMETA(DisplayName = "Furnace"),
+    CookingPot    UMETA(DisplayName = "Cooking Pot"),
+    WeaponTable   UMETA(DisplayName = "Weapon Crafting Table"),
+    ClothingTable UMETA(DisplayName = "Clothing Crafting Table")
+};
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class EMBER_API UCraftingSystem : public UActorComponent
 {
-	GENERATED_BODY()
-
+    GENERATED_BODY()
 public:
-	UCraftingSystem();
+    UCraftingSystem();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
-	TArray<UCraftingRecipe*> Recipes;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
+    UCraftingRecipeManager* RecipeManager;
 
-	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	void StartCrafting(AEmberPlayerCharacter* Player, const FString& ItemName);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
+    UAnimMontage* ProcessingAnimation;
 
-	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	TMap<FString, int32> AggregateIngredients(AEmberPlayerCharacter* Player);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
+    EStationType CurrentStation;
 
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    void StartCrafting(AEmberPlayerCharacter* Player, const FString& ItemName);
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    TMap<FString, int32> AggregateIngredients(AEmberPlayerCharacter* Player);
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    EItemRarity CalculateCraftingOutcome(const class UCraftingRecipe* Recipe, const TMap<FString, int32>& ChosenMaterials, bool bIsWeapon);
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
-	UAnimMontage* ProcessingAnimation;
-
-	void AddItemToInventory(AEmberPlayerCharacter* Player, const FString& ItemName);
-
-	virtual void BeginPlay() override;
-
+    virtual void BeginPlay() override;
+    void AddItemToInventory(AEmberPlayerCharacter* Player, const FString& ItemName);
 private:
-	UCraftingRecipe* GetRecipeByName(const FString& RecipeName) const;
-
-	TMap<FString, int32> SearchNearChestsIngredients(AEmberPlayerCharacter* Player);
+    bool CanCraftInCurrentStation(const UCraftingRecipe* Recipe) const;
+    TMap<FString, int32> SearchNearChestsIngredients(AEmberPlayerCharacter* Player);
 };

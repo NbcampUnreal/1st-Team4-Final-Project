@@ -1,12 +1,15 @@
 #include "CraftingSystem.h"
-#include "Engine/Engine.h"
+#include "../GameInfo/GameFlag.h"
 #include "CraftingRecipe.h"
-#include "Player/EmberPlayerCharacter.h" 
+#include "Player/EmberPlayerCharacter.h"
+#include "UI/Data/EmberItemData.h"
+#include "Math/UnrealMathUtility.h"
 
 UCraftingSystem::UCraftingSystem()
 {
-    Recipes = TArray<UCraftingRecipe*>();
-    ProcessingAnimation = nullptr; 
+    RecipeManager = nullptr;
+    ProcessingAnimation = nullptr;
+    CurrentStation = EStationType::CraftingTable;
 }
 
 void UCraftingSystem::BeginPlay()
@@ -16,45 +19,77 @@ void UCraftingSystem::BeginPlay()
 
 void UCraftingSystem::StartCrafting(AEmberPlayerCharacter* Player, const FString& ItemName)
 {
-    UCraftingRecipe* SelectedRecipe = GetRecipeByName(ItemName);
-    if (!SelectedRecipe)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("레시피 '%s'를 찾지 못했습니다."), *ItemName);
-        return;
-    }
-
+    if (!RecipeManager) return;
+    UCraftingRecipe* SelectedRecipe = RecipeManager->GetRecipeByName(ItemName);
+    if (!SelectedRecipe) return;
+    if (!CanCraftInCurrentStation(SelectedRecipe)) return;
     TMap<FString, int32> AvailableIngredients = AggregateIngredients(Player);
-
+    const int32 PlayerCraftingLevel = 1;
+    if (!SelectedRecipe->CanCombine(AvailableIngredients, PlayerCraftingLevel)) return;
+    EItemRarity FinalGrade = CalculateCraftingOutcome(SelectedRecipe, AvailableIngredients, true);
     if (ProcessingAnimation)
     {
+        // Player->PlayAnimMontage(ProcessingAnimation);
     }
-
     AddItemToInventory(Player, ItemName);
-    UE_LOG(LogTemp, Log, TEXT("'%s' 제작 완료!"), *ItemName);
+    UE_LOG(LogTemp, Log, TEXT("Crafting finished: %s, Grade: %d"), *ItemName, (int32)FinalGrade);
 }
 
 TMap<FString, int32> UCraftingSystem::AggregateIngredients(AEmberPlayerCharacter* Player)
 {
-    TMap<FString, int32> IngredientsFromInventory;
-    TMap<FString, int32> IngredientsFromChests = SearchNearChestsIngredients(Player);
-
-    for (auto& Pair : IngredientsFromChests)
+    TMap<FString, int32> InventoryIngredients;
+    TMap<FString, int32> ChestIngredients = SearchNearChestsIngredients(Player);
+    for (auto& Pair : ChestIngredients)
     {
-        int32* ExistingQuantity = IngredientsFromInventory.Find(Pair.Key);
-        if (ExistingQuantity)
-        {
-            *ExistingQuantity += Pair.Value;
-        }
+        int32* Existing = InventoryIngredients.Find(Pair.Key);
+        if (Existing)
+            *Existing += Pair.Value;
         else
-        {
-            IngredientsFromInventory.Add(Pair.Key, Pair.Value);
-        }
+            InventoryIngredients.Add(Pair.Key, Pair.Value);
     }
-    return IngredientsFromInventory;
+    return InventoryIngredients;
 }
 
 void UCraftingSystem::AddItemToInventory(AEmberPlayerCharacter* Player, const FString& ItemName)
 {
+    if (!Player) return;
+    /*
+    TSubclassOf<UItemTemplate> ItemTemplateClass = nullptr;
+    UEmberItemData& ItemData = UEmberItemData::Get();
+    if (ItemData.ItemTemplateClasses.Contains(ItemName))
+    {
+        ItemTemplateClass = ItemData.ItemTemplateClasses[ItemName];
+    }
+    if (!ItemTemplateClass) return;
+    EItemRarity ChosenRarity = EItemRarity::Common;
+    int32 NewItemCount = 1;
+    if (Player->InventoryManager)
+    {
+        int32 AddedCount = Player->InventoryManager->TryAddItemByRarity(ItemTemplateClass, ChosenRarity, NewItemCount);
+        if (AddedCount <= 0) return;
+    }
+    */
+    UE_LOG(LogTemp, Log, TEXT("AddItemToInventory: %s added (functionality not implemented)."), *ItemName);
+}
+
+bool UCraftingSystem::CanCraftInCurrentStation(const UCraftingRecipe* Recipe) const
+{
+    if (!Recipe) return false;
+    switch (CurrentStation)
+    {
+    case EStationType::CraftingTable:
+        return Recipe->IsCraftableAtCraftingTable();
+    case EStationType::Furnace:
+        return Recipe->IsCraftableAtFurnace();
+    case EStationType::CookingPot:
+        return Recipe->IsCraftableAtCookingPot();
+    case EStationType::WeaponTable:
+        return Recipe->IsCraftableAtWeaponTable();
+    case EStationType::ClothingTable:
+        return Recipe->IsCraftableAtClothingTable();
+    default:
+        return false;
+    }
 }
 
 TMap<FString, int32> UCraftingSystem::SearchNearChestsIngredients(AEmberPlayerCharacter* Player)
@@ -63,14 +98,91 @@ TMap<FString, int32> UCraftingSystem::SearchNearChestsIngredients(AEmberPlayerCh
     return ChestIngredients;
 }
 
-UCraftingRecipe* UCraftingSystem::GetRecipeByName(const FString& RecipeName) const
+EItemRarity UCraftingSystem::CalculateCraftingOutcome(const UCraftingRecipe* Recipe, const TMap<FString, int32>& ChosenMaterials, bool bIsWeapon)
 {
-    for (UCraftingRecipe* Recipe : Recipes)
+    int32 TotalScore = 0;
+    
+    auto GetWeaponMaterialScore = [](const FString& MaterialName) -> int32
     {
-        if (Recipe && Recipe->ItemName.Equals(RecipeName))
-        {
-            return Recipe;
-        }
+        if (MaterialName == "돌") return 1;
+        else if (MaterialName == "일반 뼈") return 2;
+        else if (MaterialName == "흑요석") return 3;
+        else if (MaterialName == "단단한 뼈") return 4;
+        else if (MaterialName == "철") return 5;
+        else if (MaterialName == "희귀한 뼈") return 6;
+        return 0;
+    };
+    
+    auto GetClothingMaterialScore = [](const FString& MaterialName) -> int32
+    {
+        if (MaterialName == "찢어진 가죽") return 1;
+        else if (MaterialName == "나무") return 2;
+        else if (MaterialName == "온전한 가죽") return 3;
+        else if (MaterialName == "흑요석") return 4;
+        else if (MaterialName == "질긴 가죽") return 5;
+        else if (MaterialName == "철") return 6;
+        return 0;
+    };
+    
+    for (const TPair<FString, int32>& Pair : ChosenMaterials)
+    {
+        int32 MaterialScore = bIsWeapon ? GetWeaponMaterialScore(Pair.Key) : GetClothingMaterialScore(Pair.Key);
+        TotalScore += MaterialScore * Pair.Value;
     }
-    return nullptr;
+    
+    TArray<int32> PossibleScores = (bIsWeapon) ? TArray<int32>{1, 2, 3, 4, 5, 6} : TArray<int32>{1, 2, 3, 4, 5, 6};
+    
+    int32 BaseMin = PossibleScores[0];
+    int32 BaseMax = PossibleScores[0];
+    for (int32 Score : PossibleScores)
+    {
+        BaseMin = FMath::Min(BaseMin, Score);
+        BaseMax = FMath::Max(BaseMax, Score);
+    }
+    
+    int32 MinScore = Recipe->MainMaterialRequired * BaseMin;
+    int32 MaxScore = Recipe->MainMaterialRequired * BaseMax;
+    
+    float NormalizedScore = ((float)(TotalScore - MinScore) / (MaxScore - MinScore)) * 100.0f;
+    
+    if (NormalizedScore < 20.0f)
+    {
+        return EItemRarity::Poor;
+    }
+    else if (NormalizedScore < 40.0f)
+    {
+        float randVal = FMath::FRand();
+        return (randVal < 0.7f) ? EItemRarity::Poor : EItemRarity::Common;
+    }
+    else if (NormalizedScore < 60.0f)
+    {
+        float randVal = FMath::FRand();
+        if (randVal < 0.2f)
+            return EItemRarity::Poor;
+        else if (randVal < 0.8f)
+            return EItemRarity::Common;
+        else
+            return EItemRarity::Uncommon;
+    }
+    else if (NormalizedScore < 80.0f)
+    {
+        float randVal = FMath::FRand();
+        if (randVal < 0.25f)
+            return EItemRarity::Common;
+        else if (randVal < 0.85f)
+            return EItemRarity::Uncommon;
+        else
+            return EItemRarity::Rare;
+    }
+    else
+    {
+        float randVal = FMath::FRand();
+        if (randVal < 0.25f)
+            return EItemRarity::Uncommon;
+        else if (randVal < 0.88f)
+            return EItemRarity::Rare;
+        else
+            return EItemRarity::Legendary;
+    }
 }
+
