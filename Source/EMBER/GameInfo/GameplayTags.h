@@ -22,7 +22,7 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Widget_Inventory);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Widget_CheatManager); /* Temporary */
 
-	// ItemStat
-	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemStat_BaseDamage);
-	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemStat_Defense);
+	// ItemAttribute
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemAttribute_BaseDamage);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemAttribute_Defense);
 }

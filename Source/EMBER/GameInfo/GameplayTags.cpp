@@ -20,7 +20,7 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Widget_Inventory,						"Ability.Widget.Inventory");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Widget_CheatManager,						"Ability.Widget.CheatManager"); /* Temporary */
 
-	// ItemStat
-	UE_DEFINE_GAMEPLAY_TAG(ItemStat_BaseDamage,								"ItemStat.BaseDamage");
-	UE_DEFINE_GAMEPLAY_TAG(ItemStat_Defense,								"ItemStat.Defense");
+	// ItemAttribute
+	UE_DEFINE_GAMEPLAY_TAG(ItemAttribute_BaseDamage,						"ItemAttribute.BaseDamage");
+	UE_DEFINE_GAMEPLAY_TAG(ItemAttribute_Defense,							"ItemAttribute.Defense");
 }
