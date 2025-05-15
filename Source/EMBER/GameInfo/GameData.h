@@ -60,9 +60,9 @@ struct FEquipment
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FSound2D EquipSound;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TObjectPtr<UAnimMontage> EquipMontage;
+    TObjectPtr<UAnimMontage> HolsterMontage;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TObjectPtr<UAnimMontage> UnEquipMontage;
+    TObjectPtr<UAnimMontage> DrawMontage;
 };
 
 USTRUCT(BlueprintType)
@@ -93,6 +93,8 @@ struct FAttackData
     FSound2D AttackSound;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TArray<TObjectPtr<UAnimMontage>> Montages;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 MontageIndex;
 };
 
 USTRUCT(BlueprintType)

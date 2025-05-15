@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
+#include "EMBER.h"
 #include "Components/ActorComponent.h"
 #include "EquipmentManagerComponent.generated.h"
 
@@ -23,10 +23,8 @@ protected:
 	
 public:
 	void AddEquipment(EWeaponSlotType WeaponSlotType, TSubclassOf<UItemTemplate> ItemTemplateClass);
-
-public:
-	UAnimMontage* GetAttackAnimMontage();
-	
+	UFUNCTION()
+	FAttackData GetAttackInfo() const;
 private:
 	UFUNCTION()
 	void OnRep_ItemTemplateID(int32 PrevItemTemplateID);
