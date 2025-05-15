@@ -1,6 +1,8 @@
 #include "AI/PassiveAI.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig.h"
+#include "DrawDebugHelpers.h"
 
 APassiveAI::APassiveAI()
 {
@@ -26,12 +28,23 @@ APassiveAI::APassiveAI()
 	ClosestActor = nullptr;
 	BlackboardComp = nullptr;
 	EnemyActors = TArray<AActor*>();
+	PrimaryActorTick.bCanEverTick = true;
 }
+
+void APassiveAI::Tick(float DeltaTime)
+{
+		FVector AIPosition = GetActorLocation();
+		float SightRadius = 2000.f;
+		FColor CircleColor = FColor::Green; // ✅ 초록색 원
+
+		DrawDebugSphere(GetWorld(), AIPosition, SightRadius, 32, CircleColor, false, -1.0f, 0); // ✅ -1.0f로 계속 유지
+}
+
 
 void APassiveAI::BeginPlay()
 {
 	Super::BeginPlay();
-	RunPerception->OnPerceptionUpdated.AddDynamic(this, &APassiveAI::OnRunPerceptionUpdate);
+	RunPerception->OnTargetPerceptionUpdated.AddDynamic(this, &APassiveAI::OnRunPerceptionUpdate);
 }
 
 void APassiveAI::UpdateClosestActorTimer()
@@ -47,6 +60,7 @@ void APassiveAI::UpdateClosestActorTimer()
 
 	for (AActor* Enemy : EnemyActors)
 	{
+		if (!Enemy->Tags.Contains(FName("Player"))) continue;
 		float Distance = FVector::Dist(Enemy->GetActorLocation(), this->GetActorLocation());
 
 		if (Distance < ClosestDistance)
@@ -64,21 +78,12 @@ void APassiveAI::UpdateClosestActorTimer()
 	}
 }
 
-void APassiveAI::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
+void APassiveAI::OnTargetPerceptionUpdate(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
-	Super::OnPerceptionUpdated(UpdatedActors);
-	EnemyActors = UpdatedActors;
-	if (UpdatedActors.Num() == 0)
+	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
+	if (Stimulus.WasSuccessfullySensed()&&UpdatedActor->Tags.Contains(FName("Player")))
 	{
-		bIsDetect = false;
-		ClosestActor = nullptr;
-		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), nullptr);
-		BlackboardComp->SetValueAsBool(TEXT("IsDetected"), false);
-		return;
-	}
-	
-	if (UpdatedActors[UpdatedActors.Num() - 1]->Tags.Contains(FName("Player"))) //플레이어인지 확인
-	{
+		UE_LOG(LogTemp, Warning, TEXT("Player Detect"));
 		AAIController* AIController = Cast<AAIController>(GetController());
 		if (!AIController) return;
 
@@ -89,12 +94,28 @@ void APassiveAI::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 		CheckDetection();
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), ClosestActor);
 		BlackboardComp->SetValueAsBool(TEXT("IsDetected"), true);
+		EnemyActors.Add(UpdatedActor);
+	}
+	else if (Stimulus.IsExpired())
+	{
+			EnemyActors.Remove(UpdatedActor);
+		if (EnemyActors.Num() == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Zero Actor"));
+			bIsDetect = false;
+			CheckDetection();
+			ClosestActor = nullptr;
+			BlackboardComp->SetValueAsObject(TEXT("TargetActor"), nullptr);
+			BlackboardComp->SetValueAsBool(TEXT("IsDetected"), false);
+			return;
+		}
 	}
 }
 
-void APassiveAI::OnRunPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
+void APassiveAI::OnRunPerceptionUpdate(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
-	Super::OnPerceptionUpdated(UpdatedActors);
+	UE_LOG(LogTemp, Warning, TEXT("OnRunPerceptionUpdate"));
+
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (!AIController) return;
 
@@ -110,7 +131,8 @@ void APassiveAI::CheckDetection()
 	{
 		if (!GetWorld()->GetTimerManager().IsTimerActive(UpdateDistanceTimer))
 		{
-			GetWorld()->GetTimerManager().SetTimer(UpdateDistanceTimer, this, &APassiveAI::UpdateClosestActorTimer, 1.0f, true);
+			GetWorld()->GetTimerManager().SetTimer(UpdateDistanceTimer, this, &APassiveAI::UpdateClosestActorTimer,
+			                                       1.0f, true);
 			UE_LOG(LogTemp, Warning, TEXT("Timer Started"));
 		}
 	}

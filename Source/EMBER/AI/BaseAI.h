@@ -41,7 +41,7 @@ public:
 
 	// AI Perception
 	UFUNCTION()
-	virtual void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+	virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus);
 
 	// AI Patrol
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Patrol")

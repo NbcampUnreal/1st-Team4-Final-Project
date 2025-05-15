@@ -13,7 +13,9 @@ void ADefensiveAI::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ADefensiveAI::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
+void ADefensiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
-	Super::OnPerceptionUpdated(UpdatedActors);
+	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
 }
+
+

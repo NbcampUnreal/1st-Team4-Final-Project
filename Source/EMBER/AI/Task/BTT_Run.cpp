@@ -28,7 +28,7 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 	FVector AI_Location = ControlledAnimal->GetActorLocation();
 
 	FVector Direction = (AI_Location - TargetLocation).GetSafeNormal();//방향벡터만 남기고 1로 설정
-	FVector NewLocation = AI_Location + Direction * 2000.0f;
+	FVector NewLocation = AI_Location + Direction * 500.0f;
 	Controller->MoveToLocation(NewLocation);
 
 	return EBTNodeResult::Succeeded;

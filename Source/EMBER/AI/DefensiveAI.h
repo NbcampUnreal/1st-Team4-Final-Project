@@ -20,5 +20,5 @@ public:
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	// UAISenseConfig_Sight* SightConfig;
 
-	virtual void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors) override;
+	virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
 };
