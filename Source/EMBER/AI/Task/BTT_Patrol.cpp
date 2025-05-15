@@ -33,22 +33,24 @@ EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	if (ControlledAnimal->PatrolPoint.Num() == 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("empty PatrolPoint"));
+		BlackboardComp->SetValueAsBool("IsRest",true);
 		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Failed);
 	}
 
 	//ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed = ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed / 2;
+	if (ControlledAnimal->PatrolPoint.Num() > 0)
+	{
+		int32 CurrentIndex = BlackboardComp->GetValueAsInt("PatrolIndex"); //현재 위치인덱스
+		CurrentIndex = (CurrentIndex + 1) % ControlledAnimal->PatrolPoint.Num(); //다음이동인덱스 업데이트
 
-	int32 CurrentIndex = BlackboardComp->GetValueAsInt("PatrolIndex"); //현재 위치인덱스
-	CurrentIndex = (CurrentIndex + 1) % ControlledAnimal->PatrolPoint.Num(); //다음이동인덱스 업데이트
+		ATargetPoint* NextPoint = ControlledAnimal->PatrolPoint[CurrentIndex]; //이동할액터위치 설정
+		BlackboardComp->SetValueAsInt("PatrolIndex", CurrentIndex); //블랙보드에 인덱스 업데이트
+		BaseAIController->MoveToActor(NextPoint, 100.0f);
+		UE_LOG(LogTemp, Warning, TEXT("Patrol Point: %s"), *NextPoint->GetName());
 
-	BlackboardComp->SetValueAsInt("PatrolIndex", CurrentIndex); //블랙보드에 인덱스 업데이트
-	ATargetPoint* NextPoint = ControlledAnimal->PatrolPoint[CurrentIndex]; //이동할액터위치 설정
-	BaseAIController->MoveToActor(NextPoint, 100.0f);
-	UE_LOG(LogTemp, Warning, TEXT("Patrol Point: %s"), *NextPoint->GetName());
-	
-	BaseAIController->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_Patrol::OnMoveCompleted);
-	BaseAIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_Patrol::OnMoveCompleted);
-	
+		BaseAIController->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_Patrol::OnMoveCompleted);
+		BaseAIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_Patrol::OnMoveCompleted);
+	}
 	return EBTNodeResult::InProgress;
 }
 

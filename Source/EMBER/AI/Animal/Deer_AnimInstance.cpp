@@ -29,7 +29,10 @@ void UDeer_AnimInstance::Multicast_OnNotifyIdleFinish_Implementation()
 {
 	APawn* OwningActor = Cast<APawn>(GetOwningActor());
 	ABaseAIController* Controller = Cast<ABaseAIController>(OwningActor->GetController());
-	Controller->GetBlackboardComponent()->SetValueAsBool("IsRest", false);
+	if (Controller)
+	{
+		Controller->GetBlackboardComponent()->SetValueAsBool("IsRest", false);
+	}
 	
 	bIsIdle = false;
 	bIsLook = true;
