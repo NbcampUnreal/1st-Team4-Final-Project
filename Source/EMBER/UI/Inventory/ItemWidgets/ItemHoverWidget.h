@@ -3,7 +3,11 @@
 #pragma once
 
 #include "UI/Inventory/Widgets/HoverWidget.h"
+#include "ItemInstance.h"
+
 #include "ItemHoverWidget.generated.h"
+
+class UItemHoverEntryWidget;
 
 UCLASS()
 class EMBER_API UItemHoverWidget : public UHoverWidget
@@ -12,4 +16,14 @@ class EMBER_API UItemHoverWidget : public UHoverWidget
 
 public:
 	UItemHoverWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+public:
+	void RefreshUI(UItemInstance* HoveredItemInstance);
+
+protected:
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UItemHoverEntryWidget> HoverWidget_Left;
+
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UItemHoverEntryWidget> HoverWidget_Right;
 };
