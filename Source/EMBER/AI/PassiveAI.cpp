@@ -3,6 +3,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig.h"
 #include "DrawDebugHelpers.h"
+#include "BehaviorTree/BehaviorTree.h"
 
 APassiveAI::APassiveAI()
 {
@@ -33,13 +34,17 @@ APassiveAI::APassiveAI()
 
 void APassiveAI::Tick(float DeltaTime)
 {
-		FVector AIPosition = GetActorLocation();
-		float SightRadius = 2000.f;
-		FColor CircleColor = FColor::Green; // ✅ 초록색 원
+	FVector AIPosition = GetActorLocation();
+	float SightRadius = 2000.f;
+	FColor CircleColor = FColor::Green; // ✅ 초록색 원
 
-		DrawDebugSphere(GetWorld(), AIPosition, SightRadius, 32, CircleColor, false, -1.0f, 0); // ✅ -1.0f로 계속 유지
+	DrawDebugSphere(GetWorld(), AIPosition, SightRadius, 32, CircleColor, false, -1.0f, 0); // ✅ -1.0f로 계속 유지
+
+	float RunSightRadius = 1000.f;
+	FColor RunCircleColor = FColor::Red; // ✅ 초록색 원
+
+	DrawDebugSphere(GetWorld(), AIPosition, RunSightRadius, 32, RunCircleColor, false, -1.0f, 0); // ✅ -1.0f로 계속 유지
 }
-
 
 void APassiveAI::BeginPlay()
 {
@@ -73,32 +78,43 @@ void APassiveAI::UpdateClosestActorTimer()
 	ClosestActor = NewClosestActor;
 	if (ClosestActor)
 	{
+		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), ClosestActor);
 		UE_LOG(LogTemp, Warning, TEXT("Closest Actor Updated: %s at distance %f"), *ClosestActor->GetName(),
 		       ClosestDistance);
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Null Character"));
+	}
 }
 
-void APassiveAI::OnTargetPerceptionUpdate(AActor* UpdatedActor, FAIStimulus Stimulus)
+void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
 	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
-	if (Stimulus.WasSuccessfullySensed()&&UpdatedActor->Tags.Contains(FName("Player")))
+	
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (!AIController) return;
+	BlackboardComp = AIController->GetBlackboardComponent();
+	if (!BlackboardComp) return;
+	ABaseAIController* BaseAIController = Cast<ABaseAIController>(AIController);
+	UBehaviorTreeComponent* BehaviorComp = Cast<UBehaviorTreeComponent>(
+		BaseAIController->GetComponentByClass(UBehaviorTreeComponent::StaticClass()));
+
+	if (Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player Detect"));
-		AAIController* AIController = Cast<AAIController>(GetController());
-		if (!AIController) return;
-
-		BlackboardComp = AIController->GetBlackboardComponent();
-		if (!BlackboardComp) return;
-
+		
 		bIsDetect = true;
 		CheckDetection();
-		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), ClosestActor);
 		BlackboardComp->SetValueAsBool(TEXT("IsDetected"), true);
+		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), ClosestActor);
+
 		EnemyActors.Add(UpdatedActor);
+		BehaviorComp->RestartTree();
 	}
-	else if (Stimulus.IsExpired())
+	else if (!Stimulus.WasSuccessfullySensed())
 	{
-			EnemyActors.Remove(UpdatedActor);
+		EnemyActors.Remove(UpdatedActor);
 		if (EnemyActors.Num() == 0)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Zero Actor"));
@@ -107,22 +123,35 @@ void APassiveAI::OnTargetPerceptionUpdate(AActor* UpdatedActor, FAIStimulus Stim
 			ClosestActor = nullptr;
 			BlackboardComp->SetValueAsObject(TEXT("TargetActor"), nullptr);
 			BlackboardComp->SetValueAsBool(TEXT("IsDetected"), false);
-			return;
+			BehaviorComp->RestartTree();
 		}
 	}
 }
 
 void APassiveAI::OnRunPerceptionUpdate(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnRunPerceptionUpdate"));
 
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (!AIController) return;
-
 	BlackboardComp = AIController->GetBlackboardComponent();
 	if (!BlackboardComp) return;
+	ABaseAIController* BaseAIController = Cast<ABaseAIController>(AIController);
+	UBehaviorTreeComponent* BehaviorComp = Cast<UBehaviorTreeComponent>(
+		BaseAIController->GetComponentByClass(UBehaviorTreeComponent::StaticClass()));
 
-	BlackboardComp->SetValueAsBool(TEXT("IsNear"), true);
+	TArray<AActor*> NearEnemies;
+
+	if (Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
+	{
+		NearEnemies.Add(UpdatedActor);
+		BlackboardComp->SetValueAsBool(TEXT("IsNear"), true);
+		BehaviorComp->RestartTree();
+	}
+	else if (!Stimulus.WasSuccessfullySensed()&&NearEnemies.Num() == 0)
+	{
+		BlackboardComp->SetValueAsBool(TEXT("IsNear"), false);
+		//BehaviorComp->RestartTree();
+	}
 }
 
 void APassiveAI::CheckDetection()

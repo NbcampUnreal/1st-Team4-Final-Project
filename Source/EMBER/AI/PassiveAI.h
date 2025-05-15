@@ -19,7 +19,7 @@ public:
 	//근접한 적 업데이트
 	void UpdateClosestActorTimer();
 	//GuardState Perception 사정거리
-	virtual void OnTargetPerceptionUpdate(AActor* UpdatedActor, FAIStimulus Stimulus);
+	virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
 
 	void CheckDetection();
 	//RunPerception 생성

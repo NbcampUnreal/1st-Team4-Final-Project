@@ -12,18 +12,19 @@ UBTT_Patrol::UBTT_Patrol()
 EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	OwnerCompRef = &OwnerComp;
-	AAIController* AIController = OwnerComp.GetAIOwner(); //컨트롤러 참조
-	if (!AIController)
+	ABaseAIController* BaseAIController = Cast<ABaseAIController>(OwnerComp.GetAIOwner());
+	if (!BaseAIController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Miss Controller"));
+		UE_LOG(LogTemp, Error, TEXT("BaseAIController is nullptr!"));
+		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Failed);
 		return EBTNodeResult::Failed;
 	}
-	
+
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent(); //블랙보드 참조
 	AllBlack = BlackboardComp;
-	ABaseAI* ControlledAnimal = Cast<ABaseAI>(AIController->GetPawn()); //사용되는 액터 참조
+	ABaseAI* ControlledAnimal = Cast<ABaseAI>(BaseAIController->GetPawn()); //사용되는 액터 참조
 
-	
+
 	if (ControlledAnimal == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Miss Animal"));
@@ -35,22 +36,19 @@ EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Failed);
 	}
 
-	ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed =  ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed/2;//속도조절
-	
+	//ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed = ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed / 2;
+
 	int32 CurrentIndex = BlackboardComp->GetValueAsInt("PatrolIndex"); //현재 위치인덱스
 	CurrentIndex = (CurrentIndex + 1) % ControlledAnimal->PatrolPoint.Num(); //다음이동인덱스 업데이트
 
 	BlackboardComp->SetValueAsInt("PatrolIndex", CurrentIndex); //블랙보드에 인덱스 업데이트
 	ATargetPoint* NextPoint = ControlledAnimal->PatrolPoint[CurrentIndex]; //이동할액터위치 설정
-
-	AIController->MoveToActor(NextPoint,100.0f);
-	if (NextPoint != nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Moving to: %s"), *NextPoint->GetName());
-	}
-
-
-	AIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_Patrol::OnMoveCompleted);
+	BaseAIController->MoveToActor(NextPoint, 100.0f);
+	UE_LOG(LogTemp, Warning, TEXT("Patrol Point: %s"), *NextPoint->GetName());
+	
+	BaseAIController->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_Patrol::OnMoveCompleted);
+	BaseAIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_Patrol::OnMoveCompleted);
+	
 	return EBTNodeResult::InProgress;
 }
 

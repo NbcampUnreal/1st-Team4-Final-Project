@@ -1,11 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "BTT_Run.h"
+﻿#include "BTT_Run.h"
 
 #include "BaseAI.h"
 #include "BaseAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UBTT_Run::UBTT_Run()
 {
@@ -14,22 +12,34 @@ UBTT_Run::UBTT_Run()
 
 EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	OwnerCompRef = &OwnerComp;
 	ABaseAIController* Controller = Cast<ABaseAIController>(OwnerComp.GetOwner());
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
+	ControlledAnimal = Cast<ABaseAI>(Controller->GetPawn());
 
 	AActor* Target = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
-	if (Target==nullptr)
+	if (Target == nullptr)
 	{
+		UE_LOG(LogTemp, Error, TEXT("RunTarget is null"));
 		return EBTNodeResult::Failed;
 	}
-	ABaseAI* ControlledAnimal = Cast<ABaseAI>(Controller->GetPawn());
-	
+
+	ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed = 700.0f; //속도 증가
 	FVector TargetLocation = Target->GetActorLocation();
 	FVector AI_Location = ControlledAnimal->GetActorLocation();
+	FVector Direction = (AI_Location - TargetLocation).GetSafeNormal(); //방향벡터만 남기고 1로 설정
+	FVector NewLocation = AI_Location + Direction * 1500.0f;
+	
+	Controller->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_Run::OnMoveCompleted);
+	Controller->MoveToLocation(NewLocation, 50.f);
+	Controller->ReceiveMoveCompleted.AddDynamic(this, &UBTT_Run::OnMoveCompleted);
 
-	FVector Direction = (AI_Location - TargetLocation).GetSafeNormal();//방향벡터만 남기고 1로 설정
-	FVector NewLocation = AI_Location + Direction * 500.0f;
-	Controller->MoveToLocation(NewLocation);
+	return EBTNodeResult::InProgress;
+}
 
-	return EBTNodeResult::Succeeded;
+void UBTT_Run::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
+{
+	UE_LOG(LogTemp, Warning, TEXT("On Run Completed"));
+	ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+	FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 }
