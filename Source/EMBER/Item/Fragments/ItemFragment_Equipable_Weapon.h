@@ -22,6 +22,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	EWeaponType WeaponType = EWeaponType::Count;
 
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FRarityStatRangeSet> RarityStatRangeSets;
+	
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	FAttackData AttackInfo;

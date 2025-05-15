@@ -19,4 +19,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Attack_3,								"Ability.Attack.3");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Widget_Inventory,						"Ability.Widget.Inventory");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Widget_CheatManager,						"Ability.Widget.CheatManager"); /* Temporary */
+
+	// ItemStat
+	UE_DEFINE_GAMEPLAY_TAG(ItemStat_BaseDamage,								"ItemStat.BaseDamage");
+	UE_DEFINE_GAMEPLAY_TAG(ItemStat_Defense,								"ItemStat.Defense");
 }
