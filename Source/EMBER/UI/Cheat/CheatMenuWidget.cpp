@@ -22,7 +22,6 @@ void UCheatMenuWidget::NativeOnInitialized()
 	Button_Exit->OnClicked.AddUniqueDynamic(this, &ThisClass::OnExitButtonClicked);
 }
 
-PRAGMA_DISABLE_OPTIMIZATION
 void UCheatMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -60,7 +59,6 @@ void UCheatMenuWidget::NativeConstruct()
 		}
 	}
 }
-PRAGMA_ENABLE_OPTIMIZATION
 
 void UCheatMenuWidget::OnExitButtonClicked()
 {

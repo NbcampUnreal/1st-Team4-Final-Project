@@ -3,8 +3,11 @@
 #pragma once
 
 #include "GameFlag.h"
+#include "System/GameplayTagStackContainer.h"
 #include "UObject/Object.h"
 #include "ItemInstance.generated.h"
+
+class UItemFragment;
 
 /**
  * 
@@ -37,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	EItemRarity GetItemRarity() const { return ItemRarity; }
 
+	UFUNCTION()
+	const FGameplayTagStackContainer& GetAttributeContainer() const { return AttributeContainer; }
+	
 public:
 	UFUNCTION(BlueprintCallable, BlueprintPure="false", meta=(DeterminesOutputType="FragmentClass"))
 	const UItemFragment* FindFragmentByClass(TSubclassOf<UItemFragment> FragmentClass) const;
@@ -52,5 +58,8 @@ private:
 	int32 ItemTemplateID = INDEX_NONE;
 
 	UPROPERTY(Replicated)
-	EItemRarity ItemRarity = EItemRarity::Poor;
+	EItemRarity ItemRarity = EItemRarity::Common;
+
+	UPROPERTY(Replicated)
+	FGameplayTagStackContainer AttributeContainer;
 };

@@ -17,11 +17,19 @@ class EMBER_API UItemFragment_Equipable_Weapon : public UItemFragment_Equipable_
 
 public:
 	UItemFragment_Equipable_Weapon(const FObjectInitializer& FObjectInitializer = FObjectInitializer::Get());
-	
+
+public:
+	//~UItemFragment Override
+	virtual void OnInstanceCreated(UItemInstance* ItemInstance) const;
+	//~End of UItemFragment Override
+
 public:
 	UPROPERTY(EditDefaultsOnly)
 	EWeaponType WeaponType = EWeaponType::Count;
 
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FRarityStatRangeSet> RarityStatRangeSets;
+	
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	FAttackData AttackInfo;

@@ -51,10 +51,10 @@ enum class EEffectType : uint8
 UENUM(BlueprintType)
 enum class EItemRarity : uint8
 {
-	Poor,
 	Common,
 	Uncommon,
 	Rare,
+	Unique,
 	Legendary,
 
 	Count	UMETA(Hidden)
