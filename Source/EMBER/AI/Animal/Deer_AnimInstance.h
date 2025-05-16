@@ -12,6 +12,10 @@ class EMBER_API UDeer_AnimInstance : public UBaseAIAnimInstance
 	UDeer_AnimInstance();
 
 public:
+	void PlayTurnMontage(bool direction);
+
+	UFUNCTION()
+	void OnTurnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	UFUNCTION(BlueprintCallable)
 	void AnimNotify_IdleFinish();
 	UFUNCTION(Server, Reliable)
@@ -39,4 +43,18 @@ public:
 	bool bIsEat;
 	UPROPERTY(BlueprintReadWrite, Category = "Animation")
 	bool bIsLook;
+
+
+	UPROPERTY(BlueprintReadWrite, Category = "Animation")
+	UAnimMontage* LeftTurnMontage;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Animation")
+	UAnimMontage* RightTurnMontage;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Animation")
+	UAnimMontage* AroundMontage;
+	
+	void StopMontage();
+	
+	FTimerHandle TurnMontageTimer;
 };
