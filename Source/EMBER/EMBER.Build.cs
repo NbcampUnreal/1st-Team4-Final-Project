@@ -27,7 +27,7 @@ public class EMBER : ModuleRules
 						"GameplayAbilities",
 						"ModularGameplay",
 						"CommonUI",
-						"CommonInput"
+						"CommonInput",						
 					});
         PublicIncludePaths.AddRange(
                     new string[]
@@ -38,7 +38,9 @@ public class EMBER : ModuleRules
 						System.IO.Path.Combine(ModuleDirectory, "AI"),
 						System.IO.Path.Combine(ModuleDirectory, "Component"),
 						System.IO.Path.Combine(ModuleDirectory, "Player"),
-                        System.IO.Path.Combine(ModuleDirectory, "Item")                        
+                        System.IO.Path.Combine(ModuleDirectory, "Item"),
+                        System.IO.Path.Combine(ModuleDirectory, "System"),
+                        System.IO.Path.Combine(ModuleDirectory, "System/Skill")
                     }
                 );
         PrivateDependencyModuleNames.AddRange(new string[] {  });

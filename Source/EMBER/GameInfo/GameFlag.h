@@ -2,6 +2,16 @@
 #include "CoreMinimal.h"
 
 UENUM()
+enum class ESkillCategory : uint8
+{
+	Survival UMETA(DisplayName = "Survival"),
+	Gather UMETA(DisplayName = "Gather"),
+	Slaughter UMETA(DisplayName = "Slaughter"),
+	Crafting UMETA(DisplayName = "Crafting"),
+	Cook UMETA(DisplayName = "Cook")
+};
+
+UENUM()
 enum class ESpeedType : uint8
 {
 	Walk UMETA(DisplayName = "Walk"),

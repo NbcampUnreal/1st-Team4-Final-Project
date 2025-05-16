@@ -5,8 +5,42 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFlag.h"
 #include "Animation/AnimMontage.h"
+#include "../System/Skill/SkillBase.h"
+#include "Engine/Texture2D.h"
 #include "GAmeData.generated.h"
 
+USTRUCT(BlueprintType)
+struct FLineColor
+{
+    GENERATED_BODY()
+};
+USTRUCT(BlueprintType)
+struct FSkillDetails
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UTexture2D Icon;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FText Name;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString AtName;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FText Description;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    ESkillCategory Category;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 StageIndex;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 CountAmount;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<FText> RequiredSkill;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<FText> UnlockSkill;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool Locked;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool Purchased;
+};
 USTRUCT(BlueprintType)
 struct FEffectData
 {
