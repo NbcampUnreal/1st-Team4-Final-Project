@@ -66,3 +66,17 @@ void UCheatEntryWidget::OnButtonClicked()
 			break;
 	}
 }
+
+void UCheatEntryWidget::OnButtonRightClicked()
+{
+	APawn* PlayerPawn = GetOwningPlayerPawn();
+	if (PlayerPawn == nullptr)
+		return;
+
+	UInventoryManagerComponent* InventoryManger = PlayerPawn->FindComponentByClass<UInventoryManagerComponent>();
+	if (InventoryManger == nullptr)
+		return;
+
+	EItemRarity RandomItemRarity = (EItemRarity)FMath::RandRange(0, (int32)EItemRarity::Count - 1);
+	InventoryManger->TryAddItemByRarity(ItemTemplateClass, RandomItemRarity, 1);
+}
