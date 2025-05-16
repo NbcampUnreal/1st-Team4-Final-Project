@@ -80,7 +80,6 @@ public:
 protected:
 	void AddStatTagStack(UItemInstance* ItemInstance, const TArray<FRarityStatRangeSet>& RarityStatRangeSets) const;
 
-	
 public:
 	EEquipmentType EquipmentType = EEquipmentType::Count;
 };

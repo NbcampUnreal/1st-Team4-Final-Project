@@ -1,6 +1,5 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "ItemInstance.h"
 
 #include "GameplayTagContainer.h"
@@ -40,7 +39,7 @@ void UItemInstance::Init(int32 InItemTemplateID, EItemRarity InItemRarity)
 
 void UItemInstance::AddOrRemoveStatTagStack(FGameplayTag StatTag, int32 StackCount)
 {
-	
+	AttributeContainer.AddOrRemoveStack(StatTag, StackCount);
 }
 
 const UItemFragment* UItemInstance::FindFragmentByClass(TSubclassOf<UItemFragment> FragmentClass) const
