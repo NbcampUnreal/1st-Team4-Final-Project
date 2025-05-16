@@ -8,6 +8,13 @@ UItemFragment_Equipable_Weapon::UItemFragment_Equipable_Weapon(const FObjectInit
 	EquipmentType = EEquipmentType::Weapon;
 }
 
+void UItemFragment_Equipable_Weapon::OnInstanceCreated(UItemInstance* ItemInstance) const
+{
+	Super::OnInstanceCreated(ItemInstance);
+	
+	AddStatTagStack(ItemInstance, RarityStatRangeSets);
+}
+
 void UItemFragment_Equipable_Weapon::IncrementMontageIndex()
 {
 	if (AttackInfo.Montages.Num() > 0)
