@@ -91,7 +91,7 @@ void APassiveAI::UpdateClosestActorTimer()
 void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
 	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
-	
+
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (!AIController) return;
 	BlackboardComp = AIController->GetBlackboardComponent();
@@ -103,13 +103,13 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 	if (Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player Detect"));
-		
+
+		EnemyActors.Add(UpdatedActor);
 		bIsDetect = true;
 		CheckDetection();
 		BlackboardComp->SetValueAsBool(TEXT("IsDetected"), true);
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), ClosestActor);
 
-		EnemyActors.Add(UpdatedActor);
 		BehaviorComp->RestartTree();
 	}
 	else if (!Stimulus.WasSuccessfullySensed())
@@ -130,7 +130,6 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 
 void APassiveAI::OnRunPerceptionUpdate(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
-
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (!AIController) return;
 	BlackboardComp = AIController->GetBlackboardComponent();
@@ -145,12 +144,15 @@ void APassiveAI::OnRunPerceptionUpdate(AActor* UpdatedActor, FAIStimulus Stimulu
 	{
 		NearEnemies.Add(UpdatedActor);
 		BlackboardComp->SetValueAsBool(TEXT("IsNear"), true);
-		BehaviorComp->RestartTree();
+
+		if (UAnimInstance* AnimInstance = this->GetMesh()->GetAnimInstance())
+		{
+			AnimInstance->StopAllMontages(0.1f); // ✅ 블렌드 아웃 후 모든 몽타주 중지
+		}
 	}
-	else if (!Stimulus.WasSuccessfullySensed()&&NearEnemies.Num() == 0)
+	else if (!Stimulus.WasSuccessfullySensed() && NearEnemies.Num() == 0)
 	{
 		BlackboardComp->SetValueAsBool(TEXT("IsNear"), false);
-		//BehaviorComp->RestartTree();
 	}
 }
 

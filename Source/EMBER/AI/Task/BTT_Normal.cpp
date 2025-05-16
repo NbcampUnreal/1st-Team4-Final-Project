@@ -30,5 +30,5 @@ EBTNodeResult::Type UBTT_Normal::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 		}
 	}
 
-	return EBTNodeResult::Succeeded;
+	return EBTNodeResult::InProgress;
 }

@@ -1,6 +1,9 @@
 ﻿#include "BTT_Guard.h"
 #include "BaseAIController.h"
 #include "BaseAI.h"
+#include "BaseAIAnimInstance.h"
+#include "PassiveAI.h"
+#include "Animal/Deer_AnimInstance.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -12,7 +15,7 @@ UBTT_Guard::UBTT_Guard()
 
 EBTNodeResult::Type UBTT_Guard::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	ABaseAIController* Controller = Cast<ABaseAIController>( OwnerComp.GetAIOwner());
+	ABaseAIController* Controller = Cast<ABaseAIController>(OwnerComp.GetAIOwner());
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	ABaseAI* ControlledAnimal = Cast<ABaseAI>(Controller->GetPawn());
 
@@ -26,8 +29,17 @@ EBTNodeResult::Type UBTT_Guard::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 	}
 	FVector TargetLocation = FVector(Target->GetActorLocation());
 	FVector MyLocation = ControlledAnimal->GetActorLocation();
-	FRotator LookRotaion = (TargetLocation - MyLocation).Rotation();
-	ControlledAnimal->SetActorRotation(LookRotaion); //대상을 향해서 회전
+	
+	FVector ForwardVector = ControlledAnimal->GetActorForwardVector();
+	FVector ToTarget = (TargetLocation - MyLocation).GetSafeNormal();
 
-	return EBTNodeResult::Succeeded;
+	FVector Cross = FVector::CrossProduct(ForwardVector, ToTarget);
+	bool bDirection = (Cross.Z < 0);
+
+	if (UDeer_AnimInstance* AnimInstance = Cast<UDeer_AnimInstance>(ControlledAnimal->GetMesh()->GetAnimInstance()))
+	{
+		AnimInstance->PlayTurnMontage(bDirection);
+	}
+
+	return EBTNodeResult::InProgress;
 }
