@@ -5,7 +5,6 @@
 #include "Blueprint/UserWidget.h"
 #include "ItemHoverEntryWidget.generated.h"
 
-class UVerticalBox;
 class UImage;
 class UTextBlock;
 class UHorizontalBox;
@@ -20,6 +19,9 @@ class EMBER_API UItemHoverEntryWidget : public UUserWidget
 public:
 	UItemHoverEntryWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+protected:
+	virtual void NativePreConstruct() override;
+	
 public:
 	void RefreshUI(const UItemInstance* ItemInstance);
 
@@ -48,15 +50,6 @@ protected:
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<URichTextBlock> Text_Description;
-
-	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<URichTextBlock> Text_UsableClassList;
-
-	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UVerticalBox> VerticalBox_EquipableClasses;
-	
-	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UTextBlock> Text_Gold;
 	
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UImage> Image_DisplayName_Background;

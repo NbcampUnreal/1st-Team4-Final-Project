@@ -41,9 +41,8 @@ void UItemEntryWidget::NativeDestruct()
 void UItemEntryWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
-
-	// 무엇을 보여주는 거지?
-	// Image_Hover->SetVisibility(ESlateVisibility::Visible);
+	
+	Image_Hover->SetVisibility(ESlateVisibility::Visible);
 
 	if (HoverWidget == nullptr)
 	{
@@ -53,8 +52,32 @@ void UItemEntryWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPo
 
 	if (HoverWidget)
 	{
-		// HoverWidget->RefreshUI(ItemInstance);
+		HoverWidget->RefreshUI(ItemInstance);
 		HoverWidget->AddToViewport();
+	}
+}
+
+FReply UItemEntryWidget::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FReply Reply = Super::NativeOnMouseMove(InGeometry, InMouseEvent);
+
+	if (HoverWidget)
+	{
+		HoverWidget->SetPosition(InMouseEvent.GetScreenSpacePosition());
+		return FReply::Handled();
+	}
+
+	return Reply;
+}
+
+void UItemEntryWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+
+	if (HoverWidget)
+	{
+		HoverWidget->RemoveFromParent();
+		HoverWidget = nullptr;
 	}
 }
 

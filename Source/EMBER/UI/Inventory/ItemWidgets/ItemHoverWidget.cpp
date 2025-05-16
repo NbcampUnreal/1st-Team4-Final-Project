@@ -12,4 +12,5 @@ UItemHoverWidget::UItemHoverWidget(const FObjectInitializer& ObjectInitializer) 
 void UItemHoverWidget::RefreshUI(UItemInstance* HoveredItemInstance)
 {
 	HoverWidget_Left->RefreshUI(HoveredItemInstance);
+	HoverWidget_Right->RefreshUI(nullptr);
 }
