@@ -27,7 +27,8 @@ public class EMBER : ModuleRules
 						"GameplayAbilities",
 						"ModularGameplay",
 						"CommonUI",
-						"CommonInput"
+						"CommonInput",
+						"CommonGame"
 					});
         PublicIncludePaths.AddRange(
                     new string[]
