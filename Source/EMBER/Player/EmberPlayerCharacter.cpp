@@ -1,5 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "EmberPlayerCharacter.h"
+
+#include "ArmorComponent.h"
 #include "C_CameraComponent.h"
 #include "EmberPlayerController.h"
 #include "EnhancedInputComponent.h"
@@ -31,6 +33,8 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 
     MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("MontageComponent"));
 
+    ArmorComponent = CreateDefaultSubobject<UArmorComponent>(TEXT("ArmorComponent"));
+
     Tags.Add("Player");
 }
 
@@ -45,6 +49,15 @@ void AEmberPlayerCharacter::BeginPlay()
     {
         playerController->PlayerCameraManager->ViewPitchMin = PitchRange.X;
         playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
+    }
+    
+    //TODOS
+    if(ArmorComponent != nullptr)
+    {
+	    if(HasAuthority() == true)
+	    {
+            ArmorComponent->InitializeArmorForLateJoiners();
+	    }
     }
 }
 
@@ -66,6 +79,8 @@ void AEmberPlayerCharacter::OnRep_PlayerState()
     Super::OnRep_PlayerState();
     
     InitAbilityActorInfo();
+    if (ArmorComponent != nullptr)
+        ArmorComponent->InitializeArmorForLateJoiners();
 }
 
 void AEmberPlayerCharacter::InitAbilityActorInfo()
@@ -74,6 +89,14 @@ void AEmberPlayerCharacter::InitAbilityActorInfo()
     check(EmberPlayerState);
     EmberPlayerState->InitAbilitySystemComponent();
     AbilitySystemComponent = EmberPlayerState->GetAbilitySystemComponent();
+}
+
+void AEmberPlayerCharacter::PostNetInit()
+{
+	Super::PostNetInit();
+    UE_LOG(LogTemp, Warning, L"PostNetInit Call");
+    if (ArmorComponent != nullptr)
+        ArmorComponent->InitializeArmorForLateJoiners();
 }
 
 // Called every frame

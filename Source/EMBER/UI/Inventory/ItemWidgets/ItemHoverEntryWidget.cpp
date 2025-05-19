@@ -92,9 +92,11 @@ void UItemHoverEntryWidget::RefreshUI(const UItemInstance* ItemInstance)
 			switch (ArmorFragment->ArmorType)
 			{
 			case EArmorType::Helmet:	ArmorTypeText = LOCTEXT("ArmorType-Helmet",	"Helmet");	break;
+			case EArmorType::Shoulder:	ArmorTypeText = LOCTEXT("ArmorType-Shoulder", "Shoulder");	break;
+			case EArmorType::Cloak:		ArmorTypeText = LOCTEXT("ArmorType-Cloak",	"Cloak");	break;
 			case EArmorType::Chest:		ArmorTypeText = LOCTEXT("ArmorType-Chest",	"Chest");	break;
-			case EArmorType::Legs:		ArmorTypeText = LOCTEXT("ArmorType-Legs",	"Legs");	break;
-			case EArmorType::Hands:		ArmorTypeText = LOCTEXT("ArmorType-Hands",	"Hands");	break;
+			case EArmorType::Gloves:	ArmorTypeText = LOCTEXT("ArmorType-Gloves",	"Gloves");	break;
+			case EArmorType::Pants:		ArmorTypeText = LOCTEXT("ArmorType-Pants",	"Pants");	break;
 			case EArmorType::Foot:		ArmorTypeText = LOCTEXT("ArmorType-Foot",	"Foot");	break;
 			}
 			Text_ItemType->SetText(ArmorTypeText);
