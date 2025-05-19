@@ -65,6 +65,9 @@ protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 	void InitAbilityActorInfo();
+
+	//TODOS
+	virtual void PostNetInit() override;
 	
 private:
 	UPROPERTY()
@@ -78,4 +81,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UMontageSystemComponent> MontageComponent;
+
+	UPROPERTY()
+	TObjectPtr<class UArmorComponent> ArmorComponent;
 };
