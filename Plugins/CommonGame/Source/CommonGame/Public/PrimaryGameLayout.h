@@ -20,17 +20,11 @@ public:
 	template <typename ActivatableWidgetT = UCommonActivatableWidget>
 	ActivatableWidgetT* PushWidgetToLayerStack(FGameplayTag LayerName, UClass* ActivatableWidgetClass)
 	{
-		return PushWidgetToLayerStack<ActivatableWidgetT>(LayerName, ActivatableWidgetClass, [](ActivatableWidgetT&) {});
-	}
-	
-	template <typename ActivatableWidgetT = UCommonActivatableWidget>
-	ActivatableWidgetT* PushWidgetToLayerStack(FGameplayTag LayerName, UClass* ActivatableWidgetClass, TFunctionRef<void(ActivatableWidgetT&)> InitInstanceFunc)
-	{
 		static_assert(TIsDerivedFrom<ActivatableWidgetT, UCommonActivatableWidget>::IsDerived, "Only CommonActivatableWidgets can be used here");
 
 		if (UCommonActivatableWidgetContainerBase* Layer = GetLayerWidget(LayerName))
 		{
-			return Layer->AddWidget<ActivatableWidgetT>(ActivatableWidgetClass, InitInstanceFunc);
+			return Layer->AddWidget<ActivatableWidgetT>(ActivatableWidgetClass);
 		}
 
 		return nullptr;

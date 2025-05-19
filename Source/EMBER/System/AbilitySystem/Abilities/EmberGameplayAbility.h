@@ -6,6 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "EmberGameplayAbility.generated.h"
 
+class UEmberLocalPlayer;
 class AEmberPlayerCharacter;
 class AEmberPlayerController;
 
@@ -38,6 +39,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
 	AEmberPlayerController* GetEmberPlayerControllerFromActorInfo() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
+	UEmberLocalPlayer* GetEmberLocalPlayerFromActorInfo() const;
 	
 	EEmberAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
 	

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFlag.h"
+#include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
 #include "EmberUIData.generated.h"
 
@@ -10,7 +11,20 @@ class UInventorySlotWidget;
 class UInventoryValidWidget;
 class UInventoryEntryWidget;
 class UItemHoverWidget;
+class UCommonActivatableWidget;
 
+USTRUCT(BlueprintType)
+struct FEmberHUDInfo
+{
+	GENERATED_BODY()
+	
+public:
+	UPROPERTY(EditAnywhere, meta = (Categories = "UI.Layer"))
+	FGameplayTag HUDWidgetTag;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UCommonActivatableWidget> HUDWidgetClass;
+};
 
 USTRUCT(BlueprintType)
 struct FEmberItemRarityInfoEntry
@@ -56,6 +70,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	FIntPoint UnitInventorySlotSize = FIntPoint::ZeroValue;
 
+	UPROPERTY(EditDefaultsOnly)
+	FEmberHUDInfo EmberHUDInfo;
+	
 private:
 	UPROPERTY(EditDefaultsOnly, meta=(ArraySizeEnum="EItemRarity"))
 	FEmberItemRarityInfoEntry RarityInfoEntries[(int32)EItemRarity::Count];
