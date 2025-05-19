@@ -7,7 +7,7 @@
 
 UItemFragment_Equipable_Armor::UItemFragment_Equipable_Armor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	
+	EquipmentType = EEquipmentType::Armor;
 }
 
 void UItemFragment_Equipable_Armor::PreSave(FObjectPreSaveContext SaveContext)

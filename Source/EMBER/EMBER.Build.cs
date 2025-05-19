@@ -10,7 +10,25 @@ public class EMBER : ModuleRules
 
         SharedPCHHeaderFile = "Public/EMBER.h";
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "Niagara", "NetCore", "GameplayMessageRuntime", "GameplayTags" });
+        PublicDependencyModuleNames.AddRange(
+					new string[] 
+					{
+						"Core", 
+						"CoreUObject",
+						"Engine",
+						"InputCore",
+						"EnhancedInput",
+						"UMG",
+						"Niagara",
+						"NetCore",
+						"GameplayMessageRuntime",
+						"GameplayTags",
+						"GameplayTasks",
+						"GameplayAbilities",
+						"ModularGameplay",
+						"CommonUI",
+						"CommonInput"
+					});
         PublicIncludePaths.AddRange(
                     new string[]
                     {

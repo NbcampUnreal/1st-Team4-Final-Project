@@ -48,12 +48,14 @@ void UCheatMenuWidget::NativeConstruct()
 				CheatEntryWidget->InitializeUI(ECheatEntryType::Utility, ItemTemplateClass, nullptr);
 				CheatList_Utility->AddEntry(CheatEntryWidget);
 			}
+			
 			else if (EquippableFragment->EquipmentType == EEquipmentType::Armor)
 			{
 				UCheatEntryWidget* CheatEntryWidget = CreateWidget<UCheatEntryWidget>(GetOwningPlayer(), CheatEntryWidgetClass);
 				CheatEntryWidget->InitializeUI(ECheatEntryType::Armor, ItemTemplateClass, nullptr);
 				CheatList_Armor->AddEntry(CheatEntryWidget);
 			}
+			//UE_LOG(LogTemp, Warning, L"%d" EquippableFragment->EquipmentType);
 		}
 	}
 }

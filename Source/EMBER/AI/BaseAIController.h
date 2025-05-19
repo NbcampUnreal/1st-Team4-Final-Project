@@ -40,4 +40,5 @@ public:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	UBehaviorTree* AggressiveBT;
 
+	UBehaviorTree* CurrentBT;
 };

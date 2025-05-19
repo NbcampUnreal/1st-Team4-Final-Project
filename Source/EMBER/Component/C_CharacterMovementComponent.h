@@ -15,7 +15,7 @@ class EMBER_API UC_CharacterMovementComponent : public UCharacterMovementCompone
 	GENERATED_BODY()
 private:
 	UPROPERTY(EditAnywhere, category = "Move")
-	bool bCanMove;
+	bool bCanMove = true;
 	UPROPERTY(EditAnywhere, category = "Move")
 	bool bIsDash;
 	//UPROPERTY(EditAnywhere, category = "State")
@@ -35,6 +35,10 @@ public:	//	추가
 	bool GetCanDash() const;
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentSpeed() const;
+	UFUNCTION(BlueprintCallable)
+	void EnableMove();
+	UFUNCTION(BlueprintCallable)
+	void DisableMove();
 	UFUNCTION(BlueprintCallable)
 	void OnMove(const FInputActionValue& Value);
 public: 
