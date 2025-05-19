@@ -17,6 +17,7 @@ class EMBER_API UEquipmentManagerComponent : public UActorComponent
 
 public:
 	UEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	virtual void BeginPlay() override;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -28,10 +29,16 @@ public:
 private:
 	UFUNCTION()
 	void OnRep_ItemTemplateID(int32 PrevItemTemplateID);
-	
+
+
+private:
 	UPROPERTY(ReplicatedUsing=OnRep_ItemTemplateID)
 	int32 ItemTemplateID = INDEX_NONE;
 
 	UPROPERTY()
 	AEquipmentBase* SpawnedWeapon;
+
+private:
+	ACharacter* OwnerCharacter;
+	TObjectPtr<class UArmorComponent> ArmorComponent;
 };
