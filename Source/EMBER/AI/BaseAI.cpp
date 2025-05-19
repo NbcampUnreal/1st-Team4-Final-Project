@@ -4,7 +4,7 @@
 #include "BaseAIController.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "BehaviorTree/BehaviorTree.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 ABaseAI::ABaseAI()
@@ -91,6 +91,16 @@ void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimul
 }
 
 #pragma region Interface
+
+void ABaseAI::SetWalkSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
+}
+
+void ABaseAI::SetRunSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
+}
 
 void ABaseAI::SetBlackboardBool(FName KeyName, bool bValue)
 {

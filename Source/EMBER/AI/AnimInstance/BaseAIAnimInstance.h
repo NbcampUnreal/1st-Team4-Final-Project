@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "AI_Interface.h"
-#include "EMBER/AI/BaseAIController.h"
+#include "BaseAIController.h"
 #include "Animation/AnimInstance.h"
 #include "BaseAIAnimInstance.generated.h"
 
@@ -18,6 +18,12 @@ public:
 	virtual void PlayDeathMontage();
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement")
+	float Speed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement")
+	float Direction;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimMontage* AttackMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

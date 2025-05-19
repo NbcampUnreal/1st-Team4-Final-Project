@@ -1,16 +1,22 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#include "AIController.h"          
-#include "GameFramework/Pawn.h"    
-#include "Animation/AnimInstance.h" 
 #include "BaseAIAnimInstance.h"
+#include "BaseAI.h"
+#include "GameFramework/Pawn.h"    
 #include "BehaviorTree/BlackboardComponent.h" 
-#include "BaseAIController.h"
+#include "KismetAnimationLibrary.h"
 
 void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
+	if (ABaseAI* AICharacter = Cast<ABaseAI>(TryGetPawnOwner()))
+	{
+		FVector Velocity = AICharacter->GetVelocity();
+		Velocity.Z = 0.0f;
+
+		Speed = Velocity.Size();
+		Direction = UKismetAnimationLibrary::CalculateDirection(Velocity, AICharacter->GetActorRotation());
+	}
+	
 	APawn* OwnerPawn = TryGetPawnOwner();
 	if (!OwnerPawn) return;
 	ABaseAIController* AIController = Cast<ABaseAIController>(OwnerPawn->GetController());

@@ -52,6 +52,13 @@ public:
 	// Getter
 	virtual float GetAttackPower() const { return AttackPower; }
 
+	// Setter
+	UFUNCTION(BlueprintCallable, Category = "AI|Movement")
+	virtual void SetWalkSpeed();
+
+	UFUNCTION(BlueprintCallable, Category = "AI|Movement")
+	virtual void SetRunSpeed();
+	
 	//Interface 함수
 	virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
 	virtual void SetBlackboardInt(FName KeyName, int value) override;
@@ -69,6 +76,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	float AttackPower;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	float WalkSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	float RunSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|State")
 	bool bIsDie;
