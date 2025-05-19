@@ -8,10 +8,11 @@ UENUM(BlueprintType)
 enum class EAnimalState : uint8
 {
 	Idle UMETA(DisplayName = "Idle"),
-	Patrol UMETA(DisplayName = "Patrol"),
-	Eat UMETA(DisplayName = "Eat"),
+	Eating UMETA(DisplayName = "Eating"),
+	Looking UMETA(DisplayName = "Looking"),
 	Guard UMETA(DisplayName = "Guard"),
-	Run UMETA(DisplayName = "Run"),
+	Near UMETA(DisplayName = "Near"),
+	Run UMETA(DisplayName = "Running"),
 	Attack UMETA(DisplayName = "Attack"),
 	Hit UMETA(DisplayName = "Hit"),
 	Death UMETA(DisplayName = "Death"),

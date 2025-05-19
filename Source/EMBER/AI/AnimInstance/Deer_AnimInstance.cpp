@@ -77,6 +77,26 @@ void UDeer_AnimInstance::AnimNotify_EatFinish()
 	Server_OnNotifyEatFinish_Implementation();
 }
 
+void UDeer_AnimInstance::SetBlackboardBool(FName KeyName, bool bValue)
+{
+	Super::SetBlackboardBool(KeyName, bValue);
+	if (bValue)
+	{
+		if (KeyName.IsEqual(FName("Idle")))
+		{
+			AnimalState = EAnimalState::Idle;
+		}
+		else if (KeyName.IsEqual(FName("Eating")))
+		{
+			AnimalState = EAnimalState::Eating;
+		}
+		else if (KeyName.IsEqual(FName("Looking")))
+		{
+			AnimalState = EAnimalState::Looking;
+		}
+	}
+}
+
 void UDeer_AnimInstance::StopMontage()
 {
 	StopAllMontages(0.1f); // 블렌드 아웃(0.1초) 후 애니메이션 중지
@@ -89,10 +109,10 @@ void UDeer_AnimInstance::Server_OnNotifyEatFinish_Implementation()
 
 void UDeer_AnimInstance::Multicast_OnNotifyEatFinish_Implementation()
 {
-	if (AAIController* AIController = Cast<AAIController>(Cast<APawn>(GetOwningActor())->GetController()))
-	{
-		AIController->GetBlackboardComponent()->SetValueAsBool("IsRest", false);
-	}
+	// if (AAIController* AIController = Cast<AAIController>(Cast<APawn>(GetOwningActor())->GetController()))
+	// {
+	// 	AIController->GetBlackboardComponent()->SetValueAsBool("IsRest", false);
+	// }
 	bIsEat = false;
 	bIsIdle = true;
 }

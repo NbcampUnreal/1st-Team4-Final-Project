@@ -108,7 +108,8 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 float APassiveAI::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	bIsHit = true;
+	SetBlackboardBool("IsHit", true);
+	UE_LOG(LogTemp, Warning, TEXT("Hit!!"));
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
