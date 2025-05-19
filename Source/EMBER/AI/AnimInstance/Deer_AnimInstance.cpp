@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/Animal/Deer_AnimInstance.h"
+#include "AI/AnimInstance/Deer_AnimInstance.h"
 #include "AIController.h"
 #include "AI/BaseAI.h"
 #include "Animation/AnimMontage.h"
@@ -79,7 +79,7 @@ void UDeer_AnimInstance::AnimNotify_EatFinish()
 
 void UDeer_AnimInstance::StopMontage()
 {
-	StopAllMontages(0.1f); // ✅ 블렌드 아웃(0.1초) 후 애니메이션 중지
+	StopAllMontages(0.1f); // 블렌드 아웃(0.1초) 후 애니메이션 중지
 }
 
 void UDeer_AnimInstance::Server_OnNotifyEatFinish_Implementation()

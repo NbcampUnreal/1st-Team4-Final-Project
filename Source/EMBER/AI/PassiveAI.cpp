@@ -2,7 +2,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig.h"
-#include "DrawDebugHelpers.h"
 #include "BehaviorTree/BehaviorTree.h"
 
 APassiveAI::APassiveAI()
@@ -27,7 +26,6 @@ APassiveAI::APassiveAI()
 		RunPerception->ConfigureSense(*RunSightConfig); //컴포넌트에 시각감각 추가
 	}
 	ClosestActor = nullptr;
-	BlackboardComp = nullptr;
 	EnemyActors = TArray<AActor*>();
 }
 
@@ -45,7 +43,6 @@ void APassiveAI::UpdateClosestActorTimer()
 		return;
 	}
 
-	AActor* NewClosestActor = nullptr;
 	float ClosestDistance = FLT_MAX;
 
 	for (AActor* Enemy : EnemyActors)
@@ -56,14 +53,13 @@ void APassiveAI::UpdateClosestActorTimer()
 		if (Distance < ClosestDistance)
 		{
 			ClosestDistance = Distance;
-			NewClosestActor = Enemy;
+			ClosestActor = Enemy;
 		}
 	}
 
-	ClosestActor = NewClosestActor;
 	if (ClosestActor)
 	{
-		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), ClosestActor);
+		SetBlackboardObject(TEXT("TargetActor"), ClosestActor);
 		UE_LOG(LogTemp, Warning, TEXT("Closest Actor Updated: %s at distance %f"), *ClosestActor->GetName(),
 		       ClosestDistance);
 	}
@@ -76,15 +72,11 @@ void APassiveAI::UpdateClosestActorTimer()
 void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
 	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
-
-	AAIController* AIController = Cast<AAIController>(GetController());
-	if (!AIController) return;
-	BlackboardComp = AIController->GetBlackboardComponent();
-	if (!BlackboardComp) return;
-	ABaseAIController* BaseAIController = Cast<ABaseAIController>(AIController);
+	
+	ABaseAIController* BaseAIController = Cast<ABaseAIController>(Cast<AAIController>(GetController()));
 	UBehaviorTreeComponent* BehaviorComp = Cast<UBehaviorTreeComponent>(
-		BaseAIController->GetComponentByClass(UBehaviorTreeComponent::StaticClass()));
-
+	BaseAIController->GetComponentByClass(UBehaviorTreeComponent::StaticClass()));
+	
 	if (Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player Detect"));
@@ -92,25 +84,32 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 		EnemyActors.Add(UpdatedActor);
 		bIsDetect = true;
 		CheckDetection();
-		BlackboardComp->SetValueAsBool(TEXT("IsDetected"), true);
-		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), ClosestActor);
+		SetBlackboardBool(TEXT("IsDetected"), true);
+		SetBlackboardObject(TEXT("TargetActor"), ClosestActor);
 
 		BehaviorComp->RestartTree();
 	}
 	else if (!Stimulus.WasSuccessfullySensed())
 	{
-		EnemyActors.Remove(UpdatedActor);
+		EnemyActors.Remove(UpdatedActor); //모든 캐릭터가 다 사라지므로 추후 수정필요
 		if (EnemyActors.Num() == 0)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Zero Actor"));
 			bIsDetect = false;
 			CheckDetection();
 			ClosestActor = nullptr;
-			BlackboardComp->SetValueAsObject(TEXT("TargetActor"), nullptr);
-			BlackboardComp->SetValueAsBool(TEXT("IsDetected"), false);
+			SetBlackboardObject(TEXT("TargetActor"), nullptr);
+			SetBlackboardBool(TEXT("IsDetected"), false);
 			BehaviorComp->RestartTree();
 		}
 	}
+}
+
+float APassiveAI::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	bIsHit = true;
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
 void APassiveAI::OnRunPerceptionUpdate(AActor* UpdatedActor, FAIStimulus Stimulus)
@@ -128,16 +127,16 @@ void APassiveAI::OnRunPerceptionUpdate(AActor* UpdatedActor, FAIStimulus Stimulu
 	if (Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
 	{
 		NearEnemies.Add(UpdatedActor);
-		BlackboardComp->SetValueAsBool(TEXT("IsNear"), true);
+		SetBlackboardBool(TEXT("IsNear"), true);
 
 		if (UAnimInstance* AnimInstance = this->GetMesh()->GetAnimInstance())
 		{
-			AnimInstance->StopAllMontages(0.1f); // ✅ 블렌드 아웃 후 모든 몽타주 중지
+			AnimInstance->StopAllMontages(0.1f); // 블렌드 아웃 후 모든 몽타주 중지
 		}
 	}
 	else if (!Stimulus.WasSuccessfullySensed() && NearEnemies.Num() == 0)
 	{
-		BlackboardComp->SetValueAsBool(TEXT("IsNear"), false);
+		SetBlackboardBool(TEXT("IsNear"), false);
 	}
 }
 

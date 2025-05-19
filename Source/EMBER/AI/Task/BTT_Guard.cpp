@@ -1,12 +1,9 @@
 ﻿#include "BTT_Guard.h"
 #include "BaseAIController.h"
 #include "BaseAI.h"
-#include "BaseAIAnimInstance.h"
-#include "PassiveAI.h"
-#include "Animal/Deer_AnimInstance.h"
+#include "AnimInstance/Deer_AnimInstance.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 UBTT_Guard::UBTT_Guard()
 {
