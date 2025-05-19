@@ -13,8 +13,8 @@ void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		FVector Velocity = AICharacter->GetVelocity();
 		Velocity.Z = 0.0f;
 
-		Speed = Velocity.Size();
-		Direction = UKismetAnimationLibrary::CalculateDirection(Velocity, AICharacter->GetActorRotation());
+		CurrentSpeed = Velocity.Size();
+		CurrentDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, AICharacter->GetActorRotation());
 	}
 	
 	APawn* OwnerPawn = TryGetPawnOwner();

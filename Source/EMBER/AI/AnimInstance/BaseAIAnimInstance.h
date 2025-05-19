@@ -13,17 +13,17 @@ class EMBER_API UBaseAIAnimInstance : public UAnimInstance, public IAI_Interface
 
 public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement")
+	float CurrentSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement")
+	float CurrentDirection;
 	
 	virtual void PlayAttackMontage();
 	virtual void PlayDeathMontage();
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement")
-	float Speed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement")
-	float Direction;
-	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimMontage* AttackMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
