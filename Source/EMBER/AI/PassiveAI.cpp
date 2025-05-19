@@ -29,21 +29,6 @@ APassiveAI::APassiveAI()
 	ClosestActor = nullptr;
 	BlackboardComp = nullptr;
 	EnemyActors = TArray<AActor*>();
-	PrimaryActorTick.bCanEverTick = true;
-}
-
-void APassiveAI::Tick(float DeltaTime)
-{
-	FVector AIPosition = GetActorLocation();
-	float SightRadius = 2000.f;
-	FColor CircleColor = FColor::Green; // ✅ 초록색 원
-
-	DrawDebugSphere(GetWorld(), AIPosition, SightRadius, 32, CircleColor, false, -1.0f, 0); // ✅ -1.0f로 계속 유지
-
-	float RunSightRadius = 1000.f;
-	FColor RunCircleColor = FColor::Red; // ✅ 초록색 원
-
-	DrawDebugSphere(GetWorld(), AIPosition, RunSightRadius, 32, RunCircleColor, false, -1.0f, 0); // ✅ -1.0f로 계속 유지
 }
 
 void APassiveAI::BeginPlay()
