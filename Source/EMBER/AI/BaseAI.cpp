@@ -4,6 +4,7 @@
 #include "BaseAIController.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "kismet/GameplayStatics.h"
 
 
@@ -36,6 +37,7 @@ void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAI::OnTargetPerceptionUpdated);
+	SetWalkSpeed();
 }
 
 float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
@@ -79,6 +81,16 @@ void ABaseAI::OnDeath()
 
 void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
+}
+
+void ABaseAI::SetWalkSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
+}
+
+void ABaseAI::SetRunSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
 }
 
 

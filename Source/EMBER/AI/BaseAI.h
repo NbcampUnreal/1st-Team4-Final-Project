@@ -50,6 +50,13 @@ public:
 	// Getter
 	virtual float GetAttackPower() const { return AttackPower; }
 
+	// Setter
+	UFUNCTION(BlueprintCallable, Category = "AI|Movement")
+	virtual void SetWalkSpeed();
+
+	UFUNCTION(BlueprintCallable, Category = "AI|Movement")
+	virtual void SetRunSpeed();
+
 protected:
 	// AI 기본 정보
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
@@ -60,6 +67,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	float AttackPower;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	float WalkSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	float RunSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|State")
 	bool bIsDie;
