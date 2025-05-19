@@ -1,11 +1,25 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+#include "BaseAIAnimInstance.h"
+#include "BaseAI.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "KismetAnimationLibrary.h"
 
+void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaTime)
+{
+	Super::NativeUpdateAnimation(DeltaTime);
 
-#include "AI/BaseAIAnimInstance.h"
+	if (ABaseAI* AICharacter = Cast<ABaseAI>(TryGetPawnOwner()))
+	{
+		FVector Velocity = AICharacter->GetVelocity();
+		Velocity.Z = 0.0f;
+
+		Speed = Velocity.Size();
+		Direction = UKismetAnimationLibrary::CalculateDirection(Velocity, AICharacter->GetActorRotation());
+	}
+}
 
 void UBaseAIAnimInstance::PlayAttackMontage()
 {
-	if (AttackMontage)
+	if (!Montage_IsPlaying(AttackMontage))
 	{
 		Montage_Play(AttackMontage);
 	}
