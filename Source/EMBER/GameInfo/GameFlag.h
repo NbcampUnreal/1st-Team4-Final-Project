@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class ESkillCategory : uint8
 {
 	Survival UMETA(DisplayName = "Survival"),
@@ -11,7 +11,7 @@ enum class ESkillCategory : uint8
 	Cook UMETA(DisplayName = "Cook")
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class ESpeedType : uint8
 {
 	Walk UMETA(DisplayName = "Walk"),
@@ -20,7 +20,7 @@ enum class ESpeedType : uint8
 	Max UMETA(DisplayName = "Max")
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EStateType : uint8
 {
 	Idle UMETA(DisplayName = "Idle"),
@@ -31,7 +31,7 @@ enum class EStateType : uint8
 	Max UMETA(DisplayName = "Max")
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EAICombatType : uint8
 {
 	Passive UMETA(DisplayName = "Passive"),
@@ -40,7 +40,7 @@ enum class EAICombatType : uint8
 	Max UMETA(DisplayName = "Max")
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class ESoundCategory : uint8
 {
 	Move UMETA(DisplayName = "Move"),

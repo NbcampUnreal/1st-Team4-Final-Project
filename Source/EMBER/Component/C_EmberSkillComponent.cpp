@@ -1,5 +1,6 @@
 ﻿#include "Component/C_EmberSkillComponent.h"
 #include "SkillBase.h"
+#include "Skill/Manager/C_EmberSkillManager.h"
 #include "GameFramework/Character.h"
 
 UC_EmberSkillComponent::UC_EmberSkillComponent()
@@ -14,25 +15,22 @@ void UC_EmberSkillComponent::BeginPlay()
 
 void UC_EmberSkillComponent::AddSkill(USkillBase* Skill)
 {
-    if (!EquippedSkills.Contains(Skill))
-    {
-        EquippedSkills.Add(Skill);
-        if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
-        {
-            Skill->ApplySkill(Character);
-        }
-    }
+    //UnlockedSkills.AddUnique(Skill->GetSkillTag());
+    //if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+    //{
+    //    Skill->ApplySkill(Character);
+    //}
 }
 
 void UC_EmberSkillComponent::RemoveSkill(USkillBase* Skill)
 {
-    if (EquippedSkills.Remove(Skill) > 0)
-    {
-        if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
-        {
-            Skill->RemoveSkill(Character);
-        }
-    }
+    //if (EquippedSkills.Remove(Skill->GetSkillTag()) > 0)
+    //{
+    //    if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+    //    {
+    //        Skill->RemoveSkill(Character);
+    //    }
+    //}
 }
 
 void UC_EmberSkillComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

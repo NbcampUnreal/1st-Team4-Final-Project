@@ -1,10 +1,10 @@
 ﻿#pragma once
 
 #include "EMBER.h"
+#include "GameplayTagsManager.h"
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "SkillBase.generated.h"
-
 UCLASS()
 class EMBER_API USkillBase : public UObject
 {
@@ -21,5 +21,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
     FName SkillName;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
-    ESkillCategory Category;
+    FGameplayTag SkillTag;
+
+public:
+    FGameplayTag GetSkillTag() const;
+    FName GetSkillName() const;
 };

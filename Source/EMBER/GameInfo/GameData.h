@@ -7,51 +7,97 @@
 #include "Animation/AnimMontage.h"
 #include "../System/Skill/SkillBase.h"
 #include "Engine/Texture2D.h"
+#include "GameplayTagsManager.h"
 #include "GAmeData.generated.h"
 
 USTRUCT(BlueprintType)
 struct FLineColor
 {
     GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FLinearColor Default;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float MaxDefaultOpacity;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FLinearColor LinearColor;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float MaxPurchasedOpacity;
 };
 USTRUCT(BlueprintType)
-struct FSkillDetails
+struct FSkillConnectionData
+{
+    GENERATED_BODY()
+
+    // 이 연결이 향하는 스킬 노드
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FGameplayTag TargetSkillTag;
+
+    // 이 연결선의 색상 정보
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FLineColor LineColor;
+};
+USTRUCT(BlueprintType)
+struct FSkillNodeData
+{
+    GENERATED_BODY()
+    // 아이콘 이미지
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TObjectPtr<UTexture2D> Icon;
+    // 스킬명 (표시용 이름)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FText SkillName;
+    // 제목 (간단히 문자열로)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString Title;
+    // 설명
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FText Description;
+    // 속한 카테고리
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    ESkillCategory Category;
+    // 선행 조건 (해당 태그가 해제되어야 함)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<FGameplayTag> RequiredSkill;
+    // 이 스킬이 열면 활성화 가능한 노드들
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<FGameplayTag> UnlockSkill;
+    // 실제 태그 ID
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FGameplayTag SkillTag;
+    // 연결선 노드 (후속 노드 목록)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<FSkillConnectionData> ConnectionSkill;
+    // TargetNode
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<class UEmberSkillNode*> NextNodes; // UMG에서 직접 드래그해서 연결
+    // 해제 여부
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bUnlocked = false;
+};
+USTRUCT(BlueprintType)
+struct FSkillCategoryData
 {
     GENERATED_BODY()
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UTexture2D Icon;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FText Name;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FString AtName;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FText Description;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     ESkillCategory Category;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 StageIndex;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 CountAmount;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TArray<FText> RequiredSkill;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TArray<FText> UnlockSkill;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool Locked;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool Purchased;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    int32 Level = 1;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    float CurrentXP = 0.0f;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    float MaxXP = 100.0f;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    int32 SkillPoint = 0;
 };
+
 USTRUCT(BlueprintType)
 struct FEffectData
 {
     GENERATED_BODY()
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
     EEffectType EffectType;
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect", meta = (EditCondition = "EffectType == EEffectType::Niagara", EditConditionHides))
     TObjectPtr<UNiagaraSystem> NiagaraSystem;
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect", meta = (EditCondition = "EffectType == EEffectType::Particle", EditConditionHides))
     TObjectPtr<UParticleSystem> ParticleSystem;
 };

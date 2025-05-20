@@ -2,6 +2,8 @@
 
 #pragma once
 
+
 #include "CoreMinimal.h"
 #include "GameFlag.h"
 #include "GameData.h"
+#include "GameplayTags.h"

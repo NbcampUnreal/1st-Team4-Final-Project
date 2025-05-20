@@ -1,10 +1,10 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-#pragma once
+﻿#pragma once
 
 #include "EMBER.h"
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "SkillBase.h"
+#include "GameplayTagsManager.h"
 #include "C_EmberSkillComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -20,7 +20,7 @@ protected:
 protected:
     /** 장착된 스킬 목록 */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)    
-    TArray<class USkillBase*> EquippedSkills;
+    TArray<FSkillNodeData> UnlockedSkills;
 public:
     /** 스킬 추가 */
     UFUNCTION(BlueprintCallable)

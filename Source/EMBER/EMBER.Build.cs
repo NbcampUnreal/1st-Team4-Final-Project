@@ -40,7 +40,8 @@ public class EMBER : ModuleRules
 						System.IO.Path.Combine(ModuleDirectory, "Player"),
                         System.IO.Path.Combine(ModuleDirectory, "Item"),
                         System.IO.Path.Combine(ModuleDirectory, "System"),
-                        System.IO.Path.Combine(ModuleDirectory, "System/Skill")
+                        System.IO.Path.Combine(ModuleDirectory, "System/Skill"),
+                        System.IO.Path.Combine(ModuleDirectory, "UI/Skill")
                     }
                 );
         PrivateDependencyModuleNames.AddRange(new string[] {  });

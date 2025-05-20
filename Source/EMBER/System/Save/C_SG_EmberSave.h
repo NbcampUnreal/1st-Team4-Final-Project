@@ -9,6 +9,7 @@ UCLASS()
 class EMBER_API UC_SG_EmberSave : public USaveGame
 {
 	GENERATED_BODY()
-private:
-
+protected:
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FGameplayTag> SavedTags;
 };
