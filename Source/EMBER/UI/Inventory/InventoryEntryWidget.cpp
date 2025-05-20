@@ -3,6 +3,7 @@
 
 #include "InventoryEntryWidget.h"
 
+#include "InventorySlotsWidget.h"
 #include "UI/Data/EmberItemData.h"
 #include "UI/Data/EmberUIData.h"
 #include "ItemInstance.h"
@@ -52,11 +53,15 @@ void UInventoryEntryWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 
 	TSubclassOf<UItemDragWidget> DragWidgetClass = UEmberUIData::Get().ItemDragWidgetClass;
 	UItemDragWidget* DragWidget = CreateWidget<UItemDragWidget>(GetOwningPlayer(), DragWidgetClass);
-	FVector2D DragWidgetSize = FVector2D(ItemTemplate.SlotCount.X * UnitInventorySlotSize.X, ItemTemplate.SlotCount.Y * UnitInventorySlotSize.Y);
+	FVector2D DragWidgetSize = FVector2D(ItemTemplate.SlotCount * UnitInventorySlotSize);
 	DragWidget->Init(DragWidgetSize, ItemTemplate.IconTexture, ItemCount);
-
+	
 	UItemDragDrop* ItemDragDrop = NewObject<UItemDragDrop>();
 	ItemDragDrop->DefaultDragVisual = DragWidget;
-
+	ItemDragDrop->FromEntryWidget = this;
+	ItemDragDrop->FromInventoryManager = SlotsWidget->GetInventoryManager();
+	ItemDragDrop->DeltaWidgetPos = (DragWidgetSize / 2.f) - (UnitInventorySlotSize / 2.f);
+	ItemDragDrop->FromItemInstance = ItemInstance;
+	
 	OutOperation = ItemDragDrop;
 }

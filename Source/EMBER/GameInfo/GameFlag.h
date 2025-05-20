@@ -95,8 +95,17 @@ enum class EEquipmentSlotType : uint8
 	Primary_LeftHand,
 	Primary_RightHand,
 	Primary_TwoHand,
+
+	Utility_Primary,
+	Utility_Secondary,
+	Utility_Tertiary,
+	Utility_Quaternary,
 	
-	Armor,
+	Helmet,
+	Chest,
+	Legs,
+	Hands,
+	Foot,
 	
 	Count	UMETA(Hidden)
 };
