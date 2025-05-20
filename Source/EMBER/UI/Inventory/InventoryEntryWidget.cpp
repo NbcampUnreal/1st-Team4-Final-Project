@@ -7,6 +7,8 @@
 #include "UI/Data/EmberUIData.h"
 #include "ItemInstance.h"
 #include "ItemTemplate.h"
+#include "ItemWidgets/ItemDragWidget.h"
+#include "ItemWidgets/ItemDragDrop.h"
 #include "Components/SizeBox.h"
 
 UInventoryEntryWidget::UInventoryEntryWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -30,4 +32,31 @@ void UInventoryEntryWidget::Init(UInventorySlotsWidget* InSlotsWidget, UItemInst
 
 	// UI 업데이트하기
 	RefreshUI(InItemInstance, InItemCount);
+}
+
+FReply UInventoryEntryWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FReply Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	
+	FIntPoint UnitInventorySlotSize = UEmberUIData::Get().UnitInventorySlotSize;
+
+	return Reply;
+}
+
+void UInventoryEntryWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
+{
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+	
+	FIntPoint UnitInventorySlotSize = UEmberUIData::Get().UnitInventorySlotSize;
+	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemInstance->GetItemTemplateID());
+
+	TSubclassOf<UItemDragWidget> DragWidgetClass = UEmberUIData::Get().ItemDragWidgetClass;
+	UItemDragWidget* DragWidget = CreateWidget<UItemDragWidget>(GetOwningPlayer(), DragWidgetClass);
+	FVector2D DragWidgetSize = FVector2D(ItemTemplate.SlotCount.X * UnitInventorySlotSize.X, ItemTemplate.SlotCount.Y * UnitInventorySlotSize.Y);
+	DragWidget->Init(DragWidgetSize, ItemTemplate.IconTexture, ItemCount);
+
+	UItemDragDrop* ItemDragDrop = NewObject<UItemDragDrop>();
+	ItemDragDrop->DefaultDragVisual = DragWidget;
+
+	OutOperation = ItemDragDrop;
 }

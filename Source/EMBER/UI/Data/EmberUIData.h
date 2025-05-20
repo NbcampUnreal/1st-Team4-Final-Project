@@ -11,6 +11,7 @@ class UInventorySlotWidget;
 class UInventoryValidWidget;
 class UInventoryEntryWidget;
 class UItemHoverWidget;
+class UItemDragWidget;
 class UCommonActivatableWidget;
 
 USTRUCT(BlueprintType)
@@ -64,9 +65,14 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UInventoryEntryWidget> InventoryEntryWidgetClass;
 
+public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UItemHoverWidget> ItemHoverWidgetClass;
-	
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UItemDragWidget> ItemDragWidgetClass;
+
+public:
 	UPROPERTY(EditDefaultsOnly)
 	FIntPoint UnitInventorySlotSize = FIntPoint::ZeroValue;
 

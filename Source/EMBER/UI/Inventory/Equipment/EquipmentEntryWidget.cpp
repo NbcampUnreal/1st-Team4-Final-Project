@@ -6,3 +6,14 @@
 UEquipmentEntryWidget::UEquipmentEntryWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
+
+FReply UEquipmentEntryWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+}
+
+void UEquipmentEntryWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
+	UDragDropOperation*& OutOperation)
+{
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+}
