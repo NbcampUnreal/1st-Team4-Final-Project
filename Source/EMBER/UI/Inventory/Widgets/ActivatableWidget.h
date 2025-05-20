@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "CommonActivatableWidget.h"
+#include "UI/Common/EmberActivatableWidget.h"
 #include "ActivatableWidget.generated.h"
 
 class UInputAction;
 
 UCLASS()
-class EMBER_API UActivatableWidget : public UCommonActivatableWidget
+class EMBER_API UActivatableWidget : public UEmberActivatableWidget
 {
 	GENERATED_BODY()
 

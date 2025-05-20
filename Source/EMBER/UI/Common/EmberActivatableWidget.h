@@ -26,6 +26,7 @@ public:
 
 public:
 	//~UCommonActivatableWidget interface
+	virtual void NativeOnInitialized() override;
 	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
 	//~End of UCommonActivatableWidget interface
 	
@@ -35,4 +36,7 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	EMouseCaptureMode GameMouseCaptureMode = EMouseCaptureMode::CapturePermanently;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	EMouseLockMode MouseLockMode = EMouseLockMode::LockAlways;
 };
