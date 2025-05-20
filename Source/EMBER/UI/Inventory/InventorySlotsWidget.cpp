@@ -35,6 +35,11 @@ void UInventorySlotsWidget::NativeConstruct()
 
 void UInventorySlotsWidget::NativeDestruct()
 {
+	DestructUI();
+	
+	UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(this);
+	MessageSubsystem.UnregisterListener(MessageListenerHandle);
+	
 	Super::NativeDestruct();
 }
 
