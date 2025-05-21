@@ -30,6 +30,7 @@ void UBaseAIAnimInstance::PlayAttackMontage()
 	if (AttackMontage)
 	{
 		Montage_Play(AttackMontage);
+		//Montage_JumpToSection(SectionName, AttackMontage);
 	}
 }
 

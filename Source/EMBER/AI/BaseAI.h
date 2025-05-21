@@ -32,14 +32,13 @@ public:
 	// AI 기본정보
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Type")
 	EAnimalType AnimalType;
-
-	// AI Animation
-	UFUNCTION(BlueprintCallable, Category = "AI|Animation")
-	virtual void PlayAttackAnimation();
-
+	
 	// AI State
 	UFUNCTION(BlueprintCallable, Category = "AI|State")
 	virtual void OnDeath();
+	
+	UFUNCTION(BlueprintCallable, Category = "AI|State")
+	virtual void Attack();
 
 	// AI Perception
 	UFUNCTION()
