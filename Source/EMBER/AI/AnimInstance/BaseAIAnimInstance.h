@@ -36,6 +36,7 @@ protected:
 	virtual void SetBlackboardObject(FName KeyName, UObject* object) override;
 
 	UBlackboardComponent* BlackboardComp;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	EAnimalState AnimalState;
 };

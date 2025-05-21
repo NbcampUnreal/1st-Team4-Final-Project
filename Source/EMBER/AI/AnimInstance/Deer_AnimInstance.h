@@ -37,13 +37,6 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnNotifyEatFinish();
 
-	UPROPERTY(BlueprintReadWrite, Category = "Animation")
-	bool bIsIdle;
-	UPROPERTY(BlueprintReadWrite, Category = "Animation")
-	bool bIsEat;
-	UPROPERTY(BlueprintReadWrite, Category = "Animation")
-	bool bIsLook;
-
 virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
 	
 	UPROPERTY(BlueprintReadWrite, Category = "Animation")

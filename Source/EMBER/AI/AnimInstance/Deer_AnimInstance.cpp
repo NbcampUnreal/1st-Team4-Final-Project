@@ -9,9 +9,6 @@
 
 UDeer_AnimInstance::UDeer_AnimInstance()
 {
-	bIsIdle = true;
-	bIsEat = false;
-	bIsLook = false;
 }
 
 void UDeer_AnimInstance::PlayTurnMontage(bool direction)
@@ -35,8 +32,12 @@ void UDeer_AnimInstance::PlayTurnMontage(bool direction)
 
 void UDeer_AnimInstance::OnTurnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	StopAllMontages(0.1f);
-	//Montage_Play(AroundMontage);
+	StopMontage();
+}
+
+void UDeer_AnimInstance::StopMontage()
+{
+	StopAllMontages(0.1f); // 블렌드 아웃(0.1초) 후 애니메이션 중지
 }
 
 void UDeer_AnimInstance::AnimNotify_IdleFinish()
@@ -52,8 +53,7 @@ void UDeer_AnimInstance::Server_OnNotifyIdleFinish_Implementation()
 
 void UDeer_AnimInstance::Multicast_OnNotifyIdleFinish_Implementation()
 {
-	bIsIdle = false;
-	bIsLook = true;
+	AnimalState = EAnimalState::Looking;
 }
 
 void UDeer_AnimInstance::AnimNotify_LookFinish()
@@ -68,13 +68,23 @@ void UDeer_AnimInstance::Server_OnNotifyLookFinish_Implementation()
 
 void UDeer_AnimInstance::Multicast_OnNotifyLookFinish_Implementation()
 {
-	bIsLook = false;
-	bIsEat = true;
+	AnimalState = EAnimalState::Eating;
 }
 
 void UDeer_AnimInstance::AnimNotify_EatFinish()
 {
 	Server_OnNotifyEatFinish_Implementation();
+}
+
+void UDeer_AnimInstance::Server_OnNotifyEatFinish_Implementation()
+{
+	Multicast_OnNotifyEatFinish_Implementation();
+}
+
+void UDeer_AnimInstance::Multicast_OnNotifyEatFinish_Implementation()
+{
+	AnimalState = EAnimalState::Idle;
+	SetBlackboardBool("IsRest", false);
 }
 
 void UDeer_AnimInstance::SetBlackboardBool(FName KeyName, bool bValue)
@@ -97,22 +107,6 @@ void UDeer_AnimInstance::SetBlackboardBool(FName KeyName, bool bValue)
 	}
 }
 
-void UDeer_AnimInstance::StopMontage()
-{
-	StopAllMontages(0.1f); // 블렌드 아웃(0.1초) 후 애니메이션 중지
-}
 
-void UDeer_AnimInstance::Server_OnNotifyEatFinish_Implementation()
-{
-	Multicast_OnNotifyEatFinish_Implementation();
-}
 
-void UDeer_AnimInstance::Multicast_OnNotifyEatFinish_Implementation()
-{
-	// if (AAIController* AIController = Cast<AAIController>(Cast<APawn>(GetOwningActor())->GetController()))
-	// {
-	// 	AIController->GetBlackboardComponent()->SetValueAsBool("IsRest", false);
-	// }
-	bIsEat = false;
-	bIsIdle = true;
-}
+

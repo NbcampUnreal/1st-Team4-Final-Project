@@ -16,6 +16,7 @@ enum class EAnimalState : uint8
 	Attack UMETA(DisplayName = "Attack"),
 	Hit UMETA(DisplayName = "Hit"),
 	Death UMETA(DisplayName = "Death"),
+	Flying UMETA(DisplayName = "Flying"),
 };
 
 UINTERFACE(MinimalAPI) //건들필요 없는 클래스
