@@ -56,7 +56,12 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 		{
 			BlackboardComponent->SetValueAsBool("IsHit", true);
 			BlackboardComponent->SetValueAsObject("TargetActor", DamageCauser);
-			BlackboardComponent->SetValueAsVector("OriginLocation", GetActorLocation());
+			
+			if (!BlackboardComponent->GetValueAsBool("IsOriginLocationSet"))
+			{
+				BlackboardComponent->SetValueAsVector("OriginLocation", GetActorLocation());
+				BlackboardComponent->SetValueAsFloat("IsOriginLocationSet", true);
+			}
 		}
 	}
 
@@ -69,19 +74,44 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	return ActualDamage;
 }
 
+void ABaseAI::OnAttack()
+{
+	if (AAIController* AIController = Cast<AAIController>(GetController()))
+	{
+		if (UBlackboardComponent* BlackboardComponent = AIController ? AIController->GetBlackboardComponent() : nullptr)
+		{
+			AActor* TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
+			if (!TargetActor) return;
+
+			FVector AILocation = GetActorLocation();
+			FVector TargetLocation = TargetActor->GetActorLocation();
+
+			float HeightDifference = TargetLocation.Z - AILocation.Z;
+
+			if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
+			{
+				if (AnimInstance->CurrentSpeed >= RunSpeed)
+				{
+					AnimInstance->PlayMontage(EAnimActionType::AttackRun);
+				}
+				else if (HeightDifference > 100.f)
+				{
+					AnimInstance->PlayMontage(EAnimActionType::AttackJump);
+				}
+				else
+				{
+					AnimInstance->PlayMontage(EAnimActionType::AttackNormal);
+				}
+			}
+		}
+	}
+}
+
 void ABaseAI::OnDeath()
 {
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->PlayDeathMontage();
-	}
-}
-
-void ABaseAI::Attack()
-{
-	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
-	{
-		AnimInstance->PlayAttackMontage();
 	}
 }
 
