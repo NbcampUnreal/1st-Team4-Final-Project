@@ -43,7 +43,7 @@ void UAnimNotify_EndPlay::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 	}
 	StateComponent.Get()->SetIdleMode();
 	Movement->EnableMove();
-	Camera->EnableFixedCamera();
+	Camera->DisableFixedCamera();
 }
 
 FString UAnimNotify_EndPlay::GetNotifyName_Implementation() const
