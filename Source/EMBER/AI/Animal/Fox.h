@@ -16,4 +16,7 @@ class EMBER_API AFox : public ADefensiveAI
 
 public:
 	AFox();
+	virtual void BeginPlay() override;
+
+	virtual void Attack() override;
 };
