@@ -13,5 +13,10 @@ UCLASS()
 class EMBER_API AFox : public ADefensiveAI
 {
 	GENERATED_BODY()
-	
+
+public:
+	AFox();
+	virtual void BeginPlay() override;
+
+	virtual void Attack() override;
 };

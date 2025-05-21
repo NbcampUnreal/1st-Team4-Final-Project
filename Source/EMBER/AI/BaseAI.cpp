@@ -1,14 +1,15 @@
 #include "BaseAI.h"
 
-#include "BaseAIAnimInstance.h"
+#include "AnimInstance/BaseAIAnimInstance.h"
 #include "BaseAIController.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 ABaseAI::ABaseAI()
 {
+	AnimalState = EAnimalState::Idle;
 	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 
@@ -30,12 +31,15 @@ ABaseAI::ABaseAI()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
 	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); //여러 감각중 시각 우선 사용
+	BlackboardComp = nullptr;
+
 }
 
 void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAI::OnTargetPerceptionUpdated);
+	SetWalkSpeed();
 }
 
 float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
@@ -65,7 +69,15 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	return ActualDamage;
 }
 
-void ABaseAI::PlayAttackAnimation()
+void ABaseAI::OnDeath()
+{
+	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		AnimInstance->PlayDeathMontage();
+	}
+}
+
+void ABaseAI::Attack()
 {
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
@@ -73,12 +85,46 @@ void ABaseAI::PlayAttackAnimation()
 	}
 }
 
-void ABaseAI::OnDeath()
-{
-}
-
 void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
+	ABaseAIController* BaseAIController = Cast<ABaseAIController>(Cast<AAIController>(GetController()));
+	BlackboardComp = BaseAIController->GetBlackboardComponent();
 }
 
+#pragma region Interface
 
+void ABaseAI::SetWalkSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
+}
+
+void ABaseAI::SetRunSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
+}
+
+void ABaseAI::SetBlackboardBool(FName KeyName, bool bValue)
+{
+	BlackboardComp->SetValueAsBool(KeyName, bValue);
+}
+
+void ABaseAI::SetBlackboardInt(FName KeyName, int value)
+{
+	BlackboardComp->SetValueAsInt(KeyName, value);
+}
+
+void ABaseAI::SetBlackboardFloat(FName KeyName, float value)
+{
+	BlackboardComp->SetValueAsFloat(KeyName, value);
+}
+
+void ABaseAI::SetBlackboardVector(FName KeyName, FVector value)
+{
+	BlackboardComp->SetValueAsVector(KeyName, value);
+}
+
+void ABaseAI::SetBlackboardObject(FName KeyName, UObject* object)
+{
+	BlackboardComp->SetValueAsObject(KeyName, object);
+}
+#pragma endregion

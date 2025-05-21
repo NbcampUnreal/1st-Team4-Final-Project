@@ -74,11 +74,40 @@ void UItemEntryWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
 
+	Image_Hover->SetVisibility(ESlateVisibility::Hidden);
+	
 	if (HoverWidget)
 	{
 		HoverWidget->RemoveFromParent();
 		HoverWidget = nullptr;
 	}
+}
+
+FReply UItemEntryWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FReply Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		Reply.DetectDrag(GetCachedWidget().ToSharedRef(), EKeys::LeftMouseButton);
+	}
+	
+	return Reply;
+}
+
+void UItemEntryWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
+	UDragDropOperation*& OutOperation)
+{
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+
+	RefreshWidgetOpacity(false);
+}
+
+void UItemEntryWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
+
+	RefreshWidgetOpacity(true);
 }
 
 void UItemEntryWidget::RefreshUI(UItemInstance* NewItemInstance, int32 NewItemCount)
@@ -102,6 +131,11 @@ void UItemEntryWidget::RefreshItemCount(int32 NewItemCount)
 	
 	ItemCount = NewItemCount;
 	Text_Count->SetText(ItemCount <= 1 ? FText::GetEmpty() : FText::AsNumber(ItemCount));
+}
+
+void UItemEntryWidget::RefreshWidgetOpacity(bool bClearlyVisible)
+{
+	SetRenderOpacity(bClearlyVisible ? 1.0f : 0.5f);
 }
 
 

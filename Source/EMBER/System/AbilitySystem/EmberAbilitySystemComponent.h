@@ -25,12 +25,16 @@ public:
 public:
 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
 	void ClearAbilityInput();
+
+protected:
+	//~UAbilitySystemComponent Overrides
+	virtual void AbilitySpecInputPressed(FGameplayAbilitySpec& Spec) override;
+	virtual void AbilitySpecInputReleased(FGameplayAbilitySpec& Spec) override;
+	//~End of UAbilitySystemComponent OVerrides
 	
 protected:
 	TArray<FGameplayAbilitySpecHandle> InputStartedSpecHandles;
 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
-	
-
 };

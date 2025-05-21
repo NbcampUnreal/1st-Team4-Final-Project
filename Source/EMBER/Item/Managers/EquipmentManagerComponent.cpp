@@ -3,6 +3,7 @@
 #include "EquipmentManagerComponent.h"
 
 #include "ArmorComponent.h"
+#include "C_StateComponent.h"
 #include "GameFlag.h"
 #include "ItemInstance.h"
 #include "ItemTemplate.h"
@@ -35,6 +36,18 @@ void UEquipmentManagerComponent::BeginPlay()
 	if (ArmorComponent == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"Armor Component is null");
+		return;
+	}
+	MontageComponent = OwnerCharacter->FindComponentByClass<UMontageSystemComponent>();
+	if (MontageComponent == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Montage Component is null");
+		return;
+	}
+	StateComponent = OwnerCharacter->FindComponentByClass<UC_StateComponent>();
+	if (StateComponent == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"State Component is null");
 		return;
 	}
 }
@@ -114,7 +127,6 @@ void UEquipmentManagerComponent::AddEquipment(EWeaponSlotType WeaponSlotType,
 
 }
 
-
 void UEquipmentManagerComponent::OnRep_ItemTemplateID(int32 PrevItemTemplateID)
 {
 	if (ItemTemplateID == PrevItemTemplateID)
@@ -144,6 +156,34 @@ void UEquipmentManagerComponent::OnRep_ItemTemplateID(int32 PrevItemTemplateID)
 	}
 }
 
+void UEquipmentManagerComponent::Attack()
+{
+	// EquipmentComponent에서 현재 무기 타입 가져오기
+	FAttackData Data = GetAttackInfo();
+	GetMontageIndex();
+	if (StateComponent->IsIdleMode() == true && !Data.Montages.IsEmpty())
+	{
+		StateComponent->SetActionMode();
+		MontageComponent->PlayMontage(Data.Montages[Data.MontageIndex]);
+	}
+}
+
+void UEquipmentManagerComponent::GetMontageIndex() const
+{
+	
+	if (ItemTemplateID == INDEX_NONE)
+		return;
+
+	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemTemplateID);
+
+	if (UItemFragment_Equipable_Weapon* WeaponFragment = ItemTemplate.FindFragmentByClass<
+		UItemFragment_Equipable_Weapon>())
+	{
+		WeaponFragment->IncrementMontageIndex();
+	}
+}
+
+
 FAttackData UEquipmentManagerComponent::GetAttackInfo() const
 {
 	FAttackData AttackInfo;
@@ -157,7 +197,6 @@ FAttackData UEquipmentManagerComponent::GetAttackInfo() const
 		UItemFragment_Equipable_Weapon>())
 	{
 		AttackInfo = WeaponFragment->GetAttackInfo();
-		WeaponFragment->IncrementMontageIndex();
 	}
 
 	return AttackInfo;
