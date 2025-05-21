@@ -13,5 +13,7 @@ UCLASS()
 class EMBER_API AFox : public ADefensiveAI
 {
 	GENERATED_BODY()
-	
+
+public:
+	AFox();
 };

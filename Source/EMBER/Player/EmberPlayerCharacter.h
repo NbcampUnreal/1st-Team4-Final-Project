@@ -15,6 +15,7 @@ class UCameraComponent;
 class UC_CharacterMovementComponent;
 class UAbilitySystemComponent;
 class UCharacterInputComponent;
+class UC_StateComponent;
 
 struct FInputActionValue;
 UCLASS()
@@ -39,6 +40,8 @@ protected:
 	UC_CharacterMovementComponent* MovementComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UC_CameraComponent* CameraLogicComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UC_StateComponent* StateComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	FVector2D PitchRange = FVector2D(-50, 50);
 	UFUNCTION()
@@ -65,6 +68,9 @@ protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 	void InitAbilityActorInfo();
+
+	//TODOS
+	virtual void PostNetInit() override;
 	
 private:
 	UPROPERTY()
@@ -78,4 +84,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UMontageSystemComponent> MontageComponent;
+
+	UPROPERTY()
+	TObjectPtr<class UArmorComponent> ArmorComponent;
 };

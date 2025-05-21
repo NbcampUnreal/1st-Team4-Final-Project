@@ -3,3 +3,8 @@
 
 #include "AI/Animal/Fox.h"
 
+AFox::AFox()
+{
+	WalkSpeed=150.f;
+	RunSpeed=600.f;
+}
