@@ -16,4 +16,5 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
 	UCraftingRecipe* GetRecipeByName(const FString& RecipeName) const;
+	UCraftingRecipe* GetRecipeByName(const FString& Name);
 };
