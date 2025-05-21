@@ -95,6 +95,10 @@ struct FAttackData
     TArray<TObjectPtr<UAnimMontage>> Montages;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 MontageIndex;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bCanMove;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bCanFixedCamera;
 };
 
 USTRUCT(BlueprintType)

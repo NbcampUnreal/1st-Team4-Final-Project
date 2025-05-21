@@ -7,7 +7,7 @@
 
 UArmorComponent::UArmorComponent()
 {
-    SetIsReplicated(true);
+    SetIsReplicatedByDefault(true);
 }
 
 void UArmorComponent::BeginPlay()
