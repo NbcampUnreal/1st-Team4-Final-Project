@@ -29,9 +29,7 @@ bool UC_CharacterMovementComponent::GetCanDash() const
 
 float UC_CharacterMovementComponent::GetCurrentSpeed() const
 {	
-	FVector Speed = Velocity * FVector(1.f, 1.f, 0.f);
-
-	return Speed.Length();
+	return Speed[(int32)CurrentSpeedType];
 }
 
 void UC_CharacterMovementComponent::EnableMove()
@@ -60,9 +58,9 @@ void UC_CharacterMovementComponent::OnMove(const FInputActionValue& Value)
 		return;
 	}
 
-	if (CharacterOwner && CharacterOwner->GetController())
+	if (OwnerCharacter && OwnerCharacter->GetController())
 	{
-		const FRotator Rotation = CharacterOwner->GetControlRotation();
+		const FRotator Rotation = OwnerCharacter->GetControlRotation();
 		const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -74,4 +72,30 @@ void UC_CharacterMovementComponent::OnMove(const FInputActionValue& Value)
 		AddInputVector(RightDirection * MoveVector.X);
 		//OnMoveDelegate.Broadcast(MoveVector);
 	}
+}
+
+void UC_CharacterMovementComponent::OnJump()
+{
+	OwnerCharacter->Jump();
+}
+
+void UC_CharacterMovementComponent::OnSprint()
+{
+	SetSpeed(ESpeedType::Sprint);
+}
+
+void UC_CharacterMovementComponent::OnRun()
+{
+	SetSpeed(ESpeedType::Run);
+}
+
+void UC_CharacterMovementComponent::OnWarlk()
+{
+	SetSpeed(ESpeedType::Walk);
+}
+
+void UC_CharacterMovementComponent::SetSpeed(ESpeedType SpeedType)
+{
+	CurrentSpeedType = SpeedType;
+	MaxWalkSpeed = Speed[(int32)CurrentSpeedType];
 }

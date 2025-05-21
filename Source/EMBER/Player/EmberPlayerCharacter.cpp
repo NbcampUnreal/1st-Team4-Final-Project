@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "C_CharacterMovementComponent.h"
+#include "C_StateComponent.h"
 #include "EmberPlayerState.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -34,6 +35,7 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("MontageComponent"));
 
     ArmorComponent = CreateDefaultSubobject<UArmorComponent>(TEXT("ArmorComponent"));
+    StateComponent = CreateDefaultSubobject<UC_StateComponent>(TEXT("StateComponent"));
 
     Tags.Add("Player");
 }
@@ -42,8 +44,10 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 void AEmberPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-    
+
+    StateComponent->SetIdleMode();
     CameraLogicComp->DisableControlRotation();
+    MovementComponent->OnRun();
     APlayerController* playerController = Cast<APlayerController>(GetController());
     if(playerController != nullptr)
     {
@@ -51,7 +55,6 @@ void AEmberPlayerCharacter::BeginPlay()
         playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
     }
     
-    //TODOS
     if(ArmorComponent != nullptr)
     {
 	    if(HasAuthority() == true)
@@ -165,7 +168,7 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
                     PlayerController->JumpAction,
                     ETriggerEvent::Started,
                     this,
-                    &AEmberPlayerCharacter::Jump
+                    &AEmberPlayerCharacter::StartJump
                 );
             }
         }
@@ -206,16 +209,11 @@ void AEmberPlayerCharacter::StopSprint(const FInputActionValue& value)
 
 void AEmberPlayerCharacter::Attack(const FInputActionValue& value)
 {
-    // EquipmentComponent에서 현재 무기 타입 가져오기
-    FAttackData Data = EquipmentManagerComponent->GetAttackInfo();
-
-    if (!Data.Montages.IsEmpty())
-    {
-        MontageComponent->PlayMontage(Data.Montages[Data.MontageIndex]);
-    }
+	EquipmentManagerComponent->Attack();
 }
 
 void AEmberPlayerCharacter::StartJump(const FInputActionValue& value)
 {
-    Jump();
+    UE_LOG(LogTemp, Warning, L"test");
+    MovementComponent->OnJump();
 }

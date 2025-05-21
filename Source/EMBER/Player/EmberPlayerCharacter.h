@@ -15,6 +15,7 @@ class UCameraComponent;
 class UC_CharacterMovementComponent;
 class UAbilitySystemComponent;
 class UCharacterInputComponent;
+class UC_StateComponent;
 
 struct FInputActionValue;
 UCLASS()
@@ -39,6 +40,8 @@ protected:
 	UC_CharacterMovementComponent* MovementComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UC_CameraComponent* CameraLogicComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UC_StateComponent* StateComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	FVector2D PitchRange = FVector2D(-50, 50);
 	UFUNCTION()
