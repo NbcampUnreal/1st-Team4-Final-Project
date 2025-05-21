@@ -7,6 +7,8 @@ void ABaseAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UE_LOG(LogTemp, Warning, TEXT("BeginPlay"));
+
 	ABaseAI* ControlledAnimal = Cast<ABaseAI>(GetPawn());
 	if (!ControlledAnimal) return;
 	UBehaviorTree* SelectedBT = nullptr;
@@ -34,5 +36,6 @@ void ABaseAIController::BeginPlay()
 		BlackboardComp->SetValueAsInt("PatrolIndex", 0);
 
 		RunBehaviorTree(SelectedBT);
+		UE_LOG(LogTemp, Warning, TEXT("BT: %s"), *GetNameSafe(SelectedBT));
 	}
 }

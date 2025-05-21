@@ -3,17 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/DefensiveAI.h"
-#include "Fox.generated.h"
+#include "AI/BaseAI.h"
+#include "Crow.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EMBER_API AFox : public ADefensiveAI
+class EMBER_API ACrow : public ABaseAI
 {
 	GENERATED_BODY()
-
-public:
-	AFox();
+	
 };
