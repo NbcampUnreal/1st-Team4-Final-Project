@@ -26,6 +26,8 @@ public:
 	void AddEquipment(EWeaponSlotType WeaponSlotType, TSubclassOf<UItemTemplate> ItemTemplateClass);
 	UFUNCTION()
 	FAttackData GetAttackInfo() const;
+	UFUNCTION()
+	void GetMontageIndex() const;
 private:
 	UFUNCTION()
 	void OnRep_ItemTemplateID(int32 PrevItemTemplateID);
@@ -38,7 +40,14 @@ private:
 	UPROPERTY()
 	AEquipmentBase* SpawnedWeapon;
 
+public:
+	void Attack();
+
 private:
 	ACharacter* OwnerCharacter;
 	TObjectPtr<class UArmorComponent> ArmorComponent;
+	TObjectPtr<class UMontageSystemComponent> MontageComponent;
+	TObjectPtr<class UC_StateComponent> StateComponent;
+
+	bool bIsClick;
 };

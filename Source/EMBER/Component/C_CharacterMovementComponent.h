@@ -23,11 +23,13 @@ private:
 	UPROPERTY(EditAnywhere, category = "Base")
 	class ACharacter* OwnerCharacter;
 	UPROPERTY(EditAnywhere, category = "Move")
-	ESpeedType SpeedType;
+	float Speed[(int32)ESpeedType::Max]{200,400,600};
+
 protected:	//	재정의
 	virtual void BeginPlay() override;
 	virtual float GetMaxSpeed() const override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 public:	//	추가
 	UFUNCTION(BlueprintCallable)
 	bool GetCanMove() const;
@@ -41,7 +43,21 @@ public:	//	추가
 	void DisableMove();
 	UFUNCTION(BlueprintCallable)
 	void OnMove(const FInputActionValue& Value);
+	UFUNCTION(BlueprintCallable)
+	void OnJump();
+
+public:
+	void OnSprint();
+	void OnRun();
+	void OnWarlk();
+
+private:
+	void SetSpeed(ESpeedType SpeedType);
+
 public: 
 	UPROPERTY(BlueprintAssignable, Category = "Movement")
 	FOnMoveDelegate OnMoveDelegate;
+
+private:
+	ESpeedType CurrentSpeedType;
 };
