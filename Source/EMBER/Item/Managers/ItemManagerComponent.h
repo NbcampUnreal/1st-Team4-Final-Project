@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Components/ControllerComponent.h"
 #include "ItemManagerComponent.generated.h"
 

@@ -41,6 +41,13 @@ FReply UInventoryEntryWidget::NativeOnMouseButtonDown(const FGeometry& InGeometr
 	
 	FIntPoint UnitInventorySlotSize = UEmberUIData::Get().UnitInventorySlotSize;
 
+	FVector2D MouseWidgetPos = SlotsWidget->GetSlotContainerGeometry().AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
+	FVector2D ItemWidgetPos = SlotsWidget->GetSlotContainerGeometry().AbsoluteToLocal(InGeometry.LocalToAbsolute(UnitInventorySlotSize / 2.f));
+	FIntPoint ItemSlotPos = FIntPoint(ItemWidgetPos.X / UnitInventorySlotSize.X, ItemWidgetPos.Y / UnitInventorySlotSize.Y);
+
+	CachedFromSlotPos = ItemSlotPos;
+	CachedDeltaWidgetPos = MouseWidgetPos - ItemWidgetPos;
+	
 	return Reply;
 }
 
@@ -53,15 +60,18 @@ void UInventoryEntryWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 
 	TSubclassOf<UItemDragWidget> DragWidgetClass = UEmberUIData::Get().ItemDragWidgetClass;
 	UItemDragWidget* DragWidget = CreateWidget<UItemDragWidget>(GetOwningPlayer(), DragWidgetClass);
-	FVector2D DragWidgetSize = FVector2D(ItemTemplate.SlotCount * UnitInventorySlotSize);
+	FVector2D DragWidgetSize = FVector2D(ItemTemplate.SlotCount.X * UnitInventorySlotSize.X, ItemTemplate.SlotCount.Y * UnitInventorySlotSize.Y);
 	DragWidget->Init(DragWidgetSize, ItemTemplate.IconTexture, ItemCount);
 	
 	UItemDragDrop* ItemDragDrop = NewObject<UItemDragDrop>();
 	ItemDragDrop->DefaultDragVisual = DragWidget;
+	ItemDragDrop->Pivot = EDragPivot::TopLeft;
+	ItemDragDrop->Offset = -((CachedDeltaWidgetPos + UnitInventorySlotSize / 2.f) / DragWidgetSize);
 	ItemDragDrop->FromEntryWidget = this;
 	ItemDragDrop->FromInventoryManager = SlotsWidget->GetInventoryManager();
-	ItemDragDrop->DeltaWidgetPos = (DragWidgetSize / 2.f) - (UnitInventorySlotSize / 2.f);
+	ItemDragDrop->FromItemSlotPos = CachedFromSlotPos;
 	ItemDragDrop->FromItemInstance = ItemInstance;
+	ItemDragDrop->DeltaWidgetPos = CachedDeltaWidgetPos;
 	
 	OutOperation = ItemDragDrop;
 }

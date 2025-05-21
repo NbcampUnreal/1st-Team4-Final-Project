@@ -30,6 +30,9 @@ private:
 	UPROPERTY()
 	TObjectPtr<UInventorySlotsWidget> SlotsWidget;
 
+	FIntPoint CachedFromSlotPos = FIntPoint::ZeroValue;
+	FVector2D CachedDeltaWidgetPos = FVector2D::ZeroVector;
+	
 private:
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<USizeBox> SizeBox_Root;

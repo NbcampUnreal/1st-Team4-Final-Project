@@ -80,11 +80,11 @@ bool UInventorySlotsWidget::NativeOnDragOver(const FGeometry& InGeometry, const 
 	int32 MovableCount = 0;
 	if (UInventoryManagerComponent* FromInventoryManager = DragDrop->FromInventoryManager)
 	{
-		// MovableCount = InventoryManager->CanMoveOrMergeItem(FromInventoryManager, DragDrop->FromItemSlotPos, ToItemSlotPos);
+		MovableCount = InventoryManager->CanMoveOrMergeItem(FromInventoryManager, DragDrop->FromItemSlotPos, ToItemSlotPos);
 	}
 	else if (UEquipmentManagerComponent* FromEquipmentManager = DragDrop->FromEquipmentManager)
 	{
-		// MovableCount = InventoryManager->CanMoveOrMergeItem(FromEquipmentManager, DragDrop->FromEquipmentSlotType, ToItemSlotPos);
+		MovableCount = InventoryManager->CanMoveOrMergeItem(FromEquipmentManager, DragDrop->FromEquipmentSlotType, ToItemSlotPos);
 	}
 
 	ResetValidSlots();
