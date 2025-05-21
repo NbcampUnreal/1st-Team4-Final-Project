@@ -15,9 +15,9 @@ class EMBER_API UFoxAnimInstance : public UBaseAIAnimInstance
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Attack")
-	TArray<FName> AttackSection;
-	
-	UFUNCTION(BlueprintCallable)
-	void PlayAttackMontage(int32 Index);
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Attack")
+	// TArray<FName> AttackSection;
+	//
+	// UFUNCTION(BlueprintCallable)
+	// void PlayAttackMontage(int32 Index);
 };

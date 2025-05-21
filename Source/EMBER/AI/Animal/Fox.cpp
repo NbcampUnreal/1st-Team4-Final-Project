@@ -11,6 +11,11 @@ AFox::AFox()
 	RunSpeed=600.f;
 }
 
+void AFox::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void AFox::Attack()
 {
 	Super::Attack();
