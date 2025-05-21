@@ -27,7 +27,9 @@ public class EMBER : ModuleRules
 						"GameplayAbilities",
 						"ModularGameplay",
 						"CommonUI",
-						"CommonInput"
+						"CommonInput",
+						"AnimGraphRuntime",
+						"NavigationSystem",
 					});
         PublicIncludePaths.AddRange(
                     new string[]
@@ -41,7 +43,7 @@ public class EMBER : ModuleRules
                         System.IO.Path.Combine(ModuleDirectory, "Item")                        
                     }
                 );
-        PrivateDependencyModuleNames.AddRange(new string[] {  });
+        PrivateDependencyModuleNames.AddRange(new string[] { "AnimGraphRuntime" });
 
         // Uncomment if you are using Slate UI
         // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
