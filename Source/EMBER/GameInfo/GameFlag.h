@@ -51,10 +51,10 @@ enum class EEffectType : uint8
 UENUM(BlueprintType)
 enum class EItemRarity : uint8
 {
-	Poor,
 	Common,
 	Uncommon,
 	Rare,
+	Unique,
 	Legendary,
 
 	Count	UMETA(Hidden)
@@ -116,9 +116,11 @@ UENUM(BlueprintType)
 enum class EArmorType : uint8
 {
 	Helmet,
+	Shoulder,
+	Cloak,
 	Chest,
-	Legs,
-	Hands,
+	Gloves,
+	Pants,
 	Foot,
 
 	Count	UMETA(Hidden)

@@ -3,3 +3,9 @@
 
 #include "AI/Animal/Deer.h"
 
+ADeer::ADeer()
+{
+	MaxHP = 100;
+	CurrentHP = MaxHP;
+	bIsDie = false;
+}

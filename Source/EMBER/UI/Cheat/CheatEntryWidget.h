@@ -44,6 +44,9 @@ public:
 private:
 	UFUNCTION()
 	void OnButtonClicked();
+
+	UFUNCTION(BlueprintCallable)
+	void OnButtonRightClicked();
 	
 public:
 	UPROPERTY()

@@ -12,22 +12,30 @@ class EMBER_API APassiveAI : public ABaseAI
 public:
 	APassiveAI();
 	virtual void BeginPlay() override;
-	virtual void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors) override;
-	void UpdateClosestActorTimer();
-
+	
+	//RunState Perception 사정거리
 	UFUNCTION()
-	void OnRunPerceptionUpdate(const TArray<AActor*>& UpdatedActors);
+	void OnRunPerceptionUpdate(AActor* UpdatedActor, FAIStimulus Stimulus);
+
+	void CheckDetection();
+	//근접한 적 업데이트 타이머
+	void UpdateClosestActorTimer();
+	//근접한 적 업데이트
+	virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	UAISenseConfig_Sight* RunSightConfig;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	UAIPerceptionComponent* RunPerception;
 
-	UBlackboardComponent* BlackboardComp;
 	TArray<AActor*> EnemyActors;
 	AActor* ClosestActor;
 
 	FTimerHandle UpdateDistanceTimer;
+	bool bIsDetect;
+	bool bIsHit;
 };
 
 

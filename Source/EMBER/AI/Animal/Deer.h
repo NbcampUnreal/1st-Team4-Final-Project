@@ -9,5 +9,7 @@ UCLASS()
 class EMBER_API ADeer : public APassiveAI
 {
 	GENERATED_BODY()
-	
+
+public:
+	ADeer();
 };
