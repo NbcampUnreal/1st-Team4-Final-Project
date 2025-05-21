@@ -18,7 +18,7 @@ class EMBER_API UItemEntryWidget : public UUserWidget
 
 public:
 	UItemEntryWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-	
+
 protected:
 	//~UUserWidget Overrides
 	virtual void NativeOnInitialized() override;
@@ -28,12 +28,17 @@ protected:
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
+	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+	virtual void NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	//~End of UUserWidget Overrides
 
 public:
 	void RefreshUI(UItemInstance* NewItemInstance, int32 NewItemCount);
 	void RefreshItemCount(int32 NewItemCount);
-	
+	void RefreshWidgetOpacity(bool bClearlyVisible);
+
 public:
 	UItemInstance* GetItemInstance() const { return ItemInstance; }
 

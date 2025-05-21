@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CommonPlayerController.h"
 #include "GameFramework/PlayerController.h"
 #include "EmberPlayerController.generated.h"
 
@@ -13,7 +14,7 @@ class UInputAction;
 class UItemTemplate;
 
 UCLASS()
-class EMBER_API AEmberPlayerController : public APlayerController
+class EMBER_API AEmberPlayerController : public ACommonPlayerController
 {
 	GENERATED_BODY()
 public:

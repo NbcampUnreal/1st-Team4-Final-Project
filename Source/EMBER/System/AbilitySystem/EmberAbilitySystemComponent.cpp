@@ -86,7 +86,7 @@ void UEmberAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGa
 			if (AbilitySpec->Ability)
 			{
 				AbilitySpec->InputPressed = true;
-
+				
 				if (AbilitySpec->IsActive())
 				{
 					AbilitySpecInputPressed(*AbilitySpec);
@@ -94,7 +94,6 @@ void UEmberAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGa
 				else
 				{
 					const UEmberGameplayAbility* EmberAbilityCDO = Cast<UEmberGameplayAbility>(AbilitySpec->Ability);
-
 					if (EmberAbilityCDO && EmberAbilityCDO->GetActivationPolicy() == EEmberAbilityActivationPolicy::OnInputTriggered)
 					{
 						AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
@@ -138,4 +137,30 @@ void UEmberAbilitySystemComponent::ClearAbilityInput()
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
 	InputHeldSpecHandles.Reset();
+}
+
+void UEmberAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& Spec)
+{
+	Super::AbilitySpecInputPressed(Spec);
+
+	if (Spec.IsActive())
+	{
+		const UGameplayAbility* Instance = Spec.GetPrimaryInstance();
+		FPredictionKey OriginalPredictionKey = Instance ? Instance->GetCurrentActivationInfo().GetActivationPredictionKey() : Spec.ActivationInfo.GetActivationPredictionKey();
+
+		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, Spec.Handle, OriginalPredictionKey);
+	}
+}
+
+void UEmberAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec& Spec)
+{
+	Super::AbilitySpecInputReleased(Spec);
+
+	if (Spec.IsActive())
+	{
+		const UGameplayAbility* Instance = Spec.GetPrimaryInstance();
+		FPredictionKey OriginalPredictionKey = Instance ? Instance->GetCurrentActivationInfo().GetActivationPredictionKey() : Spec.ActivationInfo.GetActivationPredictionKey();
+
+		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, Spec.Handle, OriginalPredictionKey);
+	}
 }

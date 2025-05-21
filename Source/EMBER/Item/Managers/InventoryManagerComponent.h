@@ -1,14 +1,16 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
+
+#include "GameData.h"
 #include "Net/Serialization/FastArraySerializer.h"
 
 #include "InventoryManagerComponent.generated.h"
 
-enum class EItemRarity : uint8;
 class UItemTemplate;
 class UItemInstance;
 class UInventoryManagerComponent;
+class UEquipmentManagerComponent;
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnInventoryEntryChanged, const FIntPoint&/*ItemSlotPos*/, UItemInstance*, int32/*ItemCount*/)
 
@@ -24,6 +26,7 @@ public:
 private:
 	UItemInstance* Init(int32 InItemTemplateID, int32 InItemCount, EItemRarity InItemRarity);
 	void Init(UItemInstance* InItemInstance, int32 InItemCount);
+	UItemInstance* Reset();
 	
 private:
 	friend class UInventoryManagerComponent;
@@ -97,20 +100,35 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 	virtual void ReadyForReplication() override;
+	virtual bool IsSupportedForNetworking() const override { return true; }
 	//~End of UActorComponent Overrides
 	
 public:
+	int32 CanMoveOrMergeItem(UInventoryManagerComponent* OtherComponent, const FIntPoint& FromItemSlotPos, const FIntPoint& ToItemSlotPos) const;
+	int32 CanMoveOrMergeItem(UEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, const FIntPoint& ToItemSlotPos) const;
+
 	int32 CanAddItem(int32 ItemTemplateID, EItemRarity ItemRarity, int32 ItemCount, TArray<FIntPoint>& OutToItemSlotPoses, TArray<int32>& OutToItemCounts) const;
 	
 public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	int32 TryAddItemByRarity(TSubclassOf<UItemTemplate> ItemTemplateClass, EItemRarity ItemRarity, int32 ItemCount);
+
+private:
+	void AddItem_Unsafe(const FIntPoint& ItemSlotPos, UItemInstance* ItemInstance, int32 ItemCount);
+	UItemInstance* RemoveItem_Unsafe(const FIntPoint& ItemSlotPos, int32 ItemCount);
 	
 public:
+	bool IsEmpty(const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount) const;
 	bool IsEmpty(const TArray<bool>& InSlotChecks, const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount) const;
+	
+	UItemInstance* GetItemInstance(const FIntPoint& ItemSlotPos) const;
+	int32 GetItemCount(const FIntPoint& ItemSlotPos) const;
 	
 	const TArray<FInventoryEntry>& GetAllEntries() const;
 	FIntPoint GetInventorySlotCount() const { return InventorySlotCount; }
+
+protected:
+	bool IsSameComponent(const UInventoryManagerComponent* OtherComponent) const;
 	
 private:
 	void MarkSlotChecks(TArray<bool>& InSlotChecks, bool bIsUsing, const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount) const;
@@ -120,6 +138,8 @@ public:
 	FOnInventoryEntryChanged OnInventoryEntryChanged;
 	
 private:
+	friend class UItemManagerComponent;
+	
 	UPROPERTY(Replicated)
 	FInventoryList InventoryList;
 

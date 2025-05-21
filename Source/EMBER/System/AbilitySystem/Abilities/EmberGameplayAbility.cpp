@@ -3,6 +3,7 @@
 
 #include "EmberGameplayAbility.h"
 
+#include "EmberLocalPlayer.h"
 #include "Player/EmberPlayerCharacter.h"
 #include "Player/EmberPlayerController.h"
 
@@ -24,4 +25,14 @@ AEmberPlayerCharacter* UEmberGameplayAbility::GetEmberCharacterFromActorInfo() c
 AEmberPlayerController* UEmberGameplayAbility::GetEmberPlayerControllerFromActorInfo() const
 {
 	return (CurrentActorInfo ? Cast<AEmberPlayerController>(CurrentActorInfo->PlayerController.Get()) : nullptr);
+}
+
+UEmberLocalPlayer* UEmberGameplayAbility::GetEmberLocalPlayerFromActorInfo() const
+{
+	if (APlayerController* Controller = CurrentActorInfo->PlayerController.Get())
+	{
+		return Cast<UEmberLocalPlayer>(Controller->Player);
+	}
+
+	return nullptr;
 }

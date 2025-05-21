@@ -31,6 +31,15 @@ void FInventoryEntry::Init(UItemInstance* InItemInstance, int32 InItemCount)
 	ItemCount = FMath::Clamp(InItemCount, 1, ItemTemplate.MaxStackCount);
 }
 
+UItemInstance* FInventoryEntry::Reset()
+{
+	UItemInstance* RemovedItemInstance = ItemInstance;
+	ItemInstance = nullptr;
+	ItemCount = 0;
+	
+	return RemovedItemInstance;
+}
+
 bool FInventoryList::NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams)
 {
 	return FFastArraySerializer::FastArrayDeltaSerialize<FInventoryEntry, FInventoryList>(Entries, DeltaParams, *this);
@@ -92,6 +101,7 @@ UInventoryManagerComponent::UInventoryManagerComponent(const FObjectInitializer&
 {
 	bWantsInitializeComponent = true;
 	SetIsReplicatedByDefault(true);
+	bReplicateUsingRegisteredSubObjectList = true;
 }
 
 void UInventoryManagerComponent::InitializeComponent()
@@ -151,6 +161,77 @@ void UInventoryManagerComponent::ReadyForReplication()
 			}
 		}
 	}
+}
+
+int32 UInventoryManagerComponent::CanMoveOrMergeItem(UInventoryManagerComponent* OtherComponent, const FIntPoint& FromItemSlotPos, const FIntPoint& ToItemSlotPos) const
+{
+	if (OtherComponent == nullptr)
+		return 0;
+
+	const FIntPoint& FromInventorySlotCount = OtherComponent->GetInventorySlotCount();
+	if (FromItemSlotPos.X < 0 || FromItemSlotPos.Y < 0 || FromItemSlotPos.X >= FromInventorySlotCount.X || FromItemSlotPos.Y >= FromInventorySlotCount.Y)
+		return 0;
+
+	if (ToItemSlotPos.X < 0 || ToItemSlotPos.Y < 0 || ToItemSlotPos.X >= InventorySlotCount.X || ToItemSlotPos.Y >= InventorySlotCount.Y)
+		return 0;
+	
+	const UItemInstance* FromItemInstance = OtherComponent->GetItemInstance(FromItemSlotPos);
+	const int32 FromItemCount = OtherComponent->GetItemCount(FromItemSlotPos);
+	
+	if (IsSameComponent(OtherComponent) && FromItemSlotPos == ToItemSlotPos)
+		return FromItemCount;
+	
+	if (FromItemInstance == nullptr || FromItemCount <= 0)
+		return 0;
+
+	const UItemInstance* ToItemInstance = GetItemInstance(ToItemSlotPos);
+	const int32 ToItemCount = GetItemCount(ToItemSlotPos);
+
+	const int32 FromTemplateID = FromItemInstance->GetItemTemplateID();
+	const UItemTemplate& FromItemTemplate = UEmberItemData::Get().FindItemTemplateByID(FromTemplateID);
+	
+	if (ToItemInstance)
+	{
+		const int32 ToTemplateID = ToItemInstance->GetItemTemplateID();
+		if (FromTemplateID != ToTemplateID)
+			return 0;
+
+		if (FromItemInstance->GetItemRarity() != ToItemInstance->GetItemRarity())
+			return 0;
+		
+		if (FromItemTemplate.MaxStackCount < 2)
+			return 0;
+
+		return FMath::Min(FromItemCount + ToItemCount, FromItemTemplate.MaxStackCount) - ToItemCount;
+	}
+	
+	const FIntPoint& FromItemSlotCount = FromItemTemplate.SlotCount;
+	if (ToItemSlotPos.X + FromItemSlotCount.X > InventorySlotCount.X || ToItemSlotPos.Y + FromItemSlotCount.Y > InventorySlotCount.Y)
+		return 0;
+	
+	if (IsSameComponent(OtherComponent))
+	{
+		TArray<bool> TempSlotChecks = SlotChecks;
+		MarkSlotChecks(TempSlotChecks, false, FromItemSlotPos, FromItemSlotCount);
+		
+		return IsEmpty(TempSlotChecks, ToItemSlotPos, FromItemSlotCount) ? FromItemCount : 0;
+	}
+
+	return IsEmpty(ToItemSlotPos, FromItemSlotCount) ? FromItemCount : 0;
+}
+
+int32 UInventoryManagerComponent::CanMoveOrMergeItem(UEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, const FIntPoint& ToItemSlotPos) const
+{
+	if (OtherComponent == nullptr)
+		return 0;
+
+	if (FromEquipmentSlotType == EEquipmentSlotType::Count)
+		return 0;
+	
+	if (ToItemSlotPos.X < 0 || ToItemSlotPos.Y < 0 || ToItemSlotPos.X >= InventorySlotCount.X || ToItemSlotPos.Y >= InventorySlotCount.Y)
+		return 0;
+	
+	return 0;
 }
 
 
@@ -288,6 +369,67 @@ int32 UInventoryManagerComponent::TryAddItemByRarity(TSubclassOf<UItemTemplate> 
 	return 0;
 }
 
+void UInventoryManagerComponent::AddItem_Unsafe(const FIntPoint& ItemSlotPos, UItemInstance* ItemInstance, int32 ItemCount)
+{
+	check(GetOwner()->HasAuthority());
+	
+	const int32 Index = ItemSlotPos.Y * InventorySlotCount.X + ItemSlotPos.X;
+	FInventoryEntry& Entry = InventoryList.Entries[Index];
+	
+	if (Entry.GetItemInstance())
+	{
+		Entry.ItemCount += ItemCount;
+		InventoryList.MarkItemDirty(Entry);
+	}
+	else
+	{
+		if (ItemInstance == nullptr)
+			return;
+		
+		const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemInstance->GetItemTemplateID());
+		
+		Entry.Init(ItemInstance, ItemCount);
+		
+		if (IsReadyForReplication() && ItemInstance)
+		{
+			AddReplicatedSubObject(ItemInstance);
+		}
+
+		MarkSlotChecks(true, ItemSlotPos, ItemTemplate.SlotCount);
+		InventoryList.MarkItemDirty(Entry);
+	}
+}
+
+UItemInstance* UInventoryManagerComponent::RemoveItem_Unsafe(const FIntPoint& ItemSlotPos, int32 ItemCount)
+{
+	check(GetOwner()->HasAuthority());
+	
+	const int32 Index = ItemSlotPos.Y * InventorySlotCount.X + ItemSlotPos.X;
+	FInventoryEntry& Entry = InventoryList.Entries[Index];
+	UItemInstance* ItemInstance = Entry.GetItemInstance();
+	
+	Entry.ItemCount -= ItemCount;
+	if (Entry.GetItemCount() <= 0)
+	{
+		const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemInstance->GetItemTemplateID());
+		MarkSlotChecks(false, ItemSlotPos, ItemTemplate.SlotCount);
+		
+		UItemInstance* RemovedItemInstance = Entry.Reset();
+		if (IsUsingRegisteredSubObjectList() && RemovedItemInstance)
+		{
+			RemoveReplicatedSubObject(RemovedItemInstance);
+		}
+	}
+	
+	InventoryList.MarkItemDirty(Entry);
+	return ItemInstance;
+}
+
+bool UInventoryManagerComponent::IsEmpty(const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount) const
+{
+	return IsEmpty(SlotChecks, ItemSlotPos, ItemSlotCount);
+}
+
 bool UInventoryManagerComponent::IsEmpty(const TArray<bool>& InSlotChecks, const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount) const
 {
 	if (ItemSlotPos.X < 0 || ItemSlotPos.Y < 0)
@@ -310,6 +452,35 @@ bool UInventoryManagerComponent::IsEmpty(const TArray<bool>& InSlotChecks, const
 	}
 	
 	return true;
+}
+
+bool UInventoryManagerComponent::IsSameComponent(const UInventoryManagerComponent* OtherComponent) const
+{
+	return this == OtherComponent;
+}
+
+UItemInstance* UInventoryManagerComponent::GetItemInstance(const FIntPoint& ItemSlotPos) const
+{
+	if (ItemSlotPos.X < 0 || ItemSlotPos.Y < 0 || ItemSlotPos.X >= InventorySlotCount.X || ItemSlotPos.Y >= InventorySlotCount.Y)
+		return nullptr;
+
+	const TArray<FInventoryEntry>& Entries = InventoryList.GetAllEntries();
+	const int32 EntryIndex = ItemSlotPos.Y * InventorySlotCount.X + ItemSlotPos.X;
+	const FInventoryEntry& Entry = Entries[EntryIndex];
+	
+	return Entry.GetItemInstance();
+}
+
+int32 UInventoryManagerComponent::GetItemCount(const FIntPoint& ItemSlotPos) const
+{
+	if (ItemSlotPos.X < 0 || ItemSlotPos.Y < 0 || ItemSlotPos.X >= InventorySlotCount.X || ItemSlotPos.Y >= InventorySlotCount.Y)
+		return 0;
+
+	const TArray<FInventoryEntry>& Entries = InventoryList.GetAllEntries();
+	const int32 EntryIndex = ItemSlotPos.Y * InventorySlotCount.X + ItemSlotPos.X;
+	const FInventoryEntry& Entry = Entries[EntryIndex];
+
+	return Entry.GetItemCount();
 }
 
 const TArray<FInventoryEntry>& UInventoryManagerComponent::GetAllEntries() const
