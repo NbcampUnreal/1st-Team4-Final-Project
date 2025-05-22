@@ -4,6 +4,18 @@
 #include "BehaviorTree/BlackboardComponent.h" 
 #include "KismetAnimationLibrary.h"
 
+void UBaseAIAnimInstance::NativeInitializeAnimation()
+{
+	Super::NativeInitializeAnimation();
+
+	APawn* OwnerPawn = TryGetPawnOwner();
+	if (!OwnerPawn) return;
+	ABaseAIController* AIController = Cast<ABaseAIController>(OwnerPawn->GetController());
+	if (!AIController) return;
+	BlackboardComp = AIController->GetBlackboardComponent();
+	if (!BlackboardComp) return;
+}
+
 void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
@@ -16,13 +28,6 @@ void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		CurrentSpeed = Velocity.Size();
 		CurrentDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, AICharacter->GetActorRotation());
 	}
-	
-	APawn* OwnerPawn = TryGetPawnOwner();
-	if (!OwnerPawn) return;
-	ABaseAIController* AIController = Cast<ABaseAIController>(OwnerPawn->GetController());
-	if (!AIController) return;
-	BlackboardComp = AIController->GetBlackboardComponent();
-	if (!BlackboardComp) return;
 }
 
 void UBaseAIAnimInstance::PlayMontage(EAnimActionType ActionType)
@@ -41,7 +46,6 @@ void UBaseAIAnimInstance::PlayDeathMontage()
 		Montage_Play(DeathMontage);
 	}
 }
-#pragma region Interface
 
 UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay(EAnimActionType ActionType) const
 {
@@ -61,6 +65,8 @@ UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay(EAnimActionType ActionType) 
 		return nullptr;
 	}
 }
+
+#pragma region Interface
 
 void UBaseAIAnimInstance::SetBlackboardBool(FName KeyName, bool bValue)
 {

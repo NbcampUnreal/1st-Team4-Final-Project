@@ -31,14 +31,20 @@ ABaseAI::ABaseAI()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
 	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); //여러 감각중 시각 우선 사용
-	BlackboardComp = nullptr;
 
 	WalkSpeed = 200.0f;
+	RunSpeed = 700.0f;
 }
 
 void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (ABaseAIController* AIController = Cast<ABaseAIController>(GetController()))
+	{
+		BlackboardComp = AIController->GetBlackboardComponent();
+	}
+	
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAI::OnTargetPerceptionUpdated);
 	SetWalkSpeed();
 }
@@ -52,7 +58,6 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	
 	if (AAIController* AIController = Cast<AAIController>(GetController()))
 	{
-		
 		if (UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent())
 		{
 			BlackboardComponent->SetValueAsBool("IsHit", true);
@@ -110,6 +115,18 @@ void ABaseAI::OnAttack()
 
 void ABaseAI::OnDeath()
 {
+	//퍼셉션 제거
+	AIPerception->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
+
+	//이동, 애니메이션 제거
+	GetController()->StopMovement();
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		AnimInstance->StopAllMontages(0.0f);
+	}
+	//컨트롤러 해제
+	DetachFromControllerPendingDestroy();
+
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->PlayDeathMontage();

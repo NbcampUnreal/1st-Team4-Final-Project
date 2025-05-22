@@ -93,6 +93,6 @@ protected:
 	UAISenseConfig_Sight* SightConfig;
 
 	UBlackboardComponent* BlackboardComp;
-	
+
 	EAnimalState AnimalState;
 };

@@ -26,8 +26,9 @@ class EMBER_API UBaseAIAnimInstance : public UAnimInstance, public IAI_Interface
 	GENERATED_BODY()
 
 public:
+	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
 	float CurrentSpeed;
 
