@@ -2,7 +2,9 @@
 
 #pragma once
 
+#include "GameFlag.h"
 #include "EquipmentSlotWidget.h"
+
 #include "EquipmentSlotSingleWidget.generated.h"
 
 class UImage;
@@ -22,7 +24,13 @@ public:
 protected:
 	//~UUserWidget Overrides
 	virtual void NativePreConstruct() override;
+	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void OnDragEnded() override;
 	//~End of UUSerWidget Overrides
+
+
+private:
+	void ChangeSlotState(bool bIsValid);
 	
 protected:
 	UPROPERTY(EditAnywhere)
@@ -42,4 +50,5 @@ protected:
 	TObjectPtr<UImage> Image_Green;
 
 private:
+	EEquipmentSlotType EquipmentSlotType = EEquipmentSlotType::Count;
 };

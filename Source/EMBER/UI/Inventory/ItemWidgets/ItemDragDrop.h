@@ -35,12 +35,12 @@ public:
 
 public:
 	UPROPERTY()
-	TObjectPtr<UEquipmentManagerComponent> FromEquipmentManager;
+	TObjectPtr<UEquipmentManagerComponent> FromInventoryEquipmentManager;
 
 	EEquipmentSlotType FromEquipmentSlotType = EEquipmentSlotType::Count;
 	
 	UPROPERTY()
-	TObjectPtr<UEquipmentManagerComponent> ToEquipmentManager;
+	TObjectPtr<UEquipmentManagerComponent> ToInventoryEquipmentManager;
 
 	EEquipmentSlotType ToEquipmentSlotType = EEquipmentSlotType::Count;
 

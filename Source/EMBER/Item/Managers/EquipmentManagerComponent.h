@@ -1,8 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-#include "EMBER.h"
-#include "Components/ActorComponent.h"
+
+#include "Components/PawnComponent.h"
+
 #include "EquipmentManagerComponent.generated.h"
 
 enum class EWeaponSlotType : uint8;
@@ -11,7 +12,7 @@ class UItemInstance;
 class AEquipmentBase;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class EMBER_API UEquipmentManagerComponent : public UActorComponent
+class EMBER_API UEquipmentManagerComponent : public UPawnComponent
 {
 	GENERATED_BODY()
 

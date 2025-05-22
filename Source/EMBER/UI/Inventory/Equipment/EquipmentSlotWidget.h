@@ -5,7 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "EquipmentSlotWidget.generated.h"
 
-class UEquipmentManagerComponent;
+class UInventoryEquipmentManagerComponent;
 
 /**
  * 
@@ -24,7 +24,7 @@ protected:
 
 protected:
 	UPROPERTY()
-	TObjectPtr<UEquipmentManagerComponent> EquipmentManager;
+	TObjectPtr<UInventoryEquipmentManagerComponent> InventoryEquipmentManager;
 
 protected:
 	bool bAlreadyHovered = false;

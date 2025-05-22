@@ -16,4 +16,5 @@ void UEquipmentSlotWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEve
 
 void UEquipmentSlotWidget::OnDragEnded()
 {
+	bAlreadyHovered = false;
 }
