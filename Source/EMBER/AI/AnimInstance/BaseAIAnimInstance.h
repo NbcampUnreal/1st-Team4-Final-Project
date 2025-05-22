@@ -35,7 +35,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
 	float CurrentDirection;
 	
-	virtual void PlayMontage(EAnimActionType ActionType);
+	virtual void PlayMontage(EAnimActionType Desired, EAnimActionType Fallback);
 	virtual void PlayDeathMontage();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)

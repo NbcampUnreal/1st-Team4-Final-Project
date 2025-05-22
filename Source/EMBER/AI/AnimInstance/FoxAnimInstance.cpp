@@ -1,7 +1,7 @@
 #include "FoxAnimInstance.h"
 
 
-void UFoxAnimInstance::PlayMontage(EAnimActionType ActionType)
+void UFoxAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType Fallback)
 {
-	Super::PlayMontage(ActionType);
+	Super::PlayMontage(Desired, Fallback);
 }

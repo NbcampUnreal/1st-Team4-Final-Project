@@ -11,5 +11,5 @@ class EMBER_API UFoxAnimInstance : public UBaseAIAnimInstance
 	GENERATED_BODY()
 
 public:
-	virtual void PlayMontage(EAnimActionType ActionType) override;
+	virtual void PlayMontage(EAnimActionType Desired, EAnimActionType Fallback) override;
 };
