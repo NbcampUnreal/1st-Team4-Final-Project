@@ -30,13 +30,25 @@ void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	}
 }
 
-void UBaseAIAnimInstance::PlayMontage(EAnimActionType ActionType)
+void UBaseAIAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType Fallback)
 {
-	UAnimMontage* MontageToPlay = GetMontageToPlay(ActionType);
-	if (!MontageToPlay || !AnimSectionMap.Contains(ActionType)) return;
+	UAnimMontage* MontageToPlay = nullptr;
+	EAnimActionType FinalType = Desired;
+
+	if (AnimSectionMap.Contains(Desired))
+	{
+		MontageToPlay = GetMontageToPlay(Desired);
+	}
+	else if (AnimSectionMap.Contains(Fallback))
+	{
+		MontageToPlay = GetMontageToPlay(Fallback);
+		FinalType = Fallback;
+	}
+
+	if (!MontageToPlay) return;
 
 	Montage_Play(MontageToPlay);
-	Montage_JumpToSection(AnimSectionMap[ActionType], MontageToPlay);
+	Montage_JumpToSection(AnimSectionMap[FinalType], MontageToPlay);
 }
 
 void UBaseAIAnimInstance::PlayDeathMontage()

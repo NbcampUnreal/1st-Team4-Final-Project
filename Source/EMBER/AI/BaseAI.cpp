@@ -104,15 +104,15 @@ void ABaseAI::OnAttack()
 			{
 				if (AnimInstance->CurrentSpeed >= RunSpeed)
 				{
-					AnimInstance->PlayMontage(EAnimActionType::AttackRun);
+					AnimInstance->PlayMontage(EAnimActionType::AttackRun, EAnimActionType::AttackNormal);
 				}
 				else if (HeightDifference > 100.f)
 				{
-					AnimInstance->PlayMontage(EAnimActionType::AttackJump);
+					AnimInstance->PlayMontage(EAnimActionType::AttackJump, EAnimActionType::AttackNormal);
 				}
 				else
 				{
-					AnimInstance->PlayMontage(EAnimActionType::AttackNormal);
+					AnimInstance->PlayMontage(EAnimActionType::AttackNormal, EAnimActionType::AttackNormal);
 				}
 			}
 		}
