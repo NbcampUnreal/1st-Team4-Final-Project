@@ -1,34 +1,17 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "AI/HumanAIBase.h"
 
-// Sets default values
+#include "C_StateComponent.h"
+#include "StatusComponent.h"
+
 AHumanAIBase::AHumanAIBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	StateComponent = CreateDefaultSubobject<UC_StateComponent>(TEXT("State Component"));
 }
 
-// Called when the game starts or when spawned
 void AHumanAIBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AHumanAIBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void AHumanAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	if(MaxHP != 0)
+		StatusComponent.Get()->SetMaxHp(MaxHP);
 }
 

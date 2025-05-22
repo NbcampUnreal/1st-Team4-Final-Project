@@ -3,11 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseAI.h"
 #include "GameFramework/Character.h"
 #include "HumanAIBase.generated.h"
 
+class UC_StateComponent;
 UCLASS()
-class EMBER_API AHumanAIBase : public ACharacter
+class EMBER_API AHumanAIBase : public ABaseAI
 {
 	GENERATED_BODY()
 
@@ -19,11 +21,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+protected:	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	TObjectPtr<UC_StateComponent> StateComponent;
 };
