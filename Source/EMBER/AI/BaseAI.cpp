@@ -2,13 +2,19 @@
 
 #include "AnimInstance/BaseAIAnimInstance.h"
 #include "BaseAIController.h"
+#include "MontageSystemComponent.h"
+#include "StatusComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Managers/EquipmentManagerComponent.h"
 
 
 ABaseAI::ABaseAI()
 {
+	StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("Status Component"));
+	MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("Montage Component"));
+	EquipComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("Equip Component"));
 	AnimalState = EAnimalState::Idle;
 	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));

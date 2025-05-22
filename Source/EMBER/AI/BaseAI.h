@@ -29,16 +29,16 @@ public:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	                         AActor* DamageCauser) override;
 
-	// AI Information
+	// AI 기본정보
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Type")
 	EAnimalType AnimalType;
 	
 	// AI State
 	UFUNCTION(BlueprintCallable, Category = "AI|State")
-	virtual void OnAttack();
+	virtual void OnDeath();
 	
 	UFUNCTION(BlueprintCallable, Category = "AI|State")
-	virtual void OnDeath();
+	virtual void OnAttack();
 
 	// AI Perception
 	UFUNCTION()
@@ -66,7 +66,15 @@ public:
 	virtual void SetBlackboardObject(FName KeyName, UObject* object) override;
 
 protected:
-	// AI Information
+	// AI 기본 정보	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	TObjectPtr<class UMontageSystemComponent> MontageComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	TObjectPtr<class UEquipmentManagerComponent> EquipComponent;
+	//TODOS HP 관련 변경 요청
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	TObjectPtr<class UStatusComponent> StatusComponent;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	float MaxHP;
 
@@ -93,6 +101,6 @@ protected:
 	UAISenseConfig_Sight* SightConfig;
 
 	UBlackboardComponent* BlackboardComp;
-
+	
 	EAnimalState AnimalState;
 };
