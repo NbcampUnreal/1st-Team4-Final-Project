@@ -42,13 +42,24 @@ protected:
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+
+	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	//~End of UUserWidget Overrides
 
 private:
 	UFUNCTION(BlueprintCallable)
 	void ConstructUI(FGameplayTag Channel, const FInventoryInitializeMessage& Message);
 	void DestructUI();
+
+	void ResetValidSlots();
+	void FinishDrag();
 	void OnInventoryEntryChanged(const FIntPoint& InItemSlotPos, UItemInstance* InItemInstance, int32 InItemCount);
+
+public:
+	UInventoryManagerComponent* GetInventoryManager() const { return InventoryManager; }
+	const FGeometry& GetSlotContainerGeometry() const;
 	
 public:
 	UPROPERTY(EditAnywhere, meta=(Categories="Message"))
@@ -88,5 +99,6 @@ private:
 
 private:
 	FDelegateHandle EntryChangedDelegateHandle;
+	FIntPoint PrevDragOverSlotPos = FIntPoint(-1, -1);
 	FGameplayMessageListenerHandle MessageListenerHandle;
 };

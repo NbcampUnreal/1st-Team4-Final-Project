@@ -39,6 +39,7 @@ void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAI::OnTargetPerceptionUpdated);
+	SetWalkSpeed();
 }
 
 float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
@@ -68,19 +69,19 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	return ActualDamage;
 }
 
-void ABaseAI::PlayAttackAnimation()
-{
-	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
-	{
-		AnimInstance->PlayAttackMontage();
-	}
-}
-
 void ABaseAI::OnDeath()
 {
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->PlayDeathMontage();
+	}
+}
+
+void ABaseAI::Attack()
+{
+	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		AnimInstance->PlayAttackMontage();
 	}
 }
 

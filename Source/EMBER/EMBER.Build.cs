@@ -28,8 +28,9 @@ public class EMBER : ModuleRules
 						"ModularGameplay",
 						"CommonUI",
 						"CommonInput",
+						"CommonGame",
 						"AnimGraphRuntime",
-						"NavigationSystem",
+						"NavigationSystem"
 					});
         PublicIncludePaths.AddRange(
                     new string[]

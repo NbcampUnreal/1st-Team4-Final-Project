@@ -1,16 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/BaseAI.h"
+#include "AI/PassiveAI.h"
 #include "Crow.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
-class EMBER_API ACrow : public ABaseAI
+class EMBER_API ACrow : public APassiveAI
 {
 	GENERATED_BODY()
 	

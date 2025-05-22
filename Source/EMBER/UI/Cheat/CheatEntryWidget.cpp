@@ -69,14 +69,10 @@ void UCheatEntryWidget::OnButtonClicked()
 
 void UCheatEntryWidget::OnButtonRightClicked()
 {
-	APawn* PlayerPawn = GetOwningPlayerPawn();
-	if (PlayerPawn == nullptr)
+	AEmberPlayerState* PlayerState = Cast<AEmberPlayerState>(GetOwningPlayerState());
+	if (PlayerState == nullptr)
 		return;
-
-	UInventoryManagerComponent* InventoryManger = PlayerPawn->FindComponentByClass<UInventoryManagerComponent>();
-	if (InventoryManger == nullptr)
-		return;
-
+	
 	EItemRarity RandomItemRarity = (EItemRarity)FMath::RandRange(0, (int32)EItemRarity::Count - 1);
-	InventoryManger->TryAddItemByRarity(ItemTemplateClass, RandomItemRarity, 1);
+	PlayerState->Server_AddInventoryItem(ItemTemplateClass, RandomItemRarity, 1);
 }

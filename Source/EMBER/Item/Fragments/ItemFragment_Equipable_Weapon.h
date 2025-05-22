@@ -37,4 +37,5 @@ protected:
 public:
 	void IncrementMontageIndex();
 	FAttackData GetAttackInfo() const;
+	
 };
