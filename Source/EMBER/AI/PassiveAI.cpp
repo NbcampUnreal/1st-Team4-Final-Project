@@ -87,7 +87,7 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 		SetBlackboardBool(TEXT("IsDetected"), true);
 		SetBlackboardObject(TEXT("TargetActor"), ClosestActor);
 
-		BehaviorComp->RestartTree();
+		//BehaviorComp->RestartTree();
 	}
 	else if (!Stimulus.WasSuccessfullySensed())
 	{
@@ -100,7 +100,7 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 			ClosestActor = nullptr;
 			SetBlackboardObject(TEXT("TargetActor"), nullptr);
 			SetBlackboardBool(TEXT("IsDetected"), false);
-			BehaviorComp->RestartTree();
+			//BehaviorComp->RestartTree();
 		}
 	}
 }
@@ -109,6 +109,7 @@ float APassiveAI::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	AActor* DamageCauser)
 {
 	SetBlackboardBool("IsHit", true);
+	ClosestActor = DamageCauser;
 	UE_LOG(LogTemp, Warning, TEXT("Hit!!"));
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }

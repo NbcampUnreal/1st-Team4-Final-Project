@@ -33,6 +33,7 @@ ABaseAI::ABaseAI()
 	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); //여러 감각중 시각 우선 사용
 	BlackboardComp = nullptr;
 
+	WalkSpeed = 200.0f;
 }
 
 void ABaseAI::BeginPlay()

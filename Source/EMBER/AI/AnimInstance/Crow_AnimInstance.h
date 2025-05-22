@@ -38,4 +38,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	ECrowState CrowState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	float Crow_WalkSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	float Crow_FlySpeed;
 };

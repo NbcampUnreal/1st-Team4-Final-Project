@@ -26,16 +26,20 @@ EBTNodeResult::Type UBTT_Guard::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 	}
 	FVector TargetLocation = FVector(Target->GetActorLocation());
 	FVector MyLocation = ControlledAnimal->GetActorLocation();
-	
+
 	FVector ForwardVector = ControlledAnimal->GetActorForwardVector();
 	FVector ToTarget = (TargetLocation - MyLocation).GetSafeNormal();
-
 	FVector Cross = FVector::CrossProduct(ForwardVector, ToTarget);
+
+	//플레이어가 왼쪽인지 오른쪽인지 판별
 	bool bDirection = (Cross.Z < 0);
 
+	//플레이어와의 각도 계산
+	float AngleDegrees = FMath::Abs(FMath::Acos(FVector::DotProduct(ForwardVector, ToTarget)) * (180 / PI));
 	if (UDeer_AnimInstance* AnimInstance = Cast<UDeer_AnimInstance>(ControlledAnimal->GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->PlayTurnMontage(bDirection);
+		AnimInstance->TurnAngle = AngleDegrees;
 	}
 
 	return EBTNodeResult::InProgress;

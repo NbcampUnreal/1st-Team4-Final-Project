@@ -14,7 +14,7 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 {
 	OwnerCompRef = &OwnerComp;
 	ABaseAIController* Controller = Cast<ABaseAIController>(OwnerComp.GetOwner());
-	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
+	BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	ControlledAnimal = Cast<ABaseAI>(Controller->GetPawn());
 
 	AActor* Target = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
@@ -40,6 +40,7 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 void UBTT_Run::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
 {
 	UE_LOG(LogTemp, Warning, TEXT("On Run Completed"));
+	BlackboardComponent->SetValueAsBool("IsHit", false);
 	ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 	FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 }
