@@ -7,11 +7,10 @@
 APassiveAI::APassiveAI()
 {
 	AnimalType = EAnimalType::Passive;
-
+	
 	RunPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("RunPerception"));
 	RunSightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("RunSightConfig"));
-
-
+	
 	if (RunSightConfig)
 	{
 		RunSightConfig->SightRadius = 1000.f;

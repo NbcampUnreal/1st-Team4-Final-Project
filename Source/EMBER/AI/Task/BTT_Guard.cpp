@@ -39,6 +39,7 @@ EBTNodeResult::Type UBTT_Guard::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 	if (UDeer_AnimInstance* AnimInstance = Cast<UDeer_AnimInstance>(ControlledAnimal->GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->PlayTurnMontage(bDirection);
+		UE_LOG(LogTemp, Warning, TEXT("Guard Turn"));
 	}
 
 	return EBTNodeResult::InProgress;

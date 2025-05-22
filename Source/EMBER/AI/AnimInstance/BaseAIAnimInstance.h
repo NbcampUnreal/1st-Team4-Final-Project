@@ -37,6 +37,8 @@ public:
 	virtual void PlayMontage(EAnimActionType ActionType);
 	virtual void PlayDeathMontage();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	EAnimalState AnimalState;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Anim")
 	TMap<EAnimActionType, FName> AnimSectionMap;
@@ -60,6 +62,5 @@ protected:
 
 	UBlackboardComponent* BlackboardComp;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	EAnimalState AnimalState;
+	
 };

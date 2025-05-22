@@ -90,21 +90,21 @@ void UDeer_AnimInstance::Multicast_OnNotifyEatFinish_Implementation()
 void UDeer_AnimInstance::SetBlackboardBool(FName KeyName, bool bValue)
 {
 	Super::SetBlackboardBool(KeyName, bValue);
-	if (bValue)
-	{
-		if (KeyName.IsEqual(FName("Idle")))
-		{
-			AnimalState = EAnimalState::Idle;
-		}
-		else if (KeyName.IsEqual(FName("Eating")))
-		{
-			AnimalState = EAnimalState::Eating;
-		}
-		else if (KeyName.IsEqual(FName("Looking")))
-		{
-			AnimalState = EAnimalState::Looking;
-		}
-	}
+	// if (bValue)
+	// {
+	// 	if (KeyName.IsEqual(FName("Idle")))
+	// 	{
+	// 		AnimalState = EAnimalState::Idle;
+	// 	}
+	// 	else if (KeyName.IsEqual(FName("Eating")))
+	// 	{
+	// 		AnimalState = EAnimalState::Eating;
+	// 	}
+	// 	else if (KeyName.IsEqual(FName("Looking")))
+	// 	{
+	// 		AnimalState = EAnimalState::Looking;
+	// 	}
+	// }
 }
 
 
