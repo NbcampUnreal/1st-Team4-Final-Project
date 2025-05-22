@@ -6,6 +6,20 @@
 #include "Animation/AnimInstance.h"
 #include "BaseAIAnimInstance.generated.h"
 
+UENUM(BlueprintType)
+enum class EAnimActionType : uint8
+{
+	AttackNormal,
+	AttackJump,
+	AttackRun,
+	
+	HitFront,
+	HitLeft,
+	HitRight,
+
+	MAX
+};
+
 UCLASS()
 class EMBER_API UBaseAIAnimInstance : public UAnimInstance, public IAI_Interface
 {
@@ -20,15 +34,24 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
 	float CurrentDirection;
 	
-	virtual void PlayAttackMontage();
+	virtual void PlayMontage(EAnimActionType ActionType);
 	virtual void PlayDeathMontage();
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Anim")
+	TMap<EAnimActionType, FName> AnimSectionMap;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Anim")
 	UAnimMontage* AttackMontage;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Anim")
+	UAnimMontage* HitMontage;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Anim")
 	UAnimMontage* DeathMontage;
 
+	virtual UAnimMontage* GetMontageToPlay(EAnimActionType ActionType) const;
+	
 	virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
 	virtual void SetBlackboardInt(FName KeyName, int value) override;
 	virtual void SetBlackboardFloat(FName KeyName, float value) override;

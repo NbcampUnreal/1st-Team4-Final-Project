@@ -25,13 +25,13 @@ void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (!BlackboardComp) return;
 }
 
-void UBaseAIAnimInstance::PlayAttackMontage()
+void UBaseAIAnimInstance::PlayMontage(EAnimActionType ActionType)
 {
-	if (AttackMontage)
-	{
-		Montage_Play(AttackMontage);
-		//Montage_JumpToSection(SectionName, AttackMontage);
-	}
+	UAnimMontage* MontageToPlay = GetMontageToPlay(ActionType);
+	if (!MontageToPlay || !AnimSectionMap.Contains(ActionType)) return;
+
+	Montage_Play(MontageToPlay);
+	Montage_JumpToSection(AnimSectionMap[ActionType], MontageToPlay);
 }
 
 void UBaseAIAnimInstance::PlayDeathMontage()
@@ -42,6 +42,25 @@ void UBaseAIAnimInstance::PlayDeathMontage()
 	}
 }
 #pragma region Interface
+
+UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay(EAnimActionType ActionType) const
+{
+	switch (ActionType)
+	{
+	case EAnimActionType::AttackNormal:
+	case EAnimActionType::AttackRun:
+	case EAnimActionType::AttackJump:
+		return AttackMontage;
+
+	case EAnimActionType::HitFront:
+	case EAnimActionType::HitLeft:
+	case EAnimActionType::HitRight:
+		return HitMontage;
+
+	default:
+		return nullptr;
+	}
+}
 
 void UBaseAIAnimInstance::SetBlackboardBool(FName KeyName, bool bValue)
 {
