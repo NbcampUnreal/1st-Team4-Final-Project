@@ -7,6 +7,14 @@ UEquipmentSlotWidget::UEquipmentSlotWidget(const FObjectInitializer& ObjectIniti
 {
 }
 
+void UEquipmentSlotWidget::Init(EEquipmentSlotType InEquipmentSlotType, UInventoryEquipmentManagerComponent* InInventoryEquipmentManager)
+{
+	check(InEquipmentSlotType != EEquipmentSlotType::Count && InInventoryEquipmentManager != nullptr);
+
+	EquipmentSlotType = InEquipmentSlotType;
+	InventoryEquipmentManager = InInventoryEquipmentManager;
+}
+
 void UEquipmentSlotWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragLeave(InDragDropEvent, InOperation);

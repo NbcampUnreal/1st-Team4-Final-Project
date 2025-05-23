@@ -2,11 +2,12 @@
 
 #pragma once
 
+#include "GameData.h"
 #include "Components/ControllerComponent.h"
 #include "ItemManagerComponent.generated.h"
 
 class UInventoryManagerComponent;
-class UEquipmentManagerComponent;
+class UInventoryEquipmentManagerComponent;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class EMBER_API UItemManagerComponent : public UControllerComponent
@@ -21,5 +22,11 @@ public:
 	void Server_InventoryToInventory(UInventoryManagerComponent* FromInventoryManager, const FIntPoint& FromItemSlotPos, UInventoryManagerComponent* ToInventoryManager, const FIntPoint& ToItemSlotPos);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_EquipmentToInventory(UEquipmentManagerComponent* FromEquipmentManager, EEquipmentSlotType FromEquipmentSlotType, UInventoryManagerComponent* ToInventoryManager, const FIntPoint& ToItemSlotPos);
+	void Server_InventoryToEquipment(UInventoryManagerComponent* FromInventoryManager, const FIntPoint& FromItemSlotPos, UInventoryEquipmentManagerComponent* ToInventoryEquipmentManager, EEquipmentSlotType ToEquipmentSlotType);
+	
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_EquipmentToInventory(UInventoryEquipmentManagerComponent* FromEquipmentManager, EEquipmentSlotType FromEquipmentSlotType, UInventoryManagerComponent* ToInventoryManager, const FIntPoint& ToItemSlotPos);
+	
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_EquipmentToEquipment(UInventoryEquipmentManagerComponent* FromEquipmentManager, EEquipmentSlotType FromEquipmentSlotType, UInventoryEquipmentManagerComponent* ToEquipmentManager, EEquipmentSlotType ToEquipmentSlotType);
 };

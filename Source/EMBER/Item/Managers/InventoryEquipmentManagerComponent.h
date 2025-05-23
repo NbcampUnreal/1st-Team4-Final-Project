@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "EquipmentManagerComponent.h"
 #include "GameData.h"
 #include "Components/PawnComponent.h"
 #include "Net/Serialization/FastArraySerializer.h"
@@ -10,18 +11,25 @@
 
 class UItemInstance;
 class UItemFragment_Equipable;
+class UEquipmentManagerComponent;
 class UInventoryManagerComponent;
 class UInventoryEquipmentManagerComponent;
+
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnEquipmentEntryChanged, EEquipmentSlotType, UItemInstance*, int32/*ItemCount*/);
 
 USTRUCT(BlueprintType)
 struct FEquipmentEntry : public FFastArraySerializerItem
 {
 	GENERATED_BODY()
 
+private:
+	void Init(UItemInstance* InItemInstance, int32 InItemCount);
+	UItemInstance* Reset();
+	
 public:
 	UItemInstance* GetItemInstance() const { return ItemInstance; }
 	int32 GetItemCount() const { return ItemCount; }
-	
+
 private:
 	UPROPERTY()
 	TObjectPtr<UItemInstance> ItemInstance;
@@ -30,11 +38,14 @@ private:
 	int32 ItemCount = 0;
 	
 private:
+	friend FEquipmentList;
+	friend UInventoryEquipmentManagerComponent;
+	
 	UPROPERTY(NotReplicated)
 	EEquipmentSlotType EquipmentSlotType = EEquipmentSlotType::Count;
 	
 	UPROPERTY(NotReplicated)
-	TObjectPtr<UInventoryEquipmentManagerComponent> EquipmentManager;
+	TObjectPtr<UInventoryEquipmentManagerComponent> InventoryEquipmentManager;
 };
 
 USTRUCT(BlueprintType)
@@ -53,10 +64,15 @@ public:
 	void PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize);
 	//~End of FFastArraySerializer Overrides
 
+private:
+	void BroadcastChangedMessage(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance, int32 ItemCount);
+	
 public:
 	const TArray<FEquipmentEntry>& GetAllEntries() const { return Entries; }
 	
 private:
+	friend UInventoryEquipmentManagerComponent;
+	
 	UPROPERTY()
 	TArray<FEquipmentEntry> Entries;
 	
@@ -80,8 +96,19 @@ class EMBER_API UInventoryEquipmentManagerComponent : public UPawnComponent
 
 public:
 	UInventoryEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+protected:
+	//~UPawnComponent Overrides
+	virtual void InitializeComponent() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+	virtual bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
+	virtual void ReadyForReplication() override;
+	//~End of UPawnComponent Overrides
+
+public:
+	void AddEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, UItemInstance* FromItemInstance, int32 FromItemCount);
+	UItemInstance* RemoveEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, int32 ItemCount);
+
 public:
 	int32 CanMoveOrMergeEquipment(UInventoryEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, EEquipmentSlotType ToEquipmentSlotType) const;
 	int32 CanMoveOrMergeEquipment(UInventoryManagerComponent* OtherComponent, const FIntPoint& FromItemSlotPos, EEquipmentSlotType ToEquipmentSlotType) const;
@@ -97,11 +124,17 @@ public:
 	bool IsSameComponent(const UInventoryEquipmentManagerComponent* OtherComponent) const;
 
 public:
+	UEquipmentManagerComponent* GetEquipmentManager() const;
+	
 	UItemInstance* GetItemInstance(EEquipmentSlotType EquipmentSlotType) const;
 	UItemInstance* GetItemInstance(const UInventoryEquipmentManagerComponent* OtherComponent, EEquipmentSlotType EquipmentSlotType) const;
-
+	
 	const FEquipmentList& GetEquipmentList() const { return EquipmentList; }
+	const TArray<FEquipmentEntry>& GetAllEntries() const;
 	int32 GetItemCount(EEquipmentSlotType EquipmentSlotType) const;
+
+public:
+	FOnEquipmentEntryChanged OnEquipmentEntryChanged;
 	
 private:
 	UPROPERTY(Replicated)

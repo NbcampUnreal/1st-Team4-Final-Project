@@ -81,5 +81,6 @@ protected:
 	void AddStatTagStack(UItemInstance* ItemInstance, const TArray<FRarityStatRangeSet>& RarityStatRangeSets) const;
 
 public:
+	UPROPERTY(EditDefaultsOnly)
 	EEquipmentType EquipmentType = EEquipmentType::Count;
 };

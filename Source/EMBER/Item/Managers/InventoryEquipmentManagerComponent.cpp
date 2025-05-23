@@ -6,10 +6,59 @@
 #include "ItemInstance.h"
 #include "Fragments/ItemFragment_Equipable.h"
 #include "InventoryManagerComponent.h"
+#include "Engine/ActorChannel.h"
 #include "Fragments/ItemFragment_Equipable_Armor.h"
 #include "Fragments/ItemFragment_Equipable_Weapon.h"
+#include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/Data/EmberItemData.h"
+
+void FEquipmentEntry::Init(UItemInstance* InItemInstance, int32 InItemCount)
+{
+	check(InItemInstance && InItemCount > 0);
+
+	UEquipmentManagerComponent* EquipmentManager = InventoryEquipmentManager->GetEquipmentManager();
+	if (EquipmentManager == nullptr)
+		return;
+
+	const UItemFragment_Equipable* EquippableFragment = InItemInstance->FindFragmentByClass<UItemFragment_Equipable>();
+	if (EquippableFragment == nullptr)
+		return;
+	
+	if (ItemInstance)
+	{
+		EquipmentManager->Unequip(EquipmentSlotType, InItemInstance);
+	}
+	
+	ItemInstance = InItemInstance;
+
+	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemInstance->GetItemTemplateID());
+	ItemCount = FMath::Clamp(InItemCount, 1, ItemTemplate.MaxStackCount);
+	
+	EEquipmentType FromEquipmentType = EquippableFragment->EquipmentType;
+	if (InventoryEquipmentManager->IsMatchingSlotType(FromEquipmentType, EquipmentSlotType))
+	{
+		EquipmentManager->Equip(EquipmentSlotType, ItemInstance);
+	}
+}
+
+UItemInstance* FEquipmentEntry::Reset()
+{
+	UEquipmentManagerComponent* EquipmentManager = InventoryEquipmentManager->GetEquipmentManager();
+	if (EquipmentManager == nullptr)
+		return nullptr;
+
+	if (ItemInstance)
+	{
+		EquipmentManager->Unequip(EquipmentSlotType, ItemInstance);
+	}
+	
+	UItemInstance* RemovedItemInstance = ItemInstance;
+	ItemInstance = nullptr;
+	ItemCount = 0;
+	
+	return RemovedItemInstance;
+}
 
 bool FEquipmentList::NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams)
 {
@@ -18,16 +67,63 @@ bool FEquipmentList::NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams)
 
 void FEquipmentList::PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize)
 {
-	
+	for (int32 AddedIndex : AddedIndices)
+	{
+		FEquipmentEntry& Entry = Entries[AddedIndex];
+		Entry.InventoryEquipmentManager = InventoryEquipmentManager;
+		Entry.EquipmentSlotType = (EEquipmentSlotType)AddedIndex;
+
+		if (Entry.GetItemInstance())
+		{
+			BroadcastChangedMessage((EEquipmentSlotType)AddedIndex, Entry.GetItemInstance(), Entry.GetItemCount());
+		}
+	}
 }
 
 void FEquipmentList::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)
 {
+	for (int32 ChangedIndex : ChangedIndices)
+	{
+		const FEquipmentEntry& Entry = Entries[ChangedIndex];
+		BroadcastChangedMessage((EEquipmentSlotType)ChangedIndex, Entry.GetItemInstance(), Entry.GetItemCount());
+	}
+}
+
+void FEquipmentList::BroadcastChangedMessage(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance, int32 ItemCount)
+{
+	if (InventoryEquipmentManager->OnEquipmentEntryChanged.IsBound())
+	{
+		InventoryEquipmentManager->OnEquipmentEntryChanged.Broadcast(EquipmentSlotType, ItemInstance, ItemCount);
+	}
 }
 
 
-UInventoryEquipmentManagerComponent::UInventoryEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UInventoryEquipmentManagerComponent::UInventoryEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+	, EquipmentList(this)
 {
+	bWantsInitializeComponent = true;
+	SetIsReplicatedByDefault(true);
+	bReplicateUsingRegisteredSubObjectList = true;
+}
+
+void UInventoryEquipmentManagerComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		TArray<FEquipmentEntry>& Entries = EquipmentList.Entries;
+		Entries.SetNum((int32)EEquipmentSlotType::Count);
+
+		for (int32 i = 0; i < Entries.Num(); i++)
+		{
+			FEquipmentEntry& Entry = Entries[i];
+			Entry.InventoryEquipmentManager = this;
+			Entry.EquipmentSlotType = (EEquipmentSlotType)i;
+			EquipmentList.MarkItemDirty(Entry);
+		}
+	}
 }
 
 void UInventoryEquipmentManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -35,6 +131,88 @@ void UInventoryEquipmentManagerComponent::GetLifetimeReplicatedProps(TArray<FLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, EquipmentList);
+}
+
+bool UInventoryEquipmentManagerComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	bool bWroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	
+	for (FEquipmentEntry& Entry : EquipmentList.Entries)
+	{
+		UItemInstance* ItemInstance = Entry.ItemInstance;
+		if (IsValid(ItemInstance))
+		{
+			bWroteSomething |= Channel->ReplicateSubobject(ItemInstance, *Bunch, *RepFlags);
+		}
+	}
+	
+	return bWroteSomething;
+}
+
+void UInventoryEquipmentManagerComponent::ReadyForReplication()
+{
+	Super::ReadyForReplication();
+
+	if (IsUsingRegisteredSubObjectList())
+	{
+		for (const FEquipmentEntry& Entry : EquipmentList.Entries)
+		{
+			UItemInstance* ItemInstance = Entry.GetItemInstance();
+			if (IsValid(ItemInstance))
+			{
+				AddReplicatedSubObject(ItemInstance);
+			}
+		}
+	}
+}
+
+void UInventoryEquipmentManagerComponent::AddEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, UItemInstance* FromItemInstance, int32 FromItemCount)
+{
+	check(HasAuthority());
+
+	if (EquipmentSlotType == EEquipmentSlotType::Count || FromItemCount <= 0)
+		return;
+
+	FEquipmentEntry& Entry = EquipmentList.Entries[(int32)EquipmentSlotType];
+	if (Entry.GetItemInstance())
+	{
+		Entry.ItemCount += FromItemCount;
+	}
+	else
+	{
+		if (FromItemInstance == nullptr)
+			return;
+		
+		Entry.Init(FromItemInstance, FromItemCount);
+
+		if (IsUsingRegisteredSubObjectList() && IsReadyForReplication() && FromItemInstance)
+		{
+			AddReplicatedSubObject(FromItemInstance);
+		}
+	}
+	
+	EquipmentList.MarkItemDirty(Entry);
+}
+
+UItemInstance* UInventoryEquipmentManagerComponent::RemoveEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, int32 ItemCount)
+{
+	check(HasAuthority());
+
+	FEquipmentEntry& Entry = EquipmentList.Entries[(int32)EquipmentSlotType];
+	UItemInstance* ItemInstance = Entry.GetItemInstance();
+
+	Entry.ItemCount -= ItemCount;
+	if (Entry.GetItemCount() <= 0)
+	{
+		UItemInstance* RemovedItemInstance = Entry.Reset();
+		if (IsUsingRegisteredSubObjectList() && RemovedItemInstance)
+		{
+			RemoveReplicatedSubObject(RemovedItemInstance);
+		}
+	}
+
+	EquipmentList.MarkItemDirty(Entry);
+	return ItemInstance;
 }
 
 int32 UInventoryEquipmentManagerComponent::CanMoveOrMergeEquipment(UInventoryEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, EEquipmentSlotType ToEquipmentSlotType) const
@@ -231,6 +409,11 @@ bool UInventoryEquipmentManagerComponent::IsMatchingSlotType(const UItemFragment
 	
 	if (FromEquippableFragment->EquipmentType == EEquipmentType::Weapon)
 	{
+		if (ToEquipmentSlotType != EEquipmentSlotType::Primary_LeftHand && ToEquipmentSlotType != EEquipmentSlotType::Primary_RightHand)
+		{
+			return false;
+		}
+		
 		const UItemFragment_Equipable_Weapon* FromWeaponFragment = Cast<UItemFragment_Equipable_Weapon>(FromEquippableFragment);
 		EWeaponHandType FromWeaponHandType = FromWeaponFragment->WeaponHandType;
 			
@@ -269,7 +452,7 @@ bool UInventoryEquipmentManagerComponent::IsSlotEquipped(EEquipmentSlotType Equi
 	if (EquipmentSlotType == EEquipmentSlotType::Count)
 		return false;
 
-	const TArray<FEquipmentEntry>& Entries = EquipmentList.GetAllEntries();
+	const TArray<FEquipmentEntry>& Entries = GetAllEntries();
 	const FEquipmentEntry& Entry = Entries[(int32)EquipmentSlotType];
 	
 	return Entry.GetItemInstance() != nullptr;
@@ -278,6 +461,17 @@ bool UInventoryEquipmentManagerComponent::IsSlotEquipped(EEquipmentSlotType Equi
 bool UInventoryEquipmentManagerComponent::IsSameComponent(const UInventoryEquipmentManagerComponent* OtherComponent) const
 {
 	return this == OtherComponent;
+}
+
+UEquipmentManagerComponent* UInventoryEquipmentManagerComponent::GetEquipmentManager() const
+{
+	UEquipmentManagerComponent* EquipmentManager = nullptr;
+	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+	{
+		EquipmentManager = Character->FindComponentByClass<UEquipmentManagerComponent>();
+	}
+	
+	return EquipmentManager;
 }
 
 UItemInstance* UInventoryEquipmentManagerComponent::GetItemInstance(EEquipmentSlotType EquipmentSlotType) const
@@ -290,10 +484,15 @@ UItemInstance* UInventoryEquipmentManagerComponent::GetItemInstance(const UInven
 	if (OtherComponent == nullptr || EquipmentSlotType == EEquipmentSlotType::Count)
 		return nullptr;
 
-	const TArray<FEquipmentEntry>& Entries = OtherComponent->GetEquipmentList().GetAllEntries();
+	const TArray<FEquipmentEntry>& Entries = OtherComponent->GetAllEntries();
 	const FEquipmentEntry& Entry = Entries[(int32)EquipmentSlotType];
 	
 	return Entry.GetItemInstance();
+}
+
+const TArray<FEquipmentEntry>& UInventoryEquipmentManagerComponent::GetAllEntries() const
+{
+	return EquipmentList.GetAllEntries();
 }
 
 int32 UInventoryEquipmentManagerComponent::GetItemCount(EEquipmentSlotType EquipmentSlotType) const
@@ -301,7 +500,7 @@ int32 UInventoryEquipmentManagerComponent::GetItemCount(EEquipmentSlotType Equip
 	if (EquipmentSlotType == EEquipmentSlotType::Count)
 		return 0;
 
-	const TArray<FEquipmentEntry>& Entries = EquipmentList.GetAllEntries();
+	const TArray<FEquipmentEntry>& Entries = GetAllEntries();
 	const FEquipmentEntry& Entry = Entries[(int32)EquipmentSlotType];
 	
 	return Entry.GetItemCount();

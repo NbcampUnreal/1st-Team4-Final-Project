@@ -9,6 +9,8 @@
 
 class UImage;
 class UOverlay;
+class UItemInstance;
+class UEquipmentEntryWidget;
 
 /**
  * 
@@ -25,10 +27,13 @@ protected:
 	//~UUserWidget Overrides
 	virtual void NativePreConstruct() override;
 	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual void OnDragEnded() override;
 	//~End of UUSerWidget Overrides
 
-
+public:
+	void OnEquipmentEntryChanged(UItemInstance* InItemInstance, int32 InItemCount);
+	
 private:
 	void ChangeSlotState(bool bIsValid);
 	
@@ -50,5 +55,6 @@ protected:
 	TObjectPtr<UImage> Image_Green;
 
 private:
-	EEquipmentSlotType EquipmentSlotType = EEquipmentSlotType::Count;
+	UPROPERTY()
+	TObjectPtr<UEquipmentEntryWidget> EntryWidget;
 };
