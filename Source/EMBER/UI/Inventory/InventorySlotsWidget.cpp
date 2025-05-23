@@ -82,7 +82,7 @@ bool UInventorySlotsWidget::NativeOnDragOver(const FGeometry& InGeometry, const 
 	{
 		MovableCount = InventoryManager->CanMoveOrMergeItem(FromInventoryManager, DragDrop->FromItemSlotPos, ToItemSlotPos);
 	}
-	else if (UEquipmentManagerComponent* FromEquipmentManager = DragDrop->FromEquipmentManager)
+	else if (UInventoryEquipmentManagerComponent* FromEquipmentManager = DragDrop->FromInventoryEquipmentManager)
 	{
 		MovableCount = InventoryManager->CanMoveOrMergeItem(FromEquipmentManager, DragDrop->FromEquipmentSlotType, ToItemSlotPos);
 	}
@@ -140,7 +140,7 @@ bool UInventorySlotsWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 	{
 		ItemManager->Server_InventoryToInventory(FromInventoryManager, DragDrop->FromItemSlotPos, InventoryManager, ToItemSlotPos);
 	}
-	else if (UEquipmentManagerComponent* FromEquipmentManager = DragDrop->FromEquipmentManager)
+	else if (UInventoryEquipmentManagerComponent* FromEquipmentManager = DragDrop->FromInventoryEquipmentManager)
 	{
 		ItemManager->Server_EquipmentToInventory(FromEquipmentManager, DragDrop->FromEquipmentSlotType, InventoryManager, ToItemSlotPos);
 	}

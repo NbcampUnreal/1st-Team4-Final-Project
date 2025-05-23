@@ -7,6 +7,17 @@ UEquipmentEntryWidget::UEquipmentEntryWidget(const FObjectInitializer& ObjectIni
 {
 }
 
+void UEquipmentEntryWidget::Init(UItemInstance* InItemInstance, int32 InItemCount, EEquipmentSlotType InEquipmentSlotType, UInventoryEquipmentManagerComponent* InInventoryEquipmentManager)
+{
+	if (InEquipmentSlotType == EEquipmentSlotType::Count)
+		return;
+
+	RefreshUI(InItemInstance, InItemCount);
+	
+	EquipmentSlotType = InEquipmentSlotType;
+	InventoryEquipmentManager = InInventoryEquipmentManager;
+}
+
 FReply UEquipmentEntryWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);

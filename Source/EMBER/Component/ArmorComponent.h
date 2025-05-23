@@ -4,7 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "ArmorComponent.generated.h"
 
-// ¾Æ¸Ó µ¥ÀÌÅÍ¸¦ ÀúÀåÇÒ ±¸Á¶Ã¼ Á¤ÀÇ
+// ï¿½Æ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
 USTRUCT()
 struct FArmorData
 {
@@ -35,7 +35,7 @@ public:
 protected:
     virtual void BeginPlay() override;
 public:
-    void DetermineEquip(class UItemFragment_Equipable_Armor* ArmorFragment, int32 NewItemTemplateID);
+    void DetermineEquip(const class UItemFragment_Equipable_Armor* ArmorFragment, int32 NewItemTemplateID);
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
     void InitializeArmorForLateJoiners();
@@ -49,26 +49,26 @@ private:
     void EquipORUnEquip(USkeletalMesh* Mesh, EArmorType ArmorType, int32 ItemTemplateID);
 
 
-    // OnRep ÄÝ¹é ÇÔ¼ö ¼±¾ð
+    // OnRep ï¿½Ý¹ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
     UFUNCTION()
     void OnRep_ArmorDataArray();
 
 private:
-    // Å¬¶óÀÌ¾ðÆ®¿¡¼­ »ç¿ëÇÒ ½Ã°¢Àû ¾÷µ¥ÀÌÆ® ÇÔ¼ö
+    // Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ô¼ï¿½
     void UpdateArmorVisuals();
 
-    // ¾Æ¸Ó µ¥ÀÌÅÍ ¹è¿­ °ü¸® ÇïÆÛ ÇÔ¼ö
+    // ï¿½Æ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
     void AddOrUpdateArmorData(EArmorType ArmorType, int32 ItemTemplateID, const FString& MeshPath);
     void RemoveArmorData(EArmorType ArmorType);
     FArmorData* FindArmorData(EArmorType ArmorType);
     FString ArmorTypeName(EArmorType& ArmorType);
 
-    // ¼ÒÀ¯ ¾×ÅÍÀÇ ±ÇÇÑÀ» È®ÀÎÇÏ´Â ÇïÆÛ ÇÔ¼ö
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
     bool HasOwnerAuthority() const;
 
 
 private:
-    // ¸®ÇÃ¸®ÄÉÀÌ¼ÇµÉ º¯¼öµé - TMap ´ë½Å TArray »ç¿ë
+    // ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼Çµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - TMap ï¿½ï¿½ï¿½ TArray ï¿½ï¿½ï¿½
     UPROPERTY(ReplicatedUsing = OnRep_ArmorDataArray)
     TArray<FArmorData> ArmorDataArray;
 private:

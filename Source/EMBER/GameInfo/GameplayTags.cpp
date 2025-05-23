@@ -3,7 +3,8 @@
 namespace EmberGameplayTags
 {
 	// Message
-	UE_DEFINE_GAMEPLAY_TAG(Message_Initialize_MyInventory,					"Message.Initialize.Inventory");
+	UE_DEFINE_GAMEPLAY_TAG(Message_Initialize_Inventory,					"Message.Initialize.Inventory");
+	UE_DEFINE_GAMEPLAY_TAG(Message_Initialize_InventoryEquipment,			"Message.Initialize.InventoryEquipment");
 
 	// Input
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Attack_MainHand,						"InputTag.Attack.MainHand");
