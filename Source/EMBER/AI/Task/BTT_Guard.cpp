@@ -38,9 +38,9 @@ EBTNodeResult::Type UBTT_Guard::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 	float AngleDegrees = FMath::Abs(FMath::Acos(FVector::DotProduct(ForwardVector, ToTarget)) * (180 / PI));
 	if (UDeer_AnimInstance* AnimInstance = Cast<UDeer_AnimInstance>(ControlledAnimal->GetMesh()->GetAnimInstance()))
 	{
-		AnimInstance->PlayTurnMontage(bDirection);
+		//AnimInstance->PlayTurnMontage(bDirection);
 		UE_LOG(LogTemp, Warning, TEXT("Guard Turn"));
 	}
 
-	return EBTNodeResult::InProgress;
+	return EBTNodeResult::Succeeded;
 }

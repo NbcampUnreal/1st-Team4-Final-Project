@@ -21,6 +21,7 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	virtual void OnDeath() override;
 	TArray<AActor*> EnemyActors;
 	AActor* ClosestActor;
 

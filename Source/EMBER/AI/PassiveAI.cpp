@@ -33,11 +33,12 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 		bIsDetect = true;
 		CheckDetection();
 		SetBlackboardBool(TEXT("IsDetected"), true);
-		SetBlackboardObject(TEXT("TargetActor"), ClosestActor);
+		SetBlackboardObject(TEXT("TargetActor"), UpdatedActor);
 
 		float DistanceToTarget = FVector::Dist(UpdatedActor->GetActorLocation(), GetActorLocation());
 		bool bIsNear = (DistanceToTarget <= ClosestDistanceBoundary);
 		SetBlackboardBool(TEXT("IsNear"), bIsNear);
+		UE_LOG(LogTemp, Warning, TEXT("DistanceToTarget: %f"), DistanceToTarget);
 		if (bIsNear)
 		{
 			if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
@@ -129,4 +130,11 @@ float APassiveAI::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	ClosestActor = DamageCauser;
 	UE_LOG(LogTemp, Warning, TEXT("%f Damage!!"),DamageAmount);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
+void APassiveAI::OnDeath()
+{
+	Super::OnDeath();
+	bIsDetect = false;
+	CheckDetection();
 }

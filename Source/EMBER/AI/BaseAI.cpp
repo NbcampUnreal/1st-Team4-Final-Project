@@ -125,18 +125,18 @@ void ABaseAI::OnDeath()
 	AIPerception->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
 
 	//이동, 애니메이션 제거
-	GetController()->StopMovement();
-	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	if (GetController())
 	{
-		AnimInstance->StopAllMontages(0.0f);
+		GetController()->StopMovement();
 	}
-	//컨트롤러 해제
-	DetachFromControllerPendingDestroy();
-
+	
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
+		AnimInstance->StopAllMontages(0.0f);
 		AnimInstance->PlayDeathMontage();
 	}
+	DetachFromControllerPendingDestroy();
+
 }
 
 void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
