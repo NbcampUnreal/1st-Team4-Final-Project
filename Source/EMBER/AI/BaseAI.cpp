@@ -83,7 +83,7 @@ void ABaseAI::OnDeath()
 	}
 }
 
-void ABaseAI::Attack()
+void ABaseAI::OnAttack()
 {
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
