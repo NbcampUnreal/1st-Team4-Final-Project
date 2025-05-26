@@ -37,8 +37,10 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 
 		float DistanceToTarget = FVector::Dist(UpdatedActor->GetActorLocation(), GetActorLocation());
 		bool bIsNear = (DistanceToTarget <= ClosestDistanceBoundary);
+		
 		SetBlackboardBool(TEXT("IsNear"), bIsNear);
 		UE_LOG(LogTemp, Warning, TEXT("DistanceToTarget: %f"), DistanceToTarget);
+		
 		if (bIsNear)
 		{
 			if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())

@@ -51,12 +51,12 @@ void UBaseAIAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType F
 	Montage_JumpToSection(AnimSectionMap[FinalType], MontageToPlay);
 }
 
-void UBaseAIAnimInstance::PlayDeathMontage()
+void UBaseAIAnimInstance::PlayMontage()
 {
-	if (DeathMontage)
-	{
-		Montage_Play(DeathMontage);
-	}
+	UAnimMontage* MontageToPlay = GetMontageToPlay();
+	if (!MontageToPlay) return;
+	
+	Montage_Play(MontageToPlay);
 }
 
 UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay(EAnimActionType ActionType) const
@@ -75,6 +75,20 @@ UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay(EAnimActionType ActionType) 
 
 	default:
 		return nullptr;
+	}
+}
+
+UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay()
+{
+	switch (AnimalState)
+	{
+		case EAnimalState::Idle:
+			return IdleMontage;
+		case EAnimalState::Death:
+			return DeathMontage;
+		
+		default:
+			return nullptr;
 	}
 }
 

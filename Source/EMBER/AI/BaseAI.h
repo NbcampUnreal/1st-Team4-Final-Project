@@ -97,6 +97,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Perception")
 	UAIPerceptionComponent* AIPerception;
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Perception")
 	UAISenseConfig_Sight* SightConfig;
 

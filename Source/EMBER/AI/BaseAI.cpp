@@ -59,9 +59,8 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
                           AActor* DamageCauser)
 {
 	if (!HasAuthority()) return 0;
-
 	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	
+
 	if (AAIController* AIController = Cast<AAIController>(GetController()))
 	{
 		if (UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent())
@@ -121,6 +120,7 @@ void ABaseAI::OnAttack()
 
 void ABaseAI::OnDeath()
 {
+	UE_LOG(LogTemp, Display, TEXT("OnDeath"));
 	//퍼셉션 제거
 	AIPerception->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
 
@@ -129,11 +129,13 @@ void ABaseAI::OnDeath()
 	{
 		GetController()->StopMovement();
 	}
-	
+	bIsDie = true;
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
+		AnimalState = EAnimalState::Death;
 		AnimInstance->StopAllMontages(0.0f);
-		AnimInstance->PlayDeathMontage();
+		AnimInstance->AnimalState = EAnimalState::Death;
+		AnimInstance->PlayMontage();
 	}
 	DetachFromControllerPendingDestroy();
 
@@ -145,8 +147,6 @@ void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimul
 	BlackboardComp = BaseAIController->GetBlackboardComponent();
 }
 
-#pragma region Interface
-
 void ABaseAI::SetWalkSpeed()
 {
 	GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
@@ -156,6 +156,8 @@ void ABaseAI::SetRunSpeed()
 {
 	GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
 }
+
+#pragma region Interface
 
 void ABaseAI::SetBlackboardBool(FName KeyName, bool bValue)
 {

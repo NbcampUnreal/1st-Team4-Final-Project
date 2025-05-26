@@ -36,13 +36,17 @@ public:
 	float CurrentDirection;
 	
 	virtual void PlayMontage(EAnimActionType Desired, EAnimActionType Fallback);
-	virtual void PlayDeathMontage();
-
+	virtual void PlayMontage();
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	EAnimalState AnimalState;
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Anim")
 	TMap<EAnimActionType, FName> AnimSectionMap;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UAnimMontage* IdleMontage;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Anim")
 	UAnimMontage* AttackMontage;
@@ -54,7 +58,8 @@ protected:
 	UAnimMontage* DeathMontage;
 
 	virtual UAnimMontage* GetMontageToPlay(EAnimActionType ActionType) const;
-	
+	virtual UAnimMontage* GetMontageToPlay();
+
 	virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
 	virtual void SetBlackboardInt(FName KeyName, int value) override;
 	virtual void SetBlackboardFloat(FName KeyName, float value) override;
