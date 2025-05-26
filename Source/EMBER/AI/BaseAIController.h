@@ -9,7 +9,8 @@ enum class EAnimalType : uint8
 {
 	Passive     UMETA(DisplayName = "Passive"),
 	Defensive   UMETA(DisplayName = "Defensive"),
-	Aggressive  UMETA(DisplayName = "Aggressive")
+	Aggressive  UMETA(DisplayName = "Aggressive"),
+	Crow        UMETA(DisplayName = "Crow")
 };
 
 UCLASS()
@@ -40,5 +41,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	UBehaviorTree* AggressiveBT;
 
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBehaviorTree* CrowBT;
+	
 	UBehaviorTree* CurrentBT;
 };

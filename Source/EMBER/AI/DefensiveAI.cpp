@@ -28,8 +28,4 @@ void ADefensiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus S
 {
 }
 
-void ADefensiveAI::Attack()
-{
-}
-
 

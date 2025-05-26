@@ -40,71 +40,24 @@ void UDeer_AnimInstance::StopMontage()
 	StopAllMontages(0.1f); // 블렌드 아웃(0.1초) 후 애니메이션 중지
 }
 
-void UDeer_AnimInstance::AnimNotify_IdleFinish()
-{
-	UE_LOG(LogTemp, Display, TEXT("OnNotifyIdleFinish"));
-	Server_OnNotifyIdleFinish_Implementation();
-}
-
-void UDeer_AnimInstance::Server_OnNotifyIdleFinish_Implementation()
-{
-	Multicast_OnNotifyIdleFinish_Implementation();
-}
-
-void UDeer_AnimInstance::Multicast_OnNotifyIdleFinish_Implementation()
-{
-	AnimalState = EAnimalState::Looking;
-}
-
-void UDeer_AnimInstance::AnimNotify_LookFinish()
-{
-	Server_OnNotifyLookFinish_Implementation();
-}
-
-void UDeer_AnimInstance::Server_OnNotifyLookFinish_Implementation()
-{
-	Multicast_OnNotifyLookFinish_Implementation();
-}
-
-void UDeer_AnimInstance::Multicast_OnNotifyLookFinish_Implementation()
-{
-	AnimalState = EAnimalState::Eating;
-}
-
-void UDeer_AnimInstance::AnimNotify_EatFinish()
-{
-	Server_OnNotifyEatFinish_Implementation();
-}
-
-void UDeer_AnimInstance::Server_OnNotifyEatFinish_Implementation()
-{
-	Multicast_OnNotifyEatFinish_Implementation();
-}
-
-void UDeer_AnimInstance::Multicast_OnNotifyEatFinish_Implementation()
-{
-	AnimalState = EAnimalState::Idle;
-	SetBlackboardBool("IsRest", false);
-}
-
 void UDeer_AnimInstance::SetBlackboardBool(FName KeyName, bool bValue)
 {
 	Super::SetBlackboardBool(KeyName, bValue);
-	if (bValue)
-	{
-		if (KeyName.IsEqual(FName("Idle")))
-		{
-			AnimalState = EAnimalState::Idle;
-		}
-		else if (KeyName.IsEqual(FName("Eating")))
-		{
-			AnimalState = EAnimalState::Eating;
-		}
-		else if (KeyName.IsEqual(FName("Looking")))
-		{
-			AnimalState = EAnimalState::Looking;
-		}
-	}
+	// if (bValue)
+	// {
+	// 	if (KeyName.IsEqual(FName("Idle")))
+	// 	{
+	// 		AnimalState = EAnimalState::Idle;
+	// 	}
+	// 	else if (KeyName.IsEqual(FName("Eating")))
+	// 	{
+	// 		AnimalState = EAnimalState::Eating;
+	// 	}
+	// 	else if (KeyName.IsEqual(FName("Looking")))
+	// 	{
+	// 		AnimalState = EAnimalState::Looking;
+	// 	}
+	// }
 }
 
 
