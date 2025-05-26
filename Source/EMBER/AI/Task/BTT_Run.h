@@ -21,4 +21,5 @@ public:
 
 	UBehaviorTreeComponent* OwnerCompRef;
 	ABaseAI* ControlledAnimal;
+	UBlackboardComponent* BlackboardComponent;
 };

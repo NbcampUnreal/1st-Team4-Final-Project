@@ -9,5 +9,7 @@ UCLASS()
 class EMBER_API ACrow : public APassiveAI
 {
 	GENERATED_BODY()
-	
+
+public:
+	ACrow();
 };
