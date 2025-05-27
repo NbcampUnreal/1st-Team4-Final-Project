@@ -1,7 +1,5 @@
 #include "AI/PassiveAI.h"
-#include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
-#include "Perception/AISenseConfig.h"
 #include "BehaviorTree/BehaviorTree.h"
 
 APassiveAI::APassiveAI()
@@ -14,7 +12,7 @@ APassiveAI::APassiveAI()
 
 void APassiveAI::BeginPlay()
 {
-	Super::BeginPlay();
+	ABaseAI::BeginPlay();
 }
 
 void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
@@ -32,15 +30,10 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 		EnemyActors.Add(UpdatedActor);
 		bIsDetect = true;
 		CheckDetection();
-		SetBlackboardBool(TEXT("IsDetected"), true);
-		SetBlackboardObject(TEXT("TargetActor"), UpdatedActor);
 
 		float DistanceToTarget = FVector::Dist(UpdatedActor->GetActorLocation(), GetActorLocation());
 		bool bIsNear = (DistanceToTarget <= ClosestDistanceBoundary);
-		
-		SetBlackboardBool(TEXT("IsNear"), bIsNear);
-		UE_LOG(LogTemp, Warning, TEXT("DistanceToTarget: %f"), DistanceToTarget);
-		
+
 		if (bIsNear)
 		{
 			if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
@@ -48,19 +41,25 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 				AnimInstance->StopAllMontages(0.1f);
 			}
 		}
+		SetBlackboardBool(TEXT("IsNear"), bIsNear);
+		SetBlackboardBool(TEXT("IsDetected"), true);
+		SetBlackboardObject(TEXT("TargetActor"), UpdatedActor);
 	}
 	else if (!Stimulus.WasSuccessfullySensed())
 	{
-		EnemyActors.Remove(UpdatedActor); //모든 캐릭터가 다 사라지므로 추후 수정필요
-		if (EnemyActors.Num() == 0)
+		if (AnimalType == EAnimalType::Passive)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Zero Actor"));
-			bIsDetect = false;
-			CheckDetection();
-			ClosestActor = nullptr;
-			SetBlackboardObject(TEXT("TargetActor"), nullptr);
-			SetBlackboardBool(TEXT("IsDetected"), false);
-			SetBlackboardBool(TEXT("IsNear"), false);
+			EnemyActors.Remove(UpdatedActor);
+			if (EnemyActors.Num() == 0)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Zero Actor"));
+				bIsDetect = false;
+				CheckDetection();
+				ClosestActor = nullptr;
+				SetBlackboardObject(TEXT("TargetActor"), nullptr);
+				SetBlackboardBool(TEXT("IsDetected"), false);
+				SetBlackboardBool(TEXT("IsNear"), false);
+			}
 		}
 	}
 }
@@ -99,7 +98,7 @@ void APassiveAI::UpdateClosestActorTimer()
 	{
 		SetBlackboardObject(TEXT("TargetActor"), ClosestActor);
 		UE_LOG(LogTemp, Warning, TEXT("Closest Actor Updated: %s at distance %f"), *ClosestActor->GetName(),
-			   ClosestDistance);
+		       ClosestDistance);
 	}
 	else
 	{
@@ -114,7 +113,7 @@ void APassiveAI::CheckDetection()
 		if (!GetWorld()->GetTimerManager().IsTimerActive(UpdateDistanceTimer))
 		{
 			GetWorld()->GetTimerManager().SetTimer(UpdateDistanceTimer, this, &APassiveAI::UpdateClosestActorTimer,
-												   1.0f, true);
+			                                       1.0f, true);
 			UE_LOG(LogTemp, Warning, TEXT("Timer Started"));
 		}
 	}
@@ -130,7 +129,7 @@ float APassiveAI::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 {
 	SetBlackboardBool("IsHit", true);
 	ClosestActor = DamageCauser;
-	UE_LOG(LogTemp, Warning, TEXT("%f Damage!!"),DamageAmount);
+	UE_LOG(LogTemp, Warning, TEXT("%f Damage!!"), DamageAmount);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 

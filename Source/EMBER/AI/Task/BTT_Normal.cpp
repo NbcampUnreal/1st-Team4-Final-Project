@@ -11,25 +11,14 @@ UBTT_Normal::UBTT_Normal()
 EBTNodeResult::Type UBTT_Normal::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	ABaseAIController* Controller = Cast<ABaseAIController>(OwnerComp.GetAIOwner());
-	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	ABaseAI* ControlledAI = Cast<ABaseAI>(Controller->GetPawn());
-	UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(ControlledAI->GetMesh()->GetAnimInstance());
+	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
-	
-	AnimInstance->AnimalState = EAnimalState::Idle;
-	AnimInstance->PlayMontage();
-
-
-	bool bIsRest = BlackboardComp->GetValueAsBool(TEXT("IsRest"));
-	if (!bIsRest) // false일 때
+	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(ControlledAI->GetMesh()->GetAnimInstance()))
 	{
-		UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(
-			Controller->GetComponentByClass(UBehaviorTreeComponent::StaticClass()));
-		if (BTComp)
-		{
-			BTComp->RestartTree();
-		}
+		AnimInstance->AnimalState = EAnimalState::Idle;
+		AnimInstance->PlayMontage();
 	}
-
+	
 	return EBTNodeResult::InProgress;
 }

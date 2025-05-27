@@ -35,7 +35,7 @@ ABaseAI::ABaseAI()
 
 	AIControllerClass = ABaseAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	
+
 	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); //여러 감각중 시각 우선 사용
 
 	WalkSpeed = 200.0f;
@@ -45,12 +45,12 @@ ABaseAI::ABaseAI()
 void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	if (ABaseAIController* AIController = Cast<ABaseAIController>(GetController()))
 	{
 		BlackboardComp = AIController->GetBlackboardComponent();
 	}
-	
+
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAI::OnTargetPerceptionUpdated);
 	SetWalkSpeed();
 }
@@ -67,7 +67,7 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 		{
 			BlackboardComponent->SetValueAsBool("IsHit", true);
 			BlackboardComponent->SetValueAsObject("TargetActor", DamageCauser);
-			
+
 			if (!BlackboardComponent->GetValueAsBool("IsOriginLocationSet"))
 			{
 				BlackboardComponent->SetValueAsVector("OriginLocation", GetActorLocation());
@@ -81,7 +81,7 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 		CurrentHP -= ActualDamage;
 		if (CurrentHP <= 0.f) OnDeath();
 	}
-	
+
 	return ActualDamage;
 }
 
@@ -151,12 +151,20 @@ void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimul
 
 void ABaseAI::SetWalkSpeed()
 {
-	GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
 void ABaseAI::SetRunSpeed()
 {
-	GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+}
+
+void ABaseAI::SetFlySpeed()
+{			
+	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+	GetCharacterMovement()->MaxFlySpeed = FlySpeed;
 }
 
 #pragma region Interface

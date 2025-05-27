@@ -1,8 +1,9 @@
 #include "BaseAIAnimInstance.h"
 #include "BaseAI.h"
-#include "GameFramework/Pawn.h"    
-#include "BehaviorTree/BlackboardComponent.h" 
+#include "GameFramework/Pawn.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "KismetAnimationLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UBaseAIAnimInstance::NativeInitializeAnimation()
 {
@@ -23,10 +24,12 @@ void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (ABaseAI* AICharacter = Cast<ABaseAI>(TryGetPawnOwner()))
 	{
 		FVector Velocity = AICharacter->GetVelocity();
-		Velocity.Z = 0.0f;
-
-		CurrentSpeed = Velocity.Size();
-		CurrentDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, AICharacter->GetActorRotation());
+		bIsAirborne = AICharacter->GetCharacterMovement()->IsFalling();
+		
+		CurrentSpeed = FVector(Velocity.X, Velocity.Y, 0.0f).Size();
+		CurrentHeight = AICharacter->GetActorLocation().Z;
+		CurrentDirection = UKismetAnimationLibrary::CalculateDirection(FVector(Velocity.X, Velocity.Y, 0.0f),
+		                                                               AICharacter->GetActorRotation());
 	}
 }
 
@@ -54,9 +57,10 @@ void UBaseAIAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType F
 void UBaseAIAnimInstance::PlayMontage()
 {
 	UAnimMontage* MontageToPlay = GetMontageToPlay();
-	if (!MontageToPlay) return;
-	
-	Montage_Play(MontageToPlay);
+	if (MontageToPlay)
+	{
+		Montage_Play(MontageToPlay);
+	}
 }
 
 UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay(EAnimActionType ActionType) const
@@ -82,13 +86,13 @@ UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay()
 {
 	switch (AnimalState)
 	{
-		case EAnimalState::Idle:
-			return IdleMontage;
-		case EAnimalState::Death:
-			return DeathMontage;
-		
-		default:
-			return nullptr;
+	case EAnimalState::Idle:
+		return IdleMontage;
+	case EAnimalState::Death:
+		return DeathMontage;
+
+	default:
+		return nullptr;
 	}
 }
 
