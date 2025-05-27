@@ -1,9 +1,7 @@
 ﻿#include "BTT_Run.h"
-
 #include "BaseAI.h"
 #include "BaseAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 UBTT_Run::UBTT_Run()
 {
@@ -48,6 +46,8 @@ void UBTT_Run::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Typ
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("OnMoveCompleted failed"));
+		UE_LOG(LogTemp, Error, TEXT("RunCompleted failed"));
+		BlackboardComponent->SetValueAsBool("IsHit", false);
+		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 	}
 }

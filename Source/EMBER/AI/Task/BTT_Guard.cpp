@@ -42,5 +42,5 @@ EBTNodeResult::Type UBTT_Guard::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 		UE_LOG(LogTemp, Warning, TEXT("Guard Turn"));
 	}
 
-	return EBTNodeResult::Succeeded;
+	return EBTNodeResult::InProgress;
 }
