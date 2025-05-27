@@ -71,7 +71,7 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 			if (!BlackboardComponent->GetValueAsBool("IsOriginLocationSet"))
 			{
 				BlackboardComponent->SetValueAsVector("OriginLocation", GetActorLocation());
-				BlackboardComponent->SetValueAsFloat("IsOriginLocationSet", true);
+				BlackboardComponent->SetValueAsBool("IsOriginLocationSet", true);
 			}
 		}
 	}
@@ -121,6 +121,9 @@ void ABaseAI::OnAttack()
 void ABaseAI::OnDeath()
 {
 	UE_LOG(LogTemp, Display, TEXT("OnDeath"));
+
+	bIsDie = true;
+
 	//퍼셉션 제거
 	AIPerception->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
 
@@ -129,7 +132,7 @@ void ABaseAI::OnDeath()
 	{
 		GetController()->StopMovement();
 	}
-	bIsDie = true;
+
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimalState = EAnimalState::Death;
@@ -138,7 +141,6 @@ void ABaseAI::OnDeath()
 		AnimInstance->PlayMontage();
 	}
 	DetachFromControllerPendingDestroy();
-
 }
 
 void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
