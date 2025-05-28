@@ -2,19 +2,66 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "CraftingRecipe.h"
+#include "GameplayTagContainer.h"
 #include "CraftingRecipeManager.generated.h"
+
+UENUM(BlueprintType)
+enum class EStationType : uint8
+{
+    None,
+    CraftingTable,
+    Furnace,
+    CookingPot,
+    WeaponTable,
+    ClothingTable
+};
+
+UCLASS(BlueprintType)
+class EMBER_API UCraftingRecipeData : public UObject
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FText RecipeDisplayName;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 OutputItemTemplateID;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TMap<FGameplayTag, int32> Ingredients;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FGameplayTagContainer AllowedMainMaterialTags;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 RequiredMainMaterialCount;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float CraftingTime;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bCraftableByCharacter;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    EStationType CraftingStation;
+};
 
 UCLASS(BlueprintType)
 class EMBER_API UCraftingRecipeManager : public UDataAsset
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crafting")
-	TArray<UCraftingRecipe*> Recipes;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crafting")
+    TArray<UCraftingRecipeData*> Recipes;
 
-	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	UCraftingRecipe* GetRecipeByName(const FString& RecipeName) const;
-	UCraftingRecipe* GetRecipeByName(const FString& Name);
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Data")
+    TMap<int32, FGameplayTag> ItemIDToMaterialTagMap;
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    UCraftingRecipeData* GetRecipeByTemplateID(int32 TemplateID) const;
+
+    UFUNCTION(BlueprintCallable, Category = "Item Data")
+    FGameplayTag GetMaterialTagForItem(int32 ItemTemplateID) const;
 };

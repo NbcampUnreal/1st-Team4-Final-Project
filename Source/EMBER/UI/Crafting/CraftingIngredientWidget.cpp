@@ -2,7 +2,7 @@
 #include "Components/VerticalBox.h"
 #include "Components/TextBlock.h"
 
-void UCraftingIngredientSelectionWidget::SetIngredientData(const TMap<FString, int32>& Ingredients)
+void UCraftingIngredientWidget::SetIngredientData(const TMap<FString, int32>& Ingredients)
 {
 	if (!IngredientSelectionBox)
 	{

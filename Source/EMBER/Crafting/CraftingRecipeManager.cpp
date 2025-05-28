@@ -1,20 +1,23 @@
 #include "CraftingRecipeManager.h"
-#include "CraftingRecipe.h"
-#include "GameplayTagContainer.h"
 
-UCraftingRecipe* UCraftingRecipeManager::GetRecipeByName(const FString& Name)
+UCraftingRecipeData* UCraftingRecipeManager::GetRecipeByTemplateID(int32 TemplateID) const
 {
-	UCraftingRecipe* Recipe = NewObject<UCraftingRecipe>(this);
+    for (UCraftingRecipeData* Recipe : Recipes)
+    {
+        if (Recipe && Recipe->OutputItemTemplateID == TemplateID)
+        {
+            return Recipe;
+        }
+    }
+    return nullptr;
+}
 
-	Recipe->RecipeTag = FGameplayTag::RequestGameplayTag(FName(*Name));
-    
-	Recipe->CraftingTime = 5.0f;
-	Recipe->EffectTag = FGameplayTag::RequestGameplayTag(FName("Effect.Default"));
-    
-	Recipe->MainMaterialType = FGameplayTag::RequestGameplayTag(FName("Material.Iron"));
-	Recipe->MainMaterialRequired = 3;
-    
-	Recipe->Ingredients.Add("Material.Iron", 3);
-    
-	return Recipe;
+FGameplayTag UCraftingRecipeManager::GetMaterialTagForItem(int32 ItemTemplateID) const
+{
+    const FGameplayTag* FoundTag = ItemIDToMaterialTagMap.Find(ItemTemplateID);
+    if (FoundTag)
+    {
+        return *FoundTag;
+    }
+    return FGameplayTag::EmptyTag;
 }

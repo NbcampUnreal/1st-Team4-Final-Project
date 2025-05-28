@@ -1,27 +1,50 @@
 #include "CraftingResultWidget.h"
-#include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 
-void UCraftingResultPreviewWidget::NativeConstruct()
+void UCraftingResultWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	if (CraftButton)
 	{
-		CraftButton->OnClicked.AddDynamic(this, &UCraftingResultPreviewWidget::OnCraftButtonClicked);
+		CraftButton->OnClicked.AddDynamic(this, &UCraftingResultWidget::OnCraftButtonClicked);
 	}
 }
 
-void UCraftingResultPreviewWidget::UpdateResultPreview(const FString& PreviewText)
+void UCraftingResultWidget::OnCraftButtonClicked()
 {
-	if (ResultPreviewText)
+	OnCraftActionRequested.Broadcast();
+}
+
+void UCraftingResultWidget::UpdateRarityChances(const TMap<EItemRarity, float>& RarityChances)
+{
+	if(ResultText)
 	{
-		ResultPreviewText->SetText(FText::FromString(PreviewText));
+		FString DisplayText = TEXT("Rarity Chances:\n");
+		for (const auto& Pair : RarityChances)
+		{
+			DisplayText += FString::Printf(TEXT("- Chance: %.2f%%\n"), Pair.Value * 100.0f);
+		}
+		ResultText->SetText(FText::FromString(DisplayText));
 	}
 }
 
-void UCraftingResultPreviewWidget::OnCraftButtonClicked()
+void UCraftingResultWidget::RefreshRarityPreview()
 {
-	OnCraftButtonPressed();
+}
 
+void UCraftingResultWidget::SetTargetRecipe(UCraftingRecipeData* InRecipe)
+{
+	TargetRecipe = InRecipe;
+	if (ResultText && TargetRecipe)
+	{
+		// ResultText->SetText(TargetRecipe->RecipeName);
+	}
+	RefreshRarityPreview();
+}
+
+void UCraftingResultWidget::SetProvidedIngredients(const TMap<FGameplayTag, int32>& InIngredients)
+{
+	ProvidedIngredients = InIngredients;
 }

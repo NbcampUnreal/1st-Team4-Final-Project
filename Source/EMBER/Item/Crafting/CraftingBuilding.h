@@ -2,7 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "../Crafting/CraftingRecipeManager.h"
 #include "CraftingBuilding.generated.h"
+
+class UCraftingWidget; 
 
 UCLASS(Abstract)
 class EMBER_API ACraftingBuilding : public AActor
@@ -14,7 +17,6 @@ public:
 
 protected:
     virtual void BeginPlay() override;
-    virtual void Tick(float DeltaTime) override;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     class UStaticMeshComponent* BuildingMesh;
@@ -30,20 +32,22 @@ protected:
 
     UPROPERTY()
     UUserWidget* InteractionWidget;
+    
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<UCraftingWidget> MainCraftingWidgetClass; 
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
-    FString SelectedItem;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    EStationType StationType = EStationType::None;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UCraftingRecipeData* SelectedRecipe;
 
 public:
     UFUNCTION()
-    virtual void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
-                                AActor* OtherActor, class UPrimitiveComponent* OtherComp, 
-                                int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+    virtual void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
     UFUNCTION()
-    virtual void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
-                              AActor* OtherActor, class UPrimitiveComponent* OtherComp, 
-                              int32 OtherBodyIndex);
+    virtual void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
     UFUNCTION(BlueprintCallable, Category = "Interaction")
     virtual void HandleInput();

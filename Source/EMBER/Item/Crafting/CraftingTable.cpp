@@ -2,7 +2,7 @@
 
 ACraftingTable::ACraftingTable()
 {
-	SelectedItem = TEXT("Sword");
+	StationType = EStationType::CraftingTable;
 }
 
 void ACraftingTable::BeginPlay()

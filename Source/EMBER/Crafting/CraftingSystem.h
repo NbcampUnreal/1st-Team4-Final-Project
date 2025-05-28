@@ -1,22 +1,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../GameInfo/GameFlag.h" 
 #include "Components/ActorComponent.h"
+#include "GameplayTagContainer.h"
+#include "CraftingRecipeManager.h"
+#include "GameFlag.h"
 #include "CraftingSystem.generated.h"
 
-UENUM(BlueprintType)
-enum class EStationType : uint8
-{
-    CraftingTable,
-    Furnace,
-    CookingPot,
-    WeaponTable,
-    ClothingTable
-};
-
 class AEmberPlayerCharacter;
-class UCraftingRecipe; 
+class UCraftingRecipeData;
+class UInventoryManagerComponent;
+class UItemTemplate;
 class UCraftingRecipeManager;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -32,28 +26,34 @@ protected:
 
 public:
     UFUNCTION(BlueprintCallable, Category = "Crafting")
-    void StartCrafting(AEmberPlayerCharacter* Player, const FString& ItemName);
-
-    TMap<FString, int32> AggregateIngredients(AEmberPlayerCharacter* Player);
-
-    void AddItemToInventory(AEmberPlayerCharacter* Player, const FString& ItemName);
-
-    bool CanCraftInCurrentStation(const UCraftingRecipe* Recipe) const;
-
-    TMap<FString, int32> SearchNearChestsIngredients(AEmberPlayerCharacter* Player);
-
-    EItemRarity CalculateCraftingOutcome(const UCraftingRecipe* Recipe, const TMap<FString, int32>& ChosenMaterials, bool bIsWeapon);
+    void StartCrafting(AEmberPlayerCharacter* Player, UCraftingRecipeData* Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
 
     UFUNCTION(BlueprintCallable, Category = "Crafting")
-    bool CanActivateCraftingButton(const UCraftingRecipe* Recipe, const TMap<FString, int32>& AggregatedIngredients);
+    bool CanCraftRecipeAtStation(const UCraftingRecipeData* Recipe, EStationType Station) const;
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    bool HasRequiredMaterials(AEmberPlayerCharacter* Player, const UCraftingRecipeData* Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    TMap<FGameplayTag, int32> AggregateIngredients(AEmberPlayerCharacter* Player) const;
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    TMap<EItemRarity, float> GetRarityProbabilities(const UCraftingRecipeData* Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    EItemRarity EvaluateItemRarity(const UCraftingRecipeData* Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
+
+private:
+    int32 CalculateScore(const UCraftingRecipeData* Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
+    bool ConsumeMaterials(AEmberPlayerCharacter* Player, const UCraftingRecipeData* Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
+    const UItemTemplate* GetItemTemplateById(int32 TemplateID) const;
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
-    UCraftingRecipeManager* RecipeManager;
+    EStationType CurrentStation = EStationType::None;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
-    UAnimMontage* ProcessingAnimation;
+    UPROPERTY(EditInstanceOnly, Category = "Crafting System")
+    TObjectPtr<UCraftingRecipeManager> RecipeManager;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
-    EStationType CurrentStation;
+private:
+    TMap<FGameplayTag, int32> TagToScoreMap;
 };

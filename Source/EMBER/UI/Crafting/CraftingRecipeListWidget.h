@@ -11,9 +11,9 @@ class EMBER_API UCraftingRecipeListWidget : public UCraftingWidget
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	void SetRecipeList(const TArray<FString>& Recipes);
+	void SetRecipeList(const TArray<class UCraftingRecipeData*>& Recipes);
 
 protected:
 	UPROPERTY(meta = (BindWidget))
-	class UScrollBox* RecipeListScrollBox;
+	class UListView* RecipeListView;
 };

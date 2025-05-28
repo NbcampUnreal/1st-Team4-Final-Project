@@ -1,24 +1,18 @@
 #include "CraftingRecipeListWidget.h"
-#include "Components/ScrollBox.h"
-#include "Components/TextBlock.h"
+#include "Components/ListView.h"
+#include "Crafting/CraftingRecipeManager.h"
 
-void UCraftingRecipeListWidget::SetRecipeList(const TArray<FString>& Recipes)
+void UCraftingRecipeListWidget::SetRecipeList(const TArray<UCraftingRecipeData*>& Recipes)
 {
-	if (!RecipeListScrollBox)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("RecipeListScrollBox is null!"));
-		return;
-	}
+	if (!RecipeListView) return;
 
-	RecipeListScrollBox->ClearChildren();
+	RecipeListView->ClearListItems();
 
-	for (const FString& Recipe : Recipes)
+	for (UCraftingRecipeData* Recipe : Recipes)
 	{
-		UTextBlock* RecipeText = NewObject<UTextBlock>(this);
-		if (RecipeText)
+		if (Recipe)
 		{
-			RecipeText->SetText(FText::FromString(Recipe));
-			RecipeListScrollBox->AddChild(RecipeText);
+			RecipeListView->AddItem(Recipe);
 		}
 	}
 }

@@ -8,7 +8,7 @@ UCLASS()
 class EMBER_API ACraftingTable : public ACraftingBuilding
 {
 	GENERATED_BODY()
-    
+
 public:
 	ACraftingTable();
 
