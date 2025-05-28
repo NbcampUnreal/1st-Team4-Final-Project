@@ -6,19 +6,14 @@
 #include "AI/AnimInstance/BaseAIAnimInstance.h"
 #include "Rabbit_AnimInstance.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class EMBER_API URabbit_AnimInstance : public UBaseAIAnimInstance
 {
 	GENERATED_BODY()
+
 public:
-	UFUNCTION(BlueprintCallable)
-	void AnimNotify_EndIdle();
-	UFUNCTION(BlueprintCallable)
-	void AnimNotify_EndEat();
-	UFUNCTION(BlueprintCallable)
-	void AnimNotify_EndLook();
-	
+	virtual void NativeInitializeAnimation() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UAnimMontage* IdleMontage;
 };

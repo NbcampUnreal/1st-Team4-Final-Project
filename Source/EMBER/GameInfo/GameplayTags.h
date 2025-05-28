@@ -6,6 +6,7 @@ namespace EmberGameplayTags
 {
 	// Message
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_Inventory);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_InventoryEquipment);
 
 	// Input
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Attack_MainHand);

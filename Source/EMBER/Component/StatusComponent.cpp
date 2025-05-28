@@ -1,0 +1,147 @@
+#include "Component/StatusComponent.h"
+
+#include "GameFramework/Character.h"
+
+UStatusComponent::UStatusComponent()
+{
+	PrimaryComponentTick.bCanEverTick = true;
+}
+
+
+void UStatusComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	OwnerCharacter = Cast<ACharacter>(GetOwner());
+	HP = MaxHP;
+	Stamina = MaxStamina;
+	Temperature = MaxTemperature;
+	Energy = MaxEnergy;
+	PhysicalStrength = MaxPhysicalStrength;
+	Dexterity = MaxDexterity;
+	XP = 0.0f;
+}
+
+void UStatusComponent::SetMaxHp(float InAmount)
+{
+	MaxHP += InAmount;
+	HP = MaxHP;
+}
+
+void UStatusComponent::SetMaxStamina(float InAmount)
+{
+	MaxStamina += InAmount;
+	Stamina = MaxStamina;
+}
+
+void UStatusComponent::SetMaxTemperature(float InAmount)
+{
+	MaxTemperature += InAmount;
+	Temperature = MaxTemperature;
+}
+
+void UStatusComponent::SetMaxFatigueLevel(float InAmount)
+{
+	MaxFatigueLevel += InAmount;
+}
+
+void UStatusComponent::SetMaxWeight(float InAmount)
+{
+	MaxWeight += InAmount;
+}
+
+void UStatusComponent::SetMaxEnergy(float InAmount)
+{
+	MaxEnergy += InAmount;
+	Energy = MaxEnergy;
+}
+
+void UStatusComponent::SetMaxPhysicalStrength(float InAmount)
+{
+	MaxPhysicalStrength += InAmount;
+	PhysicalStrength = MaxPhysicalStrength;
+}
+
+void UStatusComponent::SetMaxDexterity(int32 InAmount)
+{
+	MaxDexterity += InAmount;
+	Dexterity = MaxDexterity;
+}
+
+void UStatusComponent::SetMaxXp(int32 InAmount)
+{
+	MaxXP += InAmount;
+}
+
+void UStatusComponent::SetMaxLevel(int32 InAmount)
+{
+	MaxLevel = InAmount;
+}
+
+void UStatusComponent::Damage(float InAmount)
+{
+	HP += (InAmount * -1.0f);
+	HP = FMath::Clamp(HP, 0.0f, MaxHP);
+}
+
+void UStatusComponent::UseStamina(float InAmount)
+{
+	Stamina += (InAmount * -1.0f);
+	Stamina = FMath::Clamp(Stamina, 0.0f, MaxStamina);
+}
+
+void UStatusComponent::UseTemperature(float InAmount)
+{
+	Stamina += (InAmount * -1.0f);
+	Stamina = FMath::Clamp(Stamina, 0.0f, MaxStamina);
+	//TODOS 온도 0일때 능력치 감소
+}
+
+void UStatusComponent::AddFatigueLevel(float InAmount)
+{
+	FatigueLevel += InAmount;
+	FatigueLevel = FMath::Clamp(FatigueLevel, 0.0f, MaxFatigueLevel);
+
+	//TODOS 온도 최대치일때 능력치 감소
+}
+
+void UStatusComponent::AddWeight(float InAmount)
+{
+	Weight += InAmount;
+	Weight = FMath::Clamp(Weight, 0.0f, MaxWeight);
+
+	//TODOS 무게 최대치일때 능력치 감소
+}
+
+void UStatusComponent::UseEnergy(float InAmount)
+{
+	Energy += (InAmount * -1.0f);
+	Energy = FMath::Clamp(Energy, 0.0f, MaxEnergy);
+
+	//TODOS 에너지 0일때 능력치 감소
+}
+
+void UStatusComponent::AddPhysicalStrength(float InAmount)
+{
+	PhysicalStrength += InAmount;
+	PhysicalStrength = FMath::Clamp(PhysicalStrength, 0.0f, MaxPhysicalStrength);
+}
+
+void UStatusComponent::AddDexterity(float InAmount)
+{
+	Dexterity += InAmount;
+	Dexterity = FMath::Clamp(Dexterity, 0.0f, MaxDexterity);
+}
+
+void UStatusComponent::AddXp(float InAmount)
+{
+	XP += InAmount;
+	XP = FMath::Clamp(XP, 0.0f, MaxXP);
+}
+
+void UStatusComponent::LevelUp()
+{
+	XP = 0.0f;
+	Level++;
+
+	//TODOS 레벨업시 적용할거 작성
+}
