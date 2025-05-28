@@ -37,10 +37,8 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	FEquipment EquipmentInfo;
+	
 public:
-	UPROPERTY(EditDefaultsOnly)
-	EItemHandType ItemHandType = EItemHandType::Count;
-
 	UPROPERTY(EditDefaultsOnly)
 	FItemAttachInfo ItemAttachInfo;
 	

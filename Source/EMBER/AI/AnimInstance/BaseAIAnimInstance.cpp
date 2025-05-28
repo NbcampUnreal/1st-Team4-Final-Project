@@ -4,6 +4,18 @@
 #include "BehaviorTree/BlackboardComponent.h" 
 #include "KismetAnimationLibrary.h"
 
+void UBaseAIAnimInstance::NativeInitializeAnimation()
+{
+	Super::NativeInitializeAnimation();
+
+	APawn* OwnerPawn = TryGetPawnOwner();
+	if (!OwnerPawn) return;
+	ABaseAIController* AIController = Cast<ABaseAIController>(OwnerPawn->GetController());
+	if (!AIController) return;
+	BlackboardComp = AIController->GetBlackboardComponent();
+	if (!BlackboardComp) return;
+}
+
 void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
@@ -16,22 +28,27 @@ void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		CurrentSpeed = Velocity.Size();
 		CurrentDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, AICharacter->GetActorRotation());
 	}
-	
-	APawn* OwnerPawn = TryGetPawnOwner();
-	if (!OwnerPawn) return;
-	ABaseAIController* AIController = Cast<ABaseAIController>(OwnerPawn->GetController());
-	if (!AIController) return;
-	BlackboardComp = AIController->GetBlackboardComponent();
-	if (!BlackboardComp) return;
 }
 
-void UBaseAIAnimInstance::PlayAttackMontage()
+void UBaseAIAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType Fallback)
 {
-	if (AttackMontage)
+	UAnimMontage* MontageToPlay = nullptr;
+	EAnimActionType FinalType = Desired;
+
+	if (AnimSectionMap.Contains(Desired))
 	{
-		Montage_Play(AttackMontage);
-		//Montage_JumpToSection(SectionName, AttackMontage);
+		MontageToPlay = GetMontageToPlay(Desired);
 	}
+	else if (AnimSectionMap.Contains(Fallback))
+	{
+		MontageToPlay = GetMontageToPlay(Fallback);
+		FinalType = Fallback;
+	}
+
+	if (!MontageToPlay) return;
+
+	Montage_Play(MontageToPlay);
+	Montage_JumpToSection(AnimSectionMap[FinalType], MontageToPlay);
 }
 
 void UBaseAIAnimInstance::PlayDeathMontage()
@@ -41,6 +58,26 @@ void UBaseAIAnimInstance::PlayDeathMontage()
 		Montage_Play(DeathMontage);
 	}
 }
+
+UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay(EAnimActionType ActionType) const
+{
+	switch (ActionType)
+	{
+	case EAnimActionType::AttackNormal:
+	case EAnimActionType::AttackRun:
+	case EAnimActionType::AttackJump:
+		return AttackMontage;
+
+	case EAnimActionType::HitFront:
+	case EAnimActionType::HitLeft:
+	case EAnimActionType::HitRight:
+		return HitMontage;
+
+	default:
+		return nullptr;
+	}
+}
+
 #pragma region Interface
 
 void UBaseAIAnimInstance::SetBlackboardBool(FName KeyName, bool bValue)

@@ -7,6 +7,7 @@
 
 #include "InventoryManagerComponent.generated.h"
 
+class UInventoryEquipmentManagerComponent;
 class UItemTemplate;
 class UItemInstance;
 class UInventoryManagerComponent;
@@ -105,7 +106,7 @@ protected:
 	
 public:
 	int32 CanMoveOrMergeItem(UInventoryManagerComponent* OtherComponent, const FIntPoint& FromItemSlotPos, const FIntPoint& ToItemSlotPos) const;
-	int32 CanMoveOrMergeItem(UEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, const FIntPoint& ToItemSlotPos) const;
+	int32 CanMoveOrMergeItem(UInventoryEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, const FIntPoint& ToItemSlotPos) const;
 
 	int32 CanAddItem(int32 ItemTemplateID, EItemRarity ItemRarity, int32 ItemCount, TArray<FIntPoint>& OutToItemSlotPoses, TArray<int32>& OutToItemCounts) const;
 	
@@ -120,15 +121,13 @@ private:
 public:
 	bool IsEmpty(const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount) const;
 	bool IsEmpty(const TArray<bool>& InSlotChecks, const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount) const;
+	bool IsSameComponent(const UInventoryManagerComponent* OtherComponent) const;
 	
 	UItemInstance* GetItemInstance(const FIntPoint& ItemSlotPos) const;
 	int32 GetItemCount(const FIntPoint& ItemSlotPos) const;
 	
 	const TArray<FInventoryEntry>& GetAllEntries() const;
 	FIntPoint GetInventorySlotCount() const { return InventorySlotCount; }
-
-protected:
-	bool IsSameComponent(const UInventoryManagerComponent* OtherComponent) const;
 	
 private:
 	void MarkSlotChecks(TArray<bool>& InSlotChecks, bool bIsUsing, const FIntPoint& ItemSlotPos, const FIntPoint& ItemSlotCount) const;
@@ -139,6 +138,7 @@ public:
 	
 private:
 	friend class UItemManagerComponent;
+	friend class UInventoryEquipmentManagerComponent;
 	
 	UPROPERTY(Replicated)
 	FInventoryList InventoryList;

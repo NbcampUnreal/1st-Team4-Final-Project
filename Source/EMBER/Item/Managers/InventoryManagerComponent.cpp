@@ -220,7 +220,7 @@ int32 UInventoryManagerComponent::CanMoveOrMergeItem(UInventoryManagerComponent*
 	return IsEmpty(ToItemSlotPos, FromItemSlotCount) ? FromItemCount : 0;
 }
 
-int32 UInventoryManagerComponent::CanMoveOrMergeItem(UEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, const FIntPoint& ToItemSlotPos) const
+int32 UInventoryManagerComponent::CanMoveOrMergeItem(UInventoryEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, const FIntPoint& ToItemSlotPos) const
 {
 	if (OtherComponent == nullptr)
 		return 0;

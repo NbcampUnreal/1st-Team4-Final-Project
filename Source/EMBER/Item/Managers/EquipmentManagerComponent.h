@@ -1,17 +1,19 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-#include "EMBER.h"
-#include "Components/ActorComponent.h"
+
+#include "Components/PawnComponent.h"
+
 #include "EquipmentManagerComponent.generated.h"
 
+enum class EEquipmentSlotType : uint8;
 enum class EWeaponSlotType : uint8;
 class UItemTemplate;
 class UItemInstance;
 class AEquipmentBase;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class EMBER_API UEquipmentManagerComponent : public UActorComponent
+class EMBER_API UEquipmentManagerComponent : public UPawnComponent
 {
 	GENERATED_BODY()
 
@@ -24,6 +26,16 @@ protected:
 	
 public:
 	void AddEquipment(EWeaponSlotType WeaponSlotType, TSubclassOf<UItemTemplate> ItemTemplateClass);
+	void Equip(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
+	void Unequip(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
+
+private:
+	void Equip_HandEquipment(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
+	void Equip_Armor(UItemInstance* ItemInstance);
+	void Unequip_HandEquipment();
+	void Unequip_Armor(UItemInstance* ItemInstance);
+	
+public:
 	UFUNCTION()
 	FAttackData GetAttackInfo() const;
 	UFUNCTION()
@@ -32,7 +44,6 @@ private:
 	UFUNCTION()
 	void OnRep_ItemTemplateID(int32 PrevItemTemplateID);
 
-
 private:
 	UPROPERTY(ReplicatedUsing=OnRep_ItemTemplateID)
 	int32 ItemTemplateID = INDEX_NONE;
@@ -40,6 +51,8 @@ private:
 	UPROPERTY()
 	AEquipmentBase* SpawnedWeapon;
 
+	UPROPERTY()
+	TObjectPtr<AEquipmentBase> SpawnedHandEquipment;
 public:
 	void Attack();
 

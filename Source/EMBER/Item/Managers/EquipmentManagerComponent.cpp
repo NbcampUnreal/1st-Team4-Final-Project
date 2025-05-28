@@ -59,8 +59,7 @@ void UEquipmentManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 	DOREPLIFETIME(ThisClass, ItemTemplateID);
 }
 
-void UEquipmentManagerComponent::AddEquipment(EWeaponSlotType WeaponSlotType,
-                                              TSubclassOf<UItemTemplate> ItemTemplateClass)
+void UEquipmentManagerComponent::AddEquipment(EWeaponSlotType WeaponSlotType, TSubclassOf<UItemTemplate> ItemTemplateClass)
 {
 	if (WeaponSlotType == EWeaponSlotType::Count || ItemTemplateClass == nullptr)
 		return;
@@ -101,6 +100,7 @@ void UEquipmentManagerComponent::AddEquipment(EWeaponSlotType WeaponSlotType,
 			UWorld* World = GetWorld();
 			SpawnedWeapon = World->SpawnActorDeferred<AEquipmentBase>(AttachInfo.SpawnEquipmentClass,
 			                                                          FTransform::Identity, OwnerCharacter);
+			SpawnedWeapon->Init(NewItemTemplateID, EEquipmentSlotType::Primary_LeftHand);
 			SpawnedWeapon->SetActorRelativeTransform(AttachInfo.AttachTransform);
 			SpawnedWeapon->AttachToComponent(CharacterMeshComponent, FAttachmentTransformRules::KeepRelativeTransform,
 			                                 AttachInfo.AttachSocket);
@@ -118,18 +118,117 @@ void UEquipmentManagerComponent::AddEquipment(EWeaponSlotType WeaponSlotType,
 				}
 			}
 		}
+
 		ItemTemplateID = NewItemTemplateID;
 	}
 	else
 	{
 		ArmorComponent.Get()->DetermineEquip(ItemTemplate->FindFragmentByClass<UItemFragment_Equipable_Armor>(), NewItemTemplateID);
 	}
+}
 
+void UEquipmentManagerComponent::Equip(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance)
+{
+	check(GetOwner()->HasAuthority());
+
+	if (EquipmentSlotType == EEquipmentSlotType::Count || ItemInstance == nullptr)
+		return;
+
+	const UItemFragment_Equipable* EquippableFragment = ItemInstance->FindFragmentByClass<UItemFragment_Equipable>();
+	if (EquippableFragment == nullptr)
+		return;
+	
+	if (EquippableFragment->EquipmentType == EEquipmentType::Weapon || EquippableFragment->EquipmentType == EEquipmentType::Utility)
+	{
+		Equip_HandEquipment(EquipmentSlotType, ItemInstance);
+	}
+	else if (EquippableFragment->EquipmentType == EEquipmentType::Armor)
+	{
+		Equip_Armor(ItemInstance);
+	}
+}
+
+void UEquipmentManagerComponent::Unequip(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance)
+{
+	check(GetOwner()->HasAuthority());
+
+	if (EquipmentSlotType == EEquipmentSlotType::Count || ItemInstance == nullptr)
+		return;
+
+	const UItemFragment_Equipable* EquippableFragment = ItemInstance->FindFragmentByClass<UItemFragment_Equipable>();
+	if (EquippableFragment == nullptr)
+		return;
+	
+	if (EquippableFragment->EquipmentType == EEquipmentType::Weapon || EquippableFragment->EquipmentType == EEquipmentType::Utility)
+	{
+		Unequip_HandEquipment();
+	}
+	else if (EquippableFragment->EquipmentType == EEquipmentType::Armor)
+	{
+		Unequip_Armor(ItemInstance);
+	}
+}
+
+void UEquipmentManagerComponent::Equip_HandEquipment(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance)
+{
+	if (ItemInstance == nullptr)
+		return;
+	
+	const UItemFragment_Equipable_Attachment* AttachmentFragment = ItemInstance->FindFragmentByClass<UItemFragment_Equipable_Attachment>();
+	if (AttachmentFragment == nullptr)
+		return;
+
+	if (OwnerCharacter == nullptr)
+		return;
+	
+	// 손에 장착된 아이템 삭제
+	Unequip_HandEquipment();
+
+	// 손에 장착할 아이템 생성
+	const FItemAttachInfo& AttachInfo = AttachmentFragment->ItemAttachInfo;
+	if (AttachInfo.SpawnEquipmentClass)
+	{
+		UWorld* World = GetWorld();
+		SpawnedHandEquipment = World->SpawnActorDeferred<AEquipmentBase>(AttachInfo.SpawnEquipmentClass,FTransform::Identity, OwnerCharacter);
+		SpawnedHandEquipment->Init(ItemInstance->GetItemTemplateID(), EquipmentSlotType);
+		SpawnedHandEquipment->SetActorRelativeTransform(AttachInfo.AttachTransform);
+		SpawnedHandEquipment->AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, AttachInfo.AttachSocket);
+		SpawnedHandEquipment->FinishSpawning(FTransform::Identity, true);
+	}
+
+	// TEMP : 임시 코드
+	ItemTemplateID = ItemInstance->GetItemTemplateID();
+}
+
+void UEquipmentManagerComponent::Equip_Armor(UItemInstance* ItemInstance)
+{
+	if (ItemInstance == nullptr)
+		return;
+	
+	int32 NewItemTemplateID = ItemInstance->GetItemTemplateID();
+	ArmorComponent.Get()->DetermineEquip(ItemInstance->FindFragmentByClass<UItemFragment_Equipable_Armor>(), NewItemTemplateID);
+}
+
+void UEquipmentManagerComponent::Unequip_HandEquipment()
+{
+	if (IsValid(SpawnedHandEquipment))
+	{
+		SpawnedHandEquipment->Destroy();
+	}
+}
+
+void UEquipmentManagerComponent::Unequip_Armor(UItemInstance* ItemInstance)
+{
+	if (ItemInstance == nullptr)
+		return;
+	
+	int32 NewItemTemplateID = ItemInstance->GetItemTemplateID();
+	ArmorComponent.Get()->DetermineEquip(ItemInstance->FindFragmentByClass<UItemFragment_Equipable_Armor>(), NewItemTemplateID);
 }
 
 void UEquipmentManagerComponent::OnRep_ItemTemplateID(int32 PrevItemTemplateID)
 {
-	if (ItemTemplateID == PrevItemTemplateID)
+	/*if (ItemTemplateID == PrevItemTemplateID)
 		return;
 
 	if (OwnerCharacter == nullptr)
@@ -153,7 +252,7 @@ void UEquipmentManagerComponent::OnRep_ItemTemplateID(int32 PrevItemTemplateID)
 				MontageComp->PlayMontage(Data.DrawMontage);
 			}
 		}
-	}
+	}*/
 }
 
 void UEquipmentManagerComponent::Attack()

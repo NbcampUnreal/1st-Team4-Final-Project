@@ -8,6 +8,7 @@
 
 class UBoxComponent;
 class UArrowComponent;
+class UItemInstance;
 
 UCLASS(Abstract, BlueprintType)
 class EMBER_API AEquipmentBase : public AActor
@@ -17,8 +18,16 @@ class EMBER_API AEquipmentBase : public AActor
 public:
 	AEquipmentBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+public:
+	void Init(int32 InTemplateID, EEquipmentSlotType InEquipmentSlotType);
+	
 protected:
+	//~AActor Overrides
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	//~End of Overrides
+
+private:
+	void ProcessEquip();
 	
 private:
 	UFUNCTION()
@@ -26,6 +35,8 @@ private:
 	
 	UFUNCTION()
 	void OnRep_EquipmentSlotType();
+
+	void HandleReplicatedEquipment();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -43,4 +54,8 @@ protected:
 	
 	UPROPERTY(ReplicatedUsing=OnRep_EquipmentSlotType)
 	EEquipmentSlotType EquipmentSlotType = EEquipmentSlotType::Count;
+
+private:
+	UPROPERTY()
+	bool bInitialized = false;
 };
