@@ -165,6 +165,7 @@ void ABaseAI::SetFlySpeed()
 {			
 	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 	GetCharacterMovement()->MaxFlySpeed = FlySpeed;
+	GetCharacterMovement()->GravityScale = 0.0f;
 }
 
 #pragma region Interface

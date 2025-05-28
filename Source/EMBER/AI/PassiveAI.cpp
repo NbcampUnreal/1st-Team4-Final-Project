@@ -45,7 +45,7 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 		SetBlackboardBool(TEXT("IsDetected"), true);
 		SetBlackboardObject(TEXT("TargetActor"), UpdatedActor);
 	}
-	else if (!Stimulus.WasSuccessfullySensed())
+	else if (!Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
 	{
 		if (AnimalType == EAnimalType::Passive)
 		{

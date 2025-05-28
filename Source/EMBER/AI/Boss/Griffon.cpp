@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "AI/Boss/Griffon.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
@@ -23,7 +20,7 @@ void AGriffon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (GetActorLocation().Z > 500.0f)
+	if (GetActorLocation().Z > 1000.0f)
 	{
 		GetCharacterMovement()->Velocity.Z = 0.0f;
 	}
@@ -32,21 +29,17 @@ void AGriffon::Tick(float DeltaTime)
 void AGriffon::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
 	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
-	
-	if (Stimulus.WasSuccessfullySensed())
+
+	if (Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
 	{
 		UCharacterMovementComponent* MovementComp = GetCharacterMovement();
 		if (MovementComp)
 		{
 			SetFlySpeed();
-			MovementComp->GravityScale = 0.0f; // 중력 제거
-			MovementComp->MaxFlySpeed = FlySpeed; // 비행 속도 설정
-
 			GetCharacterMovement()->StopMovementImmediately();
-			
-			LaunchCharacter(FVector(0,0,100),false,true);
-			MovementComp->SetMovementMode(MOVE_Flying); // Launch 후 비행 모드 유지
+			LaunchCharacter(FVector(0, 0, 700), false, true);
 		}
+
+		SetBlackboardVector("OriginLocation", GetActorLocation());
 	}
 }
-
