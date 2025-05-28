@@ -1,9 +1,9 @@
 #include "BTT_Attack.h"
 #include "BaseAI.h"
 #include "BaseAIController.h"
+#include "AnimInstance/BaseAIAnimInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "../Player/EmberPlayerCharacter.h"
-#include "Animation/AnimInstance.h"
 #include "kismet/GameplayStatics.h"
 
 
@@ -18,7 +18,7 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& Comp, uint8
 	
 	if (ABaseAI* AICharacter = Cast<ABaseAI>(AIController ? AIController->GetCharacter() : nullptr))
 	{
-		//AICharacter->PlayAttackAnimation();
+		AICharacter->OnAttack();
 		
 		if (AActor* TargetActor = Cast<AActor>(Comp.GetBlackboardComponent()->GetValueAsObject("TargetActor")))
 		{

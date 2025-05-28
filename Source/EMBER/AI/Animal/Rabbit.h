@@ -9,5 +9,8 @@ UCLASS()
 class EMBER_API ARabbit : public APassiveAI
 {
 	GENERATED_BODY()
-	
+
+public:
+	ARabbit();
+	virtual void OnDeath() override;
 };

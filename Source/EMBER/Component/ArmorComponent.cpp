@@ -27,7 +27,7 @@ bool UArmorComponent::HasOwnerAuthority() const
     return Owner && Owner->HasAuthority();
 }
 
-void UArmorComponent::DetermineEquip(UItemFragment_Equipable_Armor* ArmorFragment, int32 NewItemTemplateID)
+void UArmorComponent::DetermineEquip(const UItemFragment_Equipable_Armor* ArmorFragment, int32 NewItemTemplateID)
 {
     UE_LOG(LogTemp, Warning, L"Determine Equip");
     const UItemTemplate& armorItem = UEmberItemData::Get().FindItemTemplateByID(NewItemTemplateID);

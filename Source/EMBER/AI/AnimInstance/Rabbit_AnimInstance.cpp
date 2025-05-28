@@ -3,18 +3,11 @@
 
 #include "AI/AnimInstance/Rabbit_AnimInstance.h"
 
-void URabbit_AnimInstance::AnimNotify_EndIdle()
-{
-	AnimalState = EAnimalState::Eating;
-}
 
-void URabbit_AnimInstance::AnimNotify_EndEat()
+void URabbit_AnimInstance::NativeInitializeAnimation()
 {
-	AnimalState = EAnimalState::Looking;
-}
+	Super::NativeInitializeAnimation();
 
-void URabbit_AnimInstance::AnimNotify_EndLook()
-{
 	AnimalState = EAnimalState::Idle;
+	Montage_Play(IdleMontage);
 }
-

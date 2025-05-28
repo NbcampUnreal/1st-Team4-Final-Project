@@ -15,29 +15,9 @@ public:
 	void PlayTurnMontage(bool direction);
 	UFUNCTION()
 	void OnTurnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	void StopMontage();
 	
-	UFUNCTION(BlueprintCallable)
-	void AnimNotify_IdleFinish();
-	UFUNCTION(Server, Reliable)
-	void Server_OnNotifyIdleFinish();
-	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_OnNotifyIdleFinish();
-	
-	UFUNCTION(BlueprintCallable)
-	void AnimNotify_LookFinish();
-	UFUNCTION(Server, Reliable)
-	void Server_OnNotifyLookFinish();
-	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_OnNotifyLookFinish();
-	
-	UFUNCTION(BlueprintCallable)
-	void AnimNotify_EatFinish();
-	UFUNCTION(Server, Reliable)
-	void Server_OnNotifyEatFinish();
-	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_OnNotifyEatFinish();
-
-virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
+	virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
 	
 	UPROPERTY(BlueprintReadWrite, Category = "Animation")
 	UAnimMontage* LeftTurnMontage;
@@ -47,8 +27,6 @@ virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Animation")
 	UAnimMontage* AroundMontage;
-	
-	void StopMontage();
 	
 	FTimerHandle TurnMontageTimer;
 };

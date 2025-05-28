@@ -3,18 +3,27 @@
 #pragma once
 
 #include "Blueprint/UserWidget.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "EquipmentSlotsWidget.generated.h"
 
+enum class EEquipmentSlotType : uint8;
 class UCommonVisibilitySwitcher;
 class UItemInstance;
 class UItemSlotWidget;
-class UEquipmentSlotWeaponWidget;
+class UEquipmentSlotHandWidget;
 class UEquipmentSlotSingleWidget;
-class UEquipManagerComponent;
-class UEquipmentManagerComponent;
-/**
- * 
- */
+class UInventoryEquipmentManagerComponent;
+
+USTRUCT(BlueprintType)
+struct FEquipmentInitializeMessage
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<UInventoryEquipmentManagerComponent> InventoryEquipmentManager;
+};
+
 UCLASS()
 class EMBER_API UEquipmentSlotsWidget : public UUserWidget
 {
@@ -29,25 +38,42 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 	//~End of UUserWidget Overrides
+
+private:
+	void ConstructUI(FGameplayTag Channel, const FEquipmentInitializeMessage& Message);
+	void DestructUI();
+
+	void OnEquipmentEntryChanged(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance, int32 ItemCount);
+
+public:
+	UPROPERTY(EditAnywhere, meta=(Categories="Message"))
+	FGameplayTag MessageChannelTag;
+	
 protected:
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UEquipmentSlotWeaponWidget> Widget_Weapon_Primary;
+	TObjectPtr<UEquipmentSlotHandWidget> Widget_Hand_Left;
 	
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UEquipmentSlotWeaponWidget> Widget_Weapon_Secondary;
-
+	TObjectPtr<UEquipmentSlotHandWidget> Widget_Hand_Right;
+	
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UEquipmentSlotSingleWidget> Widget_Armor_Head;
+	TObjectPtr<UEquipmentSlotSingleWidget> Widget_Armor_Helmet;
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UEquipmentSlotSingleWidget> Widget_Armor_Chest;
 
-	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UEquipmentSlotSingleWidget> Widget_Armor_Legs;
+	UPROPERTY()
+	TObjectPtr<UEquipmentSlotSingleWidget> Widget_Armor_Shoulder;
 
+	UPROPERTY()
+	TObjectPtr<UEquipmentSlotSingleWidget> Widget_Armor_Cloak;
+	
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UEquipmentSlotSingleWidget> Widget_Armor_Hand;
-
+	TObjectPtr<UEquipmentSlotSingleWidget> Widget_Armor_Gloves;
+	
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UEquipmentSlotSingleWidget> Widget_Armor_Pants;
+	
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UEquipmentSlotSingleWidget> Widget_Armor_Foot;
 
@@ -63,9 +89,13 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UEquipmentSlotSingleWidget> Widget_Utility_Quaternary;
 
-	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UCommonVisibilitySwitcher> Switcher_Weapon_Primary;
-
-	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UCommonVisibilitySwitcher> Switcher_Weapon_Secondary;
+private:
+	TMap<EEquipmentSlotType, TObjectPtr<UEquipmentSlotSingleWidget>> EquipmentSlotWidgets;
+	
+	UPROPERTY()
+	TObjectPtr<UInventoryEquipmentManagerComponent> InventoryEquipmentManager;
+	
+private:
+	FDelegateHandle EquipmentChangedDelegateHandle;
+	FGameplayMessageListenerHandle MessageListenerHandle;
 };

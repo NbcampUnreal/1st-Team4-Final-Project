@@ -38,7 +38,7 @@ public:
 	virtual void OnDeath();
 	
 	UFUNCTION(BlueprintCallable, Category = "AI|State")
-	virtual void Attack();
+	virtual void OnAttack();
 
 	// AI Perception
 	UFUNCTION()
@@ -66,7 +66,15 @@ public:
 	virtual void SetBlackboardObject(FName KeyName, UObject* object) override;
 
 protected:
-	// AI 기본 정보
+	// AI 기본 정보	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	TObjectPtr<class UMontageSystemComponent> MontageComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	TObjectPtr<class UEquipmentManagerComponent> EquipComponent;
+	//TODOS HP 관련 변경 요청
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	TObjectPtr<class UStatusComponent> StatusComponent;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	float MaxHP;
 

@@ -80,10 +80,9 @@ enum class EUtilityType : uint8
 };
 
 UENUM(BlueprintType)
-enum class EItemHandType : uint8
+enum class EWeaponHandType : uint8
 {
-	LeftHand,
-	RightHand,
+	OneHand,
 	TwoHand,
 
 	Count	UMETA(Hidden)
@@ -102,9 +101,11 @@ enum class EEquipmentSlotType : uint8
 	Utility_Quaternary,
 	
 	Helmet,
+	Shoulder,
+	Cloak,
 	Chest,
-	Legs,
-	Hands,
+	Gloves,
+	Pants,
 	Foot,
 	
 	Count	UMETA(Hidden)

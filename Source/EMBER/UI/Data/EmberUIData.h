@@ -13,6 +13,7 @@ class UInventoryEntryWidget;
 class UItemHoverWidget;
 class UItemDragWidget;
 class UCommonActivatableWidget;
+class UEquipmentEntryWidget;
 
 USTRUCT(BlueprintType)
 struct FEmberHUDInfo
@@ -54,7 +55,7 @@ public:
 public:
 	UTexture2D* GetHoverRarityTexture(EItemRarity ItemRarity) const;
 	FColor GetRarityColor(EItemRarity ItemRarity) const;
-	
+
 public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UInventorySlotWidget> InventorySlotWidgetClass;
@@ -72,6 +73,10 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UItemDragWidget> ItemDragWidgetClass;
 
+public:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UEquipmentEntryWidget> EquipmentEntryWidgetClass;
+	
 public:
 	UPROPERTY(EditDefaultsOnly)
 	FIntPoint UnitInventorySlotSize = FIntPoint::ZeroValue;
