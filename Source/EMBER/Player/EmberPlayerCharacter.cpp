@@ -177,6 +177,14 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
     CharacterInputComponent->InitializePlayerInput(PlayerInputComponent);
 }
 
+float AEmberPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+    class AController* EventInstigator, AActor* DamageCauser)
+{
+    float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+    UE_LOG(LogTemp, Log, TEXT("Damage %f"), Damage);
+    return Damage;
+}
+
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
 {
     
