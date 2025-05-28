@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "C_CameraComponent.h"
+#include "C_CharacterStatusComponent.h"
 #include "Input/CharacterInputComponent.h"
 #include "Component/MontageSystemComponent.h"
 #include "EmberPlayerCharacter.generated.h"
@@ -13,9 +14,9 @@ class UEquipmentManagerComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UC_CharacterMovementComponent;
+class UC_CharacterStatusComponent;
 class UAbilitySystemComponent;
 class UCharacterInputComponent;
-class UC_StateComponent;
 
 struct FInputActionValue;
 UCLASS()
@@ -40,8 +41,6 @@ protected:
 	UC_CharacterMovementComponent* MovementComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UC_CameraComponent* CameraLogicComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UC_StateComponent* StateComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	FVector2D PitchRange = FVector2D(-50, 50);
 	UFUNCTION()
@@ -56,15 +55,14 @@ protected:
 	void Attack(const FInputActionValue& value);
 	UFUNCTION()
 	void StartJump(const FInputActionValue& value);
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UC_CharacterStatusComponent* SatatusComponent;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
@@ -89,4 +87,5 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<class UArmorComponent> ArmorComponent;
+
 };
