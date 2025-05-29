@@ -38,6 +38,7 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     StateComponent = CreateDefaultSubobject<UC_StateComponent>(TEXT("StateComponent"));
 
     Tags.Add("Player");
+    SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -73,7 +74,7 @@ void AEmberPlayerCharacter::PostInitializeComponents()
 void AEmberPlayerCharacter::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
-    
+
     InitAbilityActorInfo();
 }
 
@@ -81,7 +82,6 @@ void AEmberPlayerCharacter::OnRep_PlayerState()
 {
     Super::OnRep_PlayerState();
     
-    InitAbilityActorInfo();
     if (ArmorComponent != nullptr)
         ArmorComponent->InitializeArmorForLateJoiners();
 }

@@ -25,12 +25,19 @@ public:
 public:
 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
 	void ClearAbilityInput();
-
+	
+//~UAbilitySystemComponent Overrides
+public:
+	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
+	
 protected:
-	//~UAbilitySystemComponent Overrides
+	virtual void AbilitySecInputStarted(FGameplayAbilitySpec& Spec);
 	virtual void AbilitySpecInputPressed(FGameplayAbilitySpec& Spec) override;
 	virtual void AbilitySpecInputReleased(FGameplayAbilitySpec& Spec) override;
-	//~End of UAbilitySystemComponent OVerrides
+//~End of UAbilitySystemComponent Overrides
+
+protected:
+	void TryActivateAbilitiesOnSpawn();
 	
 protected:
 	TArray<FGameplayAbilitySpecHandle> InputStartedSpecHandles;

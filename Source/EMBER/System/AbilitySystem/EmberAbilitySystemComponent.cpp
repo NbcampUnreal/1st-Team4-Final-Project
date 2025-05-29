@@ -5,6 +5,7 @@
 
 #include "Data/EmberAbilitySet.h"
 #include "Abilities/EmberGameplayAbility.h"
+#include "UI/Data/EmberPawnData.h"
 
 UEmberAbilitySystemComponent::UEmberAbilitySystemComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -77,6 +78,23 @@ void UEmberAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGa
 			}
 		}
 	}
+
+	//
+	// Process all abilities that had their input started this frame.
+	//
+	for (const FGameplayAbilitySpecHandle& SpecHandle : InputStartedSpecHandles)
+	{
+		if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
+		{
+			if (AbilitySpec->Ability)
+			{
+				if (AbilitySpec->IsActive())
+				{
+					AbilitySecInputStarted(*AbilitySpec);
+				}
+			}
+		}
+	}
 	
 	// 입력이 Pressed일 경우 활성화되는 모든 어빌리티을 처리한다.
 	for (const FGameplayAbilitySpecHandle& SpecHandle : InputPressedSpecHandles)
@@ -127,6 +145,7 @@ void UEmberAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGa
 		}
 	}
 	
+	InputStartedSpecHandles.Reset();
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
 }
@@ -137,6 +156,31 @@ void UEmberAbilitySystemComponent::ClearAbilityInput()
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
 	InputHeldSpecHandles.Reset();
+}
+
+void UEmberAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor)
+{
+	Super::InitAbilityActorInfo(InOwnerActor, InAvatarActor);
+
+	APawn* Pawn = Cast<APawn>(InAvatarActor);
+	if (Pawn == nullptr)
+		return;
+
+	if (Pawn->GetController() && Pawn->GetController()->IsLocalController())
+	{
+		TryActivateAbilitiesOnSpawn();
+	}
+}
+
+void UEmberAbilitySystemComponent::AbilitySecInputStarted(FGameplayAbilitySpec& Spec)
+{
+	if (Spec.IsActive())
+	{
+		const UGameplayAbility* Instance = Spec.GetPrimaryInstance();
+		FPredictionKey OriginalPredictionKey = Instance ? Instance->GetCurrentActivationInfo().GetActivationPredictionKey() : Spec.ActivationInfo.GetActivationPredictionKey();
+
+		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::GameCustom1, Spec.Handle, OriginalPredictionKey);
+	}
 }
 
 void UEmberAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& Spec)
@@ -162,5 +206,17 @@ void UEmberAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec
 		FPredictionKey OriginalPredictionKey = Instance ? Instance->GetCurrentActivationInfo().GetActivationPredictionKey() : Spec.ActivationInfo.GetActivationPredictionKey();
 
 		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, Spec.Handle, OriginalPredictionKey);
+	}
+}
+
+void UEmberAbilitySystemComponent::TryActivateAbilitiesOnSpawn()
+{
+	ABILITYLIST_SCOPE_LOCK();
+	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+	{
+		if (const UEmberGameplayAbility* LyraAbilityCDO = Cast<UEmberGameplayAbility>(AbilitySpec.Ability))
+		{
+			LyraAbilityCDO->TryActivateAbilityOnSpawn(AbilityActorInfo.Get(), AbilitySpec);
+		}
 	}
 }

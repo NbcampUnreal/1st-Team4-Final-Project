@@ -9,6 +9,7 @@
 #include "Component/MontageSystemComponent.h"
 #include "EmberPlayerCharacter.generated.h"
 
+class UEmberAbilitySystemComponent;
 class UEquipmentManagerComponent;
 class USpringArmComponent;
 class UCameraComponent;
@@ -26,7 +27,7 @@ class EMBER_API AEmberPlayerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AEmberPlayerCharacter(const FObjectInitializer& Init);	
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -7,7 +7,10 @@ namespace EmberGameplayTags
 	// Message
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_Inventory);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_InventoryEquipment);
-
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Interaction_Notice);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Interaction_Progress);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_ActionHint_Notice);
+	
 	// Input
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Attack_MainHand);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Interact);
@@ -22,8 +25,23 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Attack_3);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Widget_Inventory);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Widget_CheatManager); /* Temporary */
-
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Interact_Active);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Logging);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Mining);
+	
 	// ItemAttribute
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemAttribute_BaseDamage);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemAttribute_Defense);
+
+	// Status
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Interact);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_ActionHint);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Logging);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Mining);
+
+	// Gameplay Event
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_Begin);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_Tick);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_End);
+	
 }

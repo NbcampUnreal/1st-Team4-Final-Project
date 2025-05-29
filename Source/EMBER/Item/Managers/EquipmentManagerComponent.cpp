@@ -4,6 +4,8 @@
 
 #include "ArmorComponent.h"
 #include "C_StateComponent.h"
+#include "EmberPlayerCharacter.h"
+#include "EmberPlayerState.h"
 #include "GameFlag.h"
 #include "ItemInstance.h"
 #include "ItemTemplate.h"
@@ -15,6 +17,7 @@
 #include "UI/Data/EmberItemData.h"
 #include "MontageSystemComponent.h"
 #include "Fragments/ItemFragment_Equipable_Armor.h"
+#include "System/AbilitySystem/EmberAbilitySystemComponent.h"
 
 
 UEquipmentManagerComponent::UEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer) : Super(
@@ -181,9 +184,29 @@ void UEquipmentManagerComponent::Equip_HandEquipment(EEquipmentSlotType Equipmen
 	if (OwnerCharacter == nullptr)
 		return;
 	
+	AEmberPlayerState* EmberPlayerState = Cast<AEmberPlayerState>(OwnerCharacter->GetPlayerState());
+	if (EmberPlayerState == nullptr)
+		return;
+
+	UEmberAbilitySystemComponent* EmberASC = Cast<UEmberAbilitySystemComponent>(EmberPlayerState->GetAbilitySystemComponent());
+	if (EmberASC == nullptr)
+		return;
+	
 	// 손에 장착된 아이템 삭제
 	Unequip_HandEquipment();
+	
+	if (OwnerCharacter->HasAuthority())
+	{
+		// 이전 아이템 Ability 삭제
+		BaseAbilitySetHandles.TakeFromAbilitySystem(EmberASC);
 
+		// 현재 아이템 Ability 적용
+		if (const UEmberAbilitySet* BaseAbilitySet = AttachmentFragment->BaseAbilitySet)
+		{
+			BaseAbilitySet->GiveToAbilitySystem(EmberASC, &BaseAbilitySetHandles,  const_cast<UItemFragment_Equipable_Attachment*>(AttachmentFragment));
+		}
+	}
+	
 	// 손에 장착할 아이템 생성
 	const FItemAttachInfo& AttachInfo = AttachmentFragment->ItemAttachInfo;
 	if (AttachInfo.SpawnEquipmentClass)
