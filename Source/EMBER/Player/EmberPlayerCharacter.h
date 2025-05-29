@@ -19,6 +19,7 @@ class UCharacterInputComponent;
 
 struct FInputActionValue;
 UCLASS()
+
 class EMBER_API AEmberPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
@@ -56,6 +57,18 @@ protected:
 	void Attack(const FInputActionValue& value);
 	UFUNCTION()
 	void StartJump(const FInputActionValue& value);
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetMaxHP() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetMaxStamina() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetCurrentHP() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetCurrentStamina() const;
 
 public:	
 	// Called every frame

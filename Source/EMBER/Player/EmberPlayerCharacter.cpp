@@ -36,6 +36,7 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("MontageComponent"));
     StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
     ArmorComponent = CreateDefaultSubobject<UArmorComponent>(TEXT("ArmorComponent"));
+    SatatusComponent = CreateDefaultSubobject<UC_CharacterStatusComponent>(TEXT("SatatusComponent"));
 
     Tags.Add("Player");
 }
@@ -222,4 +223,38 @@ void AEmberPlayerCharacter::Attack(const FInputActionValue& value)
 void AEmberPlayerCharacter::StartJump(const FInputActionValue& value)
 {
     Jump();
+}
+float AEmberPlayerCharacter::GetMaxHP() const
+{
+    if (SatatusComponent)
+    {
+        return SatatusComponent->GetMaxHP();
+    }
+    return 0.f;
+}
+
+float AEmberPlayerCharacter::GetMaxStamina() const
+{
+    if (SatatusComponent)
+    {
+        return SatatusComponent->GetMaxStamina();
+    }
+    return 0.f;
+}
+float AEmberPlayerCharacter::GetCurrentHP() const
+{
+    if (SatatusComponent)
+    {
+        return SatatusComponent->GetCurrentHP();
+    }
+    return 0.f;
+}
+
+float AEmberPlayerCharacter::GetCurrentStamina() const
+{
+    if (SatatusComponent)
+    {
+        return SatatusComponent->GetCurrentStamina();
+    }
+    return 0.f;
 }
