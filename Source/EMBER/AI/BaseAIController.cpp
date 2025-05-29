@@ -15,6 +15,10 @@ void ABaseAIController::BeginPlay()
 
 	switch (ControlledAnimal->AnimalType)
 	{
+	case EAnimalType::Crow:
+		SelectedBT = CrowBT;
+		CurrentBT = CrowBT;
+		break;
 	case EAnimalType::Passive:
 		SelectedBT = PassiveBT;
 		CurrentBT = PassiveBT;
@@ -27,8 +31,9 @@ void ABaseAIController::BeginPlay()
 		SelectedBT = AggressiveBT;
 		CurrentBT = AggressiveBT;
 		break;
+
 	}
-	
+
 	if (UseBlackboard(BlackboardAsset, BlackboardComp) && SelectedBT)
 	{
 		// 패트롤 포인트를 블랙보드에 저장
@@ -36,6 +41,7 @@ void ABaseAIController::BeginPlay()
 		BlackboardComp->SetValueAsInt("PatrolIndex", 0);
 
 		RunBehaviorTree(SelectedBT);
+
 		UE_LOG(LogTemp, Warning, TEXT("BT: %s"), *GetNameSafe(SelectedBT));
 	}
 }

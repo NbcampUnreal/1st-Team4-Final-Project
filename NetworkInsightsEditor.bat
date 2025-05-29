@@ -1,1 +1,1 @@
-"C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealEditor.exe" "%cd%\Ember.uproject" -NetTrace=1 -Trace=Net
+UnrealEditor.exe "%cd%\EMBER.uproject" -NetTrace=1 -Trace=Net
