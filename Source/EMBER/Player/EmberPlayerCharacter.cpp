@@ -179,6 +179,11 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
     CharacterInputComponent->InitializePlayerInput(PlayerInputComponent);
 }
 
+UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() const
+{
+    return AbilitySystemComponent;
+}
+
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
 {
     

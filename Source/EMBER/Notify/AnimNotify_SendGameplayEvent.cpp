@@ -25,16 +25,6 @@ void UAnimNotify_SendGameplayEvent::NotifyBegin(USkeletalMeshComponent* MeshComp
 	}
 }
 
-void UAnimNotify_SendGameplayEvent::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
-{
-	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
-
-	if (TickEventTag.IsValid())
-	{
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(MeshComp->GetOwner(), TickEventTag, EventData);
-	}
-}
-
 void UAnimNotify_SendGameplayEvent::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
 	const FAnimNotifyEventReference& EventReference)
 {
