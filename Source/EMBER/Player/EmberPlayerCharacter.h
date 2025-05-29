@@ -9,16 +9,17 @@
 #include "Component/MontageSystemComponent.h"
 #include "EmberPlayerCharacter.generated.h"
 
+class UStatusComponent;
 class UEquipmentManagerComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UC_CharacterMovementComponent;
 class UAbilitySystemComponent;
 class UCharacterInputComponent;
-class UC_StateComponent;
 
 struct FInputActionValue;
 UCLASS()
+
 class EMBER_API AEmberPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
@@ -41,7 +42,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UC_CameraComponent* CameraLogicComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UC_StateComponent* StateComponent;
+	UStatusComponent* StatusComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	FVector2D PitchRange = FVector2D(-50, 50);
 	UFUNCTION()
@@ -56,6 +57,18 @@ protected:
 	void Attack(const FInputActionValue& value);
 	UFUNCTION()
 	void StartJump(const FInputActionValue& value);
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetMaxHP() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetMaxStamina() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetCurrentHP() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetCurrentStamina() const;
 
 public:	
 	// Called every frame
@@ -87,4 +100,5 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<class UArmorComponent> ArmorComponent;
+
 };
