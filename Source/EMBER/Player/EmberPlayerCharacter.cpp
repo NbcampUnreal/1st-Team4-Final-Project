@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "C_CharacterMovementComponent.h"
 #include "EmberPlayerState.h"
+#include "GameData.h"
+#include "StatusComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Managers/EquipmentManagerComponent.h"
@@ -32,9 +34,9 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     CharacterInputComponent = CreateDefaultSubobject<UCharacterInputComponent>(TEXT("CharacterInput"));
 
     MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("MontageComponent"));
-
+    StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
     ArmorComponent = CreateDefaultSubobject<UArmorComponent>(TEXT("ArmorComponent"));
-    SatatusComponent = CreateDefaultSubobject<UC_CharacterStatusComponent>(TEXT("SatatusComponent"));
+    StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("SatatusComponent"));
 
     Tags.Add("Player");
 }
@@ -43,11 +45,9 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 void AEmberPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-    SatatusComponent->SetMaxHP(100);
-    SatatusComponent->SetCurrentHP(100);
-    SatatusComponent->SetMaxStamina(100);
-    SatatusComponent->SetCurrentStamina(100);
+    
+    StatusComponent->SetMaxHp(100);
+    StatusComponent->SetMaxStamina(100);
     CameraLogicComp->DisableControlRotation();
     APlayerController* playerController = Cast<APlayerController>(GetController());
     if(playerController != nullptr)
@@ -226,35 +226,35 @@ void AEmberPlayerCharacter::StartJump(const FInputActionValue& value)
 }
 float AEmberPlayerCharacter::GetMaxHP() const
 {
-    if (SatatusComponent)
+    if (StatusComponent)
     {
-        return SatatusComponent->GetMaxHP();
+        return StatusComponent->GetMaxHp();
     }
     return 0.f;
 }
 
 float AEmberPlayerCharacter::GetMaxStamina() const
 {
-    if (SatatusComponent)
+    if (StatusComponent)
     {
-        return SatatusComponent->GetMaxStamina();
+        return StatusComponent->GetMaxStamina();
     }
     return 0.f;
 }
 float AEmberPlayerCharacter::GetCurrentHP() const
 {
-    if (SatatusComponent)
+    if (StatusComponent)
     {
-        return SatatusComponent->GetCurrentHP();
+        return StatusComponent->GetHp();
     }
     return 0.f;
 }
 
 float AEmberPlayerCharacter::GetCurrentStamina() const
 {
-    if (SatatusComponent)
+    if (StatusComponent)
     {
-        return SatatusComponent->GetCurrentStamina();
+        return StatusComponent->GetStamina();
     }
     return 0.f;
 }

@@ -5,16 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "C_CameraComponent.h"
-#include "C_CharacterStatusComponent.h"
 #include "Input/CharacterInputComponent.h"
 #include "Component/MontageSystemComponent.h"
 #include "EmberPlayerCharacter.generated.h"
 
+class UStatusComponent;
 class UEquipmentManagerComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UC_CharacterMovementComponent;
-class UC_CharacterStatusComponent;
 class UAbilitySystemComponent;
 class UCharacterInputComponent;
 
@@ -42,6 +41,8 @@ protected:
 	UC_CharacterMovementComponent* MovementComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UC_CameraComponent* CameraLogicComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStatusComponent* StatusComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	FVector2D PitchRange = FVector2D(-50, 50);
 	UFUNCTION()
@@ -56,6 +57,7 @@ protected:
 	void Attack(const FInputActionValue& value);
 	UFUNCTION()
 	void StartJump(const FInputActionValue& value);
+
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetMaxHP() const;
 
@@ -68,8 +70,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetCurrentStamina() const;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UC_CharacterStatusComponent* SatatusComponent;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
