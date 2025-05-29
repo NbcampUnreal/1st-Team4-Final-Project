@@ -18,7 +18,6 @@ public:
 protected:
 	//~UAnimNotifyState Overrides
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
-	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference) override;
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 	//~End of UAnimNotifyState Overrides
 	
@@ -26,9 +25,6 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FGameplayTag BeginEventTag;
 
-	UPROPERTY(EditAnywhere)
-	FGameplayTag TickEventTag;
-	
 	UPROPERTY(EditAnywhere)
 	FGameplayTag EndEventTag;
 
