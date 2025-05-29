@@ -2,33 +2,37 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Crafting/CraftingRecipeManager.h"
+#include "Blueprint/IUserObjectListEntry.h"
+#include "UI/Crafting/CraftingRecipeListItemData.h"
+
 #include "CraftingListEntryWidget.generated.h"
 
 class UTextBlock;
-class UCraftingResultWidget;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCraftingListEntryClicked, UCraftingRecipeListItemData*, ListItemData);
 
 UCLASS()
-class EMBER_API UCraftingListEntryWidget : public UUserWidget
+class EMBER_API UCraftingListEntryWidget : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 
 public:
+	UCraftingListEntryWidget(const FObjectInitializer& ObjectInitializer);
+
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* RecipeNameText;
 
-	void Init(UCraftingRecipeData* InRecipe, UCraftingResultWidget* InResultWidget);
+	UPROPERTY(BlueprintAssignable, Category = "ListEntry")
+	FOnCraftingListEntryClicked OnThisEntryClicked;
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 
-	UFUNCTION()
-	void OnClicked();
+	UFUNCTION(BlueprintCallable)
+	void HandleClick();
 
 private:
 	UPROPERTY()
-	UCraftingRecipeData* Recipe;
-
-	UPROPERTY()
-	UCraftingResultWidget* ResultWidget;
+	TObjectPtr<UCraftingRecipeListItemData> CurrentListItemData;
 };

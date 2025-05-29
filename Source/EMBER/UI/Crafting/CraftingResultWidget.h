@@ -2,48 +2,63 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "CraftingWidget.h"
 #include "GameFlag.h"
-#include "../Common/EmberActivatableWidget.h"
+#include "UI/Common/EmberActivatableWidget.h"
+#include "Crafting/CraftingRecipeManager.h"
 #include "CraftingResultWidget.generated.h"
+
+class UTextBlock;
+class UButton;
+class UVerticalBox;
+struct FCraftingRecipeRow;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnResultCraftActionRequestedSignature);
 
 UCLASS()
 class EMBER_API UCraftingResultWidget : public UEmberActivatableWidget
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	void UpdateRarityChances(const TMap<EItemRarity, float>& RarityChances);
+    UCraftingResultWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	void RefreshRarityPreview();
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    void UpdateRarityChances(const TMap<EItemRarity, float>& InRarityChances);
 
-	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	void SetTargetRecipe(class UCraftingRecipeData* InRecipe);
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    void RefreshRarityPreview();
 
-	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	void SetProvidedIngredients(const TMap<FGameplayTag, int32>& InIngredients);
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    void SetTargetRecipe(const FCraftingRecipeRow& InRecipeRow);
 
-	UPROPERTY(BlueprintAssignable, Category = "Crafting")
-	FOnResultCraftActionRequestedSignature OnCraftActionRequested;
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    void SetProvidedIngredients(const TMap<FGameplayTag, int32>& InIngredients);
 
-protected:
-	virtual void NativeConstruct() override;
-
-	UFUNCTION()
-	void OnCraftButtonClicked();
+    UPROPERTY(BlueprintAssignable, Category = "Crafting")
+    FOnResultCraftActionRequestedSignature OnCraftActionRequested;
 
 protected:
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* ResultText;
+    virtual void NativeConstruct() override;
 
-	UPROPERTY(meta = (BindWidget))
-	class UButton* CraftButton;
+    UFUNCTION()
+    void OnCraftButtonClicked();
+
+protected:
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* ResultText; 
+
+    UPROPERTY(meta = (BindWidget))
+    UButton* CraftButton;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Crafting Display", meta = (BindWidgetOptional))
+    UTextBlock* ResultItemNameText;
+    
+    UPROPERTY(BlueprintReadOnly, Category = "Crafting Display", meta = (BindWidgetOptional))
+    UVerticalBox* PlayerIngredientsDisplayBox;
 
 private:
-	UCraftingRecipeData* TargetRecipe;
-	TMap<FGameplayTag, int32> ProvidedIngredients;
+    const FCraftingRecipeRow* CurrentTargetRecipeRowPtr; 
+    
+    TMap<FGameplayTag, int32> CurrentProvidedIngredients;
+    TMap<EItemRarity, float> CurrentRarityChances;
 };

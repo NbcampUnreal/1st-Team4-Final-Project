@@ -1,21 +1,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CraftingWidget.h"
+#include "GameplayTagContainer.h"
+#include "UI/Common/EmberActivatableWidget.h"
 #include "CraftingIngredientWidget.generated.h"
 
 class UVerticalBox;
 
 UCLASS()
-class EMBER_API UCraftingIngredientWidget : public UCraftingWidget
+class EMBER_API UCraftingIngredientWidget : public UEmberActivatableWidget
 {
 	GENERATED_BODY()
 
 public:
+	UCraftingIngredientWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	void SetIngredientData(const TMap<FString, int32>& Ingredients);
+	void SetIngredientData(const TMap<FGameplayTag, int32>& Ingredients);
     
 protected:
 	UPROPERTY(meta = (BindWidget))
-	class UVerticalBox* IngredientSelectionBox;
+	UVerticalBox* IngredientDisplayBox;
 };

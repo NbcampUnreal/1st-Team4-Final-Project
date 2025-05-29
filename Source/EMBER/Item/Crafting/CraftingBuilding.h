@@ -2,10 +2,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "../Crafting/CraftingRecipeManager.h"
+#include "Crafting/CraftingRecipeManager.h"
 #include "CraftingBuilding.generated.h"
 
-class UCraftingWidget; 
+class UCraftingWidget;
+struct FCraftingRecipeRow;
+class UCraftingRecipeManager;
+class AEmberPlayerCharacter;
+class UStaticMeshComponent;
+class UBoxComponent;
+class UUserWidget;
 
 UCLASS(Abstract)
 class EMBER_API ACraftingBuilding : public AActor
@@ -19,28 +25,34 @@ protected:
     virtual void BeginPlay() override;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-    class UStaticMeshComponent* BuildingMesh;
+    TObjectPtr<UStaticMeshComponent> BuildingMesh;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-    class UBoxComponent* InteractionBox;
+    TObjectPtr<UBoxComponent> InteractionBox;
 
     UPROPERTY()
-    AActor* OverlappingPlayer;
+    TObjectPtr<AEmberPlayerCharacter> OverlappingPlayerCharacter;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
-    TSubclassOf<class UUserWidget> InteractionWidgetClass;
+    TSubclassOf<UUserWidget> InteractionPromptWidgetClass;
 
     UPROPERTY()
-    UUserWidget* InteractionWidget;
+    TObjectPtr<UUserWidget> InteractionPromptWidgetInstance;
     
     UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UCraftingWidget> MainCraftingWidgetClass; 
+    TSubclassOf<UCraftingWidget> MainCraftingUIClass; 
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crafting")
     EStationType StationType = EStationType::None;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UCraftingRecipeData* SelectedRecipe;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crafting", meta = (GetOptions = "EditorOnly_GetRecipeRowNames"))
+    FName SelectedRecipeRowName;
+    
+    const FCraftingRecipeRow* CachedSelectedRecipeData;
+
+    UFUNCTION()
+    TArray<FName> EditorOnly_GetRecipeRowNames() const;
+
 
 public:
     UFUNCTION()
@@ -60,4 +72,7 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Interaction")
     virtual void HideInteractPrompt();
+
+private:
+    UCraftingRecipeManager* GetRecipeManagerFromPlayer(AEmberPlayerCharacter* Player) const;
 };

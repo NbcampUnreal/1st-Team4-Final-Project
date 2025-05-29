@@ -1,30 +1,38 @@
-#include "CraftingListEntryWidget.h"
+#include "UI/Crafting/CraftingListEntryWidget.h" 
 #include "Components/TextBlock.h"
-#include "Components/Button.h"
-#include "CraftingResultWidget.h"
+#include "UI/Crafting/CraftingRecipeListItemData.h" 
+#include "Crafting/CraftingRecipeManager.h" 
+
+
+UCraftingListEntryWidget::UCraftingListEntryWidget(const FObjectInitializer& ObjectInitializer) 
+	: Super(ObjectInitializer)
+{
+	CurrentListItemData = nullptr;
+}
 
 void UCraftingListEntryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	SetIsEnabled(true);
 }
 
-void UCraftingListEntryWidget::Init(UCraftingRecipeData* InRecipe, UCraftingResultWidget* InResultWidget)
+void UCraftingListEntryWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
-	Recipe = InRecipe;
-	ResultWidget = InResultWidget;
+	CurrentListItemData = Cast<UCraftingRecipeListItemData>(ListItemObject);
 
-	if (RecipeNameText && Recipe)
+	if (CurrentListItemData && RecipeNameText)
 	{
-		RecipeNameText->SetText(Recipe->RecipeDisplayName);
+		RecipeNameText->SetText(CurrentListItemData->RecipeData.RecipeDisplayName);
+	}
+	else if (RecipeNameText)
+	{
+		RecipeNameText->SetText(FText::FromString(TEXT("Invalid Data")));
 	}
 }
 
-void UCraftingListEntryWidget::OnClicked()
+void UCraftingListEntryWidget::HandleClick()
 {
-	if (ResultWidget && Recipe)
+	if (CurrentListItemData)
 	{
-		ResultWidget->SetTargetRecipe(Recipe);
+		OnThisEntryClicked.Broadcast(CurrentListItemData);
 	}
 }

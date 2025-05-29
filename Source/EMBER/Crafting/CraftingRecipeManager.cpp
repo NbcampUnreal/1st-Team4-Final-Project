@@ -1,15 +1,34 @@
-#include "CraftingRecipeManager.h"
+#include "Crafting/CraftingRecipeManager.h" 
 
-UCraftingRecipeData* UCraftingRecipeManager::GetRecipeByTemplateID(int32 TemplateID) const
+const FCraftingRecipeRow* UCraftingRecipeManager::GetRecipeRowByOutputItemID(int32 TemplateID) const
 {
-    for (UCraftingRecipeData* Recipe : Recipes)
+    if (!RecipeDataTable)
     {
-        if (Recipe && Recipe->OutputItemTemplateID == TemplateID)
+        return nullptr;
+    }
+
+    TArray<FName> RowNames = RecipeDataTable->GetRowNames();
+    for (const FName& RowName : RowNames)
+    {
+        FCraftingRecipeRow* Row = RecipeDataTable->FindRow<FCraftingRecipeRow>(RowName, TEXT(""));
+        if (Row && Row->OutputItemTemplateID == TemplateID)
         {
-            return Recipe;
+            return Row;
         }
     }
     return nullptr;
+}
+
+void UCraftingRecipeManager::GetAllRecipeRows(TArray<FCraftingRecipeRow*>& OutRows) const
+{
+    OutRows.Empty();
+    if (!RecipeDataTable)
+    {
+        return;
+    }
+    
+    FString ContextString; 
+    RecipeDataTable->GetAllRows(ContextString, OutRows);
 }
 
 FGameplayTag UCraftingRecipeManager::GetMaterialTagForItem(int32 ItemTemplateID) const

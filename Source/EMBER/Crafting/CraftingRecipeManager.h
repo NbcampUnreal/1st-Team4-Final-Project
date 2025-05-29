@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
+#include "Engine/DataTable.h"
 #include "CraftingRecipeManager.generated.h"
 
 UENUM(BlueprintType)
@@ -13,11 +14,12 @@ enum class EStationType : uint8
     Furnace,
     CookingPot,
     WeaponTable,
-    ClothingTable
+    ClothingTable,
+    Campfire
 };
 
-UCLASS(BlueprintType)
-class EMBER_API UCraftingRecipeData : public UObject
+USTRUCT(BlueprintType)
+struct FCraftingRecipeRow : public FTableRowBase
 {
     GENERATED_BODY()
 
@@ -45,6 +47,14 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     EStationType CraftingStation;
+
+    FCraftingRecipeRow()
+        : OutputItemTemplateID(0)
+        , RequiredMainMaterialCount(0)
+        , CraftingTime(0.f)
+        , bCraftableByCharacter(false)
+        , CraftingStation(EStationType::None)
+    {}
 };
 
 UCLASS(BlueprintType)
@@ -54,13 +64,14 @@ class EMBER_API UCraftingRecipeManager : public UDataAsset
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crafting")
-    TArray<UCraftingRecipeData*> Recipes;
+    UDataTable* RecipeDataTable;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Data")
     TMap<int32, FGameplayTag> ItemIDToMaterialTagMap;
 
-    UFUNCTION(BlueprintCallable, Category = "Crafting")
-    UCraftingRecipeData* GetRecipeByTemplateID(int32 TemplateID) const;
+    const FCraftingRecipeRow* GetRecipeRowByOutputItemID(int32 TemplateID) const;
+    
+    void GetAllRecipeRows(TArray<FCraftingRecipeRow*>& OutRows) const;
 
     UFUNCTION(BlueprintCallable, Category = "Item Data")
     FGameplayTag GetMaterialTagForItem(int32 ItemTemplateID) const;
