@@ -2,7 +2,10 @@
 
 #pragma once
 
+#include "AbilitySystemInterface.h"
+#include "ActiveGameplayEffectHandle.h"
 #include "Components/PawnComponent.h"
+#include "System/AbilitySystem/Data/EmberAbilitySet.h"
 
 #include "EquipmentManagerComponent.generated.h"
 
@@ -11,6 +14,7 @@ enum class EWeaponSlotType : uint8;
 class UItemTemplate;
 class UItemInstance;
 class AEquipmentBase;
+struct FAttackData;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class EMBER_API UEquipmentManagerComponent : public UPawnComponent
@@ -20,7 +24,7 @@ class EMBER_API UEquipmentManagerComponent : public UPawnComponent
 public:
 	UEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void BeginPlay() override;
-
+	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
@@ -56,6 +60,13 @@ private:
 public:
 	void Attack();
 
+private:
+	UPROPERTY(Replicated)
+	FEmberAbilitySet_GrantedHandles BaseAbilitySetHandles;
+
+	UPROPERTY(Replicated)
+	FActiveGameplayEffectHandle BaseStatHandle;
+	
 private:
 	ACharacter* OwnerCharacter;
 	TObjectPtr<class UArmorComponent> ArmorComponent;

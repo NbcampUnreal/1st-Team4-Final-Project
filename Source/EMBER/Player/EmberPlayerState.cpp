@@ -14,15 +14,12 @@ AEmberPlayerState::AEmberPlayerState(const FObjectInitializer& ObjectInitializer
 {
 	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UEmberAbilitySystemComponent>(this, "EmberAbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 }
 
 void AEmberPlayerState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	check(AbilitySystemComponent);
-	AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
 }
 
 UAbilitySystemComponent* AEmberPlayerState::GetAbilitySystemComponent() const
@@ -32,13 +29,19 @@ UAbilitySystemComponent* AEmberPlayerState::GetAbilitySystemComponent() const
 
 void AEmberPlayerState::InitAbilitySystemComponent()
 {
-	AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
-	for (const UEmberAbilitySet* AbilitySet : UEmberPawnData::Get().AbilitySets)
+	check(AbilitySystemComponent);
+
+	if (HasAuthority())
 	{
-		if (AbilitySet)
+		for (const UEmberAbilitySet* AbilitySet : UEmberPawnData::Get().AbilitySets)
 		{
-			AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr);
+			if (AbilitySet)
+			{
+				AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr);
+			}
 		}
+
+		AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
 	}
 }
 
