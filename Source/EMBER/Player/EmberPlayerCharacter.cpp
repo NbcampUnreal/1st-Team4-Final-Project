@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "C_CharacterMovementComponent.h"
 #include "EmberPlayerState.h"
+#include "GameData.h"
+#include "StatusComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Managers/EquipmentManagerComponent.h"
@@ -32,7 +34,7 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     CharacterInputComponent = CreateDefaultSubobject<UCharacterInputComponent>(TEXT("CharacterInput"));
 
     MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("MontageComponent"));
-
+    StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
     ArmorComponent = CreateDefaultSubobject<UArmorComponent>(TEXT("ArmorComponent"));
 
     Tags.Add("Player");
@@ -42,11 +44,9 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 void AEmberPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-    SatatusComponent->SetMaxHP(100);
-    SatatusComponent->SetCurrentHP(100);
-    SatatusComponent->SetMaxStamina(100);
-    SatatusComponent->SetCurrentStamina(100);
+    
+    StatusComponent->SetMaxHp(100);
+    StatusComponent->SetMaxStamina(100);
     CameraLogicComp->DisableControlRotation();
     APlayerController* playerController = Cast<APlayerController>(GetController());
     if(playerController != nullptr)
