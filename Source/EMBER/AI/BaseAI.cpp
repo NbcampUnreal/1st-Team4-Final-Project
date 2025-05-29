@@ -37,13 +37,20 @@ ABaseAI::ABaseAI()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
 	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); //여러 감각중 시각 우선 사용
-	BlackboardComp = nullptr;
 
+	WalkSpeed = 200.0f;
+	RunSpeed = 700.0f;
 }
 
 void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (ABaseAIController* AIController = Cast<ABaseAIController>(GetController()))
+	{
+		BlackboardComp = AIController->GetBlackboardComponent();
+	}
+	
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAI::OnTargetPerceptionUpdated);
 	SetWalkSpeed();
 }
@@ -57,12 +64,16 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	
 	if (AAIController* AIController = Cast<AAIController>(GetController()))
 	{
-		
 		if (UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent())
 		{
 			BlackboardComponent->SetValueAsBool("IsHit", true);
 			BlackboardComponent->SetValueAsObject("TargetActor", DamageCauser);
-			BlackboardComponent->SetValueAsVector("OriginLocation", GetActorLocation());
+			
+			if (!BlackboardComponent->GetValueAsBool("IsOriginLocationSet"))
+			{
+				BlackboardComponent->SetValueAsVector("OriginLocation", GetActorLocation());
+				BlackboardComponent->SetValueAsFloat("IsOriginLocationSet", true);
+			}
 		}
 	}
 
@@ -75,20 +86,57 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	return ActualDamage;
 }
 
-void ABaseAI::OnDeath()
+void ABaseAI::OnAttack()
 {
-	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
+	if (AAIController* AIController = Cast<AAIController>(GetController()))
 	{
-		AnimInstance->PlayDeathMontage();
+		if (UBlackboardComponent* BlackboardComponent = AIController ? AIController->GetBlackboardComponent() : nullptr)
+		{
+			AActor* TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
+			if (!TargetActor) return;
+
+			FVector AILocation = GetActorLocation();
+			FVector TargetLocation = TargetActor->GetActorLocation();
+
+			float HeightDifference = TargetLocation.Z - AILocation.Z;
+
+			if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
+			{
+				if (AnimInstance->CurrentSpeed >= RunSpeed)
+				{
+					AnimInstance->PlayMontage(EAnimActionType::AttackRun, EAnimActionType::AttackNormal);
+				}
+				else if (HeightDifference > 100.f)
+				{
+					AnimInstance->PlayMontage(EAnimActionType::AttackJump, EAnimActionType::AttackNormal);
+				}
+				else
+				{
+					AnimInstance->PlayMontage(EAnimActionType::AttackNormal, EAnimActionType::AttackNormal);
+				}
+			}
+		}
 	}
 }
 
-void ABaseAI::Attack()
+void ABaseAI::OnDeath()
 {
+	//퍼셉션 제거
+	AIPerception->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
+
+	//이동, 애니메이션 제거
+	if (GetController())
+	{
+		GetController()->StopMovement();
+	}
+	
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
-		AnimInstance->PlayAttackMontage();
+		AnimInstance->StopAllMontages(0.0f);
+		AnimInstance->PlayDeathMontage();
 	}
+	DetachFromControllerPendingDestroy();
+
 }
 
 void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)

@@ -38,7 +38,7 @@ public:
 	virtual void OnDeath();
 	
 	UFUNCTION(BlueprintCallable, Category = "AI|State")
-	virtual void Attack();
+	virtual void OnAttack();
 
 	// AI Perception
 	UFUNCTION()

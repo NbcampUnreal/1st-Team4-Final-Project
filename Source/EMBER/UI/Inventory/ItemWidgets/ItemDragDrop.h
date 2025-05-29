@@ -9,7 +9,7 @@
 class UItemEntryWidget;
 class UItemInstance;
 class UInventoryManagerComponent;
-class UEquipmentManagerComponent;
+class UInventoryEquipmentManagerComponent;
 
 /**
  * 
@@ -35,12 +35,12 @@ public:
 
 public:
 	UPROPERTY()
-	TObjectPtr<UEquipmentManagerComponent> FromEquipmentManager;
+	TObjectPtr<UInventoryEquipmentManagerComponent> FromInventoryEquipmentManager;
 
 	EEquipmentSlotType FromEquipmentSlotType = EEquipmentSlotType::Count;
 	
 	UPROPERTY()
-	TObjectPtr<UEquipmentManagerComponent> ToEquipmentManager;
+	TObjectPtr<UInventoryEquipmentManagerComponent> ToInventoryEquipmentManager;
 
 	EEquipmentSlotType ToEquipmentSlotType = EEquipmentSlotType::Count;
 
