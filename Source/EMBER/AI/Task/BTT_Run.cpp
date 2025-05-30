@@ -14,8 +14,8 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 	ABaseAIController* Controller = Cast<ABaseAIController>(OwnerComp.GetOwner());
 	BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	ControlledAnimal = Cast<ABaseAI>(Controller->GetPawn());
-
 	AActor* Target = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
+
 	if (Target == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("RunTarget is null"));

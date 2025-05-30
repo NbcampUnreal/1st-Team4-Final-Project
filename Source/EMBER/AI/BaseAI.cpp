@@ -138,7 +138,7 @@ void ABaseAI::OnDeath()
 		AnimalState = EAnimalState::Death;
 		AnimInstance->StopAllMontages(0.0f);
 		AnimInstance->AnimalState = EAnimalState::Death;
-		AnimInstance->PlayMontage();
+		AnimInstance->PlayStateMontage();
 	}
 	DetachFromControllerPendingDestroy();
 }

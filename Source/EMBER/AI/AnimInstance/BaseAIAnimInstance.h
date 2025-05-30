@@ -42,9 +42,9 @@ public:
 	bool bIsAirborne;
 	
 	virtual void PlayMontage(EAnimActionType Desired, EAnimActionType Fallback);
-	virtual void PlayMontage(); //AnimalState에 따라 자동으로 몽타주 재생
+	virtual void PlayStateMontage(); //AnimalState에 따라 자동으로 몽타주 재생
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAnimalState AnimalState;
 	
 protected:

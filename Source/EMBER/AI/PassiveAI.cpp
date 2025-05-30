@@ -8,6 +8,7 @@ APassiveAI::APassiveAI()
 	ClosestActor = nullptr;
 	EnemyActors = TArray<AActor*>();
 	ClosestDistanceBoundary = 1000.0f;
+	ClosestDistance = FLT_MAX;
 }
 
 void APassiveAI::BeginPlay()
@@ -66,18 +67,23 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 
 void APassiveAI::UpdateClosestActorTimer()
 {
-	if (EnemyActors.Num() == 0)
+	if (EnemyActors.Num() == 0 && AnimalType == EAnimalType::Passive)
 	{
 		ClosestActor = nullptr;
+		ClosestDistance = FLT_MAX;
 		return;
 	}
-
-	float ClosestDistance = FLT_MAX;
 
 	for (AActor* Enemy : EnemyActors)
 	{
 		if (!Enemy->Tags.Contains(FName("Player"))) continue;
-		float Distance = FVector::Dist(Enemy->GetActorLocation(), this->GetActorLocation());
+		FVector MyLocation = this->GetActorLocation();
+		FVector EnemyLocation = Enemy->GetActorLocation();
+
+		MyLocation.Z = 0;
+		EnemyLocation.Z = 0;
+
+		float Distance = FVector::Dist(MyLocation, EnemyLocation);
 
 		if (Distance < ClosestDistanceBoundary)
 		{
@@ -91,18 +97,10 @@ void APassiveAI::UpdateClosestActorTimer()
 		{
 			ClosestDistance = Distance;
 			ClosestActor = Enemy;
+			SetBlackboardObject(TEXT("TargetActor"), ClosestActor);
+			UE_LOG(LogTemp, Warning, TEXT("Closest Actor Updated: %s at distance %f"), *ClosestActor->GetName(),
+			       ClosestDistance);
 		}
-	}
-
-	if (ClosestActor)
-	{
-		SetBlackboardObject(TEXT("TargetActor"), ClosestActor);
-		UE_LOG(LogTemp, Warning, TEXT("Closest Actor Updated: %s at distance %f"), *ClosestActor->GetName(),
-		       ClosestDistance);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Null Character"));
 	}
 }
 

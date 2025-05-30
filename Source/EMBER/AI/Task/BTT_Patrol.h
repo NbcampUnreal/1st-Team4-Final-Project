@@ -19,6 +19,6 @@ public:
 	void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
 private:
 
-	UBlackboardComponent* AllBlack;
+	UBlackboardComponent* BlackboardComp;
 	UBehaviorTreeComponent* OwnerCompRef;
 };

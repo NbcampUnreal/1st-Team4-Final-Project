@@ -17,7 +17,7 @@ EBTNodeResult::Type UBTT_Normal::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(ControlledAI->GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->AnimalState = EAnimalState::Idle;
-		AnimInstance->PlayMontage();
+		AnimInstance->PlayStateMontage();
 	}
 	
 	return EBTNodeResult::InProgress;

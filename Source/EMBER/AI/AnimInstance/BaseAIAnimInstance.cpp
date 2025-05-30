@@ -25,7 +25,7 @@ void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		FVector Velocity = AICharacter->GetVelocity();
 		bIsAirborne = AICharacter->GetCharacterMovement()->IsFalling();
-		
+
 		CurrentSpeed = FVector(Velocity.X, Velocity.Y, 0.0f).Size();
 		CurrentHeight = AICharacter->GetActorLocation().Z;
 		CurrentDirection = UKismetAnimationLibrary::CalculateDirection(FVector(Velocity.X, Velocity.Y, 0.0f),
@@ -54,11 +54,13 @@ void UBaseAIAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType F
 	Montage_JumpToSection(AnimSectionMap[FinalType], MontageToPlay);
 }
 
-void UBaseAIAnimInstance::PlayMontage()
+void UBaseAIAnimInstance::PlayStateMontage()
 {
 	UAnimMontage* MontageToPlay = GetMontageToPlay();
+	UE_LOG(LogTemp, Warning, TEXT("Montage: %s"), *UEnum::GetValueAsString(AnimalState));
 	if (MontageToPlay)
 	{
+		UE_LOG(LogTemp,Error, TEXT("Montage: %s"), *MontageToPlay->GetName());
 		Montage_Play(MontageToPlay);
 	}
 }
@@ -90,6 +92,8 @@ UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay()
 		return IdleMontage;
 	case EAnimalState::Death:
 		return DeathMontage;
+	case EAnimalState::Attack:
+		return AttackMontage;
 
 	default:
 		return nullptr;

@@ -16,4 +16,7 @@ public:
 
 	UFUNCTION()
 	void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
+
+	UBehaviorTreeComponent* OwnerCompRef;
+
 };

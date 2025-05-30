@@ -15,5 +15,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
-	
+
+	void SetCombatState();
 };
