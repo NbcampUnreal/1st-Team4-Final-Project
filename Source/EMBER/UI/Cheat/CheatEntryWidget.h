@@ -18,6 +18,7 @@ enum class ECheatEntryType : uint8
 	None,
 	PrimaryWeapon,
 	SecondaryWeapon,
+	Tool,
 	Armor,
 	Utility,
 	Animation

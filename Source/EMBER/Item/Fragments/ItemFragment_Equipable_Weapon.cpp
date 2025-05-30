@@ -6,6 +6,7 @@
 UItemFragment_Equipable_Weapon::UItemFragment_Equipable_Weapon(const FObjectInitializer& FObjectInitializer) : Super(FObjectInitializer)
 {
 	EquipmentType = EEquipmentType::Weapon;
+	AttackInfo.PlayRate = 1.0f;
 }
 
 void UItemFragment_Equipable_Weapon::OnInstanceCreated(UItemInstance* ItemInstance) const

@@ -3,30 +3,33 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "C_CameraComponent.h"
 #include "Input/CharacterInputComponent.h"
 #include "Component/MontageSystemComponent.h"
 #include "EmberPlayerCharacter.generated.h"
 
+class UEmberAbilitySystemComponent;
+class UStatusComponent;
 class UEquipmentManagerComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UC_CharacterMovementComponent;
 class UAbilitySystemComponent;
 class UCharacterInputComponent;
-class UC_StateComponent;
 
 struct FInputActionValue;
 UCLASS()
-class EMBER_API AEmberPlayerCharacter : public ACharacter
+
+class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AEmberPlayerCharacter(const FObjectInitializer& Init);	
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -41,7 +44,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UC_CameraComponent* CameraLogicComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UC_StateComponent* StateComponent;
+	UStatusComponent* StatusComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	FVector2D PitchRange = FVector2D(-50, 50);
 	UFUNCTION()
@@ -57,6 +60,18 @@ protected:
 	UFUNCTION()
 	void StartJump(const FInputActionValue& value);
 
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetMaxHP() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetMaxStamina() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetCurrentHP() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetCurrentStamina() const;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -64,9 +79,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-
-protected:
+public:
+	//~IAbilitySystemInterface Overrides
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	//~End of IAbilitySystemInterface Overrides
+	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 	void InitAbilityActorInfo();
