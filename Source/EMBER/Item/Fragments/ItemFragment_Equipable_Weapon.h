@@ -25,9 +25,6 @@ public:
 
 public:
 	UPROPERTY(EditDefaultsOnly)
-	EWeaponHandType WeaponHandType = EWeaponHandType::Count;
-
-	UPROPERTY(EditDefaultsOnly)
 	EWeaponType WeaponType = EWeaponType::Count;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -40,5 +37,4 @@ protected:
 public:
 	void IncrementMontageIndex();
 	FAttackData GetAttackInfo() const;
-	
 };

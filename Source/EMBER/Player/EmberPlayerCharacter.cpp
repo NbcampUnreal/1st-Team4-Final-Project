@@ -7,8 +7,9 @@
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "C_CharacterMovementComponent.h"
-#include "C_StateComponent.h"
 #include "EmberPlayerState.h"
+#include "GameData.h"
+#include "StatusComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Managers/EquipmentManagerComponent.h"
@@ -33,21 +34,22 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     CharacterInputComponent = CreateDefaultSubobject<UCharacterInputComponent>(TEXT("CharacterInput"));
 
     MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("MontageComponent"));
-
+    StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
     ArmorComponent = CreateDefaultSubobject<UArmorComponent>(TEXT("ArmorComponent"));
-    StateComponent = CreateDefaultSubobject<UC_StateComponent>(TEXT("StateComponent"));
+    StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("SatatusComponent"));
 
     Tags.Add("Player");
+    SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
 void AEmberPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-    StateComponent->SetIdleMode();
+    
+    StatusComponent->SetMaxHp(100);
+    StatusComponent->SetMaxStamina(100);
     CameraLogicComp->DisableControlRotation();
-    MovementComponent->OnRun();
     APlayerController* playerController = Cast<APlayerController>(GetController());
     if(playerController != nullptr)
     {
@@ -55,6 +57,7 @@ void AEmberPlayerCharacter::BeginPlay()
         playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
     }
     
+    //TODOS
     if(ArmorComponent != nullptr)
     {
 	    if(HasAuthority() == true)
@@ -73,7 +76,7 @@ void AEmberPlayerCharacter::PostInitializeComponents()
 void AEmberPlayerCharacter::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
-    
+
     InitAbilityActorInfo();
 }
 
@@ -81,7 +84,6 @@ void AEmberPlayerCharacter::OnRep_PlayerState()
 {
     Super::OnRep_PlayerState();
     
-    InitAbilityActorInfo();
     if (ArmorComponent != nullptr)
         ArmorComponent->InitializeArmorForLateJoiners();
 }
@@ -168,7 +170,7 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
                     PlayerController->JumpAction,
                     ETriggerEvent::Started,
                     this,
-                    &AEmberPlayerCharacter::StartJump
+                    &AEmberPlayerCharacter::Jump
                 );
             }
         }
@@ -177,12 +179,9 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
     CharacterInputComponent->InitializePlayerInput(PlayerInputComponent);
 }
 
-float AEmberPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-    class AController* EventInstigator, AActor* DamageCauser)
+UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() const
 {
-    float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-    UE_LOG(LogTemp, Log, TEXT("Damage %f"), Damage);
-    return Damage;
+    return AbilitySystemComponent;
 }
 
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
@@ -217,11 +216,50 @@ void AEmberPlayerCharacter::StopSprint(const FInputActionValue& value)
 
 void AEmberPlayerCharacter::Attack(const FInputActionValue& value)
 {
-	EquipmentManagerComponent->Attack();
+    // EquipmentComponent에서 현재 무기 타입 가져오기
+    FAttackData Data = EquipmentManagerComponent->GetAttackInfo();
+
+    if (!Data.Montages.IsEmpty())
+    {
+        MontageComponent->PlayMontage(Data.Montages[Data.MontageIndex]);
+    }
 }
 
 void AEmberPlayerCharacter::StartJump(const FInputActionValue& value)
 {
-    UE_LOG(LogTemp, Warning, L"test");
-    MovementComponent->OnJump();
+    Jump();
+}
+float AEmberPlayerCharacter::GetMaxHP() const
+{
+    if (StatusComponent)
+    {
+        return StatusComponent->GetMaxHp();
+    }
+    return 0.f;
+}
+
+float AEmberPlayerCharacter::GetMaxStamina() const
+{
+    if (StatusComponent)
+    {
+        return StatusComponent->GetMaxStamina();
+    }
+    return 0.f;
+}
+float AEmberPlayerCharacter::GetCurrentHP() const
+{
+    if (StatusComponent)
+    {
+        return StatusComponent->GetHp();
+    }
+    return 0.f;
+}
+
+float AEmberPlayerCharacter::GetCurrentStamina() const
+{
+    if (StatusComponent)
+    {
+        return StatusComponent->GetStamina();
+    }
+    return 0.f;
 }
