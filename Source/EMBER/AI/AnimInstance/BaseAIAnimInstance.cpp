@@ -1,8 +1,9 @@
 #include "BaseAIAnimInstance.h"
 #include "BaseAI.h"
-#include "GameFramework/Pawn.h"    
-#include "BehaviorTree/BlackboardComponent.h" 
+#include "GameFramework/Pawn.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "KismetAnimationLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UBaseAIAnimInstance::NativeInitializeAnimation()
 {
@@ -23,10 +24,12 @@ void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (ABaseAI* AICharacter = Cast<ABaseAI>(TryGetPawnOwner()))
 	{
 		FVector Velocity = AICharacter->GetVelocity();
-		Velocity.Z = 0.0f;
+		bIsAirborne = AICharacter->GetCharacterMovement()->IsFalling();
 
-		CurrentSpeed = Velocity.Size();
-		CurrentDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, AICharacter->GetActorRotation());
+		CurrentSpeed = FVector(Velocity.X, Velocity.Y, 0.0f).Size();
+		CurrentHeight = AICharacter->GetActorLocation().Z;
+		CurrentDirection = UKismetAnimationLibrary::CalculateDirection(FVector(Velocity.X, Velocity.Y, 0.0f),
+		                                                               AICharacter->GetActorRotation());
 	}
 }
 
@@ -38,6 +41,7 @@ void UBaseAIAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType F
 	if (AnimSectionMap.Contains(Desired))
 	{
 		MontageToPlay = GetMontageToPlay(Desired);
+		UE_LOG(LogTemp, Log, TEXT("Desired Montage"));
 	}
 	else if (AnimSectionMap.Contains(Fallback))
 	{
@@ -51,11 +55,14 @@ void UBaseAIAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType F
 	Montage_JumpToSection(AnimSectionMap[FinalType], MontageToPlay);
 }
 
-void UBaseAIAnimInstance::PlayDeathMontage()
+void UBaseAIAnimInstance::PlayStateMontage()
 {
-	if (DeathMontage)
+	UAnimMontage* PlayingMontage = GetMontageToPlay();
+	UE_LOG(LogTemp, Warning, TEXT("Montage: %s"), *UEnum::GetValueAsString(AnimalState));
+	if (PlayingMontage)
 	{
-		Montage_Play(DeathMontage);
+		UE_LOG(LogTemp,Error, TEXT("Montage: %s"), *PlayingMontage->GetName());
+		Montage_Play(PlayingMontage,1.0f);
 	}
 }
 
@@ -71,6 +78,24 @@ UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay(EAnimActionType ActionType) 
 	case EAnimActionType::HitFront:
 	case EAnimActionType::HitLeft:
 	case EAnimActionType::HitRight:
+		return HitMontage;
+
+	default:
+		return nullptr;
+	}
+}
+
+UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay()
+{
+	switch (AnimalState)
+	{
+	case EAnimalState::Idle:
+		return IdleMontage;
+	case EAnimalState::Death:
+		return DeathMontage;
+	case EAnimalState::Attack:
+		return AttackMontage;
+	case EAnimalState::Hit:
 		return HitMontage;
 
 	default:
