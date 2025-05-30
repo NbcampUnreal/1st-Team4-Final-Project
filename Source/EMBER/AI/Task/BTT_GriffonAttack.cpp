@@ -2,15 +2,21 @@
 
 
 #include "AI/Task/BTT_GriffonAttack.h"
-#include "AI/BaseAI.h"
-#include "kismet/GameplayStatics.h"
+#include "AI/Boss/Griffon.h"
 #include "BaseAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+UBTT_GriffonAttack::UBTT_GriffonAttack()
+{
+	NodeName = TEXT("GriffonAttack");
+}
+
 EBTNodeResult::Type UBTT_GriffonAttack::ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory)
 {
-	ABaseAI* BaseAI = Cast<ABaseAI>(Comp.GetOwner());
-	ABaseAIController* Controller = Cast<ABaseAIController>(BaseAI->GetController());
-	
-	return EBTNodeResult::InProgress;
+	ABaseAIController* AIController = Cast<ABaseAIController>(Comp.GetAIOwner());
+	AGriffon* Griffon = Cast<AGriffon>(AIController ? AIController->GetPawn() : nullptr);
+
+	Griffon->Attack();
+
+	return EBTNodeResult::Succeeded;
 }

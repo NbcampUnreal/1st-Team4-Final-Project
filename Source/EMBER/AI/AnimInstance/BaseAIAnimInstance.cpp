@@ -57,12 +57,12 @@ void UBaseAIAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType F
 
 void UBaseAIAnimInstance::PlayStateMontage()
 {
-	UAnimMontage* MontageToPlay = GetMontageToPlay();
+	UAnimMontage* PlayingMontage = GetMontageToPlay();
 	UE_LOG(LogTemp, Warning, TEXT("Montage: %s"), *UEnum::GetValueAsString(AnimalState));
-	if (MontageToPlay)
+	if (PlayingMontage)
 	{
-		UE_LOG(LogTemp,Error, TEXT("Montage: %s"), *MontageToPlay->GetName());
-		Montage_Play(MontageToPlay);
+		UE_LOG(LogTemp,Error, TEXT("Montage: %s"), *PlayingMontage->GetName());
+		Montage_Play(PlayingMontage,1.0f);
 	}
 }
 
@@ -95,6 +95,8 @@ UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay()
 		return DeathMontage;
 	case EAnimalState::Attack:
 		return AttackMontage;
+	case EAnimalState::Hit:
+		return HitMontage;
 
 	default:
 		return nullptr;

@@ -1,9 +1,14 @@
 #include "AI/Boss/Griffon.h"
 
+#include "BehaviorTree/BlackboardComponent.h"
+#include "AI/AnimInstance/BaseAIAnimInstance.h"
+#include "AnimInstance/Griffon_AnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "kismet/GameplayStatics.h"
 
 AGriffon::AGriffon()
 {
+	MaxHP = 20.0f;
 	AnimalType = EAnimalType::Griffon;
 	AttackPower = 10.0f;
 	WalkSpeed = 250.f;
@@ -32,11 +37,22 @@ void AGriffon::Tick(float DeltaTime)
 	}
 }
 
+void AGriffon::Attack()
+{
+	AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(("TargetActor")));
+	UGriffon_AnimInstance* AnimInstance = Cast<UGriffon_AnimInstance>(GetMesh()->GetAnimInstance());
+
+	UGameplayStatics::ApplyDamage(TargetActor, AttackPower, GetController(), this, nullptr);
+	GetController()->StopMovement();
+	AnimalState = EAnimalState::Attack;
+	AnimInstance->AnimalState = EAnimalState::Attack;
+	AnimInstance->PlayStateMontage();
+}
+
 void AGriffon::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
 	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
-
-
+	
 	SetBlackboardVector("OriginLocation", GetActorLocation());
 }
 

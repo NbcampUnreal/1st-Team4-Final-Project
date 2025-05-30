@@ -1,5 +1,6 @@
 #include "AI/PassiveAI.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "AI/AnimInstance/BaseAIAnimInstance.h"
 #include "BehaviorTree/BehaviorTree.h"
 
 APassiveAI::APassiveAI()
@@ -89,7 +90,7 @@ void APassiveAI::UpdateClosestActorTimer()
 		{
 			SetBlackboardBool("IsNear", true);
 		}
-		else
+		else if (Distance >= ClosestDistanceBoundary && AnimalType == EAnimalType::Passive)
 		{
 			SetBlackboardBool("IsNear", false);
 		}
@@ -126,6 +127,9 @@ float APassiveAI::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
                              AActor* DamageCauser)
 {
 	SetBlackboardBool("IsHit", true);
+	UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance());
+	AnimInstance->AnimalState = EAnimalState::Hit;
+	AnimInstance->PlayStateMontage();
 	ClosestActor = DamageCauser;
 	UE_LOG(LogTemp, Warning, TEXT("%f Damage!!"), DamageAmount);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
