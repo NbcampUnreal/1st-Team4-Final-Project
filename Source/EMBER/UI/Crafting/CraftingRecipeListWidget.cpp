@@ -1,5 +1,6 @@
 #include "UI/Crafting/CraftingRecipeListWidget.h"
 #include "Components/ListView.h"
+#include "Components/TextBlock.h"
 #include "Crafting/CraftingRecipeManager.h"
 #include "UI/Crafting/CraftingRecipeListItemData.h"
 
@@ -36,6 +37,16 @@ void UCraftingRecipeListWidget::SetRecipeList(const TArray<FCraftingRecipeRow>& 
 			NewListItemData->RecipeData = Recipe;
 			RecipeListView->AddItem(NewListItemData);
 		}
+	}
+}
+
+void UCraftingRecipeListWidget::SetStationTitle(EStationType InStationType)
+{
+	if (StationNameText_InList)
+	{
+		FString StationEnumString = UEnum::GetValueAsString(InStationType);
+		FString DisplayStationName = StationEnumString.RightChop(StationEnumString.Find(TEXT("::")) + 2);
+		StationNameText_InList->SetText(FText::FromString(DisplayStationName + TEXT(" 제작 목록")));
 	}
 }
 

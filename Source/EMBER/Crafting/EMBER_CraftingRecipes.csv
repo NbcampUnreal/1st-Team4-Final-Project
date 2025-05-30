@@ -1,0 +1,15 @@
+Name,RecipeDisplayName,OutputItemTemplateID,Ingredients,AllowedMainMaterialTags,RequiredMainMaterialCount,CraftingTime,bCraftableByCharacter,CraftingStation
+Item_String ,끈,1000,"((Key=(TagName=""Material.Fiber.ToughGrass""),Value=4))",(),0,2,TRUE,CraftingTable
+Item_Bandage,붕대,1001,,,,,,
+Item_Meat_Small_Cooked,구운 작은 고기,4000,,,,,,
+Item_Meat_Large_Cooked,구운 큰 고기,4001,,,,,,
+Item_Stew,스튜,4002,,,,,,
+Deployable_Crafting_Table,제작대,5000,"((Key=(TagName=""Material.Wood.Log""),Value=5),(Key=(TagName=""Item.Crafted.String""),Value=8))",(),0,10,TRUE,CraftingTable
+Deployable_Furnace,가마,5001,,,,,,
+Deployable_Campfire,모닥불,5002,"((Key=(TagName=""Material.Wood.Branch""),Value=10),(Key=(TagName=""Material.Stone.Rock""),Value=5))",(),0,7,TRUE,CraftingTable
+Item_Trap,덫,1002,,,,,,
+Item_Torch,횃불,1003,"((Key=(TagName=""Material.Wood.Branch""),Value=5),(Key=(TagName=""Item.Crafted.String""),Value=5))",(),0,5,TRUE,CraftingTable
+Item_Bag,가방,1004,,,,,,
+Tool_Pickaxe,곡괭이,3000,,,,,,
+Tool_Axe,도끼,3001,,,,,,
+Weapon_,,,,,,,,

@@ -33,24 +33,24 @@ void UCraftingSystem::BeginPlay()
     Super::BeginPlay();
 }
 
-void UCraftingSystem::StartCrafting(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
+UItemInstance* UCraftingSystem::StartCrafting(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
 {
-    if (!Player) return;
+    if (!Player) return nullptr;
     if (!RecipeManager)
     {
         UE_LOG(LogTemp, Error, TEXT("CraftingSystem: RecipeManager is not set!"));
-        return;
+        return nullptr;
     }
     if (!CanCraftRecipeAtStation(Recipe, CurrentStation))
     {
         UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: Cannot craft recipe at this station."));
-        return;
+        return nullptr;
     }
 
     if (!HasRequiredMaterials(Player, Recipe, InSelectedMainIngredients))
     {
         UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: Missing required materials."));
-        return;
+        return nullptr;
     }
 
     EItemRarity FinalRarity = EItemRarity::Common;
@@ -64,7 +64,7 @@ void UCraftingSystem::StartCrafting(AEmberPlayerCharacter* Player, const FCrafti
     if (!ConsumeMaterials(Player, Recipe, InSelectedMainIngredients))
     {
         UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: Failed to consume materials."));
-        return;
+        return nullptr;
     }
 
     UItemInstance* NewItem = NewObject<UItemInstance>(Player);
@@ -78,24 +78,26 @@ void UCraftingSystem::StartCrafting(AEmberPlayerCharacter* Player, const FCrafti
             const UItemTemplate* OutputItemTemplate = GetItemTemplateById(Recipe.OutputItemTemplateID);
             if(OutputItemTemplate)
             {
-                UE_LOG(LogTemp, Warning, TEXT("Crafted Item: TemplateID = %d, Rarity = %s. ADD TO INVENTORY (using TryAddItemByRarity or similar) NEEDED."),
+                UE_LOG(LogTemp, Warning, TEXT("Crafted Item: TemplateID = %d, Rarity = %s. Returning instance. ADD TO INVENTORY/OUTPUTBOX NEEDED."),
                     NewItem->GetItemTemplateID(),
                     *UEnum::GetValueAsString(FinalRarity));
             }
             else
             {
-                UE_LOG(LogTemp, Error, TEXT("CraftingSystem: Could not find ItemTemplate for OutputItemTemplateID %d to add to inventory."), Recipe.OutputItemTemplateID);
+                UE_LOG(LogTemp, Error, TEXT("CraftingSystem: Could not find ItemTemplate for OutputItemTemplateID %d. Returning crafted instance without inventory add attempt."), Recipe.OutputItemTemplateID);
             }
         }
         else
         {
-             UE_LOG(LogTemp, Error, TEXT("CraftingSystem: PlayerInventory not found to add crafted item."));
+             UE_LOG(LogTemp, Error, TEXT("CraftingSystem: PlayerInventory not found. Returning crafted instance without inventory add attempt."));
         }
+        return NewItem;
     }
     else
     {
         UE_LOG(LogTemp, Error, TEXT("CraftingSystem: Failed to create NewItem instance."));
     }
+    return nullptr;
 }
 
 bool UCraftingSystem::CanCraftRecipeAtStation(const FCraftingRecipeRow& Recipe, EStationType Station) const
@@ -126,7 +128,6 @@ bool UCraftingSystem::HasRequiredMaterials(AEmberPlayerCharacter* Player, const 
         }
         if (ProvidedMainCount < Recipe.RequiredMainMaterialCount)
         {
-            UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: Not enough selected main material count. Need %d, Got %d"), Recipe.RequiredMainMaterialCount, ProvidedMainCount);
             return false;
         }
         for (const auto& SelectedPair : InSelectedMainIngredients)
@@ -134,7 +135,6 @@ bool UCraftingSystem::HasRequiredMaterials(AEmberPlayerCharacter* Player, const 
             const int32* OwnedCount = PlayerOwnedIngredients.Find(SelectedPair.Key);
             if (!OwnedCount || *OwnedCount < SelectedPair.Value)
             {
-                 UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: Player does not own enough of selected main material %s. Need %d, Got %d"), *SelectedPair.Key.ToString(), SelectedPair.Value, OwnedCount ? *OwnedCount : 0);
                 return false;
             }
         }
@@ -145,7 +145,6 @@ bool UCraftingSystem::HasRequiredMaterials(AEmberPlayerCharacter* Player, const 
         const int32* OwnedCount = PlayerOwnedIngredients.Find(RequiredPair.Key);
         if (!OwnedCount || *OwnedCount < RequiredPair.Value)
         {
-            UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: Not enough general material %s. Need %d, Got %d"), *RequiredPair.Key.ToString(), RequiredPair.Value, OwnedCount ? *OwnedCount : 0);
             return false;
         }
     }
@@ -291,7 +290,7 @@ const UItemTemplate* UCraftingSystem::GetItemTemplateById(int32 TemplateID) cons
 
 bool UCraftingSystem::ConsumeMaterials(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
 {
-    if (!Player || !RecipeManager) return false; // Recipe is now a reference, always "valid" if passed
+    if (!Player || !RecipeManager) return false; 
     UInventoryManagerComponent* PlayerInventory = Player->FindComponentByClass<UInventoryManagerComponent>();
     if (!PlayerInventory) return false;
 

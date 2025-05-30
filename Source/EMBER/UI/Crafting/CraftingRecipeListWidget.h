@@ -3,12 +3,14 @@
 #include "CoreMinimal.h"
 #include "UI/Common/EmberActivatableWidget.h"
 #include "Crafting/CraftingRecipeManager.h" 
-#include "UI/Crafting/CraftingRecipeListItemData.h" 
+#include "UI/Crafting/CraftingRecipeListItemData.h"
 
-#include "CraftingRecipeListWidget.generated.h" 
+#include "CraftingRecipeListWidget.generated.h"
 
 class UListView;
-struct FCraftingRecipeRow; 
+class UTextBlock;
+struct FCraftingRecipeRow;
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRecipeRowSelectedInListSignature, const FCraftingRecipeRow&, SelectedRecipeRow);
 
@@ -22,12 +24,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
 	void SetRecipeList(const TArray<FCraftingRecipeRow>& Recipes);
+
+	UFUNCTION(BlueprintCallable, Category = "Crafting")
+	void SetStationTitle(EStationType InStationType);
     
 	UPROPERTY(BlueprintAssignable, Category = "Crafting")
 	FOnRecipeRowSelectedInListSignature OnRecipeSelected;
 
 protected:
 	virtual void NativeConstruct() override;
+
+	UPROPERTY(meta = (BindWidgetOptional))
+	UTextBlock* StationNameText_InList; 
 
 	UPROPERTY(meta = (BindWidget))
 	UListView* RecipeListView;

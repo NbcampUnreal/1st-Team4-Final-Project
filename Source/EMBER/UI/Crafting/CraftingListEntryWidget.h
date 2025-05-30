@@ -8,6 +8,7 @@
 #include "CraftingListEntryWidget.generated.h"
 
 class UTextBlock;
+class UBorder;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCraftingListEntryClicked, UCraftingRecipeListItemData*, ListItemData);
 
@@ -20,7 +21,10 @@ public:
 	UCraftingListEntryWidget(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* RecipeNameText;
+	TObjectPtr<UTextBlock> RecipeNameText;
+    
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+	TObjectPtr<UBorder> SelectionHighlightBorder;
 
 	UPROPERTY(BlueprintAssignable, Category = "ListEntry")
 	FOnCraftingListEntryClicked OnThisEntryClicked;
@@ -28,11 +32,13 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
+    
+	UFUNCTION(BlueprintImplementableEvent, Category = "ListEntry", meta = (DisplayName = "OnRecipeStatusUpdated_BP"))
+	void K2_OnRecipeStatusUpdated(bool bIsCraftable);
 
 	UFUNCTION(BlueprintCallable)
 	void HandleClick();
 
-private:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category="ListEntry")
 	TObjectPtr<UCraftingRecipeListItemData> CurrentListItemData;
 };

@@ -10,6 +10,7 @@
 
 class UInventoryManagerComponent;
 class UItemTemplate;
+class UItemInstance;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class EMBER_API UCraftingSystem : public UActorComponent
@@ -25,7 +26,7 @@ protected:
 
 public:
     UFUNCTION(BlueprintCallable, Category = "Crafting")
-    void StartCrafting(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
+    UItemInstance* StartCrafting(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
 
     UFUNCTION(BlueprintCallable, Category = "Crafting")
     bool CanCraftRecipeAtStation(const FCraftingRecipeRow& Recipe, EStationType Station) const;
@@ -54,7 +55,7 @@ private:
 public:
     EStationType CurrentStation = EStationType::None;
 
-    UPROPERTY(EditInstanceOnly, Category = "Crafting System")
+    UPROPERTY(EditAnywhere, Category = "Crafting System")
     TObjectPtr<UCraftingRecipeManager> RecipeManager;
 
 private:

@@ -45,12 +45,6 @@ UCraftingRecipeManager* ACraftingBuilding::GetRecipeManagerFromPlayer(AEmberPlay
 TArray<FName> ACraftingBuilding::EditorOnly_GetRecipeRowNames() const
 {
     TArray<FName> RowNames;
-    // For editor functionality, we might need a way to access a default RecipeManager or have one set.
-    // This example might not work perfectly in all editor contexts without further setup.
-    // A common way is to have a TSoftObjectPtr to the RecipeManager DA in project settings or a game singleton.
-    // For simplicity, this example tries to get it via a hypothetical first player if in PIE, or might need a direct asset reference for editor.
-    // This part is tricky for direct editor dropdowns without more editor-specific code or a direct UPROPERTY for the RecipeManager DataAsset on ACraftingBuilding.
-    // For now, leaving it to fetch via player if possible, otherwise, it won't populate dropdown in standalone editor view of this actor.
     AEmberPlayerCharacter* PlayerForContext = nullptr;
     if (GetWorld() && GetWorld()->IsPlayInEditor())
     {
@@ -72,9 +66,6 @@ void ACraftingBuilding::BeginPlay()
 
     InteractionBox->OnComponentBeginOverlap.AddDynamic(this, &ACraftingBuilding::OnOverlapBegin);
     InteractionBox->OnComponentEndOverlap.AddDynamic(this, &ACraftingBuilding::OnOverlapEnd);
-
-    // Cache recipe data if a name is selected and player is already overlapping (e.g. placed on player start)
-    // Or, more robustly, fetch it within OnInteract when the player is confirmed.
 }
 
 void ACraftingBuilding::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -87,12 +78,12 @@ void ACraftingBuilding::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAct
         if (PC)
         {
             EnableInput(PC);
-            if (!InputComponent) // Ensure InputComponent is created if not already
+            if (!InputComponent)
             {
                 InputComponent = NewObject<UInputComponent>(this);
                 InputComponent->RegisterComponent();
             }
-            if (InputComponent) // Check again after potential creation
+            if (InputComponent)
             {
                 InputComponent->BindAction("Interact", IE_Pressed, this, &ACraftingBuilding::HandleInput);
             }
@@ -120,7 +111,7 @@ void ACraftingBuilding::HandleInput()
 {
     if (OverlappingPlayerCharacter)
     {
-        HideInteractPrompt(); // Hide prompt once interaction starts
+        HideInteractPrompt();
         OnInteract(OverlappingPlayerCharacter);
     }
 }
@@ -178,7 +169,7 @@ void ACraftingBuilding::OnInteract(AActor* Interactor)
                 CraftingWidgetInstance->AddToViewport();
                 
                 FInputModeGameAndUI InputModeData;
-                InputModeData.SetWidgetToFocus(CraftingWidgetInstance->TakeWidget()); // Set focus to the UI
+                InputModeData.SetWidgetToFocus(CraftingWidgetInstance->TakeWidget());
                 InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
                 PC->SetInputMode(InputModeData);
                 PC->SetShowMouseCursor(true);
