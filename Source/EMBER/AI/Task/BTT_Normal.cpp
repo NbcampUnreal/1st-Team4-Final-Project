@@ -1,7 +1,7 @@
 ﻿#include "BTT_Normal.h"
 #include "BaseAI.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "AI/AnimInstance/BaseAIAnimInstance.h"
 
 UBTT_Normal::UBTT_Normal()
 {
@@ -11,23 +11,14 @@ UBTT_Normal::UBTT_Normal()
 EBTNodeResult::Type UBTT_Normal::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	ABaseAIController* Controller = Cast<ABaseAIController>(OwnerComp.GetAIOwner());
+	ABaseAI* ControlledAI = Cast<ABaseAI>(Controller->GetPawn());
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
-
-	// ABaseAI* ControlledAnimal = Cast<ABaseAI>(Controller->GetPawn());
-	// if (!ControlledAnimal) return EBTNodeResult::Failed;
-	
-	//ControlledAnimal->GetCharacterMovement()->MaxWalkSpeed = 200.0f; //속도는 동물별 변수를 생성
-
-	bool bIsRest = BlackboardComp->GetValueAsBool(TEXT("IsRest"));
-	if (!bIsRest) // false일 때
+	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(ControlledAI->GetMesh()->GetAnimInstance()))
 	{
-		UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(Controller->GetComponentByClass(UBehaviorTreeComponent::StaticClass()));
-		if (BTComp)
-		{
-			BTComp->RestartTree();
-		}
+		AnimInstance->AnimalState = EAnimalState::Idle;
+		AnimInstance->PlayStateMontage();
 	}
-
+	
 	return EBTNodeResult::InProgress;
 }

@@ -7,7 +7,5 @@
 void URabbit_AnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
-
-	AnimalState = EAnimalState::Idle;
-	Montage_Play(IdleMontage);
+	
 }
