@@ -45,9 +45,10 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 void AEmberPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-    
-    StatusComponent->SetMaxHp(100);
-    StatusComponent->SetMaxStamina(100);
+	if(StatusComponent->GetMaxHp() <= 0.0f)
+	    StatusComponent->SetMaxHp(100);
+	if(StatusComponent->GetMaxStamina() <= 0.0f)
+		StatusComponent->SetMaxStamina(100);
     CameraLogicComp->DisableControlRotation();
     APlayerController* playerController = Cast<APlayerController>(GetController());
     if(playerController != nullptr)

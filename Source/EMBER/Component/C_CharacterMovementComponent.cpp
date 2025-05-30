@@ -89,7 +89,7 @@ void UC_CharacterMovementComponent::OnRun()
 	SetSpeed(ESpeedType::Run);
 }
 
-void UC_CharacterMovementComponent::OnWarlk()
+void UC_CharacterMovementComponent::OnWalk()
 {
 	SetSpeed(ESpeedType::Walk);
 }

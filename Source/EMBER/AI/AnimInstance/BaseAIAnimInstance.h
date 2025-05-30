@@ -29,10 +29,10 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Movement")
 	float CurrentSpeed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Movement")
 	float CurrentDirection;
 	
 	virtual void PlayMontage(EAnimActionType Desired, EAnimActionType Fallback);

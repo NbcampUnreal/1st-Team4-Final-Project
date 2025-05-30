@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "C_CameraComponent.h"
+#include "GenericTeamAgentInterface.h"
 #include "Input/CharacterInputComponent.h"
 #include "Component/MontageSystemComponent.h"
 #include "EmberPlayerCharacter.generated.h"
@@ -20,7 +21,7 @@ class UCharacterInputComponent;
 struct FInputActionValue;
 UCLASS()
 
-class EMBER_API AEmberPlayerCharacter : public ACharacter
+class EMBER_API AEmberPlayerCharacter : public ACharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -84,7 +85,8 @@ protected:
 
 	//TODOS
 	virtual void PostNetInit() override;
-	
+public:
+	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
 private:
 	UPROPERTY()
 	TObjectPtr<UCharacterInputComponent> CharacterInputComponent;
@@ -101,4 +103,6 @@ private:
 	UPROPERTY()
 	TObjectPtr<class UArmorComponent> ArmorComponent;
 
+	UPROPERTY(EditDefaultsOnly)
+	uint8 TeamID = 1;
 };
