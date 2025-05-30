@@ -2,15 +2,29 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "GameplayAbilitySpec.h"
+#include "ActiveGameplayEffectHandle.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
 #include "EmberAbilitySet.generated.h"
 
-struct FGameplayAbilitySpecHandle;
 class UEmberAbilitySystemComponent;
 class UEmberGameplayAbility;
 class UAttributeSet;
+class UGameplayEffect;
+
+USTRUCT(BlueprintType)
+struct FEmberAbilitySet_GameplayEffect
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> GameplayEffect = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float EffectLevel = 1.0f;
+};
 
 USTRUCT(BlueprintType)
 struct FEmberAbilitySet_GameplayAbility
@@ -34,11 +48,15 @@ struct FEmberAbilitySet_GrantedHandles
 
 public:
 	void AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle);
+	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
 	void TakeFromAbilitySystem(UEmberAbilitySystemComponent* EmberASC);
 
 protected:
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
+
+	UPROPERTY()
+	TArray<FActiveGameplayEffectHandle> GameplayEffectHandles;
 	
 	UPROPERTY()
 	TArray<TObjectPtr<UAttributeSet>> GrantedAttributeSets;
@@ -56,6 +74,10 @@ public:
 	void GiveToAbilitySystem(UEmberAbilitySystemComponent* EmberASC, FEmberAbilitySet_GrantedHandles* OutGrantedHandles, UObject* SourceObject = nullptr) const;
 	
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities")
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities",  meta=(TitleProperty=Ability))
 	TArray<FEmberAbilitySet_GameplayAbility> GrantedGameplayAbilities;
+
+	// Gameplay effects to grant when this ability set is granted.
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty=GameplayEffect))
+	TArray<FEmberAbilitySet_GameplayEffect> GrantedGameplayEffects;
 };

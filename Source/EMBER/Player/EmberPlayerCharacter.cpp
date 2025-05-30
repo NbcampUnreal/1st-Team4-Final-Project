@@ -39,6 +39,7 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("SatatusComponent"));
 
     Tags.Add("Player");
+    SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -75,7 +76,7 @@ void AEmberPlayerCharacter::PostInitializeComponents()
 void AEmberPlayerCharacter::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
-    
+
     InitAbilityActorInfo();
 }
 
@@ -83,7 +84,6 @@ void AEmberPlayerCharacter::OnRep_PlayerState()
 {
     Super::OnRep_PlayerState();
     
-    InitAbilityActorInfo();
     if (ArmorComponent != nullptr)
         ArmorComponent->InitializeArmorForLateJoiners();
 }
@@ -177,6 +177,11 @@ if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(Playe
     }
 
     CharacterInputComponent->InitializePlayerInput(PlayerInputComponent);
+}
+
+UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() const
+{
+    return AbilitySystemComponent;
 }
 
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)

@@ -34,16 +34,26 @@ public:
 	UEmberGameplayAbility(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
+	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
+	
 	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
 	AEmberPlayerCharacter* GetEmberCharacterFromActorInfo() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
 	AEmberPlayerController* GetEmberPlayerControllerFromActorInfo() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Lyra|Ability")
+	AController* GetControllerFromActorInfo() const;
+	
 	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
 	UEmberLocalPlayer* GetEmberLocalPlayerFromActorInfo() const;
 	
 	EEmberAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
+
+protected:
+	//~UGameplayAbility interface
+	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
+	
 	
 protected:
 	// Defines how this ability is meant to activate.
