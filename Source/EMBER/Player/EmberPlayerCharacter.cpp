@@ -43,6 +43,7 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("SatatusComponent"));
 
     Tags.Add("Player");
+    SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -79,7 +80,7 @@ void AEmberPlayerCharacter::PostInitializeComponents()
 void AEmberPlayerCharacter::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
-    
+
     InitAbilityActorInfo();
 }
 
@@ -87,7 +88,6 @@ void AEmberPlayerCharacter::OnRep_PlayerState()
 {
     Super::OnRep_PlayerState();
     
-    InitAbilityActorInfo();
     if (ArmorComponent != nullptr)
         ArmorComponent->InitializeArmorForLateJoiners();
 }
@@ -186,6 +186,11 @@ void AEmberPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Look,ETriggerEvent::Triggered,this,&ThisClass::Look);
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Jump, ETriggerEvent::Triggered, this, &ThisClass::Jump);
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Triggered, this, &ThisClass::StartSprint);
+}
+
+UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() const
+{
+    return AbilitySystemComponent;
 }
 
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)

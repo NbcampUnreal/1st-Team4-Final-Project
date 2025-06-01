@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "C_CameraComponent.h"
 #include "Input/CharacterInputComponent.h"
@@ -10,6 +11,7 @@
 #include "Input/Data/EmberInputConfig.h"
 #include "EmberPlayerCharacter.generated.h"
 
+class UEmberAbilitySystemComponent;
 class UStatusComponent;
 class UEquipmentManagerComponent;
 class USpringArmComponent;
@@ -21,14 +23,14 @@ class UCharacterInputComponent;
 struct FInputActionValue;
 UCLASS()
 
-class EMBER_API AEmberPlayerCharacter : public ACharacter
+class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AEmberPlayerCharacter(const FObjectInitializer& Init);	
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -78,7 +80,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-protected:
+public:
+	//~IAbilitySystemInterface Overrides
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	//~End of IAbilitySystemInterface Overrides
+	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 	void InitAbilityActorInfo();

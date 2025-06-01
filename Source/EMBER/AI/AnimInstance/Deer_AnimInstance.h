@@ -17,8 +17,6 @@ public:
 	void OnTurnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	void StopMontage();
 	
-	virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
-	
 	UPROPERTY(BlueprintReadWrite, Category = "Animation")
 	UAnimMontage* LeftTurnMontage;
 

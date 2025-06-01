@@ -7,10 +7,11 @@
 UENUM(BlueprintType)
 enum class EAnimalType : uint8
 {
-	Passive     UMETA(DisplayName = "Passive"),
-	Defensive   UMETA(DisplayName = "Defensive"),
-	Aggressive  UMETA(DisplayName = "Aggressive"),
-	Crow        UMETA(DisplayName = "Crow")
+	Passive UMETA(DisplayName = "Passive"),
+	Defensive UMETA(DisplayName = "Defensive"),
+	Aggressive UMETA(DisplayName = "Aggressive"),
+	Crow UMETA(DisplayName = "Crow"),
+	Griffon UMETA(DisplayName = "Griffon")
 };
 
 UCLASS()
@@ -19,7 +20,6 @@ class EMBER_API ABaseAIController : public AAIController
 	GENERATED_BODY()
 
 public:
-
 	virtual void BeginPlay() override;
 
 	// 블랙보드 데이터 (에디터에서 설정)
@@ -29,7 +29,7 @@ public:
 	// 블랙보드 컴포넌트 (UseBlackboard()를 통해 참조)
 	UPROPERTY(VisibleAnywhere, Category = "AI")
 	UBlackboardComponent* BlackboardComp;
-	
+
 	EAnimalType AnimalType;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
@@ -43,6 +43,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "AI")
 	UBehaviorTree* CrowBT;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBehaviorTree* GriffonBT;
 	
 	UBehaviorTree* CurrentBT;
 };
