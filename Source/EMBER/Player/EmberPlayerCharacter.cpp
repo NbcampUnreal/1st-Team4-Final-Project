@@ -29,7 +29,7 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManager"));
     CharacterInputComponent = CreateDefaultSubobject<UCharacterInputComponent>(TEXT("CharacterInput"));
 
-    MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("MontageComponent"));
+    MontageComponent = CreateDefaultSubobject<UEmberMontageSystemComponent>(TEXT("MontageComponent"));
 }
 
 // Called when the game starts or when spawned

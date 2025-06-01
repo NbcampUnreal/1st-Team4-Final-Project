@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "C_CameraComponent.h"
 #include "Input/CharacterInputComponent.h"
-#include "Component/MontageSystemComponent.h"
+#include "Component/EmberMontageSystemComponent.h"
 #include "EmberPlayerCharacter.generated.h"
 
 class UEquipmentManagerComponent;
@@ -77,5 +77,5 @@ private:
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY()
-	TObjectPtr<UMontageSystemComponent> MontageComponent;
+	TObjectPtr<UEmberMontageSystemComponent> MontageComponent;
 };

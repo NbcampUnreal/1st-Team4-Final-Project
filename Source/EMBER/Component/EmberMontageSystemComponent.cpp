@@ -1,15 +1,15 @@
-﻿#include "MontageSystemComponent.h"
+﻿#include "EmberMontageSystemComponent.h"
 #include "GameFramework/Character.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Net/UnrealNetwork.h"
 
-UMontageSystemComponent::UMontageSystemComponent()
+UEmberMontageSystemComponent::UEmberMontageSystemComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicatedByDefault(true);
 }
 
-void UMontageSystemComponent::BeginPlay()
+void UEmberMontageSystemComponent::BeginPlay()
 {
     Super::BeginPlay();
 
@@ -23,7 +23,7 @@ void UMontageSystemComponent::BeginPlay()
     }
 }
 
-void UMontageSystemComponent::MulticastPlayMontage_Implementation(UAnimMontage* Montage, float PlayRate, FName SectionName)
+void UEmberMontageSystemComponent::MulticastPlayMontage_Implementation(UAnimMontage* Montage, float PlayRate, FName SectionName)
 {
     if (AnimInstance)
     {
@@ -40,7 +40,7 @@ void UMontageSystemComponent::MulticastPlayMontage_Implementation(UAnimMontage* 
     }
 }
 
-void UMontageSystemComponent::ServerPlayMontage_Implementation(UAnimMontage* Montage, float PlayRate, FName SectionName)
+void UEmberMontageSystemComponent::ServerPlayMontage_Implementation(UAnimMontage* Montage, float PlayRate, FName SectionName)
 {
     if (AnimInstance)
     {
@@ -48,12 +48,12 @@ void UMontageSystemComponent::ServerPlayMontage_Implementation(UAnimMontage* Mon
     }
 }
 
-bool UMontageSystemComponent::ServerPlayMontage_Validate(UAnimMontage* Montage, float PlayRate, FName SectionName)
+bool UEmberMontageSystemComponent::ServerPlayMontage_Validate(UAnimMontage* Montage, float PlayRate, FName SectionName)
 {
     return true;  // 여기에 검증 로직 추가 가능
 }
 
-void UMontageSystemComponent::PlayMontage(UAnimMontage* Montage, float PlayRate, FName SectionName)
+void UEmberMontageSystemComponent::PlayMontage(UAnimMontage* Montage, float PlayRate, FName SectionName)
 {
     if (!Montage)
     {

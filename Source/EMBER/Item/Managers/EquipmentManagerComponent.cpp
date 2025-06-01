@@ -11,7 +11,7 @@
 #include "Net/UnrealNetwork.h"
 #include "System/EmberAssetManager.h"
 #include "UI/Data/EmberItemData.h"
-#include "MontageSystemComponent.h"
+#include "EmberMontageSystemComponent.h"
 UEquipmentManagerComponent::UEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	SetIsReplicatedByDefault(true);
@@ -73,7 +73,7 @@ void UEquipmentManagerComponent::AddEquipment(EWeaponSlotType WeaponSlotType, TS
 
 			if (Data.DrawMontage)
 			{
-				if (UMontageSystemComponent* MontageComp = OwnerCharacter->FindComponentByClass<UMontageSystemComponent>())
+				if (UEmberMontageSystemComponent* MontageComp = OwnerCharacter->FindComponentByClass<UEmberMontageSystemComponent>())
 				{
 					MontageComp->PlayMontage(Data.DrawMontage);
 				}
@@ -105,7 +105,7 @@ void UEquipmentManagerComponent::OnRep_ItemTemplateID(int32 PrevItemTemplateID)
 
 		if (Data.DrawMontage)
 		{
-			if (UMontageSystemComponent* MontageComp = OwnerCharacter->FindComponentByClass<UMontageSystemComponent>())
+			if (UEmberMontageSystemComponent* MontageComp = OwnerCharacter->FindComponentByClass<UEmberMontageSystemComponent>())
 			{
 				MontageComp->PlayMontage(Data.DrawMontage);
 			}

@@ -3,15 +3,15 @@
 #include "EMBER.h"
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "LevelComponent.generated.h"
+#include "EmberLevelComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class EMBER_API ULevelComponent : public UActorComponent
+class EMBER_API UEmberLevelComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	ULevelComponent();
+	UEmberLevelComponent();
 protected:
     UPROPERTY()
     TMap<ESkillCategory, class ULevelBase*> CategoryLevel;

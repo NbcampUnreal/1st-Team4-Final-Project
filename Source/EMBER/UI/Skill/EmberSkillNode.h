@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include "EMBER.h"
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/EmberBaseWidget.h"
 #include "EmberSkillConnection.h"
 #include "EmberSkillNode.generated.h"
 
 UCLASS()
-class EMBER_API UEmberSkillNode : public UUserWidget
+class EMBER_API UEmberSkillNode : public UEmberBaseWidget
 {
 	GENERATED_BODY()
 protected:
@@ -23,20 +23,36 @@ public:
 protected:
 	UPROPERTY()
 	FGuid NodeID;
-protected:
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName DisplayName;
+	FName NodeName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PurchaseTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSkillNodeData NodeData;
-	// 에디터에서 연결할 다음 노드들
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<FName, FGameplayTag> NextNode;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//TSubclassOf<UEmberSkillConnection> LineClass;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//TArray<UEmberSkillConnection*> LineConnections;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//bool bShowCategoryText;
+	bool bShowCategoryText;
+	// 속한 카테고리
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ESkillCategory Category;
+	// 선행 조건 (해당 태그가 해제되어야 함)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FGameplayTag> RequiredSkill;
+	// 이 스킬이 열면 활성화 가능한 노드들
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FGameplayTag> UnlockSkill;
+	// 실제 태그 ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag SkillTag;
+	// TargetNode
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> NextNodes; 
+	UPROPERTY()
+	TArray<UEmberSkillNode*> LinkedNodes;
+	// 연결선 노드 (후속 노드 목록)
+	UPROPERTY()
+	TArray<UEmberSkillConnection*> ConnectionLine;
+	// 해제 여부
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bUnlocked = false;
 };

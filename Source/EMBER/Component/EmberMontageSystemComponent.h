@@ -5,15 +5,15 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Animation/AnimInstance.h"
-#include "MontageSystemComponent.generated.h"
+#include "EmberMontageSystemComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class EMBER_API UMontageSystemComponent : public UActorComponent
+class EMBER_API UEmberMontageSystemComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	UMontageSystemComponent();
+	UEmberMontageSystemComponent();
 protected:
 	virtual void BeginPlay() override;
 private:
