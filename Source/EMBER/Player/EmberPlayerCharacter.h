@@ -7,6 +7,7 @@
 #include "C_CameraComponent.h"
 #include "Input/CharacterInputComponent.h"
 #include "Component/MontageSystemComponent.h"
+#include "Input/Data/EmberInputConfig.h"
 #include "EmberPlayerCharacter.generated.h"
 
 class UStatusComponent;
@@ -101,4 +102,14 @@ private:
 	UPROPERTY()
 	TObjectPtr<class UArmorComponent> ArmorComponent;
 
+
+#pragma region Inputs
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
+	UEmberInputConfig* InputConfigDataAsset;
+
+	void Input_Move(const FInputActionValue& InputActionValue);
+	void Input_Look(const FInputActionValue& InputActionValue);
+
+#pragma endregion
 };

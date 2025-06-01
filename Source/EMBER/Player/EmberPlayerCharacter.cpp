@@ -13,6 +13,10 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Managers/EquipmentManagerComponent.h"
+#include "..\GameInfo/GameplayTags.h"
+#include "EnhancedInputSubsystems.h"
+#include "Input/EmberEnhancedInputComponent.h"
+
 
 AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
     : Super(Init.SetDefaultSubobjectClass<UC_CharacterMovementComponent>
@@ -104,6 +108,41 @@ void AEmberPlayerCharacter::PostNetInit()
         ArmorComponent->InitializeArmorForLateJoiners();
 }
 
+void AEmberPlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
+{	
+    const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
+
+    const FRotator MovementRotation(0.f,Controller->GetControlRotation().Yaw,0.f);
+
+    if (MovementVector.Y != 0.f)
+    {
+        const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+
+        AddMovementInput(ForwardDirection,MovementVector.Y);
+    }
+
+    if (MovementVector.X != 0.f)
+    {
+        const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
+
+        AddMovementInput(RightDirection,MovementVector.X);
+    }
+}
+void AEmberPlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
+{
+    const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
+	
+    if (LookAxisVector.X != 0.f)
+    {
+        AddControllerYawInput(LookAxisVector.X);
+    }
+
+    if (LookAxisVector.Y != 0.f)
+    {
+        AddControllerPitchInput(LookAxisVector.Y);
+    }
+}
+
 // Called every frame
 void AEmberPlayerCharacter::Tick(float DeltaTime)
 {
@@ -114,74 +153,43 @@ void AEmberPlayerCharacter::Tick(float DeltaTime)
 // Called to bind functionality to input
 void AEmberPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-    
-if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+    if (!InputConfigDataAsset)
     {
-        if (AEmberPlayerController* PlayerController = Cast<AEmberPlayerController>(GetController()))
-        {
-            if (PlayerController->MoveAction)
-            {
-                EnhancedInput->BindAction(
-                    PlayerController->MoveAction,
-                    ETriggerEvent::Triggered,
-                    this,
-                    &AEmberPlayerCharacter::Move
-                );
-            }
-            
-            if (PlayerController->LookAction)
-            {
-                EnhancedInput->BindAction(
-                    PlayerController->LookAction,
-                    ETriggerEvent::Triggered,
-                    this,
-                    &AEmberPlayerCharacter::Look
-                );
-            }
-            
-            if (PlayerController->SprintAction)
-            {
-                EnhancedInput->BindAction(
-                    PlayerController->SprintAction,
-                    ETriggerEvent::Triggered, 
-                    this, 
-                    &AEmberPlayerCharacter::StartSprint
-                );
-                EnhancedInput->BindAction(
-                    PlayerController->SprintAction, 
-                    ETriggerEvent::Completed, 
-                    this, 
-                    &AEmberPlayerCharacter::StopSprint
-                );
-            }
-            if (PlayerController->AttackAction)
-            {
-                EnhancedInput->BindAction(
-                    PlayerController->AttackAction,
-                    ETriggerEvent::Started, 
-                    this, 
-                    &AEmberPlayerCharacter::Attack
-                );
-            }
-            if (PlayerController->MoveAction)
-            {
-                EnhancedInput->BindAction(
-                    PlayerController->JumpAction,
-                    ETriggerEvent::Started,
-                    this,
-                    &AEmberPlayerCharacter::Jump
-                );
-            }
-        }
+        return;
     }
-
+    checkf(InputConfigDataAsset,TEXT("Forgot to assign a valid data asset as input config"));
+    
     CharacterInputComponent->InitializePlayerInput(PlayerInputComponent);
+
+    if (!IsLocallyControlled()) 
+    {
+        return;
+    }
+    APlayerController* PC = Cast<APlayerController>(GetController());
+    if (!PC)
+    {
+        return;
+    }
+    ULocalPlayer* LocalPlayer = PC->GetLocalPlayer();
+    if (!LocalPlayer)
+    {
+        return;
+    }
+    UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+    
+    Subsystem->AddMappingContext(InputConfigDataAsset->InputMappingContext,0);
+
+    UEmberEnhancedInputComponent* WarriorInputComponent = CastChecked<UEmberEnhancedInputComponent>(PlayerInputComponent);
+
+    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Move,ETriggerEvent::Triggered,this,&ThisClass::Move);
+    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Look,ETriggerEvent::Triggered,this,&ThisClass::Look);
+    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Jump, ETriggerEvent::Triggered, this, &ThisClass::Jump);
+    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Triggered, this, &ThisClass::StartSprint);
 }
 
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
 {
-    
     if(MovementComponent)
     {
         MovementComponent->OnMove(value);
