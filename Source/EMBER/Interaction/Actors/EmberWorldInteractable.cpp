@@ -19,6 +19,28 @@ AEmberWorldInteractable::AEmberWorldInteractable(const FObjectInitializer& Objec
 	InteractionInfo.bVisible = false;
 }
 
+void AEmberWorldInteractable::OnInteractActiveStarted(AActor* Interactor)
+{
+	if (IsValid(Interactor) == false)
+		return;
+
+	if (HasAuthority())
+	{
+		CachedInteractors = Interactor;
+	}
+}
+
+void AEmberWorldInteractable::OnInteractionSuccess(AActor* Interactor)
+{
+	if (IsValid(Interactor) == false)
+		return;
+
+	if (HasAuthority())
+	{
+			
+	}
+}
+
 FEmberInteractionInfo AEmberWorldInteractable::GetPreInteractionInfo( const FEmberInteractionQuery& InteractionQuery) const
 {
 	return InteractionInfo;

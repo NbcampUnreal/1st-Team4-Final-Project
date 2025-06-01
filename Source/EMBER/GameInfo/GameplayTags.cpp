@@ -17,6 +17,7 @@ namespace EmberGameplayTags
 
 	// Ability
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Interact,								"Ability.Interact");
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Interact_Object,							"Ability.Interact.Object");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Attack,									"Ability.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Attack_1,								"Ability.Attack.1");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Attack_2,								"Ability.Attack.2");

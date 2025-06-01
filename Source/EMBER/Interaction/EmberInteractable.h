@@ -37,5 +37,5 @@ public:
 	virtual UMeshComponent* Get() const { return nullptr; }
 	
 	UFUNCTION(BlueprintCallable)
-	virtual bool CanInteraction(UAbilitySystemComponent* ASC) const = 0;
+	virtual bool CanInteraction(UAbilitySystemComponent* ASC) { return true; }
 };
