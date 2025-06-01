@@ -57,6 +57,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AI|Movement")
 	virtual void SetRunSpeed();
+
+	UFUNCTION(BlueprintCallable, Category = "AI|Movement")
+	virtual void SetFlySpeed();
 	
 	//Interface 함수
 	virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
@@ -90,6 +93,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	float RunSpeed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	float FlySpeed;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|State")
 	bool bIsDie;
 
@@ -97,6 +103,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Perception")
 	UAIPerceptionComponent* AIPerception;
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Perception")
 	UAISenseConfig_Sight* SightConfig;
 

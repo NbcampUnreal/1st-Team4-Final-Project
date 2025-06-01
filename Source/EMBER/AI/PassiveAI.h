@@ -31,6 +31,9 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float ClosestDistanceBoundary;
+
+	float ClosestDistance;
+
 };
 
 
