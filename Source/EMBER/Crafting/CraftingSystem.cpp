@@ -35,24 +35,31 @@ void UCraftingSystem::BeginPlay()
 
 UItemInstance* UCraftingSystem::StartCrafting(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
 {
-    if (!Player) return nullptr;
+    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: Called for Recipe DisplayName: %s, OutputItemID: %d"), *Recipe.RecipeDisplayName.ToString(), Recipe.OutputItemTemplateID);
+
+    if (!Player)
+    {
+        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: Player is NULL. Returning nullptr."));
+        return nullptr;
+    }
     if (!RecipeManager)
     {
-        UE_LOG(LogTemp, Error, TEXT("CraftingSystem: RecipeManager is not set!"));
+        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: RecipeManager is not set on CraftingSystem component! Returning nullptr."));
         return nullptr;
     }
+    
     if (!CanCraftRecipeAtStation(Recipe, CurrentStation))
     {
-        UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: Cannot craft recipe at this station."));
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::StartCrafting: Cannot craft recipe at this station. Recipe requires: %s. Returning nullptr."), *UEnum::GetValueAsString(Recipe.CraftingStation));
         return nullptr;
     }
-
+    
     if (!HasRequiredMaterials(Player, Recipe, InSelectedMainIngredients))
     {
-        UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: Missing required materials."));
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::StartCrafting: Missing required materials. Returning nullptr."));
         return nullptr;
     }
-
+    
     EItemRarity FinalRarity = EItemRarity::Common;
     bool bUsesQuality = Recipe.RequiredMainMaterialCount > 0;
 
@@ -63,41 +70,44 @@ UItemInstance* UCraftingSystem::StartCrafting(AEmberPlayerCharacter* Player, con
 
     if (!ConsumeMaterials(Player, Recipe, InSelectedMainIngredients))
     {
-        UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: Failed to consume materials."));
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::StartCrafting: ConsumeMaterials FAILED (Note: ConsumeMaterials is currently a stub). Returning nullptr."));
         return nullptr;
     }
+    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: Material checks and consumption stub PASSED. Attempting to create item instance for TemplateID: %d"), Recipe.OutputItemTemplateID);
+
+    const UItemTemplate* OutputItemTemplateForValidation = GetItemTemplateById(Recipe.OutputItemTemplateID);
+
+    if (!OutputItemTemplateForValidation)
+    {
+        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: GetItemTemplateById (our stub) returned nullptr for TemplateID %d. This ID might be invalid or the function is not implemented. Skipping NewItem->Init() to prevent potential crash in teammate's code. No item will be properly initialized or returned."), Recipe.OutputItemTemplateID);
+        return nullptr;
+    }
+    
+    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: (Simulated) ItemTemplate validation passed via our GetItemTemplateById stub. Now creating UItemInstance."));
 
     UItemInstance* NewItem = NewObject<UItemInstance>(Player);
-    if (NewItem)
+    if (!NewItem)
     {
-        NewItem->Init(Recipe.OutputItemTemplateID, FinalRarity);
-        
-        UInventoryManagerComponent* PlayerInventory = Player->FindComponentByClass<UInventoryManagerComponent>();
-        if(PlayerInventory)
-        {
-            const UItemTemplate* OutputItemTemplate = GetItemTemplateById(Recipe.OutputItemTemplateID);
-            if(OutputItemTemplate)
-            {
-                UE_LOG(LogTemp, Warning, TEXT("Crafted Item: TemplateID = %d, Rarity = %s. Returning instance. ADD TO INVENTORY/OUTPUTBOX NEEDED."),
-                    NewItem->GetItemTemplateID(),
-                    *UEnum::GetValueAsString(FinalRarity));
-            }
-            else
-            {
-                UE_LOG(LogTemp, Error, TEXT("CraftingSystem: Could not find ItemTemplate for OutputItemTemplateID %d. Returning crafted instance without inventory add attempt."), Recipe.OutputItemTemplateID);
-            }
-        }
-        else
-        {
-             UE_LOG(LogTemp, Error, TEXT("CraftingSystem: PlayerInventory not found. Returning crafted instance without inventory add attempt."));
-        }
-        return NewItem;
+        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: Failed to create NewItem UObject instance. Returning nullptr."));
+        return nullptr;
     }
-    else
+    
+    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: NewItem UObject created. Calling NewItem->Init with TemplateID: %d, Rarity: %s"), Recipe.OutputItemTemplateID, *UEnum::GetValueAsString(FinalRarity));
+    
+    NewItem->Init(Recipe.OutputItemTemplateID, FinalRarity); 
+    
+    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: NewItem->Init call completed. Checking if PlayerInventory exists."));
+    UInventoryManagerComponent* PlayerInventory = Player->FindComponentByClass<UInventoryManagerComponent>();
+    if (!PlayerInventory)
     {
-        UE_LOG(LogTemp, Error, TEXT("CraftingSystem: Failed to create NewItem instance."));
+         UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: PlayerInventory component not found on Player. Cannot add item, but returning created (and Init-called) NewItem."));
+         return NewItem;
     }
-    return nullptr;
+    
+    UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::StartCrafting: Placeholder for adding item to inventory. OutputItemTemplate was %s."), OutputItemTemplateForValidation ? *OutputItemTemplateForValidation->DisplayName.ToString() : TEXT("STILL NULL (as GetItemTemplateById is a stub)"));
+    
+    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: Function returning NewItem instance."));
+    return NewItem; 
 }
 
 bool UCraftingSystem::CanCraftRecipeAtStation(const FCraftingRecipeRow& Recipe, EStationType Station) const
@@ -284,7 +294,7 @@ EItemRarity UCraftingSystem::EvaluateItemRarity(const FCraftingRecipeRow& Recipe
 
 const UItemTemplate* UCraftingSystem::GetItemTemplateById(int32 TemplateID) const
 {
-    UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::GetItemTemplateById - NOT IMPLEMENTED. Please implement item template fetching."));
+    UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::GetItemTemplateById - NOT IMPLEMENTED. Returning nullptr. This is a STUB FUNCTION."));
     return nullptr;
 }
 

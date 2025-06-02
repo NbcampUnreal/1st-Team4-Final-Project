@@ -1,22 +1,42 @@
 #include "UI/Crafting/CraftingOutputBoxWidget.h"
+#include "UI/Crafting/CraftedItemSlotEntryWidget.h"
 #include "Item/ItemInstance.h"
 #include "Item/ItemTemplate.h"
+#include "Player/EmberPlayerCharacter.h" 
+#include "Components/UniformGridPanel.h"
+#include "Components/UniformGridSlot.h"
+#include "Components/TextBlock.h"      
 #include "Net/UnrealNetwork.h"
-
-const UItemTemplate* UCraftingOutputBoxWidget::GetTemplateFromInstance(UItemInstance* Instance) const
-{
-    if (Instance)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("GetTemplateFromInstance: Needs proper implementation to fetch UItemTemplate from UItemInstance."));
-    }
-    return nullptr; 
-}
+#include "UI/Data/EmberItemData.h"
 
 
 UCraftingOutputBoxWidget::UCraftingOutputBoxWidget(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
-    MaxOutputSlots = 5;
+    NumRows = 1;
+    NumColumns = 5; 
+    CraftedItemSlotEntryClass = nullptr;
+    OutputSlotsGridPanel = nullptr;
+    TitleTextWidget = nullptr;
+}
+
+void UCraftingOutputBoxWidget::NativeConstruct()
+{
+    Super::NativeConstruct();
+    RefreshSlotsUI_Internal();
+}
+
+const UItemTemplate* UCraftingOutputBoxWidget::GetTemplateFromInstance(UItemInstance* Instance) const
+{
+    if (Instance)
+    {
+        const int32 TemplateID = Instance->GetItemTemplateID();
+        if (TemplateID != INDEX_NONE)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::GetTemplateFromInstance - Returning nullptr for TemplateID %d. UEmberItemData::Get().FindItemTemplateByID() must be fixed to return 'const UItemTemplate*' to enable proper functionality."), TemplateID);
+        }
+    }
+    return nullptr;
 }
 
 void UCraftingOutputBoxWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -25,18 +45,58 @@ void UCraftingOutputBoxWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProper
     DOREPLIFETIME(UCraftingOutputBoxWidget, OutputSlotEntries);
 }
 
+void UCraftingOutputBoxWidget::RefreshSlotsUI_Internal()
+{
+    if (!OutputSlotsGridPanel)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshSlotsUI_Internal - OutputSlotsGridPanel is NULL."));
+        return;
+    }
+    if (!CraftedItemSlotEntryClass)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshSlotsUI_Internal - CraftedItemSlotEntryClass is not set."));
+        return;
+    }
+
+    OutputSlotsGridPanel->ClearChildren();
+    int32 CurrentMaxSlots = GetMaxSlots();
+    
+    OutputSlotEntries.SetNum(CurrentMaxSlots);
+
+    for (int32 i = 0; i < CurrentMaxSlots; ++i)
+    {
+        UCraftedItemSlotEntryWidget* EntryWidget = CreateWidget<UCraftedItemSlotEntryWidget>(this, CraftedItemSlotEntryClass);
+        if (EntryWidget)
+        {
+            const FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[i];
+            EntryWidget->SetSlotData(SlotEntry.ItemInstance, SlotEntry.Quantity);
+            
+            int32 TargetRow = i / NumColumns;
+            int32 TargetColumn = i % NumColumns;
+            UUniformGridSlot* GridSlot = OutputSlotsGridPanel->AddChildToUniformGrid(EntryWidget, TargetRow, TargetColumn);
+            if(GridSlot)
+            {
+                GridSlot->SetHorizontalAlignment(HAlign_Center); 
+                GridSlot->SetVerticalAlignment(VAlign_Center); 
+            }
+        }
+    }
+    OnContentsChanged.Broadcast(); 
+}
+
+
 bool UCraftingOutputBoxWidget::TryAddItem(UItemInstance* ItemInstanceToAdd)
 {
-    if (!ItemInstanceToAdd) return false;
+    if (!ItemInstanceToAdd) 
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::TryAddItem - ItemInstanceToAdd is NULL."));
+        return false;
+    }
 
     const UItemTemplate* TemplateOfItemToAdd = GetTemplateFromInstance(ItemInstanceToAdd);
-    if (!TemplateOfItemToAdd)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("TryAddItem: Could not get ItemTemplate for item being added. Stacking might not work correctly. Defaulting to MaxStackCount of 1."));
-    }
-    
     int32 MaxStackSize = TemplateOfItemToAdd ? (TemplateOfItemToAdd->MaxStackCount > 0 ? TemplateOfItemToAdd->MaxStackCount : 1) : 1;
-
+    
+    bool bItemPlaced = false;
     for (int32 i = 0; i < OutputSlotEntries.Num(); ++i)
     {
         FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[i];
@@ -46,91 +106,89 @@ bool UCraftingOutputBoxWidget::TryAddItem(UItemInstance* ItemInstanceToAdd)
             SlotEntry.Quantity < MaxStackSize)
         {
             SlotEntry.Quantity++;
-            UE_LOG(LogTemp, Log, TEXT("CraftingOutputBoxWidget: Item stacked in slot %d. New quantity: %d"), i, SlotEntry.Quantity);
-            OnContentsChanged.Broadcast();
-            K2_UpdateOutputBoxUI();
-            return true;
+            bItemPlaced = true;
+            if (ItemInstanceToAdd->IsValidLowLevel()) ItemInstanceToAdd->MarkAsGarbage();
+            break; 
         }
     }
 
-    if (OutputSlotEntries.Num() < MaxOutputSlots)
+    if (!bItemPlaced)
     {
-        FCraftingOutputSlotEntry NewSlotEntry;
-        NewSlotEntry.ItemInstance = ItemInstanceToAdd;
-        NewSlotEntry.Quantity = 1;
-        OutputSlotEntries.Add(NewSlotEntry);
-        UE_LOG(LogTemp, Log, TEXT("CraftingOutputBoxWidget: Item added to new slot. Total slots used: %d"), OutputSlotEntries.Num());
-        OnContentsChanged.Broadcast();
-        K2_UpdateOutputBoxUI();
-        return true;
-    }
+        int32 EmptySlotIndex = -1;
+        for (int32 i = 0; i < OutputSlotEntries.Num(); ++i)
+        {
+            if (OutputSlotEntries[i].ItemInstance == nullptr || OutputSlotEntries[i].Quantity == 0)
+            {
+                EmptySlotIndex = i;
+                break;
+            }
+        }
 
-    UE_LOG(LogTemp, Warning, TEXT("CraftingOutputBoxWidget: Output box is full and no existing stack available. Cannot add item."));
-    return false;
+        if (EmptySlotIndex != -1)
+        {
+            OutputSlotEntries[EmptySlotIndex].ItemInstance = ItemInstanceToAdd;
+            OutputSlotEntries[EmptySlotIndex].Quantity = 1;
+            bItemPlaced = true;
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("CraftingOutputBoxWidget: Output box is full (no empty or stackable slots). Cannot add new item."));
+            if (ItemInstanceToAdd->IsValidLowLevel()) ItemInstanceToAdd->MarkAsGarbage();
+            RefreshSlotsUI_Internal(); 
+            return false;
+        }
+    }
+    
+    if(bItemPlaced) RefreshSlotsUI_Internal();
+    return bItemPlaced;
 }
 
-UItemInstance* UCraftingOutputBoxWidget::RemoveItemFromSlot(int32 SlotIndex)
+UItemInstance* UCraftingOutputBoxWidget::RemoveItemFromSlot(int32 FlatSlotIndex)
 {
-    if (OutputSlotEntries.IsValidIndex(SlotIndex))
+    UItemInstance* ItemToReturn = nullptr;
+    if (OutputSlotEntries.IsValidIndex(FlatSlotIndex))
     {
-        UItemInstance* ItemToReturn = nullptr;
-        FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[SlotIndex];
+        FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[FlatSlotIndex];
 
         if (SlotEntry.ItemInstance && SlotEntry.Quantity > 0)
         {
-            ItemToReturn = SlotEntry.ItemInstance;
+            ItemToReturn = SlotEntry.ItemInstance; 
             SlotEntry.Quantity--;
 
             if (SlotEntry.Quantity <= 0)
             {
-                OutputSlotEntries.RemoveAt(SlotIndex); 
+                SlotEntry.ItemInstance = nullptr; 
             }
-            UE_LOG(LogTemp, Log, TEXT("CraftingOutputBoxWidget: Item (or part of stack) removed from slot %d. Remaining quantity in slot: %d"), SlotIndex, SlotEntry.Quantity);
         }
-        else if(SlotEntry.Quantity <= 0) 
+        else 
         {
-             OutputSlotEntries.RemoveAt(SlotIndex);
+            SlotEntry.ItemInstance = nullptr; 
+            SlotEntry.Quantity = 0;
         }
-        
-        OnContentsChanged.Broadcast();
-        K2_UpdateOutputBoxUI();
-        return ItemToReturn;
+        RefreshSlotsUI_Internal();
     }
-    return nullptr;
+    return ItemToReturn; 
 }
 
 bool UCraftingOutputBoxWidget::IsFull() const
 {
-    if (OutputSlotEntries.Num() < MaxOutputSlots) return false;
-
-    const UItemTemplate* LastAttemptedTemplate = nullptr; 
-    EItemRarity LastAttemptedRarity = EItemRarity::Common;
-    if (OutputSlotEntries.Num() > 0 && OutputSlotEntries.Last().ItemInstance) {
-    }
-
-
     for (const FCraftingOutputSlotEntry& SlotEntry : OutputSlotEntries)
     {
-        if (SlotEntry.ItemInstance)
-        {
-            const UItemTemplate* Template = GetTemplateFromInstance(SlotEntry.ItemInstance);
-            int32 MaxStack = Template ? (Template->MaxStackCount > 0 ? Template->MaxStackCount : 1) : 1;
-            if (SlotEntry.Quantity < MaxStack)
-            {
-                return false;
-            }
-        }
-        else
+        if (!SlotEntry.ItemInstance) return false; 
+
+        const UItemTemplate* Template = GetTemplateFromInstance(SlotEntry.ItemInstance);
+        int32 MaxStack = Template ? (Template->MaxStackCount > 0 ? Template->MaxStackCount : 1) : 1;
+        if (SlotEntry.Quantity < MaxStack)
         {
             return false;
         }
     }
-    return OutputSlotEntries.Num() >= MaxOutputSlots;
+    return OutputSlotEntries.Num() >= GetMaxSlots();
 }
 
 int32 UCraftingOutputBoxWidget::GetMaxSlots() const
 {
-    return MaxOutputSlots;
+    return NumRows * NumColumns;
 }
 
 const TArray<FCraftingOutputSlotEntry>& UCraftingOutputBoxWidget::GetOutputSlotEntries() const
@@ -140,5 +198,24 @@ const TArray<FCraftingOutputSlotEntry>& UCraftingOutputBoxWidget::GetOutputSlotE
 
 void UCraftingOutputBoxWidget::OnRep_OutputSlotEntries()
 {
-    K2_UpdateOutputBoxUI();
+    RefreshSlotsUI_Internal();
+}
+
+void UCraftingOutputBoxWidget::SetGridDimensions(int32 InNumRows, int32 InNumColumns)
+{
+    NumRows = FMath::Max(1, InNumRows);
+    NumColumns = FMath::Max(1, InNumColumns);
+    
+    int32 NewMaxSlots = GetMaxSlots();
+    if (OutputSlotEntries.Num() > NewMaxSlots)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::SetGridDimensions - Slot count reduced, excess items might be lost if not handled."));
+        OutputSlotEntries.SetNum(NewMaxSlots);
+    }
+    else if (OutputSlotEntries.Num() < NewMaxSlots)
+    {
+        OutputSlotEntries.SetNum(NewMaxSlots);
+    }
+
+    RefreshSlotsUI_Internal();
 }

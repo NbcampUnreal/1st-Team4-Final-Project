@@ -46,16 +46,19 @@ public:
     UFUNCTION(BlueprintPure, Category = "Crafting")
     int32 GetMaterialScore(const FGameplayTag& MaterialTag) const;
 
+    UFUNCTION(BlueprintPure, Category = "Crafting")
+    const UItemTemplate* GetItemTemplateById(int32 TemplateID) const;
+
 private:
     void InitializeTagMap();
     int32 CalculateScore(const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
     bool ConsumeMaterials(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
-    const UItemTemplate* GetItemTemplateById(int32 TemplateID) const;
+    
 
 public:
     EStationType CurrentStation = EStationType::None;
 
-    UPROPERTY(EditAnywhere, Category = "Crafting System")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting System")
     TObjectPtr<UCraftingRecipeManager> RecipeManager;
 
 private:

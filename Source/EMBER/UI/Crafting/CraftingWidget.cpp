@@ -7,10 +7,12 @@
 #include "Crafting/CraftingSystem.h"
 #include "Crafting/CraftingRecipeManager.h"
 #include "Player/EmberPlayerCharacter.h"
-#include "Kismet/GameplayStatics.h"
+#include "Item/ItemInstance.h"
+#include "Item/ItemTemplate.h"
+#include "UI/Data/EmberItemData.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/TextBlock.h"
-#include "Item/ItemInstance.h"
+
 
 UCraftingWidget::UCraftingWidget(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -168,7 +170,7 @@ void UCraftingWidget::UpdateSelectedRecipe(int32 Direction)
 
 void UCraftingWidget::ChangeCategory()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::ChangeCategory function needs re-evaluation based on StationType or removed if not used."));
+    UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::ChangeCategory function needs re-evaluation or removal if not used."));
 }
 
 void UCraftingWidget::AdjustCraftAmount(int32 Delta)
@@ -190,69 +192,48 @@ void UCraftingWidget::RefreshAll()
        RecipeListWidget->SetStationTitle(CurrentStationTypeForUI);
        RecipeListWidget->SetRecipeList(ActiveRecipeList);
     }
-    else
-    {
-       UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::RefreshAll - RecipeListWidget is NULL."));
-    }
     
     AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn());
     UCraftingSystem* CraftingSystem = Player ? Player->FindComponentByClass<UCraftingSystem>() : nullptr;
-
-    bool bIsQualityRecipe = (SelectedRecipePtr && SelectedRecipePtr->RequiredMainMaterialCount > 0);
+    
+    TMap<FGameplayTag, int32> PlayerAggregatedIngredients;
+    if(Player && CraftingSystem)
+    {
+        PlayerAggregatedIngredients = CraftingSystem->AggregateIngredients(Player);
+    }
 
     if (SelectedRecipeDisplayWidget)
     {
         if (SelectedRecipePtr)
         {
-            SelectedRecipeDisplayWidget->SetTargetRecipe(*SelectedRecipePtr);
-            if (Player && CraftingSystem)
+            SelectedRecipeDisplayWidget->SetRecipeDetails(*SelectedRecipePtr, PlayerAggregatedIngredients, CraftAmount);
+            
+            bool bIsQualityRecipeForDisplay = (SelectedRecipePtr->RequiredMainMaterialCount > 0);
+            if (bIsQualityRecipeForDisplay && CraftingSystem)
             {
-                TMap<FGameplayTag, int32> PlayerTotalIngredientsForDisplay = CraftingSystem->AggregateIngredients(Player);
-                SelectedRecipeDisplayWidget->SetProvidedIngredients(PlayerTotalIngredientsForDisplay);
-
-                if (bIsQualityRecipe)
-                {
-                    TMap<EItemRarity, float> RarityChances = CraftingSystem->GetRarityProbabilities(*SelectedRecipePtr, CurrentSelectedMainIngredients);
-                    SelectedRecipeDisplayWidget->UpdateRarityChances(RarityChances);
-                }
-                else 
-                {
-                    TMap<EItemRarity, float> DefaultChances;
-                    DefaultChances.Add(EItemRarity::Common, 1.f); 
-                    SelectedRecipeDisplayWidget->UpdateRarityChances(DefaultChances);
-                }
+                TMap<EItemRarity, float> RarityChances = CraftingSystem->GetRarityProbabilities(*SelectedRecipePtr, CurrentSelectedMainIngredients);
+                SelectedRecipeDisplayWidget->UpdateRarityDisplay(*SelectedRecipePtr, RarityChances);
             }
-            else
+            else if (!bIsQualityRecipeForDisplay && CraftingSystem) 
             {
-                SelectedRecipeDisplayWidget->SetProvidedIngredients(TMap<FGameplayTag, int32>());
-                SelectedRecipeDisplayWidget->UpdateRarityChances(TMap<EItemRarity, float>());
+                 SelectedRecipeDisplayWidget->UpdateRarityDisplay(*SelectedRecipePtr, TMap<EItemRarity, float>());
             }
-            SelectedRecipeDisplayWidget->SetVisibility(ESlateVisibility::Visible);
         }
         else
         {
-            FCraftingRecipeRow EmptyRecipeRowForClearing; 
-            SelectedRecipeDisplayWidget->SetTargetRecipe(EmptyRecipeRowForClearing);
-            SelectedRecipeDisplayWidget->SetProvidedIngredients(TMap<FGameplayTag, int32>());
-            SelectedRecipeDisplayWidget->UpdateRarityChances(TMap<EItemRarity, float>());
-            SelectedRecipeDisplayWidget->SetVisibility(ESlateVisibility::Collapsed);
+            SelectedRecipeDisplayWidget->ClearDetails();
         }
     }
-     else
-    {
-       UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::RefreshAll - SelectedRecipeDisplayWidget is NULL."));
-    }
 
+    bool bIsQualityRecipeOverall = (SelectedRecipePtr && SelectedRecipePtr->RequiredMainMaterialCount > 0);
     if (CenterContentSwitcher)
     {
-        if (bIsQualityRecipe)
+        if (bIsQualityRecipeOverall)
         {
             if (MainMaterialSelectorWidget && CraftingSystem && Player && SelectedRecipePtr)
             {
                 TArray<FSelectableMainMaterialInfo> SelectableInfos;
-                TMap<FGameplayTag, int32> PlayerAggregatedMainIngredients = CraftingSystem->AggregateIngredients(Player); 
-                
-                for(const auto& Pair : PlayerAggregatedMainIngredients)
+                for(const auto& Pair : PlayerAggregatedIngredients)
                 {
                     if(SelectedRecipePtr->AllowedMainMaterialTags.HasTag(Pair.Key))
                     {
@@ -260,66 +241,43 @@ void UCraftingWidget::RefreshAll()
                         Info.MaterialTag = Pair.Key;
                         Info.AvailableCountInInventory = Pair.Value;
                         Info.Grade = CraftingSystem->GetMaterialScore(Pair.Key);
-                        Info.DisplayName = FText::FromString(Pair.Key.GetTagName().ToString()); 
+                        
+                        FString DisplayNameStr = Pair.Key.GetTagName().ToString();
+                        Info.DisplayName = FText::FromString(DisplayNameStr); 
                         SelectableInfos.Add(Info);
                     }
                 }
                 MainMaterialSelectorWidget->InitializeSelector(SelectableInfos, SelectedRecipePtr->RequiredMainMaterialCount);
+                MainMaterialSelectorWidget->SetVisibility(ESlateVisibility::Visible);
                 CenterContentSwitcher->SetActiveWidget(MainMaterialSelectorWidget);
+                if (GeneralRecipeIngredientsWidget)
+                {
+                     GeneralRecipeIngredientsWidget->SetVisibility(ESlateVisibility::Collapsed);
+                }
             }
-            else if (GeneralRecipeIngredientsWidget) 
+            else 
             {
-                CenterContentSwitcher->SetActiveWidget(GeneralRecipeIngredientsWidget);
-                FCraftingRecipeRow EmptyRecipeForIngredientWidget;
-                TMap<FGameplayTag, int32> EmptyPlayerIngredients;
-                GeneralRecipeIngredientsWidget->UpdateDisplay(EmptyRecipeForIngredientWidget, EmptyPlayerIngredients, 0);
+                if(MainMaterialSelectorWidget) MainMaterialSelectorWidget->SetVisibility(ESlateVisibility::Collapsed);
+                if (GeneralRecipeIngredientsWidget) GeneralRecipeIngredientsWidget->SetVisibility(ESlateVisibility::Collapsed);
+                
+                if (MainMaterialSelectorWidget) CenterContentSwitcher->SetActiveWidget(MainMaterialSelectorWidget);
+                else if (GeneralRecipeIngredientsWidget) CenterContentSwitcher->SetActiveWidget(GeneralRecipeIngredientsWidget);
             }
         }
         else 
         {
-            if (GeneralRecipeIngredientsWidget && Player && CraftingSystem)
+            if (MainMaterialSelectorWidget)
             {
-                TMap<FGameplayTag, int32> PlayerAggregatedIngredients = CraftingSystem->AggregateIngredients(Player);
-                if (SelectedRecipePtr)
-                {
-                    GeneralRecipeIngredientsWidget->UpdateDisplay(*SelectedRecipePtr, PlayerAggregatedIngredients, CraftAmount);
-                }
-                else
-                {
-                    FCraftingRecipeRow EmptyRecipeRow; 
-                    GeneralRecipeIngredientsWidget->UpdateDisplay(EmptyRecipeRow, PlayerAggregatedIngredients, CraftAmount);
-                }
-                CenterContentSwitcher->SetActiveWidget(GeneralRecipeIngredientsWidget);
+                MainMaterialSelectorWidget->SetVisibility(ESlateVisibility::Collapsed);
             }
-            else if (MainMaterialSelectorWidget)
+            if (GeneralRecipeIngredientsWidget)
             {
-                 CenterContentSwitcher->SetActiveWidget(MainMaterialSelectorWidget);
-                 if(MainMaterialSelectorWidget) MainMaterialSelectorWidget->SetVisibility(ESlateVisibility::Collapsed);
+                 GeneralRecipeIngredientsWidget->SetVisibility(ESlateVisibility::Collapsed); 
             }
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::RefreshAll - CenterContentSwitcher is NULL. Manual visibility control would be needed."));
-        if(MainMaterialSelectorWidget) MainMaterialSelectorWidget->SetVisibility(bIsQualityRecipe ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
-        if(GeneralRecipeIngredientsWidget) 
-        {
-            if (SelectedRecipePtr && !bIsQualityRecipe && Player && CraftingSystem)
-            {
-                TMap<FGameplayTag, int32> PlayerAggregatedIngredients = CraftingSystem->AggregateIngredients(Player);
-                GeneralRecipeIngredientsWidget->UpdateDisplay(*SelectedRecipePtr, PlayerAggregatedIngredients, CraftAmount);
-                GeneralRecipeIngredientsWidget->SetVisibility(ESlateVisibility::Visible);
-            }
-            else
-            {
-                 if(GeneralRecipeIngredientsWidget) 
-                 {
-                    FCraftingRecipeRow EmptyRecipeRow;
-                    TMap<FGameplayTag, int32> EmptyPlayerIngredients;
-                    GeneralRecipeIngredientsWidget->UpdateDisplay(EmptyRecipeRow, EmptyPlayerIngredients, 0); 
-                    GeneralRecipeIngredientsWidget->SetVisibility(ESlateVisibility::Collapsed);
-                 }
-            }
+            
+            if (MainMaterialSelectorWidget) CenterContentSwitcher->SetActiveWidget(MainMaterialSelectorWidget); 
+            else if (GeneralRecipeIngredientsWidget) CenterContentSwitcher->SetActiveWidget(GeneralRecipeIngredientsWidget);
+            else if (CenterContentSwitcher->GetChildrenCount() > 0) CenterContentSwitcher->SetActiveWidgetIndex(0);
         }
     }
     
@@ -333,11 +291,11 @@ void UCraftingWidget::RefreshAll()
         PlayerInventoryDisplayWidget->SetVisibility(ESlateVisibility::Visible);
     }
 }
+
 void UCraftingWidget::AttemptCraftCurrentRecipe()
 {
     if (!ActiveRecipeList.IsValidIndex(SelectedRecipeIndex)) 
     {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::AttemptCraftCurrentRecipe - No valid recipe selected."));
         return;
     }
 
@@ -351,7 +309,6 @@ void UCraftingWidget::AttemptCraftCurrentRecipe()
 
     if(CraftingOutputBoxWidget && CraftingOutputBoxWidget->IsFull())
     {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::AttemptCraftCurrentRecipe - CraftingOutputBox is full!"));
         return;
     }
 
@@ -366,7 +323,6 @@ void UCraftingWidget::AttemptCraftCurrentRecipe()
 
         if (TotalSelectedCount != SelectedRecipeRef.RequiredMainMaterialCount)
         {
-            UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::AttemptCraftCurrentRecipe: Selected main ingredient count (%d) does not match recipe requirement (%d). Cannot craft."), TotalSelectedCount, SelectedRecipeRef.RequiredMainMaterialCount);
             return; 
         }
     }
@@ -375,7 +331,6 @@ void UCraftingWidget::AttemptCraftCurrentRecipe()
     {
         if(CraftingOutputBoxWidget && CraftingOutputBoxWidget->IsFull())
         {
-            UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::AttemptCraftCurrentRecipe - OutputBox became full during batch craft. Crafted %d."), i);
             break;
         }
 
@@ -386,17 +341,11 @@ void UCraftingWidget::AttemptCraftCurrentRecipe()
            {
                if(!CraftingOutputBoxWidget->TryAddItem(CraftedItem))
                {
-                   UE_LOG(LogTemp, Error, TEXT("UCraftingWidget::AttemptCraftCurrentRecipe - Failed to add item to CraftingOutputBox."));
                }
-           }
-           else
-           {
-                UE_LOG(LogTemp, Error, TEXT("UCraftingWidget::AttemptCraftCurrentRecipe - CraftingOutputBoxWidget is NULL. Item not placed."));
            }
        }
        else
        {
-           UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::AttemptCraftCurrentRecipe - Crafting failed for one item in batch (materials might be insufficient for repeated crafts)."));
            break; 
        }
     }
@@ -420,19 +369,13 @@ void UCraftingWidget::HandleRecipeSelectedFromList(const FCraftingRecipeRow& Sel
 
     if (bFound)
     {
-        UE_LOG(LogTemp, Log, TEXT("UCraftingWidget::HandleRecipeSelectedFromList - Recipe '%s' selected at index %d."), *SelectedRecipeRow.RecipeDisplayName.ToString(), SelectedRecipeIndex);
         ClearSelectedMainIngredients();
         RefreshAll();
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::HandleRecipeSelectedFromList - Selected recipe row (Output ID: %d) not found in ActiveRecipeList."), SelectedRecipeRow.OutputItemTemplateID);
     }
 }
 
 void UCraftingWidget::HandleMainMaterialSelectionChanged(const FSelectedIngredientsMapWrapper& SelectedIngredientsWrapper)
 {
     CurrentSelectedMainIngredients = SelectedIngredientsWrapper.IngredientsMap;
-    UE_LOG(LogTemp, Log, TEXT("UCraftingWidget::HandleMainMaterialSelectionChanged - Main ingredients updated. Count: %d"), CurrentSelectedMainIngredients.Num());
     RefreshAll();
 }

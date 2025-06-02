@@ -6,7 +6,7 @@
 #include "UI/Common/EmberActivatableWidget.h"
 #include "UI/Crafting/CraftingMainMaterialWidget.h" 
 #include "Crafting/CraftingRecipeManager.h"   
-#include "UI/Crafting/CraftingOutputBoxWidget.h"
+#include "UI/Crafting/CraftingOutputBoxWidget.h" 
 #include "CraftingWidget.generated.h"
 
 class UCraftingRecipeListWidget;
@@ -16,6 +16,8 @@ struct FCraftingRecipeRow;
 class UCraftingMainMaterialWidget;
 class UWidgetSwitcher;
 class UUserWidget;
+class UCraftingOutputBoxWidget;
+
 
 UCLASS()
 class EMBER_API UCraftingWidget : public UEmberActivatableWidget
@@ -33,14 +35,14 @@ public:
 
 protected:
     void UpdateSelectedRecipe(int32 Direction);
-    void ChangeCategory(); 
+    void ChangeCategory();
     void AdjustCraftAmount(int32 Delta);
     void RefreshAll();
     void ClearSelectedMainIngredients();
     void PopulateActiveRecipeList();
 
     UFUNCTION()
-    void AttemptCraftCurrentRecipe(); 
+    void AttemptCraftCurrentRecipe();
     
     UFUNCTION()
     void HandleRecipeSelectedFromList(const FCraftingRecipeRow& SelectedRecipeRow);
@@ -53,7 +55,7 @@ protected:
     TObjectPtr<UCraftingRecipeListWidget> RecipeListWidget;
 
     UPROPERTY(meta = (BindWidgetOptional))
-    TObjectPtr<UWidgetSwitcher> CenterContentSwitcher; 
+    TObjectPtr<UWidgetSwitcher> CenterContentSwitcher;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UCraftingIngredientWidget> GeneralRecipeIngredientsWidget; 
@@ -69,7 +71,6 @@ protected:
 
     UPROPERTY(meta = (BindWidgetOptional))
     TObjectPtr<UUserWidget> PlayerInventoryDisplayWidget;
-
 
     UPROPERTY(BlueprintReadOnly, Category = "Crafting State")
     EStationType CurrentStationTypeForUI;

@@ -5,9 +5,10 @@
 #include "Item/ItemInstance.h"
 #include "CraftingOutputBoxWidget.generated.h"
 
-class UWrapBox; 
+class UUniformGridPanel;
+class UCraftedItemSlotEntryWidget;
 class UItemTemplate;
-
+class UTextBlock;
 
 USTRUCT(BlueprintType)
 struct FCraftingOutputSlotEntry
@@ -37,7 +38,7 @@ public:
     bool TryAddItem(UItemInstance* ItemInstanceToAdd);
 
     UFUNCTION(BlueprintCallable, Category = "CraftingOutput")
-    UItemInstance* RemoveItemFromSlot(int32 SlotIndex);
+    UItemInstance* RemoveItemFromSlot(int32 FlatSlotIndex);
 
     UFUNCTION(BlueprintPure, Category = "CraftingOutput")
     bool IsFull() const;
@@ -48,12 +49,20 @@ public:
     UFUNCTION(BlueprintPure, Category = "CraftingOutput")
     const TArray<FCraftingOutputSlotEntry>& GetOutputSlotEntries() const;
 
+    UFUNCTION(BlueprintCallable, Category = "Layout")
+    void SetGridDimensions(int32 InNumRows, int32 InNumColumns);
+
     UPROPERTY(BlueprintAssignable, Category = "CraftingOutput")
     FOnOutputBoxContentsChanged OnContentsChanged;
 
 protected:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CraftingOutput", meta = (ClampMin = "1", ClampMax = "20"))
-    int32 MaxOutputSlots;
+    virtual void NativeConstruct() override;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CraftingOutput|Layout", meta = (ClampMin = "1", UIMin = "1"))
+    int32 NumRows;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CraftingOutput|Layout", meta = (ClampMin = "1", UIMin = "1"))
+    int32 NumColumns;
 
     UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_OutputSlotEntries, Category = "CraftingOutput")
     TArray<FCraftingOutputSlotEntry> OutputSlotEntries;
@@ -61,9 +70,16 @@ protected:
     UFUNCTION()
     void OnRep_OutputSlotEntries();
 
-    UFUNCTION(BlueprintImplementableEvent, Category = "CraftingOutput", meta = (DisplayName = "OnUpdateOutputBoxUI_BP"))
-    void K2_UpdateOutputBoxUI(); 
+    UPROPERTY(EditDefaultsOnly, Category = "CraftingOutput")
+    TSubclassOf<UCraftedItemSlotEntryWidget> CraftedItemSlotEntryClass;
+
+    UPROPERTY(BlueprintReadOnly, Category = "CraftingOutput", meta = (BindWidgetOptional))
+    TObjectPtr<UUniformGridPanel> OutputSlotsGridPanel;
+
+    UPROPERTY(BlueprintReadOnly, Category = "CraftingOutput", meta = (BindWidgetOptional))
+    TObjectPtr<UTextBlock> TitleTextWidget;
 
 private:
+    void RefreshSlotsUI_Internal();
     const UItemTemplate* GetTemplateFromInstance(UItemInstance* Instance) const;
 };
