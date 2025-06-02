@@ -11,10 +11,10 @@ const FCraftingRecipeRow* UCraftingRecipeManager::GetRecipeRowByOutputItemID(int
     for (const FName& RowName : RowNames)
     {
         FCraftingRecipeRow* Row = RecipeDataTable->FindRow<FCraftingRecipeRow>(RowName, TEXT(""));
-        if (Row && Row->OutputItemTemplateID == TemplateID)
-        {
-            return Row;
-        }
+        // if (Row && Row->OutputItemTemplateID == TemplateID)
+        //{
+        //    return Row;
+        //}
     }
     return nullptr;
 }

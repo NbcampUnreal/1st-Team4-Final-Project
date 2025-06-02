@@ -8,7 +8,9 @@
 #include "CraftingRecipeListWidget.generated.h"
 
 class UListView;
+class UScrollBox;
 class UTextBlock;
+class UCraftingListEntryWidget;
 struct FCraftingRecipeRow;
 
 
@@ -40,6 +42,11 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UListView* RecipeListView;
 
+	UScrollBox* RecipeListScrollBox;
+
 	UFUNCTION()
-	void HandleRecipeClicked(UObject* ItemObject); 
+	void HandleRecipeClicked(UObject* ItemObject);
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UCraftingListEntryWidget> ItemDataClass;
 };

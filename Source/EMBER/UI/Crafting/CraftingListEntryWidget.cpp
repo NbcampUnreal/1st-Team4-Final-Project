@@ -1,10 +1,14 @@
 #include "UI/Crafting/CraftingListEntryWidget.h"
+
+#include "ItemTemplate.h"
 #include "Components/TextBlock.h"
 #include "Components/Border.h"
+#include "Components/Image.h"
 #include "UI/Crafting/CraftingRecipeListItemData.h" 
 #include "Crafting/CraftingRecipeManager.h" 
 #include "Crafting/CraftingSystem.h" 
 #include "Player/EmberPlayerCharacter.h" 
+#include "UI/Data/EmberItemData.h"
 
 UCraftingListEntryWidget::UCraftingListEntryWidget(const FObjectInitializer& ObjectInitializer) 
 	: Super(ObjectInitializer)
@@ -13,6 +17,18 @@ UCraftingListEntryWidget::UCraftingListEntryWidget(const FObjectInitializer& Obj
 	SelectionHighlightBorder = nullptr; 
 }
 
+PRAGMA_DISABLE_OPTIMIZATION
+void UCraftingListEntryWidget::InitializeUI(TSubclassOf<UItemTemplate> ItemTemplateClass)
+{
+	int32 ItemTemplateID = UEmberItemData::Get().FindItemTemplateIDByClass(ItemTemplateClass);
+	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemTemplateID);
+	
+	RecipeNameText->SetText(ItemTemplate.DisplayName);
+	// TODO : 아이콘 이미지 수정 
+	RecipeIcon->SetBrushFromTexture(ItemTemplate.IconTexture);
+}
+PRAGMA_ENABLE_OPTIMIZATION
+
 void UCraftingListEntryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -20,17 +36,6 @@ void UCraftingListEntryWidget::NativeConstruct()
 
 void UCraftingListEntryWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
-	CurrentListItemData = Cast<UCraftingRecipeListItemData>(ListItemObject);
-
-	if (RecipeNameText && CurrentListItemData)
-	{
-		RecipeNameText->SetText(CurrentListItemData->RecipeData.RecipeDisplayName);
-	}
-	else if (RecipeNameText)
-	{
-		RecipeNameText->SetText(FText::FromString(TEXT("...")));
-	}
-
 	AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn());
 	UCraftingSystem* CraftingSystem = Player ? Player->FindComponentByClass<UCraftingSystem>() : nullptr;
 	bool bCanCraft = false;

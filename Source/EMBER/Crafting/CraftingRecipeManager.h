@@ -6,6 +6,8 @@
 #include "Engine/DataTable.h"
 #include "CraftingRecipeManager.generated.h"
 
+class UItemTemplate;
+
 UENUM(BlueprintType)
 enum class EStationType : uint8
 {
@@ -28,7 +30,7 @@ public:
     FText RecipeDisplayName;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 OutputItemTemplateID;
+    TSubclassOf<UItemTemplate> ItemTemplateClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TMap<FGameplayTag, int32> Ingredients;
@@ -48,9 +50,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     EStationType CraftingStation;
 
-    FCraftingRecipeRow()
-        : OutputItemTemplateID(0)
-        , RequiredMainMaterialCount(0)
+    FCraftingRecipeRow():
+        ItemTemplateClass(nullptr),
+          RequiredMainMaterialCount(0)
         , CraftingTime(0.f)
         , bCraftableByCharacter(false)
         , CraftingStation(EStationType::None)

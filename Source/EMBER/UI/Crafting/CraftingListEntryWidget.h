@@ -9,6 +9,7 @@
 
 class UTextBlock;
 class UBorder;
+class UImage;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCraftingListEntryClicked, UCraftingRecipeListItemData*, ListItemData);
 
@@ -22,12 +23,17 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UTextBlock> RecipeNameText;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UImage> RecipeIcon;
     
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<UBorder> SelectionHighlightBorder;
 
 	UPROPERTY(BlueprintAssignable, Category = "ListEntry")
 	FOnCraftingListEntryClicked OnThisEntryClicked;
+
+	void InitializeUI(TSubclassOf<UItemTemplate> ItemTemplateClass);
 
 protected:
 	virtual void NativeConstruct() override;

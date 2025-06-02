@@ -41,8 +41,9 @@ void UCraftingResultWidget::SetRecipeDetails(const FCraftingRecipeRow& InRecipeR
     {
         ResultItemNameText->SetText(InRecipeRow.RecipeDisplayName);
     }
-
-    OutputTemplate = GetTemplateFromID(InRecipeRow.OutputItemTemplateID);
+    int32 ItemTemplateID = UEmberItemData::Get().FindItemTemplateIDByClass(InRecipeRow.ItemTemplateClass);
+    const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemTemplateID);
+    
     K2_OnUpdateIconAndDescription(OutputTemplate);
 
     PopulateIngredientsDisplay(InRecipeRow, PlayerOwnedIngredients, CraftingAmount);

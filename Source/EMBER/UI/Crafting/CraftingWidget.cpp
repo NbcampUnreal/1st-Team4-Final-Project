@@ -39,11 +39,12 @@ void UCraftingWidget::InitializeForStation(EStationType InStationType, FName Opt
         {
             for (int32 i = 0; i < ActiveRecipeList.Num(); ++i)
             {
-                if (ActiveRecipeList[i].OutputItemTemplateID == FoundRecipeRow->OutputItemTemplateID) 
+                // Todo: 나중에 수정할 것
+                /* if (ActiveRecipeList[i].OutputItemTemplateID == FoundRecipeRow->OutputItemTemplateID) 
                 {
                     SelectedRecipeIndex = i;
                     break;
-                }
+                } */
             }
         }
     }
@@ -359,12 +360,13 @@ void UCraftingWidget::HandleRecipeSelectedFromList(const FCraftingRecipeRow& Sel
     bool bFound = false;
     for (int32 i = 0; i < ActiveRecipeList.Num(); ++i)
     {
-        if (ActiveRecipeList[i].OutputItemTemplateID == SelectedRecipeRow.OutputItemTemplateID) 
+        //Todo : 수정 필요
+        /* if (ActiveRecipeList[i].OutputItemTemplateID == SelectedRecipeRow.OutputItemTemplateID) 
         {
             SelectedRecipeIndex = i;
             bFound = true;
             break;
-        }
+        } */
     }
 
     if (bFound)
