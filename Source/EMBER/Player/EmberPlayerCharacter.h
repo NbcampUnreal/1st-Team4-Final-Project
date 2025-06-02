@@ -21,8 +21,7 @@ class UCharacterInputComponent;
 struct FInputActionValue;
 UCLASS()
 
-class EMBER_API AEmberPlayerCharacter : public ACharacter, public IGenericTeamAgentInterface
-{
+class EMBER_API AEmberPlayerCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
@@ -102,7 +101,4 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<class UArmorComponent> ArmorComponent;
-
-	UPROPERTY(EditDefaultsOnly)
-	uint8 TeamID = 1;
 };
