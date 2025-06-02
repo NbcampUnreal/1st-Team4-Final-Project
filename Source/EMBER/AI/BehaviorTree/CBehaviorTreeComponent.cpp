@@ -77,8 +77,6 @@ FVector UCBehaviorTreeComponent::GetPatrolLocation()
 //	return Blackboard->GetValueAsVector(AvoidLocationKey);
 //}
 
-
-
 void UCBehaviorTreeComponent::SetPatrolLocation(const FVector& InLocation)
 {
 	Blackboard->SetValueAsVector(PatrolLocationKey, InLocation);
