@@ -10,15 +10,17 @@ enum class EAnimalState : uint8
 	Idle UMETA(DisplayName = "Idle"),
 	Eating UMETA(DisplayName = "Eating"),
 	Looking UMETA(DisplayName = "Looking"),
-	Guard UMETA(DisplayName = "Guard"),
-	Near UMETA(DisplayName = "Near"),
-	Run UMETA(DisplayName = "Running"),
+	Guard UMETA(DisplayName = "Guard"),//경계
+	Near UMETA(DisplayName = "Near"),//
+	Run UMETA(DisplayName = "Running"),//도망
+	Patrol UMETA(DisplayName = "Patrol"),
+	Approach UMETA(DisplayName = "Approach"),
 	Attack UMETA(DisplayName = "Attack"),
 	Hit UMETA(DisplayName = "Hit"),
 	Death UMETA(DisplayName = "Death"),
-	Flying UMETA(DisplayName = "Flying"),
+	Flying UMETA(DisplayName = "Flying"),//
 };
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAnimalStateChaged, EAnimalState, InPrevType, EAnimalState, InNewType);
 UINTERFACE(MinimalAPI) //건들필요 없는 클래스
 class UAI_Interface : public UInterface
 {

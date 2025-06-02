@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
 #include "EmberInputConfig.generated.h"
@@ -44,4 +45,5 @@ public:
 	// 변경될 수 있는 입력 액션들을 포함한다.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputTag"))
 	TArray<FEmberInputAction> AbilityInputActions;
+	
 };

@@ -49,9 +49,9 @@ public:	//	추가
 public:
 	void OnSprint();
 	void OnRun();
-	void OnWarlk();
+	void OnWalk();
 
-private:
+public:
 	void SetSpeed(ESpeedType SpeedType);
 
 public: 
