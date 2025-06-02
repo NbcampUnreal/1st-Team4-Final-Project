@@ -31,7 +31,9 @@ void ABaseAIController::BeginPlay()
 		SelectedBT = AggressiveBT;
 		CurrentBT = AggressiveBT;
 		break;
-
+	case EAnimalType::Griffon:
+		SelectedBT = GriffonBT;
+		break;
 	}
 
 	if (UseBlackboard(BlackboardAsset, BlackboardComp) && SelectedBT)

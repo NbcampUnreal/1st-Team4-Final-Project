@@ -8,6 +8,8 @@
 #include "UObject/Object.h"
 #include "ItemFragment_Equipable.generated.h"
 
+class UEmberAbilitySet;
+
 USTRUCT(BlueprintType)
 struct FRarityStat
 {
@@ -81,6 +83,9 @@ protected:
 	void AddStatTagStack(UItemInstance* ItemInstance, const TArray<FRarityStatRangeSet>& RarityStatRangeSets) const;
 
 public:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="Ember|Equipable")
 	EEquipmentType EquipmentType = EEquipmentType::Count;
+
+	UPROPERTY(EditDefaultsOnly, Category="Ember|Equipable")
+	TObjectPtr<const UEmberAbilitySet> BaseAbilitySet;
 };

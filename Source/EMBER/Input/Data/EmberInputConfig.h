@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
 #include "EmberInputConfig.generated.h"
@@ -38,10 +39,11 @@ public:
 	TObjectPtr<UInputMappingContext> InputMappingContext;
 	
 	// 변경되지 않는 고정된 입력 액션들을 포함한다.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputTag"))
 	TArray<FEmberInputAction> NativeInputActions;
 
 	// 변경될 수 있는 입력 액션들을 포함한다.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputTag"))
 	TArray<FEmberInputAction> AbilityInputActions;
+	
 };

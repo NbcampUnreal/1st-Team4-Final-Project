@@ -5,6 +5,7 @@
 
 UItemFragment_Equipable_Attachment::UItemFragment_Equipable_Attachment(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+    EquipmentInfo.PlayRate = 1.0f;
 }
 
 FEquipment UItemFragment_Equipable_Attachment::GetEquipmentInfo() const

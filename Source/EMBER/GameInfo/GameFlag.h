@@ -118,6 +118,7 @@ enum class EWeaponType : uint8
 	OneHandSword,
 	TwoHandSword,
 	Shield,
+	Tool,
 
 	Count	UMETA(Hidden)
 };

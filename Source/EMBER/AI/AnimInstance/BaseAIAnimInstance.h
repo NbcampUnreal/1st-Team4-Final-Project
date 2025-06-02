@@ -32,17 +32,31 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Movement")
 	float CurrentSpeed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Movement")
+//<<<<<<< HEAD
+//	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Movement")
+//=======
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
+	float CurrentHeight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
+//>>>>>>> Dev
 	float CurrentDirection;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
+	bool bIsAirborne;
 	
 	virtual void PlayMontage(EAnimActionType Desired, EAnimActionType Fallback);
-	virtual void PlayDeathMontage();
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	virtual void PlayStateMontage(); //AnimalState에 따라 자동으로 몽타주 재생
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAnimalState AnimalState;
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Anim")
 	TMap<EAnimActionType, FName> AnimSectionMap;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Anim")
+	UAnimMontage* IdleMontage;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Anim")
 	UAnimMontage* AttackMontage;
@@ -54,7 +68,8 @@ protected:
 	UAnimMontage* DeathMontage;
 
 	virtual UAnimMontage* GetMontageToPlay(EAnimActionType ActionType) const;
-	
+	virtual UAnimMontage* GetMontageToPlay();
+
 	virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
 	virtual void SetBlackboardInt(FName KeyName, int value) override;
 	virtual void SetBlackboardFloat(FName KeyName, float value) override;

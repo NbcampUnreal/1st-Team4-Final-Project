@@ -1,11 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "AI/AnimInstance/Deer_AnimInstance.h"
-#include "AIController.h"
-#include "AI/BaseAI.h"
 #include "Animation/AnimMontage.h"
-#include "BehaviorTree/BlackboardComponent.h"
 
 UDeer_AnimInstance::UDeer_AnimInstance()
 {
@@ -39,27 +33,3 @@ void UDeer_AnimInstance::StopMontage()
 {
 	StopAllMontages(0.1f); // 블렌드 아웃(0.1초) 후 애니메이션 중지
 }
-
-void UDeer_AnimInstance::SetBlackboardBool(FName KeyName, bool bValue)
-{
-	Super::SetBlackboardBool(KeyName, bValue);
-	// if (bValue)
-	// {
-	// 	if (KeyName.IsEqual(FName("Idle")))
-	// 	{
-	// 		AnimalState = EAnimalState::Idle;
-	// 	}
-	// 	else if (KeyName.IsEqual(FName("Eating")))
-	// 	{
-	// 		AnimalState = EAnimalState::Eating;
-	// 	}
-	// 	else if (KeyName.IsEqual(FName("Looking")))
-	// 	{
-	// 		AnimalState = EAnimalState::Looking;
-	// 	}
-	// }
-}
-
-
-
-

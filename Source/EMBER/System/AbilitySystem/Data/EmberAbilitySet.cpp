@@ -14,6 +14,14 @@ void FEmberAbilitySet_GrantedHandles::AddAbilitySpecHandle(const FGameplayAbilit
 	}
 }
 
+void FEmberAbilitySet_GrantedHandles::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)
+{
+	if (Handle.IsValid())
+	{
+		GameplayEffectHandles.Add(Handle);
+	}
+}
+
 void FEmberAbilitySet_GrantedHandles::TakeFromAbilitySystem(UEmberAbilitySystemComponent* EmberASC)
 {
 	if (!EmberASC->IsOwnerActorAuthoritative())
@@ -29,7 +37,16 @@ void FEmberAbilitySet_GrantedHandles::TakeFromAbilitySystem(UEmberAbilitySystemC
 		}
 	}
 
+	for (const FActiveGameplayEffectHandle& Handle : GameplayEffectHandles)
+	{
+		if (Handle.IsValid())
+		{
+			EmberASC->RemoveActiveGameplayEffect(Handle);
+		}
+	}
+
 	GrantedAttributeSets.Reset();
+	GameplayEffectHandles.Reset();
 }
 
 UEmberAbilitySet::UEmberAbilitySet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -61,10 +78,28 @@ void UEmberAbilitySet::GiveToAbilitySystem(UEmberAbilitySystemComponent* EmberAS
 		AbilitySpec.GetDynamicSpecSourceTags().AddTag(AbilityToGrant.InputTag);
 
 		const FGameplayAbilitySpecHandle AbilitySpecHandle = EmberASC->GiveAbility(AbilitySpec);
-
+		
 		if (OutGrantedHandles)
 		{
 			OutGrantedHandles->AddAbilitySpecHandle(AbilitySpecHandle);
+		}
+	}
+
+	for (int32 EffectIndex = 0; EffectIndex < GrantedGameplayEffects.Num(); ++EffectIndex)
+	{
+		const FEmberAbilitySet_GameplayEffect& EffectToGrant = GrantedGameplayEffects[EffectIndex];
+
+		if (!IsValid(EffectToGrant.GameplayEffect))
+		{
+			continue;
+		}
+
+		const UGameplayEffect* GameplayEffect = EffectToGrant.GameplayEffect->GetDefaultObject<UGameplayEffect>();
+		const FActiveGameplayEffectHandle GameplayEffectHandle = EmberASC->ApplyGameplayEffectToSelf(GameplayEffect, EffectToGrant.EffectLevel, EmberASC->MakeEffectContext());
+
+		if (OutGrantedHandles)
+		{
+			OutGrantedHandles->AddGameplayEffectHandle(GameplayEffectHandle);
 		}
 	}
 }
