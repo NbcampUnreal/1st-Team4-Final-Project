@@ -62,7 +62,7 @@ void UBaseAIAnimInstance::PlayStateMontage()
 	if (PlayingMontage)
 	{
 		UE_LOG(LogTemp,Error, TEXT("Montage: %s"), *PlayingMontage->GetName());
-		Montage_Play(PlayingMontage,1.0f);
+		Montage_Play(PlayingMontage);
 	}
 }
 
