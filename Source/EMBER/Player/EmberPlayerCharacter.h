@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "C_CameraComponent.h"
+#include "GenericTeamAgentInterface.h"
 #include "Input/CharacterInputComponent.h"
 #include "Component/MontageSystemComponent.h"
 #include "Input/Data/EmberInputConfig.h"
@@ -23,7 +24,7 @@ class UCharacterInputComponent;
 struct FInputActionValue;
 UCLASS()
 
-class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface
+class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -118,4 +119,8 @@ private:
 	void Input_Look(const FInputActionValue& InputActionValue);
 
 #pragma endregion
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Team")
+	uint8 TeamID = 1;
 };

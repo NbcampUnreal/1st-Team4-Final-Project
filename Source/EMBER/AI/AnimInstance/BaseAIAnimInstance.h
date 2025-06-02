@@ -32,14 +32,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Movement")
 	float CurrentSpeed;
 
-//<<<<<<< HEAD
-//	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Movement")
-//=======
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
 	float CurrentHeight;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
-//>>>>>>> Dev
 	float CurrentDirection;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
