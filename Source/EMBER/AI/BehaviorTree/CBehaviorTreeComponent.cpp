@@ -16,44 +16,45 @@ void UCBehaviorTreeComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-EAIStateType UCBehaviorTreeComponent::GetType()
+EAnimalState UCBehaviorTreeComponent::GetType()
 {
-	return (EAIStateType)Blackboard->GetValueAsEnum(AIStateTypeKey);
+	return (EAnimalState)Blackboard->GetValueAsEnum(AIStateTypeKey);
 }
 
 bool UCBehaviorTreeComponent::IsWaitMode()
 {
-	return GetType() == EAIStateType::Wait;
+	return GetType() == EAnimalState::Idle;
 }
 
 bool UCBehaviorTreeComponent::IsApproachMode()
 {
-	return GetType() == EAIStateType::Approach;
+	return GetType() == EAnimalState::Run;
 }
 
 bool UCBehaviorTreeComponent::IsActionMode()
 {
-	return GetType() == EAIStateType::Action;
+	return GetType() == EAnimalState::Attack;
 }
 
 bool UCBehaviorTreeComponent::IsPatrolMode()
 {
-	return GetType() == EAIStateType::Patrol;
+	return GetType() == EAnimalState::Patrol;
 }
 
 bool UCBehaviorTreeComponent::IsHittedMode()
 {
-	return GetType() == EAIStateType::Hitted;
+	return GetType() == EAnimalState::Hit;
 }
 
 bool UCBehaviorTreeComponent::IsAvoidMode()
 {
-	return GetType() == EAIStateType::Avoid;
+	//return GetType() == EAnimalState::Avoid;
+	return false;
 }
 
 bool UCBehaviorTreeComponent::IsDeadMode()
 {
-	return GetType() == EAIStateType::Dead;
+	return GetType() == EAnimalState::Death;
 }
 
 TObjectPtr<ACharacter> UCBehaviorTreeComponent::GetTarget()
@@ -66,10 +67,10 @@ TObjectPtr<ACharacter> UCBehaviorTreeComponent::GetTarget()
 	return Cast<ACharacter>(Blackboard->GetValueAsObject(TargetKey));
 }
 
-//FVector UCBehaviorTreeComponent::GetPatrolLocation()
-//{
-//	return Blackboard->GetValueAsVector(PatrolLocationKey);
-//}
+FVector UCBehaviorTreeComponent::GetPatrolLocation()
+{
+	return Blackboard->GetValueAsVector(PatrolLocationKey);
+}
 
 //FVector UCBehaviorTreeComponent::GetAvoidlocation()
 //{
@@ -78,49 +79,49 @@ TObjectPtr<ACharacter> UCBehaviorTreeComponent::GetTarget()
 
 
 
-//void UCBehaviorTreeComponent::SetPatrolLocation(const FVector& InLocation)
-//{
-//	Blackboard->SetValueAsVector(PatrolLocationKey, InLocation);
-//}
+void UCBehaviorTreeComponent::SetPatrolLocation(const FVector& InLocation)
+{
+	Blackboard->SetValueAsVector(PatrolLocationKey, InLocation);
+}
 
 void UCBehaviorTreeComponent::SetWaitMode()
 {
-	ChangeType(EAIStateType::Wait);
+	ChangeType(EAnimalState::Idle);
 }
 
 void UCBehaviorTreeComponent::SetApproachMode()
 {
-	ChangeType(EAIStateType::Approach);
+	ChangeType(EAnimalState::Approach);
 }
 
 void UCBehaviorTreeComponent::SetActionMode()
 {
-	ChangeType(EAIStateType::Action);
+	ChangeType(EAnimalState::Attack);
 }
 
 void UCBehaviorTreeComponent::SetPatrolMode()
 {
-	ChangeType(EAIStateType::Patrol);
+	ChangeType(EAnimalState::Patrol);
 }
 
 void UCBehaviorTreeComponent::SetHittedMode()
 {
-	ChangeType(EAIStateType::Hitted);
+	ChangeType(EAnimalState::Hit);
 }
 
 void UCBehaviorTreeComponent::SetAvoidMode()
 {
-	ChangeType(EAIStateType::Avoid);
+	//ChangeType(EAnimalState::Avoid);
 }
 
 void UCBehaviorTreeComponent::SetDeadMode()
 {
-	ChangeType(EAIStateType::Dead);
+	ChangeType(EAnimalState::Death);
 }
 
-void UCBehaviorTreeComponent::ChangeType(EAIStateType InType)
+void UCBehaviorTreeComponent::ChangeType(EAnimalState InType)
 {
-	EAIStateType prevType = GetType();
+	EAnimalState prevType = GetType();
 
 	Blackboard->SetValueAsEnum(AIStateTypeKey, (uint8)InType);
 

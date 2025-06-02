@@ -10,9 +10,7 @@
 AHumanAIBase::AHumanAIBase()
 {
 	StateComponent = CreateDefaultSubobject<UC_StateComponent>(TEXT("State Component"));
-	StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("Status Component"));
 	MoveComponent = CreateDefaultSubobject<UC_CharacterMovementComponent>(TEXT("Move Component"));
-	MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("Montage Component"));
 	Behavior = CreateDefaultSubobject<UCBehaviorTreeComponent>(TEXT("BehaviorTree"));
 }
 
@@ -20,7 +18,8 @@ void AHumanAIBase::BeginPlay()
 {
 	Super::BeginPlay();
 	MoveComponent->OnWalk();
-	StateComponent->OnStateTypeChanged.AddDynamic(this, &AHumanAIBase::OnStateTypeChanged);
+	//StateComponent->OnStateTypeChanged.AddDynamic(this, &AHumanAIBase::OnStateTypeChanged);
+
 }
 
 void AHumanAIBase::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)

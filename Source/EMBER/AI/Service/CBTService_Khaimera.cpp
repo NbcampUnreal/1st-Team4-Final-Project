@@ -47,6 +47,7 @@ void UCBTService_Khaimera::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	if(state->IsHittdMode() == true)
 	{
 		aiState->SetHittedMode();
+		
 		return;
 	}
 

@@ -10,7 +10,7 @@
 
 class UC_StateComponent;
 UCLASS()
-class EMBER_API AHumanAIBase : public ACharacter
+class EMBER_API AHumanAIBase : public ABaseAI
 {
 	GENERATED_BODY()
 public:
@@ -31,16 +31,16 @@ private:
 protected:	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Stat")
 	TObjectPtr<UC_StateComponent> StateComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Status")
-	TObjectPtr<class UStatusComponent> StatusComponent;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Status")
+	//TObjectPtr<class UStatusComponent> StatusComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Move")
 	TObjectPtr<class UC_CharacterMovementComponent> MoveComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Montage")
-	TObjectPtr<class UMontageSystemComponent> MontageComponent;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Montage")
+	//TObjectPtr<class UMontageSystemComponent> MontageComponent;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "AI|Behavior")
 	TObjectPtr< class UCBehaviorTreeComponent> Behavior;
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
-	UPROPERTY(EditAnywhere)
-	float MaxHP = 100.0f;
+	//UPROPERTY(EditAnywhere)
+	//float MaxHP = 100.0f;
 };

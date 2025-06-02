@@ -20,6 +20,6 @@ protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Action")
+	UPROPERTY(EditAnywhere, Category = "Action")
 	float ActionRange = 150.0f;
 };

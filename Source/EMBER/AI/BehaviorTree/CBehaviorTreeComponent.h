@@ -3,16 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AI_Interface.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "CBehaviorTreeComponent.generated.h"
 
-UENUM()
-enum EAIStateType
-{
-	Wait = 0, Approach, Action, Patrol, Hitted, Avoid, Dead, MAX
-};
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAIStateTypeChanged, EAIStateType, InPrevType, EAIStateType, InNewType);
 
 UCLASS()
 class EMBER_API UCBehaviorTreeComponent : public UBehaviorTreeComponent
@@ -29,7 +24,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	EAIStateType GetType();
+	EAnimalState GetType();
 
 public:
 	bool IsWaitMode();
@@ -43,6 +38,9 @@ public:
 public:
 	TObjectPtr<ACharacter> GetTarget();
 
+	FVector GetPatrolLocation();
+	void SetPatrolLocation(const FVector& InLocation);
+
 	void SetWaitMode();
 	void SetApproachMode();
 	void SetActionMode();
@@ -52,17 +50,17 @@ public:
 	void SetDeadMode();
 
 private:
-	void ChangeType(EAIStateType InType);
+	void ChangeType(EAnimalState InType);
 
 public:
-	FAIStateTypeChanged OnAIStateTypeChanged;
+	FAnimalStateChaged OnAIStateTypeChanged;
 private:
 	UPROPERTY(EditAnywhere, Category = "Key")
 	FName AIStateTypeKey = "AIState";
 	UPROPERTY(EditAnywhere, Category = "Key")
 	FName TargetKey = "Target";
 	UPROPERTY(EditAnywhere, Category = "Key")
-	FName AvoidLocationKey= "Avoid Location";
+	FName PatrolLocationKey = "Patrol_Location";
 
 private:
 	TObjectPtr<UBlackboardComponent> Blackboard;

@@ -2,6 +2,7 @@
 
 #include "AnimInstance/BaseAIAnimInstance.h"
 #include "BaseAIController.h"
+#include "CAIController.h"
 #include "MontageSystemComponent.h"
 #include "StatusComponent.h"
 #include "Perception/AIPerceptionComponent.h"
@@ -141,7 +142,11 @@ void ABaseAI::OnDeath()
 
 void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
-	ABaseAIController* BaseAIController = Cast<ABaseAIController>(Cast<AAIController>(GetController()));
+	//TODOS 원상복귀 해야될 수 있음
+	AAIController* BaseAIController = Cast<ABaseAIController>(Cast<AAIController>(GetController()));
+	if (BaseAIController == nullptr)
+		BaseAIController = Cast<ACAIController>(GetController());
+	//ABaseAIController* BaseAIController = Cast<ABaseAIController>(Cast<AAIController>(GetController()));
 	BlackboardComp = BaseAIController->GetBlackboardComponent();
 }
 
