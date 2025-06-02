@@ -136,6 +136,7 @@ void ABaseAI::OnDeath()
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimalState = EAnimalState::Death;
+		SetWalkSpeed();
 		AnimInstance->StopAllMontages(0.0f);
 		AnimInstance->AnimalState = EAnimalState::Death;
 		AnimInstance->PlayStateMontage();
