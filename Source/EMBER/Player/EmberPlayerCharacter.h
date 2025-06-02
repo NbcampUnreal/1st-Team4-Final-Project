@@ -80,6 +80,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
 
 public:
 	//~IAbilitySystemInterface Overrides
@@ -92,8 +93,7 @@ public:
 
 	//TODOS
 	virtual void PostNetInit() override;
-public:
-	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
+	
 private:
 	UPROPERTY()
 	TObjectPtr<UCharacterInputComponent> CharacterInputComponent;
@@ -110,6 +110,7 @@ private:
 	UPROPERTY()
 	TObjectPtr<class UArmorComponent> ArmorComponent;
 
+
 #pragma region Inputs
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
@@ -120,6 +121,7 @@ private:
 
 #pragma endregion
 
-	UPROPERTY(EditDefaultsOnly)
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Team")
 	uint8 TeamID = 1;
 };
