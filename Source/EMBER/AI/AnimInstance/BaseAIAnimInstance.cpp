@@ -41,7 +41,6 @@ void UBaseAIAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType F
 	if (AnimSectionMap.Contains(Desired))
 	{
 		MontageToPlay = GetMontageToPlay(Desired);
-		UE_LOG(LogTemp, Log, TEXT("Desired Montage"));
 	}
 	else if (AnimSectionMap.Contains(Fallback))
 	{
