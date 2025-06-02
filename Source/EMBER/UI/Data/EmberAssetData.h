@@ -44,9 +44,9 @@ public:
 
 protected:
 /* Editor */
-#if WITH_EDITORONLY_DATA
+//#if WITH_EDITORONLY_DATA
 	virtual void PreSave(FObjectPreSaveContext ObjectSaveContext) override;
-#endif
+//#endif
 	
 public:
 	FSoftObjectPath GetAssetPathByName(const FName& AssetName) const;

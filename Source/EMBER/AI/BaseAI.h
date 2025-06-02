@@ -111,3 +111,5 @@ public:
 	
 	EAnimalState AnimalState;
 };
+
+//TODOS State, Move 컴포넌트 있고어야할듯

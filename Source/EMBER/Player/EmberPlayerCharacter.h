@@ -6,8 +6,10 @@
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "C_CameraComponent.h"
+#include "GenericTeamAgentInterface.h"
 #include "Input/CharacterInputComponent.h"
 #include "Component/MontageSystemComponent.h"
+#include "Input/Data/EmberInputConfig.h"
 #include "EmberPlayerCharacter.generated.h"
 
 class UEmberAbilitySystemComponent;
@@ -22,7 +24,7 @@ class UCharacterInputComponent;
 struct FInputActionValue;
 UCLASS()
 
-class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface
+class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -90,7 +92,8 @@ public:
 
 	//TODOS
 	virtual void PostNetInit() override;
-	
+public:
+	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
 private:
 	UPROPERTY()
 	TObjectPtr<UCharacterInputComponent> CharacterInputComponent;
@@ -106,4 +109,17 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<class UArmorComponent> ArmorComponent;
+
+#pragma region Inputs
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
+	UEmberInputConfig* InputConfigDataAsset;
+
+	void Input_Move(const FInputActionValue& InputActionValue);
+	void Input_Look(const FInputActionValue& InputActionValue);
+
+#pragma endregion
+
+	UPROPERTY(EditDefaultsOnly)
+	uint8 TeamID = 1;
 };

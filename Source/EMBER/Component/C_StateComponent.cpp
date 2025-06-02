@@ -65,3 +65,13 @@ void UC_StateComponent::SetDeadMode()
 	CurrentStateType = EStateType::Dead;
 }
 
+void UC_StateComponent::ChangeType(EStateType InType)
+{
+	EStateType prevType = CurrentStateType;
+	CurrentStateType = InType;
+	UE_LOG(LogTemp, Warning, L"%d", CurrentStateType);
+
+	if (OnStateTypeChanged.IsBound())
+		OnStateTypeChanged.Broadcast(prevType, CurrentStateType);
+}
+
