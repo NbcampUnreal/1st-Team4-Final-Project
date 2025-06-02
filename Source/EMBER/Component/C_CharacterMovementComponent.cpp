@@ -89,13 +89,12 @@ void UC_CharacterMovementComponent::OnRun()
 	SetSpeed(ESpeedType::Run);
 }
 
-void UC_CharacterMovementComponent::OnWarlk()
+void UC_CharacterMovementComponent::OnWalk()
 {
 	SetSpeed(ESpeedType::Walk);
 }
 
 void UC_CharacterMovementComponent::SetSpeed(ESpeedType SpeedType)
 {
-	CurrentSpeedType = SpeedType;
-	MaxWalkSpeed = Speed[(int32)CurrentSpeedType];
+	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(int32)SpeedType];
 }
