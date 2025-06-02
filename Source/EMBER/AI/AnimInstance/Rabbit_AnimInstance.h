@@ -13,7 +13,4 @@ class EMBER_API URabbit_AnimInstance : public UBaseAIAnimInstance
 
 public:
 	virtual void NativeInitializeAnimation() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	UAnimMontage* IdleMontage;
 };
