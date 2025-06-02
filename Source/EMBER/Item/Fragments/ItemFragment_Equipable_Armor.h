@@ -17,9 +17,9 @@ public:
 	UItemFragment_Equipable_Armor(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
-#if WITH_EDITORONLY_DATA
+//#if WITH_EDITORONLY_DATA
 	virtual void PreSave(FObjectPreSaveContext SaveContext) override;
-#endif // WITH_EDITORONLY_DATA
+//#endif // WITH_EDITORONLY_DATA
 	
 public:
 	virtual void OnInstanceCreated(UItemInstance* ItemInstance) const override;
