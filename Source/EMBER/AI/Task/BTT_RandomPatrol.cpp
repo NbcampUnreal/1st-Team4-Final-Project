@@ -1,5 +1,4 @@
-#include "AI/Task/BTT_BossPatrol.h"
-
+#include "BTT_RandomPatrol.h"
 #include "CAIController.h"
 #include "HumanAIBase.h"
 #include "NavigationSystem.h"
@@ -7,13 +6,13 @@
 #include "Navigation/PathFollowingComponent.h"
 
 
-UBTT_BossPatrol::UBTT_BossPatrol()
+UBTT_RandomPatrol::UBTT_RandomPatrol()
 {
 	NodeName = " Boss Patrol";
 	bNotifyTick = true;
 }
 
-EBTNodeResult::Type UBTT_BossPatrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTT_RandomPatrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
@@ -58,7 +57,7 @@ EBTNodeResult::Type UBTT_BossPatrol::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	return EBTNodeResult::InProgress;
 }
 
-void UBTT_BossPatrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTT_RandomPatrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 

@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "BTT_BossPatrol.generated.h"
+#include "BTT_RandomPatrol.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EMBER_API UBTT_BossPatrol : public UBTTaskNode
+class EMBER_API UBTT_RandomPatrol : public UBTTaskNode
 {
 	GENERATED_BODY()
 public:
-	UBTT_BossPatrol();
+	UBTT_RandomPatrol();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
