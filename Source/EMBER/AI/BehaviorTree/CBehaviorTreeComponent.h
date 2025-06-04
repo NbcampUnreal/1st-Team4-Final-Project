@@ -7,14 +7,13 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "CBehaviorTreeComponent.generated.h"
 
-
 UENUM(BlueprintType)
 enum class EAnimalState : uint8
 {
 	Idle UMETA(DisplayName = "Idle"),
-	Guard UMETA(DisplayName = "Guard"),//°æ°è
-	//Near UMETA(DisplayName = "Near"),//->¼­ºñ½º¿¡¼­ ´ëÃ¼
-	Run UMETA(DisplayName = "Running"),//µµ¸Á
+	Guard UMETA(DisplayName = "Guard"),//ï¿½ï¿½ï¿½
+	Detect UMETA(DisplayName = "Detect"),
+	Run UMETA(DisplayName = "Running"),//ï¿½ï¿½ï¿½ï¿½
 	Patrol UMETA(DisplayName = "Patrol"),
 	Chase UMETA(DisplayName = "Chase"),
 	Attack UMETA(DisplayName = "Attack"),
