@@ -1,7 +1,5 @@
 #include "BaseAIAnimInstance.h"
 #include "BaseAI.h"
-#include "GameFramework/Pawn.h"
-#include "BehaviorTree/BlackboardComponent.h"
 #include "KismetAnimationLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -9,12 +7,20 @@ void UBaseAIAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	APawn* OwnerPawn = TryGetPawnOwner();
-	if (!OwnerPawn) return;
-	ABaseAIController* AIController = Cast<ABaseAIController>(OwnerPawn->GetController());
+	ABaseAI* AICharacter = Cast<ABaseAI>(TryGetPawnOwner());
+	if (!AICharacter) return;
+	ABaseAIController* AIController = Cast<ABaseAIController>(AICharacter->GetController());
 	if (!AIController) return;
-	BlackboardComp = AIController->GetBlackboardComponent();
-	if (!BlackboardComp) return;
+
+	for (uint8 i = 0; i < static_cast<uint8>(EAnimActionType::MAX); ++i)
+	{
+		EAnimActionType ActionType = static_cast<EAnimActionType>(i);
+
+		if (!AnimSectionMap.Contains(ActionType))
+		{
+			AnimSectionMap.Add(ActionType, FName("Default"));
+		}
+	}
 }
 
 void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -33,19 +39,19 @@ void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	}
 }
 
-void UBaseAIAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType Fallback)
+void UBaseAIAnimInstance::PlayMontage()
 {
 	UAnimMontage* MontageToPlay = nullptr;
-	EAnimActionType FinalType = Desired;
+	EAnimActionType FinalType = DesiredActionType;
 
-	if (AnimSectionMap.Contains(Desired))
+	if (AnimSectionMap.Contains(DesiredActionType))
 	{
-		MontageToPlay = GetMontageToPlay(Desired);
+		MontageToPlay = GetMontageToPlay(DesiredActionType);
 	}
-	else if (AnimSectionMap.Contains(Fallback))
+	else if (AnimSectionMap.Contains(FallbackActionType))
 	{
-		MontageToPlay = GetMontageToPlay(Fallback);
-		FinalType = Fallback;
+		MontageToPlay = GetMontageToPlay(FallbackActionType);
+		FinalType = FallbackActionType;
 	}
 
 	if (!MontageToPlay) return;
@@ -54,21 +60,27 @@ void UBaseAIAnimInstance::PlayMontage(EAnimActionType Desired, EAnimActionType F
 	Montage_JumpToSection(AnimSectionMap[FinalType], MontageToPlay);
 }
 
-void UBaseAIAnimInstance::PlayStateMontage()
-{
-	UAnimMontage* PlayingMontage = GetMontageToPlay();
-	UE_LOG(LogTemp, Warning, TEXT("Montage: %s"), *UEnum::GetValueAsString(AnimalState));
-	if (PlayingMontage)
-	{
-		UE_LOG(LogTemp,Error, TEXT("Montage: %s"), *PlayingMontage->GetName());
-		Montage_Play(PlayingMontage);
-	}
-}
+// void UBaseAIAnimInstance::PlayStateMontage()
+// {
+// 	UAnimMontage* PlayingMontage = GetMontageToPlay();
+// 	UE_LOG(LogTemp, Warning, TEXT("Montage: %s"), *UEnum::GetValueAsString(AnimalState));
+// 	if (PlayingMontage)
+// 	{
+// 		UE_LOG(LogTemp,Error, TEXT("Montage: %s"), *PlayingMontage->GetName());
+// 		Montage_Play(PlayingMontage);
+// 	}
+// }
 
 UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay(EAnimActionType ActionType) const
 {
 	switch (ActionType)
 	{
+	case EAnimActionType::Idle:
+		return IdleMontage;
+
+	case EAnimActionType::Death:
+		return DeathMontage;
+		
 	case EAnimActionType::AttackNormal:
 	case EAnimActionType::AttackRun:
 	case EAnimActionType::AttackJump:
@@ -84,48 +96,20 @@ UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay(EAnimActionType ActionType) 
 	}
 }
 
-UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay()
-{
-	switch (AnimalState)
-	{
-	case EAnimalState::Idle:
-		return IdleMontage;
-	case EAnimalState::Death:
-		return DeathMontage;
-	case EAnimalState::Attack:
-		return AttackMontage;
-	case EAnimalState::Hit:
-		return HitMontage;
-
-	default:
-		return nullptr;
-	}
-}
-
-#pragma region Interface
-
-void UBaseAIAnimInstance::SetBlackboardBool(FName KeyName, bool bValue)
-{
-	BlackboardComp->SetValueAsBool(KeyName, bValue);
-}
-
-void UBaseAIAnimInstance::SetBlackboardInt(FName KeyName, int value)
-{
-	BlackboardComp->SetValueAsInt(KeyName, value);
-}
-
-void UBaseAIAnimInstance::SetBlackboardFloat(FName KeyName, float value)
-{
-	BlackboardComp->SetValueAsFloat(KeyName, value);
-}
-
-void UBaseAIAnimInstance::SetBlackboardVector(FName KeyName, FVector value)
-{
-	BlackboardComp->SetValueAsVector(KeyName, value);
-}
-
-void UBaseAIAnimInstance::SetBlackboardObject(FName KeyName, UObject* object)
-{
-	BlackboardComp->SetValueAsObject(KeyName, object);
-}
-#pragma endregion
+// UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay()
+// {
+// 	switch (AnimalState)
+// 	{
+// 	case EAnimalState::Idle:
+// 		return IdleMontage;
+// 	case EAnimalState::Death:
+// 		return DeathMontage;
+// 	case EAnimalState::Attack:
+// 		return AttackMontage;
+// 	case EAnimalState::Hit:
+// 		return HitMontage;
+//
+// 	default:
+// 		return nullptr;
+// 	}
+// }
