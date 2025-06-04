@@ -21,6 +21,8 @@ EAnimalState UCBehaviorTreeComponent::GetType()
 	return (EAnimalState)Blackboard->GetValueAsEnum(AIStateTypeKey);
 }
 
+#pragma region GetState
+
 bool UCBehaviorTreeComponent::IsWaitMode()
 {
 	return GetType() == EAnimalState::Idle;
@@ -34,6 +36,11 @@ bool UCBehaviorTreeComponent::IsGuardMode()
 bool UCBehaviorTreeComponent::IsRunMode()
 {
 	return GetType() == EAnimalState::Run;
+}
+
+bool UCBehaviorTreeComponent::IsDetect()
+{
+	return GetType() == EAnimalState::Detect;
 }
 
 bool UCBehaviorTreeComponent::IsFlyingMode()
@@ -66,27 +73,24 @@ bool UCBehaviorTreeComponent::IsDeadMode()
 	return GetType() == EAnimalState::Death;
 }
 
+FVector UCBehaviorTreeComponent::GetPatrolLocation()
+{
+	return Blackboard->GetValueAsVector(PatrolLocationKey);
+}
+
 TObjectPtr<ACharacter> UCBehaviorTreeComponent::GetTarget()
 {
-	if(Blackboard == nullptr)
+	if (Blackboard == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"Blackboard");
 		return nullptr;
 	}
 	return Cast<ACharacter>(Blackboard->GetValueAsObject(TargetKey));
 }
+#pragma endregion
 
-FVector UCBehaviorTreeComponent::GetPatrolLocation()
-{
-	return Blackboard->GetValueAsVector(PatrolLocationKey);
-}
-
-void UCBehaviorTreeComponent::SetPatrolLocation(const FVector& InLocation)
-{
-	Blackboard->SetValueAsVector(PatrolLocationKey, InLocation);
-}
-
-void UCBehaviorTreeComponent::SetWaitMode()
+#pragma region SetState
+void UCBehaviorTreeComponent::SetIdleMode()
 {
 	ChangeType(EAnimalState::Idle);
 }
@@ -99,6 +103,11 @@ void UCBehaviorTreeComponent::SetGuardMode()
 void UCBehaviorTreeComponent::SetRunMode()
 {
 	ChangeType(EAnimalState::Run);
+}
+
+void UCBehaviorTreeComponent::SetDetect()
+{
+	ChangeType(EAnimalState::Detect);
 }
 
 void UCBehaviorTreeComponent::SetFlyingMode()
@@ -130,6 +139,51 @@ void UCBehaviorTreeComponent::SetDeadMode()
 {
 	ChangeType(EAnimalState::Death);
 }
+
+void UCBehaviorTreeComponent::SetPatrolLocation(const FVector& InLocation)
+{
+	Blackboard->SetValueAsVector(PatrolLocationKey, InLocation);
+}
+#pragma endregion
+
+#pragma region SetBlackboard
+void UCBehaviorTreeComponent::SetBlackboard_Bool(FName Keyname, bool Value)
+{
+	Blackboard->SetValueAsBool(Keyname, Value);
+}
+
+void UCBehaviorTreeComponent::SetBlackboard_String(FName Keyname, FString Value)
+{
+	Blackboard->SetValueAsString(Keyname, Value);
+}
+
+void UCBehaviorTreeComponent::SetBlackboard_Int(FName Keyname, int Value)
+{
+	Blackboard->SetValueAsInt(Keyname, Value);
+}
+
+void UCBehaviorTreeComponent::SetBlackboard_Float(FName Keyname, float Value)
+{
+	Blackboard->SetValueAsFloat(Keyname, Value);
+}
+
+void UCBehaviorTreeComponent::SetBlackboard_Enum(FName Keyname, EAnimalState Value)
+{
+	Blackboard->SetValueAsEnum(Keyname, (uint8)Value);
+}
+
+void UCBehaviorTreeComponent::SetBlackboard_Object(FName Keyname, UObject* Value)
+{
+	Blackboard->SetValueAsObject(Keyname, Value);
+}
+
+void UCBehaviorTreeComponent::SetBlackboard_Vector(FName Keyname, FVector Value)
+{
+	Blackboard->SetValueAsVector(Keyname, Value);
+}
+
+
+#pragma endregion
 
 void UCBehaviorTreeComponent::ChangeType(EAnimalState InType)
 {
