@@ -14,7 +14,7 @@ class UCBehaviorTreeComponent;
 
 UENUM(BlueprintType)
 enum class
-EAnimalType : uint8
+	EAnimalType : uint8
 {
 	Passive UMETA(DisplayName = "Passive"),
 	Defensive UMETA(DisplayName = "Defensive"),
@@ -29,8 +29,10 @@ UCLASS()
 class EMBER_API ACAIController : public AAIController
 {
 	GENERATED_BODY()
+
 public:
 	FORCEINLINE TObjectPtr<UAIPerceptionComponent> GetPercption() { return Perception; }
+
 public:
 	ACAIController();
 
@@ -40,16 +42,17 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	// 	UFUNCTION()
+	// 	void OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors);
 	UFUNCTION()
-	void OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors);
+	virtual void OnTargetPerceptionUpdated(AActor* Target, FAIStimulus Stimulus);
+
 	//UFUNCTION()
 	//virtual void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
-private:
+protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAIPerceptionComponent> Perception;
-
-private:
 	TObjectPtr<ABaseAI> AI;
 	TObjectPtr<UCBehaviorTreeComponent> Behavior;
 	TObjectPtr<UAISenseConfig_Sight> Sight;

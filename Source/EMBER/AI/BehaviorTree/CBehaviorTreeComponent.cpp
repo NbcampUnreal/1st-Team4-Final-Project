@@ -105,7 +105,7 @@ void UCBehaviorTreeComponent::SetRunMode()
 	ChangeType(EAnimalState::Run);
 }
 
-void UCBehaviorTreeComponent::SetDetect()
+void UCBehaviorTreeComponent::SetDetectMode()
 {
 	ChangeType(EAnimalState::Detect);
 }

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI_Interface.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "CBehaviorTreeComponent.generated.h"
 
@@ -62,7 +61,7 @@ public:
 	void SetIdleMode();
 	void SetGuardMode();
 	void SetRunMode();
-	void SetDetect();
+	void SetDetectMode();
 	void SetFlyingMode();
 	void SetPatrolMode();
 	void SetChaseMode();

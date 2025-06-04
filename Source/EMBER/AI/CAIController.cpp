@@ -39,7 +39,7 @@ void ACAIController::OnPossess(APawn* InPawn)
 
 	AI = Cast<ABaseAI>(InPawn);
 
-	if(AI->GetBehaviorTree() == nullptr)
+	if (AI->GetBehaviorTree() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"Behavior is null");
 		return;
@@ -47,7 +47,7 @@ void ACAIController::OnPossess(APawn* InPawn)
 
 	UBlackboardComponent* bb = GetBlackboardComponent();
 	UseBlackboard(AI->GetBehaviorTree()->GetBlackboardAsset(), bb);
-	
+
 	Behavior = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
 	Behavior->SetBlackboard(Blackboard);
 
@@ -63,11 +63,27 @@ void ACAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Perception->OnPerceptionUpdated.AddDynamic(this, &ACAIController::OnPerceptionUpdate);
+	// Perception->OnPerceptionUpdated.AddDynamic(this, &ACAIController::OnPerceptionUpdate);
+	Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ACAIController::OnTargetPerceptionUpdated);
 }
 
-void ACAIController::OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
+// void ACAIController::OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
+// {
+// 	TArray<AActor*> actors;
+// 	Perception->GetCurrentlyPerceivedActors(nullptr, actors);
+//
+// 	if (actors.Num() <= 0)
+// 	{
+// 		Blackboard->SetValueAsObject("TargetActor", nullptr);
+// 		return;
+// 	}
+// 	UE_LOG(LogTemp, Error, L"%s", *actors[0]->GetName());
+// 	Blackboard->SetValueAsObject("TargetActor", actors[0]);
+// }
+
+void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
+
 	TArray<AActor*> actors;
 	Perception->GetCurrentlyPerceivedActors(nullptr, actors);
 
@@ -78,8 +94,5 @@ void ACAIController::OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
 	}
 	UE_LOG(LogTemp, Error, L"%s", *actors[0]->GetName());
 	Blackboard->SetValueAsObject("TargetActor", actors[0]);
+	Behavior->SetDetectMode();
 }
-
-//void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
-//{
-//}

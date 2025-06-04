@@ -36,9 +36,10 @@ void UCBTService_Griffon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		return;
 	}
 
+	//Detect됬을 때 설정
 	if (AIState->IsDetect() == true)
 	{
-		AIState->SetDetect();
+		AIState->SetDetectMode();
 		return;
 	}
 	
