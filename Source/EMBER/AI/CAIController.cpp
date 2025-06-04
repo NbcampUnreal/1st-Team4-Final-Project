@@ -8,6 +8,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/CBehaviorTreeComponent.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
 
 ACAIController::ACAIController()
 {
@@ -65,42 +66,6 @@ void ACAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ABaseAI* ControlledAnimal = Cast<ABaseAI>(GetPawn());
-	if (!ControlledAnimal) return;
-	//UBehaviorTree* SelectedBT = nullptr;
-
-	switch (ControlledAnimal->AnimalType)
-	{
-	case EAnimalType::Crow:
-		//SelectedBT = CrowBT;
-		CurrentBT = CrowBT;
-		break;
-	case EAnimalType::Passive:
-		//SelectedBT = PassiveBT;
-		CurrentBT = PassiveBT;
-		break;
-	case EAnimalType::Defensive:
-		//SelectedBT = DefensiveBT;
-		CurrentBT = DefensiveBT;
-		break;
-	case EAnimalType::Aggressive:
-		//SelectedBT = AggressiveBT;
-		CurrentBT = AggressiveBT;
-		break;
-	case EAnimalType::Griffon:
-		//SelectedBT = GriffonBT;
-		CurrentBT = GriffonBT;
-		break;
-	case EAnimalType::Dragon:
-		//SelectedBT = DragonBT;
-		CurrentBT = DragonBT;
-		break;
-	case EAnimalType::Human:
-		//SelectedBT = HumanBT;
-		CurrentBT = HumanBT;
-		break;
-	}
-
 	Perception->OnPerceptionUpdated.AddDynamic(this, &ACAIController::OnPerceptionUpdate);
 }
 
@@ -116,4 +81,8 @@ void ACAIController::OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
 	}
 	UE_LOG(LogTemp, Error, L"%s", *actors[0]->GetName());
 	Blackboard->SetValueAsObject("Target", actors[0]);
+}
+
+void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
 }

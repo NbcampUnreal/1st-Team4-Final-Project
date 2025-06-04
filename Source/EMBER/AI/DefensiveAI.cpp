@@ -3,7 +3,6 @@
 
 ADefensiveAI::ADefensiveAI()
 {
-	AnimalType = EAnimalType::Defensive;
 }
 
 void ADefensiveAI::BeginPlay()

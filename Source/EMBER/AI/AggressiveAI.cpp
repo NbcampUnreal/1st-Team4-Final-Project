@@ -5,7 +5,7 @@
 
 AAggressiveAI::AAggressiveAI()
 {
-	AnimalType = EAnimalType::Aggressive;
+	//AnimalType = EAnimalType::Aggressive;
 }
 
 void AAggressiveAI::BeginPlay()

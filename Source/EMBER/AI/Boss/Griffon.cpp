@@ -10,7 +10,6 @@
 AGriffon::AGriffon()
 {
 	MaxHP = 20.0f;
-	AnimalType = EAnimalType::Griffon;
 	AttackPower = 10.0f;
 	WalkSpeed = 250.f;
 	RunSpeed = 750.f;

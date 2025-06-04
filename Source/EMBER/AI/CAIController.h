@@ -6,12 +6,14 @@
 #include "AIController.h"
 #include "CAIController.generated.h"
 
+struct FAIStimulus;
 class UAISenseConfig_Sight;
 class AHumanAIBase;
 class UCBehaviorTreeComponent;
 
 UENUM(BlueprintType)
-enum class EAnimalType : uint8
+enum class
+EAnimalType : uint8
 {
 	Passive UMETA(DisplayName = "Passive"),
 	Defensive UMETA(DisplayName = "Defensive"),
@@ -28,7 +30,7 @@ class EMBER_API ACAIController : public AAIController
 	GENERATED_BODY()
 public:
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() { return CurrentBT; }
-
+	FORCEINLINE TObjectPtr<UAIPerceptionComponent> GetPercption() { return Perception; }
 public:
 	ACAIController();
 
@@ -40,6 +42,9 @@ protected:
 private:
 	UFUNCTION()
 	void OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors);
+	UFUNCTION()
+	virtual void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAIPerceptionComponent> Perception;

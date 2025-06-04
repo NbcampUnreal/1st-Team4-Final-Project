@@ -5,7 +5,6 @@
 
 APassiveAI::APassiveAI()
 {
-	AnimalType = EAnimalType::Passive;
 	ClosestActor = nullptr;
 	EnemyActors = TArray<AActor*>();
 	ClosestDistanceBoundary = 1000.0f;
@@ -26,7 +25,8 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 		UE_LOG(LogTemp, Warning, TEXT("Player Detect"));
 
 		EnemyActors.Add(UpdatedActor);
-		AIState->SetDetectMode();
+		//TODOS State를 변경하던 다른 코드로 대체해야할듯?
+		//AIState->SetDetectMode();
 		CheckDetection(true);
 
 		float DistanceToTarget = FVector::Dist(UpdatedActor->GetActorLocation(), GetActorLocation());
@@ -46,7 +46,8 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 	else if (!Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
 	{
 		AIState->SetIdleMode();
-		if (AnimalType == EAnimalType::Passive)
+		//TODOS State를 변경하던 다른 코드로 대체해야할듯?
+		//if (AnimalType == EAnimalType::Passive)
 		{
 			EnemyActors.Remove(UpdatedActor);
 			if (EnemyActors.Num() == 0)
@@ -64,7 +65,7 @@ void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Sti
 
 void APassiveAI::UpdateClosestActorTimer()
 {
-	if (EnemyActors.Num() == 0 && AnimalType == EAnimalType::Passive)
+	if (EnemyActors.Num() == 0 )//&& AnimalType == EAnimalType::Passive)
 	{
 		ClosestActor = nullptr;
 		ClosestDistance = FLT_MAX;
@@ -86,7 +87,7 @@ void APassiveAI::UpdateClosestActorTimer()
 		{
 			// SetBlackboardBool("IsNear", true);
 		}
-		else if (Distance >= ClosestDistanceBoundary && AnimalType == EAnimalType::Passive)
+		else if (Distance >= ClosestDistanceBoundary) //&& AnimalType == EAnimalType::Passive)
 		{
 			// SetBlackboardBool("IsNear", false);
 		}
