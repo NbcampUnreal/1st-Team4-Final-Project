@@ -36,8 +36,10 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& Comp, uint8
 	AICharacter->OnAttack();
 	
 	UGameplayStatics::ApplyDamage(TargetActor, AICharacter->GetAttackPower(), AIController, AICharacter, nullptr);
-
-	return EBTNodeResult::InProgress;
+	UE_LOG(LogTemp, Warning, L"Attack");
+	//현재 애니메이션이 없어 임시로 Succes
+	return EBTNodeResult::Succeeded;
+	//return EBTNodeResult::InProgress;
 }
 
 void UBTT_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
