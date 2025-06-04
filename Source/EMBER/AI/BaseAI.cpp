@@ -16,7 +16,7 @@ ABaseAI::ABaseAI()
 	EquipComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("Equip Component"));
 	AIState = CreateDefaultSubobject<UC_StateComponent>(TEXT("AI State"));
 	
-	AIControllerClass = ABaseAIController::StaticClass();
+	AIControllerClass = ACAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	WalkSpeed = 200.0f;
@@ -27,12 +27,12 @@ void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (ABaseAIController* AIController = Cast<ABaseAIController>(GetController()))
+	if (ACAIController* AIController = Cast<ACAIController>(GetController()))
 	{
 		BlackboardComp = AIController->GetBlackboardComponent();
 	}
-
-	Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAI::OnTargetPerceptionUpdated);
+ACAIController* Controller = Cast<ACAIController>(GetController());
+	// Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAI::OnTargetPerceptionUpdated);
 	SetWalkSpeed();
 }
 
@@ -69,36 +69,36 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 
 void ABaseAI::OnAttack()
 {
-	if (AAIController* AIController = Cast<AAIController>(GetController()))
-	{
-		if (UBlackboardComponent* BlackboardComponent = AIController ? AIController->GetBlackboardComponent() : nullptr)
-		{
-			AIState->SetActionMode();
-			AActor* TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
-			if (!TargetActor) return;
-
-			FVector AILocation = GetActorLocation();
-			FVector TargetLocation = TargetActor->GetActorLocation();
-
-			float HeightDifference = TargetLocation.Z - AILocation.Z;
-
-			if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
-			{
-				if (AnimInstance->CurrentSpeed >= RunSpeed)
-				{
-					AnimInstance->PlayMontage(EAnimActionType::AttackRun, EAnimActionType::AttackNormal);
-				}
-				else if (HeightDifference > 100.f)
-				{
-					AnimInstance->PlayMontage(EAnimActionType::AttackJump, EAnimActionType::AttackNormal);
-				}
-				else
-				{
-					AnimInstance->PlayMontage(EAnimActionType::AttackNormal, EAnimActionType::AttackNormal);
-				}
-			}
-		}
-	}
+	// if (AAIController* AIController = Cast<AAIController>(GetController()))
+	// {
+	// 	if (UBlackboardComponent* BlackboardComponent = AIController ? AIController->GetBlackboardComponent() : nullptr)
+	// 	{
+	// 		AIState->SetActionMode();
+	// 		AActor* TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
+	// 		if (!TargetActor) return;
+	//
+	// 		FVector AILocation = GetActorLocation();
+	// 		FVector TargetLocation = TargetActor->GetActorLocation();
+	//
+	// 		float HeightDifference = TargetLocation.Z - AILocation.Z;
+	//
+	// 		if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
+	// 		{
+	// 			if (AnimInstance->CurrentSpeed >= RunSpeed)
+	// 			{
+	// 				AnimInstance->PlayMontage(EAnimActionType::AttackRun, EAnimActionType::AttackNormal);
+	// 			}
+	// 			else if (HeightDifference > 100.f)
+	// 			{
+	// 				AnimInstance->PlayMontage(EAnimActionType::AttackJump, EAnimActionType::AttackNormal);
+	// 			}
+	// 			else
+	// 			{
+	// 				AnimInstance->PlayMontage(EAnimActionType::AttackNormal, EAnimActionType::AttackNormal);
+	// 			}
+	// 		}
+	// 	}
+	// }
 }
 
 void ABaseAI::OnDeath()
@@ -109,7 +109,7 @@ void ABaseAI::OnDeath()
 	bIsDie = true;
 
 	//퍼셉션 제거
-	Perception->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
+	// Perception->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
 
 	//이동, 애니메이션 제거
 	if (GetController())
@@ -128,11 +128,16 @@ void ABaseAI::OnDeath()
 void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
 	//TODOS 원상복귀 해야될 수 있음
-	AAIController* BaseAIController = Cast<ABaseAIController>(Cast<AAIController>(GetController()));
+	ACAIController* BaseAIController = Cast<ACAIController>(Cast<AAIController>(GetController()));
 	if (BaseAIController == nullptr)
 		BaseAIController = Cast<ACAIController>(GetController());
 	//ABaseAIController* BaseAIController = Cast<ABaseAIController>(Cast<AAIController>(GetController()));
 	BlackboardComp = BaseAIController->GetBlackboardComponent();
+}
+
+UBehaviorTree* ABaseAI::GetBehaviorTree() const
+{
+	return BehaviorTree;
 }
 
 void ABaseAI::SetWalkSpeed()

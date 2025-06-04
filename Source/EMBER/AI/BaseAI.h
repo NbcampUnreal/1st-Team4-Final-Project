@@ -44,6 +44,7 @@ public:
 
 	// Getter
 	virtual float GetAttackPower() const { return AttackPower; }
+	UBehaviorTree* GetBehaviorTree() const;
 
 	// Setter
 	UFUNCTION(BlueprintCallable, Category = "AI|Movement")
@@ -66,6 +67,9 @@ protected:
 	TObjectPtr<class UStatusComponent> StatusComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	TObjectPtr<class UC_StateComponent> AIState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "AI/BehaviorTree")
+	UBehaviorTree* BehaviorTree;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	float MaxHP;
@@ -88,6 +92,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|State")
 	bool bIsDie;
 
+	UAIPerceptionComponent* PerceptionComponent;
 	UBlackboardComponent* BlackboardComp;
 };
 
