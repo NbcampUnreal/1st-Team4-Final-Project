@@ -32,8 +32,9 @@ public class EMBER : ModuleRules
 						"AnimGraphRuntime",
 						"NavigationSystem",
 						"FieldSystemEngine",
-						"GeometryCollectionEngine"
-					});
+						"GeometryCollectionEngine",
+                        "AIModule"
+                    });
         PublicIncludePaths.AddRange(
                     new string[]
                     {

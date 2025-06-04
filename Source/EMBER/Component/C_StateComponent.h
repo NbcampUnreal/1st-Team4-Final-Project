@@ -30,6 +30,10 @@ public:
 	void SetActionMode();
 	void SetHittdMode();
 	void SetDeadMode();
+
+
+private:
+	void ChangeType(EStateType InType);
 public:
 	FStateTypeChanged OnStateTypeChanged;
 };

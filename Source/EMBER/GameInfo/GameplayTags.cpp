@@ -14,6 +14,11 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Interact,								"InputTag.Interact");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Widget_Inventory,						"InputTag.Widget.Inventory");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Widget_CheatManager,					"InputTag.Widget.CheatManager");
+	
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Movement_Move,							"InputTag.Movement.Move");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Movement_Look,							"InputTag.Movement.Look");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Movement_Sprint,						"InputTag.Movement.Sprint");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Movement_Jump,							"InputTag.Movement.Jump");
 
 	// Ability
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Interact,								"Ability.Interact");

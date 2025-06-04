@@ -40,7 +40,7 @@ void AGriffon::Tick(float DeltaTime)
 void AGriffon::Attack()
 {
 	AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(("TargetActor")));
-	UGriffon_AnimInstance* AnimInstance = Cast<UGriffon_AnimInstance>(GetMesh()->GetAnimInstance());
+	UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance());
 
 	UGameplayStatics::ApplyDamage(TargetActor, AttackPower, GetController(), this, nullptr);
 	GetController()->StopMovement();
