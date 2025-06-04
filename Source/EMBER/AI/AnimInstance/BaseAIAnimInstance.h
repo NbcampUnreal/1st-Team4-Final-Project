@@ -35,7 +35,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
 	float CurrentHeight;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Movement")
 	float CurrentDirection;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")

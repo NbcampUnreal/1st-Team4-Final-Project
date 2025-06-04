@@ -93,7 +93,8 @@ public:
 
 	//TODOS
 	virtual void PostNetInit() override;
-	
+public:
+	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
 private:
 	UPROPERTY()
 	TObjectPtr<UCharacterInputComponent> CharacterInputComponent;
@@ -109,7 +110,6 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<class UArmorComponent> ArmorComponent;
-
 
 #pragma region Inputs
 
