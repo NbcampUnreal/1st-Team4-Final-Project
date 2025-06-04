@@ -36,7 +36,7 @@ void UCraftingSystem::BeginPlay()
 
 UItemInstance* UCraftingSystem::StartCrafting(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
 {
-    //UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: Called for Recipe DisplayName: %s, OutputItemID: %d"), *Recipe.RecipeDisplayName.ToString(), Recipe.OutputItemTemplateID);
+    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: Called for Recipe DisplayName: %s"), *Recipe.RecipeDisplayName.ToString());
 
     if (!Player)
     {
@@ -74,32 +74,45 @@ UItemInstance* UCraftingSystem::StartCrafting(AEmberPlayerCharacter* Player, con
         UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::StartCrafting: ConsumeMaterials FAILED (Note: ConsumeMaterials is currently a stub). Returning nullptr."));
         return nullptr;
     }
-    // UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: Material checks and consumption stub PASSED. Attempting to create item instance for TemplateID: %d"), Recipe.OutputItemTemplateID);
-    int32 ItemTemplateID = UEmberItemData::Get().FindItemTemplateIDByClass(Recipe.ItemTemplateClass);
-    const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemTemplateID);
-        
-    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: (Simulated) ItemTemplate validation passed via our GetItemTemplateById stub. Now creating UItemInstance."));
+    
+    if (!Recipe.ItemTemplateClass)
+    {
+        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: Recipe.ItemTemplateClass is NULL for recipe [%s]. Cannot create item."), *Recipe.RecipeDisplayName.ToString());
+        return nullptr;
+    }
 
-    UItemInstance* NewItem = NewObject<UItemInstance>();
+    int32 ItemTemplateIDToUse = UEmberItemData::Get().FindItemTemplateIDByClass(Recipe.ItemTemplateClass);
+
+    if (ItemTemplateIDToUse == INDEX_NONE)
+    {
+        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: FindItemTemplateIDByClass returned INDEX_NONE for class %s. Cannot initialize item instance."), *Recipe.ItemTemplateClass->GetName());
+        return nullptr; 
+    }
+    
+    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: ItemTemplateID %d obtained for class %s. Creating UItemInstance."), ItemTemplateIDToUse, *Recipe.ItemTemplateClass->GetName());
+
+    UItemInstance* NewItem = NewObject<UItemInstance>(Player);
     if (!NewItem)
     {
         UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: Failed to create NewItem UObject instance. Returning nullptr."));
         return nullptr;
     }
     
-    // UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: NewItem UObject created. Calling NewItem->Init with TemplateID: %d, Rarity: %s"), Recipe.OutputItemTemplateID, *UEnum::GetValueAsString(FinalRarity));
+    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: NewItem UObject created. Calling NewItem->Init with TemplateID: %d, Rarity: %s"), ItemTemplateIDToUse, *UEnum::GetValueAsString(FinalRarity));
     
-    NewItem->Init(ItemTemplateID, FinalRarity); 
+    NewItem->Init(ItemTemplateIDToUse, FinalRarity); 
     
-    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: NewItem->Init call completed. Checking if PlayerInventory exists."));
-    UInventoryManagerComponent* PlayerInventory = Player->FindComponentByClass<UInventoryManagerComponent>();
-    if (!PlayerInventory)
+    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: NewItem->Init call completed."));
+    
+    const UItemTemplate* OutputItemTemplateForLog = GetItemTemplateById(ItemTemplateIDToUse); 
+    if (OutputItemTemplateForLog) 
     {
-         UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: PlayerInventory component not found on Player. Cannot add item, but returning created (and Init-called) NewItem."));
-         return NewItem;
+        UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: (Our GetItemTemplateById stub) OutputItemTemplate is %s."), *OutputItemTemplateForLog->DisplayName.ToString());
     }
-    
-    // UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::StartCrafting: Placeholder for adding item to inventory. OutputItemTemplate was %s."), OutputItemTemplateForValidation ? *OutputItemTemplateForValidation->DisplayName.ToString() : TEXT("STILL NULL (as GetItemTemplateById is a stub)"));
+    else 
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::StartCrafting: (Our GetItemTemplateById stub) OutputItemTemplate is NULL for ID %d."), ItemTemplateIDToUse);
+    }
     
     UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: Function returning NewItem instance."));
     return NewItem; 

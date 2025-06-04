@@ -4,15 +4,13 @@
 #include "UI/Common/EmberActivatableWidget.h"
 #include "Crafting/CraftingRecipeManager.h" 
 #include "UI/Crafting/CraftingRecipeListItemData.h"
-
 #include "CraftingRecipeListWidget.generated.h"
 
 class UListView;
 class UScrollBox;
 class UTextBlock;
-class UCraftingListEntryWidget;
+class UCraftingListEntryWidget; 
 struct FCraftingRecipeRow;
-
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRecipeRowSelectedInListSignature, const FCraftingRecipeRow&, SelectedRecipeRow);
 
@@ -36,17 +34,15 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-	UPROPERTY(meta = (BindWidgetOptional))
-	UTextBlock* StationNameText_InList; 
+	UPROPERTY(BlueprintReadOnly, Category = "RecipeList", meta = (BindWidgetOptional))
+	TObjectPtr<UTextBlock> StationNameText_InList; 
 
-	UPROPERTY(meta = (BindWidget))
-	UListView* RecipeListView;
+	UPROPERTY(BlueprintReadOnly, Category = "RecipeList", meta = (BindWidget))
+	TObjectPtr<UListView> RecipeListView;
 
-	UScrollBox* RecipeListScrollBox;
+	UPROPERTY(BlueprintReadOnly, Category = "RecipeList", meta = (BindWidgetOptional))
+	TObjectPtr<UScrollBox> RecipeListScrollBox;
 
 	UFUNCTION()
 	void HandleRecipeClicked(UObject* ItemObject);
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UCraftingListEntryWidget> ItemDataClass;
 };

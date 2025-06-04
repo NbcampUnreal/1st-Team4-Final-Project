@@ -1,8 +1,10 @@
-#include "Crafting/CraftingRecipeManager.h" 
+#include "Crafting/CraftingRecipeManager.h"
+#include "Item/ItemTemplate.h"
+#include "UI/Data/EmberItemData.h"
 
 const FCraftingRecipeRow* UCraftingRecipeManager::GetRecipeRowByOutputItemID(int32 TemplateID) const
 {
-    if (!RecipeDataTable)
+    if (!RecipeDataTable || TemplateID == INDEX_NONE)
     {
         return nullptr;
     }
@@ -11,10 +13,14 @@ const FCraftingRecipeRow* UCraftingRecipeManager::GetRecipeRowByOutputItemID(int
     for (const FName& RowName : RowNames)
     {
         FCraftingRecipeRow* Row = RecipeDataTable->FindRow<FCraftingRecipeRow>(RowName, TEXT(""));
-        // if (Row && Row->OutputItemTemplateID == TemplateID)
-        //{
-        //    return Row;
-        //}
+        if (Row && Row->ItemTemplateClass)
+        {
+            int32 OutputIDFromClass = UEmberItemData::Get().FindItemTemplateIDByClass(Row->ItemTemplateClass);
+            if (OutputIDFromClass != INDEX_NONE && OutputIDFromClass == TemplateID)
+            {
+                return Row;
+            }
+        }
     }
     return nullptr;
 }

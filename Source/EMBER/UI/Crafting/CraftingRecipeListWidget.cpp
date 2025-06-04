@@ -1,16 +1,16 @@
 #include "UI/Crafting/CraftingRecipeListWidget.h"
-
-#include "CraftingListEntryWidget.h"
 #include "Components/ListView.h"
 #include "Components/ScrollBox.h"
 #include "Components/TextBlock.h"
 #include "Crafting/CraftingRecipeManager.h"
-#include "UI/Cheat/CheatEntryWidget.h"
 #include "UI/Crafting/CraftingRecipeListItemData.h"
 
 UCraftingRecipeListWidget::UCraftingRecipeListWidget(const FObjectInitializer& ObjectInitializer) 
     : Super(ObjectInitializer)
 {
+    StationNameText_InList = nullptr;
+    RecipeListView = nullptr;
+    RecipeListScrollBox = nullptr;
 }
 
 void UCraftingRecipeListWidget::NativeConstruct()
@@ -34,9 +34,12 @@ void UCraftingRecipeListWidget::SetRecipeList(const TArray<FCraftingRecipeRow>& 
 
     for (const FCraftingRecipeRow& Recipe : Recipes)
     {
-       UCraftingListEntryWidget* Widget = CreateWidget<UCraftingListEntryWidget>(GetOwningPlayer(), ItemDataClass);
-       Widget->InitializeUI(Recipe.ItemTemplateClass);
-       RecipeListView->AddItem(Widget);
+       UCraftingRecipeListItemData* NewListItemData = NewObject<UCraftingRecipeListItemData>(this);
+       if (NewListItemData)
+       {
+          NewListItemData->RecipeData = Recipe;
+          RecipeListView->AddItem(NewListItemData);
+       }
     }
 }
 
