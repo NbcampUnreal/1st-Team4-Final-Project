@@ -45,6 +45,7 @@ public:
 	bool IsWaitMode();
 	bool IsGuardMode();
 	bool IsRunMode();
+	bool IsDetect();
 	bool IsFlyingMode();
 	bool IsPatrolMode();
 	bool IsChaseMode();
@@ -58,9 +59,10 @@ public:
 	FVector GetPatrolLocation();
 	void SetPatrolLocation(const FVector& InLocation);
 
-	void SetWaitMode();
+	void SetIdleMode();
 	void SetGuardMode();
 	void SetRunMode();
+	void SetDetect();
 	void SetFlyingMode();
 	void SetPatrolMode();
 	void SetChaseMode();
@@ -68,6 +70,13 @@ public:
 	void SetHittedMode();
 	void SetDeadMode();
 
+	void SetBlackboard_Bool(FName Keyname, bool Value);
+	void SetBlackboard_String(FName Keyname, FString Value);
+	void SetBlackboard_Int(FName Keyname, int Value);
+	void SetBlackboard_Float(FName Keyname, float Value);
+	void SetBlackboard_Enum(FName Keyname, EAnimalState Value);
+	void SetBlackboard_Object(FName Keyname, UObject* Value);
+	void SetBlackboard_Vector(FName Keyname, FVector Value);
 private:
 	void ChangeType(EAnimalState InType);
 

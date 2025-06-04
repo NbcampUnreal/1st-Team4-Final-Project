@@ -7,6 +7,8 @@
 
 UCBTService_Griffon::UCBTService_Griffon()
 {
+	Interval = 1.0f;
+	RandomDeviation = 0.0f;
 }
 
 void UCBTService_Griffon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -34,18 +36,12 @@ void UCBTService_Griffon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		return;
 	}
 
-	if(AIState->IsDeadMode() == true)
+	if (AIState->IsDetect() == true)
 	{
-		Controller->StopMovement();
-		AIState->SetDeadMode();
+		AIState->SetDetect();
 		return;
 	}
-
-	if(AIState->IsHittedMode() == true)
-	{
-		AIState->SetHittedMode();
-		return;
-	}
+	
 	//Target이 없으면 Patrol
 	TObjectPtr<ACharacter> target = AIState->GetTarget(); 
 	if(target == nullptr)
@@ -61,5 +57,5 @@ void UCBTService_Griffon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		return;
 	}
 	//Default State
-	AIState->SetWaitMode();
+	AIState->SetIdleMode();
 }
