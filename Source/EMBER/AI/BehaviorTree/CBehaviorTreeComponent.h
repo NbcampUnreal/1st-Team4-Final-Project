@@ -8,6 +8,22 @@
 #include "CBehaviorTreeComponent.generated.h"
 
 
+UENUM(BlueprintType)
+enum class EAnimalState : uint8
+{
+	Idle UMETA(DisplayName = "Idle"),
+	Guard UMETA(DisplayName = "Guard"),//경계
+	//Near UMETA(DisplayName = "Near"),//->서비스에서 대체
+	Run UMETA(DisplayName = "Running"),//도망
+	Patrol UMETA(DisplayName = "Patrol"),
+	Chase UMETA(DisplayName = "Chase"),
+	Attack UMETA(DisplayName = "Attack"),
+	Hit UMETA(DisplayName = "Hit"),
+	Death UMETA(DisplayName = "Death"),
+	Flying UMETA(DisplayName = "Flying"),//
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAnimalStateChaged, EAnimalState, InPrevType, EAnimalState, InNewType);
 
 UCLASS()
 class EMBER_API UCBehaviorTreeComponent : public UBehaviorTreeComponent
