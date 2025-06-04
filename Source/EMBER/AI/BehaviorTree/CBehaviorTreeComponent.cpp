@@ -26,14 +26,19 @@ bool UCBehaviorTreeComponent::IsWaitMode()
 	return GetType() == EAnimalState::Idle;
 }
 
-bool UCBehaviorTreeComponent::IsApproachMode()
+bool UCBehaviorTreeComponent::IsGuardMode()
+{
+	return GetType() == EAnimalState::Guard;
+}
+
+bool UCBehaviorTreeComponent::IsRunMode()
 {
 	return GetType() == EAnimalState::Run;
 }
 
-bool UCBehaviorTreeComponent::IsActionMode()
+bool UCBehaviorTreeComponent::IsFlyingMode()
 {
-	return GetType() == EAnimalState::Attack;
+	return GetType() == EAnimalState::Flying;
 }
 
 bool UCBehaviorTreeComponent::IsPatrolMode()
@@ -41,15 +46,19 @@ bool UCBehaviorTreeComponent::IsPatrolMode()
 	return GetType() == EAnimalState::Patrol;
 }
 
+bool UCBehaviorTreeComponent::IsChaseMode()
+{
+	return GetType() == EAnimalState::Chase;
+}
+
+bool UCBehaviorTreeComponent::IsActionMode()
+{
+	return GetType() == EAnimalState::Attack;
+}
+
 bool UCBehaviorTreeComponent::IsHittedMode()
 {
 	return GetType() == EAnimalState::Hit;
-}
-
-bool UCBehaviorTreeComponent::IsAvoidMode()
-{
-	//return GetType() == EAnimalState::Avoid;
-	return false;
 }
 
 bool UCBehaviorTreeComponent::IsDeadMode()
@@ -72,11 +81,6 @@ FVector UCBehaviorTreeComponent::GetPatrolLocation()
 	return Blackboard->GetValueAsVector(PatrolLocationKey);
 }
 
-//FVector UCBehaviorTreeComponent::GetAvoidlocation()
-//{
-//	return Blackboard->GetValueAsVector(AvoidLocationKey);
-//}
-
 void UCBehaviorTreeComponent::SetPatrolLocation(const FVector& InLocation)
 {
 	Blackboard->SetValueAsVector(PatrolLocationKey, InLocation);
@@ -87,14 +91,19 @@ void UCBehaviorTreeComponent::SetWaitMode()
 	ChangeType(EAnimalState::Idle);
 }
 
-void UCBehaviorTreeComponent::SetApproachMode()
+void UCBehaviorTreeComponent::SetGuardMode()
 {
-	ChangeType(EAnimalState::Approach);
+	ChangeType(EAnimalState::Guard);
 }
 
-void UCBehaviorTreeComponent::SetActionMode()
+void UCBehaviorTreeComponent::SetRunMode()
 {
-	ChangeType(EAnimalState::Attack);
+	ChangeType(EAnimalState::Run);
+}
+
+void UCBehaviorTreeComponent::SetFlyingMode()
+{
+	ChangeType(EAnimalState::Flying);
 }
 
 void UCBehaviorTreeComponent::SetPatrolMode()
@@ -102,14 +111,19 @@ void UCBehaviorTreeComponent::SetPatrolMode()
 	ChangeType(EAnimalState::Patrol);
 }
 
+void UCBehaviorTreeComponent::SetChaseMode()
+{
+	ChangeType(EAnimalState::Chase);
+}
+
+void UCBehaviorTreeComponent::SetActionMode()
+{
+	ChangeType(EAnimalState::Attack);
+}
+
 void UCBehaviorTreeComponent::SetHittedMode()
 {
 	ChangeType(EAnimalState::Hit);
-}
-
-void UCBehaviorTreeComponent::SetAvoidMode()
-{
-	//ChangeType(EAnimalState::Avoid);
 }
 
 void UCBehaviorTreeComponent::SetDeadMode()

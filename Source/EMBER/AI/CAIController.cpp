@@ -38,19 +38,22 @@ void ACAIController::OnPossess(APawn* InPawn)
 
 	AI = Cast<AHumanAIBase>(InPawn);
 
-	if(AI->GetBehaviorTree() == nullptr)
+	//if(AI->GetBehaviorTree() == nullptr)
+	if(AI == nullptr)
 	{
-		UE_LOG(LogTemp, Error, L"BehaviorTree is null");
+		UE_LOG(LogTemp, Error, L"AI is null");
 		return;
 	}
 
 	UBlackboardComponent* bb = GetBlackboardComponent();
-	UseBlackboard(AI->GetBehaviorTree()->GetBlackboardAsset(), bb);
+	//UseBlackboard(AI->GetBehaviorTree()->GetBlackboardAsset(), bb);
+	UseBlackboard(CurrentBT->GetBlackboardAsset(), bb);
 
 	Behavior = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
 	Behavior->SetBlackboard(Blackboard);
 
-	RunBehaviorTree(AI->GetBehaviorTree());
+	//RunBehaviorTree(AI->GetBehaviorTree());
+	RunBehaviorTree(CurrentBT);
 }
 
 void ACAIController::OnUnPossess()
@@ -61,6 +64,42 @@ void ACAIController::OnUnPossess()
 void ACAIController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ABaseAI* ControlledAnimal = Cast<ABaseAI>(GetPawn());
+	if (!ControlledAnimal) return;
+	//UBehaviorTree* SelectedBT = nullptr;
+
+	switch (ControlledAnimal->AnimalType)
+	{
+	case EAnimalType::Crow:
+		//SelectedBT = CrowBT;
+		CurrentBT = CrowBT;
+		break;
+	case EAnimalType::Passive:
+		//SelectedBT = PassiveBT;
+		CurrentBT = PassiveBT;
+		break;
+	case EAnimalType::Defensive:
+		//SelectedBT = DefensiveBT;
+		CurrentBT = DefensiveBT;
+		break;
+	case EAnimalType::Aggressive:
+		//SelectedBT = AggressiveBT;
+		CurrentBT = AggressiveBT;
+		break;
+	case EAnimalType::Griffon:
+		//SelectedBT = GriffonBT;
+		CurrentBT = GriffonBT;
+		break;
+	case EAnimalType::Dragon:
+		//SelectedBT = DragonBT;
+		CurrentBT = DragonBT;
+		break;
+	case EAnimalType::Human:
+		//SelectedBT = HumanBT;
+		CurrentBT = HumanBT;
+		break;
+	}
 
 	Perception->OnPerceptionUpdated.AddDynamic(this, &ACAIController::OnPerceptionUpdate);
 }

@@ -8,13 +8,15 @@
 #include "GameFramework/Character.h"
 #include "HumanAIBase.generated.h"
 
+class UBehaviorTree;
 class UC_StateComponent;
+
 UCLASS()
 class EMBER_API AHumanAIBase : public ABaseAI
 {
 	GENERATED_BODY()
-public:
-	FORCEINLINE UBehaviorTree* GetBehaviorTree() { return BehaviorTree; }
+//public:
+//	FORCEINLINE UBehaviorTree* GetBehaviorTree() { return BehaviorTree; }
 
 public:
 	// Sets default values for this character's properties
@@ -39,8 +41,8 @@ protected:
 	//TObjectPtr<class UMontageSystemComponent> MontageComponent;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "AI|Behavior")
 	TObjectPtr< class UCBehaviorTreeComponent> Behavior;
-	UPROPERTY(EditDefaultsOnly, Category = "AI")
-	TObjectPtr<UBehaviorTree> BehaviorTree;
+	//UPROPERTY(EditDefaultsOnly, Category = "AI")
+	//TObjectPtr<UBehaviorTree> BehaviorTree;
 	//UPROPERTY(EditAnywhere)
 	//float MaxHP = 100.0f;
 };

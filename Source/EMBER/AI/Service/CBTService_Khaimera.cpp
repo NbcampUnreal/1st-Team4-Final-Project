@@ -44,6 +44,14 @@ void UCBTService_Khaimera::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 		UE_LOG(LogTemp, Error, L"aistate is null");
 		return;
 	}
+
+	if(state->IsDeadMode() == true)
+	{
+		//controller->StopMovement();
+		aiState->SetDeadMode();
+		return;
+	}
+
 	if(state->IsHittdMode() == true)
 	{
 		aiState->SetHittedMode();
@@ -64,5 +72,5 @@ void UCBTService_Khaimera::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 		return;
 	}
 
-	aiState->SetApproachMode();
+	aiState->SetChaseMode();
 }

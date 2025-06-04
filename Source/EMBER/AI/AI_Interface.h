@@ -1,8 +1,8 @@
-#pragma once
+//#pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/Interface.h"
-#include "AI_Interface.generated.h"
+//#include "CoreMinimal.h"
+//#include "UObject/Interface.h"
+//#include "AI_Interface.generated.h"
 
 //UENUM(BlueprintType)
 //enum class EAnimalState : uint8
