@@ -11,10 +11,13 @@ AEmberWorldInteractable::AEmberWorldInteractable(const FObjectInitializer& Objec
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
+	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	SetRootComponent(SceneComponent);
+	
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	MeshComponent->SetCollisionProfileName(TEXT("Interactable"));
 	MeshComponent->SetCanEverAffectNavigation(true);
-	SetRootComponent(MeshComponent);
+	MeshComponent->SetupAttachment(SceneComponent);
 
 	InteractionInfo.bVisible = false;
 }

@@ -6,17 +6,18 @@
 #include "Components/SphereComponent.h"
 
 
+
 AEmberPickupableItemBase::AEmberPickupableItemBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	bReplicates = true;
 
 	PrimaryActorTick.bCanEverTick = false;
 	
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
-	MeshComponent->SetCollisionProfileName("NoCollision");
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+	MeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
 	SetRootComponent(MeshComponent);
 
-	PickupCollision = CreateDefaultSubobject<USphereComponent>("SphereCollision");
-	PickupCollision->SetCollisionProfileName("Pickupable");
+	PickupCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
+	PickupCollision->SetCollisionProfileName(TEXT("Pickupable"));
 	PickupCollision->SetupAttachment(GetRootComponent());
 }

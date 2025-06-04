@@ -44,5 +44,6 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_Begin);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_Tick);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_End);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Trace);
 	
 }

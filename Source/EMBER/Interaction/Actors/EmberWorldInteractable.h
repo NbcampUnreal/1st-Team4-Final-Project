@@ -32,6 +32,9 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, Category="Info")
 	FEmberInteractionInfo InteractionInfo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USceneComponent> SceneComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStaticMeshComponent> MeshComponent;

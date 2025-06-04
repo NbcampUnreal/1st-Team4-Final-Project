@@ -10,7 +10,7 @@
 
 class UItemInstance;
 
-UCLASS()
+UCLASS(Abstract, Blueprintable)
 class EMBER_API AEmberWorldPickupable : public AActor, public IEmberInteractable, public IEmberPickupable
 {
 	GENERATED_BODY()
@@ -18,6 +18,15 @@ class EMBER_API AEmberWorldPickupable : public AActor, public IEmberInteractable
 public:
 	AEmberWorldPickupable(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+public:
+	//~IEmberInteractable Override
+	virtual FEmberInteractionInfo GetPreInteractionInfo(const FEmberInteractionQuery& InteractionQuery) const override;
+	virtual UMeshComponent* GetMeshComponent() const override;
+	//~End of IEmberInteractable Override
+	
 public:
 	//~IEmberPickupable Override
 	UFUNCTION()
@@ -26,12 +35,21 @@ public:
 
 public:
 	virtual void SetPickupInfo(const FPickupInfo& InPickupInfo);
+
+public:
+
 	
 protected:
 	UFUNCTION()
-	virtual void OnRep_PickupInfo(const FPickupInfo& InPickupInfo);
+	virtual void OnRep_PickupInfo();
 	
 protected:
+	UPROPERTY(EditAnywhere, Category="Pickupable|Info")
+	FEmberInteractionInfo InteractionInfo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
+	
 	UPROPERTY(ReplicatedUsing=OnRep_PickupInfo)
 	FPickupInfo PickupInfo;
 };

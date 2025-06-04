@@ -30,7 +30,9 @@ public class EMBER : ModuleRules
 						"CommonInput",
 						"CommonGame",
 						"AnimGraphRuntime",
-						"NavigationSystem"
+						"NavigationSystem",
+						"FieldSystemEngine",
+						"GeometryCollectionEngine"
 					});
         PublicIncludePaths.AddRange(
                     new string[]

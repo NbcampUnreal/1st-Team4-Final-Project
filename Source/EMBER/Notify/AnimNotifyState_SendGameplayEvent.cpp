@@ -1,11 +1,11 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AnimNotify_SendGameplayEvent.h"
+#include "AnimNotifyState_SendGameplayEvent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 
-UAnimNotify_SendGameplayEvent::UAnimNotify_SendGameplayEvent(const FObjectInitializer& ObjectInitializer)
+UAnimNotifyState_SendGameplayEvent::UAnimNotifyState_SendGameplayEvent(const FObjectInitializer& ObjectInitializer)
 {
 #if WITH_EDITORONLY_DATA
 	// 노티파이가 애니메이션 에디터에서 프리뷰 중에는 실행되지 않도록 설정
@@ -15,7 +15,7 @@ UAnimNotify_SendGameplayEvent::UAnimNotify_SendGameplayEvent(const FObjectInitia
 	bIsNativeBranchingPoint = true;
 }
 
-void UAnimNotify_SendGameplayEvent::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
+void UAnimNotifyState_SendGameplayEvent::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
@@ -25,7 +25,7 @@ void UAnimNotify_SendGameplayEvent::NotifyBegin(USkeletalMeshComponent* MeshComp
 	}
 }
 
-void UAnimNotify_SendGameplayEvent::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
+void UAnimNotifyState_SendGameplayEvent::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
 	const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);

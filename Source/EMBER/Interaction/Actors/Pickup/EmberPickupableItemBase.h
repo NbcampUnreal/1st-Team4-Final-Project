@@ -15,11 +15,8 @@ class EMBER_API AEmberPickupableItemBase : public AEmberWorldPickupable
 
 public:
 	AEmberPickupableItemBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> PickupCollision;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<UStaticMeshComponent> MeshComponent;
 };
