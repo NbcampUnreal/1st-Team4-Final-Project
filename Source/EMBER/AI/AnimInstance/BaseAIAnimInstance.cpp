@@ -1,5 +1,6 @@
 #include "BaseAIAnimInstance.h"
 #include "BaseAI.h"
+#include "CAIController.h"
 #include "KismetAnimationLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -9,7 +10,7 @@ void UBaseAIAnimInstance::NativeInitializeAnimation()
 
 	ABaseAI* AICharacter = Cast<ABaseAI>(TryGetPawnOwner());
 	if (!AICharacter) return;
-	ABaseAIController* AIController = Cast<ABaseAIController>(AICharacter->GetController());
+	ACAIController* AIController = Cast<ACAIController>(AICharacter->GetController());
 	if (!AIController) return;
 
 	for (uint8 i = 0; i < static_cast<uint8>(EAnimActionType::MAX); ++i)
