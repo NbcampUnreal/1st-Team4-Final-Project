@@ -93,7 +93,7 @@ public:
 
 	//TODOS
 	virtual void PostNetInit() override;
-	
+public:
 private:
 	UPROPERTY()
 	TObjectPtr<UCharacterInputComponent> CharacterInputComponent;
@@ -109,7 +109,6 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<class UArmorComponent> ArmorComponent;
-
 
 #pragma region Inputs
 
