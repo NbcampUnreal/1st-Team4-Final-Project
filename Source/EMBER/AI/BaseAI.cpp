@@ -2,6 +2,7 @@
 
 #include "AnimInstance/BaseAIAnimInstance.h"
 #include "CAIController.h"
+#include "C_CharacterMovementComponent.h"
 #include "C_StateComponent.h"
 #include "MontageSystemComponent.h"
 #include "StatusComponent.h"
@@ -16,8 +17,8 @@ ABaseAI::ABaseAI()
 	MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("Montage Component"));
 	EquipComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("Equip Component"));
 	AIState = CreateDefaultSubobject<UC_StateComponent>(TEXT("AI State"));
-	Behavior = CreateDefaultSubobject<UCBehaviorTreeComponent>(TEXT("BehaviorTree Component"));
-
+	BehaviorTreeComponent = CreateDefaultSubobject<UCBehaviorTreeComponent>(TEXT("BehaviorTree Component"));
+	MoveComponent = CreateDefaultSubobject<UC_CharacterMovementComponent>(TEXT("Move Component"));
 	AIControllerClass = ACAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -139,6 +140,11 @@ void ABaseAI::OnDeath()
 
 UBehaviorTree* ABaseAI::GetBehaviorTree() const
 {
+	if(BehaviorTree == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Behavior Tree is null");
+		return nullptr;
+	}
 	return BehaviorTree;
 }
 

@@ -45,6 +45,16 @@ void UCBTService_Khaimera::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 		return;
 	}
 
+	if (bDrawDebug)
+	{
+		FVector start = ai->GetActorLocation();
+		start.Z -= 25;
+
+		FVector end = start;
+
+		DrawDebugCylinder(ai->GetWorld(), start, end, ActionRange, 10, FColor::Red, false, Interval);
+	}
+
 	if(state->IsDeadMode() == true)
 	{
 		//controller->StopMovement();

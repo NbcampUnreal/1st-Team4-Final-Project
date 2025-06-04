@@ -40,7 +40,7 @@ void AGriffon::Tick(float DeltaTime)
 void AGriffon::Attack()
 {
 	//AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(("TargetActor")));
-	AActor* TargetActor = Cast<AActor>(Behavior.Get()->GetTarget());
+	AActor* TargetActor = Cast<AActor>(BehaviorTreeComponent.Get()->GetTarget());
 	if(TargetActor == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"Target is Null");

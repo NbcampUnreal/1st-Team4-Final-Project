@@ -70,7 +70,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	TObjectPtr<class UC_StateComponent> AIState;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "AI|Behavior")
-	TObjectPtr<UCBehaviorTreeComponent> Behavior;
+	TObjectPtr<UCBehaviorTreeComponent> BehaviorTreeComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Move")
+	TObjectPtr<class UC_CharacterMovementComponent> MoveComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "AI/BehaviorTree")
 	UBehaviorTree* BehaviorTree;

@@ -19,7 +19,7 @@ EBTNodeResult::Type UBTT_Speed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 		UE_LOG(LogTemp, Error, L"controller is null");
 		return EBTNodeResult::Failed;
 	}
-	TObjectPtr<AHumanAIBase> ai = Cast<AHumanAIBase>(controller->GetPawn());
+	TObjectPtr<ABaseAI> ai = Cast<ABaseAI>(controller->GetPawn());
 	if(ai == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"ai is null");

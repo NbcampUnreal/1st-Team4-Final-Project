@@ -22,4 +22,6 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Action")
 	float RunRange = 1000.0f;
+	UPROPERTY(EditAnywhere, Category = "Debug")
+	bool bDrawDebug;
 };
