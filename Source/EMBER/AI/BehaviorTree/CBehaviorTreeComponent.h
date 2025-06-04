@@ -44,11 +44,13 @@ private:
 
 public:
 	bool IsWaitMode();
-	bool IsApproachMode();
-	bool IsActionMode();
+	bool IsGuardMode();
+	bool IsRunMode();
+	bool IsFlyingMode();
 	bool IsPatrolMode();
+	bool IsChaseMode();
+	bool IsActionMode();
 	bool IsHittedMode();
-	bool IsAvoidMode();
 	bool IsDeadMode();
 
 public:
@@ -58,11 +60,13 @@ public:
 	void SetPatrolLocation(const FVector& InLocation);
 
 	void SetWaitMode();
-	void SetApproachMode();
-	void SetActionMode();
+	void SetGuardMode();
+	void SetRunMode();
+	void SetFlyingMode();
 	void SetPatrolMode();
+	void SetChaseMode();
+	void SetActionMode();
 	void SetHittedMode();
-	void SetAvoidMode();
 	void SetDeadMode();
 
 private:

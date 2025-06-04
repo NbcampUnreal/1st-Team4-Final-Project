@@ -9,13 +9,26 @@
 class UAISenseConfig_Sight;
 class AHumanAIBase;
 class UCBehaviorTreeComponent;
-/**
- * 
- */
+
+UENUM(BlueprintType)
+enum class EAnimalType : uint8
+{
+	Passive UMETA(DisplayName = "Passive"),
+	Defensive UMETA(DisplayName = "Defensive"),
+	Aggressive UMETA(DisplayName = "Aggressive"),
+	Crow UMETA(DisplayName = "Crow"),
+	Griffon UMETA(DisplayName = "Griffon"),
+	Dragon UMETA(DisplayName = "Dragon"),
+	Human UMETA(DisplayName = "Hunam")
+};
+
 UCLASS()
 class EMBER_API ACAIController : public AAIController
 {
 	GENERATED_BODY()
+public:
+	FORCEINLINE UBehaviorTree* GetBehaviorTree() { return CurrentBT; }
+
 public:
 	ACAIController();
 
@@ -35,4 +48,25 @@ private:
 	TObjectPtr<AHumanAIBase> AI;
 	TObjectPtr<UCBehaviorTreeComponent> Behavior;
 	TObjectPtr<UAISenseConfig_Sight> Sight;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBehaviorTree* PassiveBT;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBehaviorTree* DefensiveBT;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBehaviorTree* AggressiveBT;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBehaviorTree* CrowBT;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBehaviorTree* GriffonBT;
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBehaviorTree* DragonBT;
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBehaviorTree* HumanBT;
+
+	UBehaviorTree* CurrentBT;
 };
