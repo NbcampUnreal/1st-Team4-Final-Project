@@ -37,7 +37,7 @@ void ACAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	AI = Cast<AHumanAIBase>(InPawn);
+	AI = Cast<ABaseAI>(InPawn);
 
 	if(AI->GetBehaviorTree() == nullptr)
 	{

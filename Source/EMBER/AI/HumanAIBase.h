@@ -35,8 +35,8 @@ protected:
 	//TObjectPtr<UC_StateComponent> StateComponent;
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Status")
 	//TObjectPtr<class UStatusComponent> StatusComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Move")
-	TObjectPtr<class UC_CharacterMovementComponent> MoveComponent;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Move")
+	//TObjectPtr<class UC_CharacterMovementComponent> MoveComponent;
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Montage")
 	//TObjectPtr<class UMontageSystemComponent> MontageComponent;
 	/*UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "AI|Behavior")

@@ -24,7 +24,7 @@ void UCBTService_Aggressive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 		UE_LOG(LogTemp, Error, L"controller is null");
 		return;
 	}
-	TObjectPtr<AHumanAIBase> ai = Cast<AHumanAIBase>(controller->GetPawn());
+	TObjectPtr<ABaseAI> ai = Cast<ABaseAI>(controller->GetPawn());
 	if (ai.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"ai is null");
@@ -41,6 +41,16 @@ void UCBTService_Aggressive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	{
 		UE_LOG(LogTemp, Error, L"aistate is null");
 		return;
+	}
+
+	if (bDrawDebug)
+	{
+		FVector start = ai->GetActorLocation();
+		start.Z -= 25;
+
+		FVector end = start;
+
+		DrawDebugCylinder(ai->GetWorld(), start, end, ActionRange, 10, FColor::Red, false, Interval);
 	}
 
 	if (state->IsDeadMode() == true)

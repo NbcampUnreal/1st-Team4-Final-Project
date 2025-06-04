@@ -23,7 +23,7 @@ EBTNodeResult::Type UBTT_BossPatrol::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 		UE_LOG(LogTemp, Warning, L"controller is null");
 		return EBTNodeResult::Failed;
 	}
-	TObjectPtr<AHumanAIBase> ai = Cast<AHumanAIBase>(controller->GetPawn());
+	TObjectPtr<ABaseAI> ai = Cast<ABaseAI>(controller->GetPawn());
 	if (ai == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"ai is null");
@@ -68,7 +68,7 @@ void UBTT_BossPatrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 		UE_LOG(LogTemp, Warning, L"controller is null");
 		return;
 	}
-	TObjectPtr<AHumanAIBase> ai = Cast<AHumanAIBase>(controller->GetPawn());
+	TObjectPtr<ABaseAI> ai = Cast<ABaseAI>(controller->GetPawn());
 	if (ai == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"ai is null");

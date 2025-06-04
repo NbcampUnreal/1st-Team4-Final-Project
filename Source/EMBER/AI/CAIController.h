@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "CAIController.generated.h"
 
+class ABaseAI;
 struct FAIStimulus;
 class UAISenseConfig_Sight;
 class AHumanAIBase;
@@ -49,7 +50,7 @@ private:
 	TObjectPtr<UAIPerceptionComponent> Perception;
 
 private:
-	TObjectPtr<AHumanAIBase> AI;
+	TObjectPtr<ABaseAI> AI;
 	TObjectPtr<UCBehaviorTreeComponent> Behavior;
 	TObjectPtr<UAISenseConfig_Sight> Sight;
 };
