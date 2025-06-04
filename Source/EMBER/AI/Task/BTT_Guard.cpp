@@ -1,7 +1,6 @@
 ﻿#include "BTT_Guard.h"
-#include "BaseAIController.h"
 #include "BaseAI.h"
-#include "AnimInstance/Deer_AnimInstance.h"
+#include "CAIController.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -13,7 +12,7 @@ UBTT_Guard::UBTT_Guard()
 
 EBTNodeResult::Type UBTT_Guard::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	ABaseAIController* Controller = Cast<ABaseAIController>(OwnerComp.GetAIOwner());
+	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetAIOwner());
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	ABaseAI* ControlledAnimal = Cast<ABaseAI>(Controller->GetPawn());
 	

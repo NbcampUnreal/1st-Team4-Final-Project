@@ -1,6 +1,6 @@
 ﻿#include "BTT_Run.h"
 #include "BaseAI.h"
-#include "BaseAIController.h"
+#include "CAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTT_Run::UBTT_Run()
@@ -11,7 +11,7 @@ UBTT_Run::UBTT_Run()
 EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	OwnerCompRef = &OwnerComp;
-	ABaseAIController* Controller = Cast<ABaseAIController>(OwnerComp.GetOwner());
+	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetOwner());
 	BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	ControlledAnimal = Cast<ABaseAI>(Controller->GetPawn());
 	AActor* Target = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
