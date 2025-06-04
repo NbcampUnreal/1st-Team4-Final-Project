@@ -78,7 +78,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Key")
 	FName AIStateTypeKey = "AIState";
 	UPROPERTY(EditAnywhere, Category = "Key")
-	FName TargetKey = "Target";
+	FName TargetKey = "TargetActor";
 	UPROPERTY(EditAnywhere, Category = "Key")
 	FName PatrolLocationKey = "Patrol_Location";
 
