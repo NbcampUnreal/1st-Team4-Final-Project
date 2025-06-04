@@ -3,6 +3,7 @@
 
 #include "AI/Task/BTT_FlyMoveTo.h"
 #include "AI/BaseAI.h"
+#include "AI/CAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -17,7 +18,7 @@ EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
 	if (!TargetActor) return EBTNodeResult::Failed;
 	
-	ABaseAIController* AIController = Cast<ABaseAIController>(BaseAI->GetController());
+	ACAIController* AIController = Cast<ACAIController>(BaseAI->GetController());
 
 	FVector CurrentLocation = BaseAI->GetActorLocation();
 	FVector TargetLocation = TargetActor->GetActorLocation();

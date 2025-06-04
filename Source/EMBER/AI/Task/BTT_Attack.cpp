@@ -1,6 +1,6 @@
 #include "BTT_Attack.h"
 #include "BaseAI.h"
-#include "BaseAIController.h"
+#include "CAIController.h"
 #include "AnimInstance/BaseAIAnimInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "../Player/EmberPlayerCharacter.h"
@@ -16,7 +16,7 @@ UBTT_Attack::UBTT_Attack()
 
 EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory)
 {
-	ABaseAIController* AIController = Cast<ABaseAIController>(Comp.GetAIOwner());
+	ACAIController* AIController = Cast<ACAIController>(Comp.GetAIOwner());
 	if (!AIController) return EBTNodeResult::Failed;
 	
 	ABaseAI* AICharacter = Cast<ABaseAI>(AIController->GetCharacter());
