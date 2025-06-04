@@ -26,7 +26,6 @@ public:
 	AActor* ClosestActor;
 
 	FTimerHandle UpdateDistanceTimer;
-	bool bIsHit;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float ClosestDistanceBoundary;
