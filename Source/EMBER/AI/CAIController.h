@@ -42,8 +42,8 @@ protected:
 private:
 	UFUNCTION()
 	void OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors);
-	UFUNCTION()
-	virtual void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+	//UFUNCTION()
+	//virtual void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
 private:
 	UPROPERTY(VisibleAnywhere)

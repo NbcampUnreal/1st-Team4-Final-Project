@@ -73,13 +73,13 @@ void ACAIController::OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
 
 	if (actors.Num() <= 0)
 	{
-		Blackboard->SetValueAsObject("Target", nullptr);
+		Blackboard->SetValueAsObject("TargetActor", nullptr);
 		return;
 	}
 	UE_LOG(LogTemp, Error, L"%s", *actors[0]->GetName());
-	Blackboard->SetValueAsObject("Target", actors[0]);
+	Blackboard->SetValueAsObject("TargetActor", actors[0]);
 }
 
-void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
-{
-}
+//void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+//{
+//}
