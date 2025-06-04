@@ -2,11 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "AI/BehaviorTree/CBehaviorTreeComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Engine/TargetPoint.h"
 #include "BaseAI.generated.h"
 
 
+class UBehaviorTree;
 UENUM(BlueprintType)
 enum class AISoundCategory : uint8
 {
@@ -35,8 +37,8 @@ public:
 	virtual void OnAttack();
 
 	// AI Perception
-	UFUNCTION()
-	virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus);
+	//UFUNCTION()
+	//virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus);
 
 	// AI Patrol
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Patrol")
@@ -67,6 +69,8 @@ protected:
 	TObjectPtr<class UStatusComponent> StatusComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	TObjectPtr<class UC_StateComponent> AIState;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "AI|Behavior")
+	TObjectPtr<UCBehaviorTreeComponent> Behavior;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "AI/BehaviorTree")
 	UBehaviorTree* BehaviorTree;
@@ -92,8 +96,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|State")
 	bool bIsDie;
 
-	UAIPerceptionComponent* PerceptionComponent;
-	UBlackboardComponent* BlackboardComp;
+	//UAIPerceptionComponent* PerceptionComponent;
+	//UBlackboardComponent* BlackboardComp;
 };
 
 //TODOS State, Move 컴포넌트 있고어야할듯

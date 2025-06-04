@@ -16,7 +16,7 @@ public:
 
 	void Attack();
 	
-	virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
+	//virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
 
 	void SetCombatState();
 };

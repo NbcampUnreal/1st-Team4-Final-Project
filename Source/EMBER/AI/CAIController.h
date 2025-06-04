@@ -29,7 +29,6 @@ class EMBER_API ACAIController : public AAIController
 {
 	GENERATED_BODY()
 public:
-	FORCEINLINE UBehaviorTree* GetBehaviorTree() { return CurrentBT; }
 	FORCEINLINE TObjectPtr<UAIPerceptionComponent> GetPercption() { return Perception; }
 public:
 	ACAIController();
@@ -53,25 +52,4 @@ private:
 	TObjectPtr<AHumanAIBase> AI;
 	TObjectPtr<UCBehaviorTreeComponent> Behavior;
 	TObjectPtr<UAISenseConfig_Sight> Sight;
-
-	UPROPERTY(EditAnywhere, Category = "AI")
-	UBehaviorTree* PassiveBT;
-
-	UPROPERTY(EditAnywhere, Category = "AI")
-	UBehaviorTree* DefensiveBT;
-
-	UPROPERTY(EditAnywhere, Category = "AI")
-	UBehaviorTree* AggressiveBT;
-
-	UPROPERTY(EditAnywhere, Category = "AI")
-	UBehaviorTree* CrowBT;
-
-	UPROPERTY(EditAnywhere, Category = "AI")
-	UBehaviorTree* GriffonBT;
-	UPROPERTY(EditAnywhere, Category = "AI")
-	UBehaviorTree* DragonBT;
-	UPROPERTY(EditAnywhere, Category = "AI")
-	UBehaviorTree* HumanBT;
-
-	UBehaviorTree* CurrentBT;
 };

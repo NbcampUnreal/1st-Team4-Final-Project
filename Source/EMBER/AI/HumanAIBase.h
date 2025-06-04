@@ -27,20 +27,20 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UFUNCTION()
-	void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
+	//UFUNCTION()
+	//void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
 
 protected:	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Stat")
-	TObjectPtr<UC_StateComponent> StateComponent;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Stat")
+	//TObjectPtr<UC_StateComponent> StateComponent;
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Status")
 	//TObjectPtr<class UStatusComponent> StatusComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Move")
 	TObjectPtr<class UC_CharacterMovementComponent> MoveComponent;
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Montage")
 	//TObjectPtr<class UMontageSystemComponent> MontageComponent;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "AI|Behavior")
-	TObjectPtr< class UCBehaviorTreeComponent> Behavior;
+	/*UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "AI|Behavior")
+	TObjectPtr< class UCBehaviorTreeComponent> Behavior;*/
 	//UPROPERTY(EditDefaultsOnly, Category = "AI")
 	//TObjectPtr<UBehaviorTree> BehaviorTree;
 	//UPROPERTY(EditAnywhere)

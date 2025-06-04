@@ -26,16 +26,16 @@ float AAggressiveAI::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	return ActualDamage;
 }
 
-void AAggressiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
-{
-	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
-
-	if (Stimulus.WasSuccessfullySensed())
-	{
-		SetRunSpeed();
-	}
-	else
-	{
-		SetWalkSpeed();
-	}
-}
+//void AAggressiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
+//{
+//	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
+//
+//	if (Stimulus.WasSuccessfullySensed())
+//	{
+//		SetRunSpeed();
+//	}
+//	else
+//	{
+//		SetWalkSpeed();
+//	}
+//}

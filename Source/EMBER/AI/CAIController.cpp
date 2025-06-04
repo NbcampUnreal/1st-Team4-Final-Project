@@ -15,9 +15,9 @@ ACAIController::ACAIController()
 	Blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
 	Perception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception"));
 
-	//»ı¼ºÀÚ µ¿ÀûÇÒ´ç 
+	//ìƒì„±ì ë™ì í• ë‹¹ 
 	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight"));
-	//·±Å¸ÀÓ µ¿ÀûÇÒ´ç
+	//ëŸ°íƒ€ì„ ë™ì í• ë‹¹
 	//NewObject<>()
 
 	Sight->SightRadius = 600.0f;
@@ -30,7 +30,7 @@ ACAIController::ACAIController()
 
 	Perception->ConfigureSense(*Sight);
 	Perception->SetDominantSense(*Sight->GetSenseImplementation());
-	//GetSenseImplementation ÀÚ·áÇü Å¸ÀÔÀ» ³Ñ°ÜÁÖ´Â ÇÔ¼ö
+	//GetSenseImplementation ìë£Œí˜• íƒ€ì…ì„ ë„˜ê²¨ì£¼ëŠ” í•¨ìˆ˜
 }
 
 void ACAIController::OnPossess(APawn* InPawn)
@@ -39,22 +39,19 @@ void ACAIController::OnPossess(APawn* InPawn)
 
 	AI = Cast<AHumanAIBase>(InPawn);
 
-	//if(AI->GetBehaviorTree() == nullptr)
-	if(AI == nullptr)
+	if(AI->GetBehaviorTree() == nullptr)
 	{
-		UE_LOG(LogTemp, Error, L"AI is null");
+		UE_LOG(LogTemp, Error, L"Behavior is null");
 		return;
 	}
 
 	UBlackboardComponent* bb = GetBlackboardComponent();
-	//UseBlackboard(AI->GetBehaviorTree()->GetBlackboardAsset(), bb);
-	UseBlackboard(CurrentBT->GetBlackboardAsset(), bb);
-
+	UseBlackboard(AI->GetBehaviorTree()->GetBlackboardAsset(), bb);
+	
 	Behavior = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
 	Behavior->SetBlackboard(Blackboard);
 
-	//RunBehaviorTree(AI->GetBehaviorTree());
-	RunBehaviorTree(CurrentBT);
+	RunBehaviorTree(AI->GetBehaviorTree());
 }
 
 void ACAIController::OnUnPossess()

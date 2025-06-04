@@ -17,7 +17,7 @@ public:
 	//근접한 적 업데이트 타이머
 	void UpdateClosestActorTimer();
 	//근접한 적 업데이트
-	virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
+//	virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 

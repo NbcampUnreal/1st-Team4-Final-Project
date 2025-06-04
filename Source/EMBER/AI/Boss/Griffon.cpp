@@ -39,7 +39,13 @@ void AGriffon::Tick(float DeltaTime)
 
 void AGriffon::Attack()
 {
-	AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(("TargetActor")));
+	//AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(("TargetActor")));
+	AActor* TargetActor = Cast<AActor>(Behavior.Get()->GetTarget());
+	if(TargetActor == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Target is Null");
+		return;
+	}
 	UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance());
 
 	UGameplayStatics::ApplyDamage(TargetActor, AttackPower, GetController(), this, nullptr);
@@ -51,12 +57,12 @@ void AGriffon::Attack()
 	// AnimInstance->PlayStateMontage();
 }
 
-void AGriffon::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
-{
-	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
-	
-	// SetBlackboardVector("OriginLocation", GetActorLocation());
-}
+//void AGriffon::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
+//{
+//	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
+//	
+//	// SetBlackboardVector("OriginLocation", GetActorLocation());
+//}
 
 void AGriffon::SetCombatState()
 {

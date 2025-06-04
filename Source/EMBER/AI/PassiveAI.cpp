@@ -16,52 +16,52 @@ void APassiveAI::BeginPlay()
 	ABaseAI::BeginPlay();
 }
 
-void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
-{
-	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
-	
-	if (Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player Detect"));
-
-		EnemyActors.Add(UpdatedActor);
-		//TODOS State를 변경하던 다른 코드로 대체해야할듯?
-		//AIState->SetDetectMode();
-		CheckDetection(true);
-
-		float DistanceToTarget = FVector::Dist(UpdatedActor->GetActorLocation(), GetActorLocation());
-		bool bIsNear = (DistanceToTarget <= ClosestDistanceBoundary);
-
-		if (bIsNear)
-		{
-			if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-			{
-				AnimInstance->StopAllMontages(0.1f);
-			}
-		}
-		// SetBlackboardBool(TEXT("IsNear"), bIsNear);
-		// SetBlackboardBool(TEXT("IsDetected"), true);
-		// SetBlackboardObject(TEXT("TargetActor"), UpdatedActor);
-	}
-	else if (!Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
-	{
-		AIState->SetIdleMode();
-		//TODOS State를 변경하던 다른 코드로 대체해야할듯?
-		//if (AnimalType == EAnimalType::Passive)
-		{
-			EnemyActors.Remove(UpdatedActor);
-			if (EnemyActors.Num() == 0)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Zero Actor"));
-				CheckDetection(false);
-				ClosestActor = nullptr;
-				// SetBlackboardObject(TEXT("TargetActor"), nullptr);
-				// SetBlackboardBool(TEXT("IsDetected"), false);
-				// SetBlackboardBool(TEXT("IsNear"), false);
-			}
-		}
-	}
-}
+//void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
+//{
+//	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
+//	
+//	if (Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
+//	{
+//		UE_LOG(LogTemp, Warning, TEXT("Player Detect"));
+//
+//		EnemyActors.Add(UpdatedActor);
+//		//TODOS State를 변경하던 다른 코드로 대체해야할듯?
+//		//AIState->SetDetectMode();
+//		CheckDetection(true);
+//
+//		float DistanceToTarget = FVector::Dist(UpdatedActor->GetActorLocation(), GetActorLocation());
+//		bool bIsNear = (DistanceToTarget <= ClosestDistanceBoundary);
+//
+//		if (bIsNear)
+//		{
+//			if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+//			{
+//				AnimInstance->StopAllMontages(0.1f);
+//			}
+//		}
+//		// SetBlackboardBool(TEXT("IsNear"), bIsNear);
+//		// SetBlackboardBool(TEXT("IsDetected"), true);
+//		// SetBlackboardObject(TEXT("TargetActor"), UpdatedActor);
+//	}
+//	else if (!Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
+//	{
+//		AIState->SetIdleMode();
+//		//TODOS State를 변경하던 다른 코드로 대체해야할듯?
+//		//if (AnimalType == EAnimalType::Passive)
+//		{
+//			EnemyActors.Remove(UpdatedActor);
+//			if (EnemyActors.Num() == 0)
+//			{
+//				UE_LOG(LogTemp, Warning, TEXT("Zero Actor"));
+//				CheckDetection(false);
+//				ClosestActor = nullptr;
+//				// SetBlackboardObject(TEXT("TargetActor"), nullptr);
+//				// SetBlackboardBool(TEXT("IsDetected"), false);
+//				// SetBlackboardBool(TEXT("IsNear"), false);
+//			}
+//		}
+//	}
+//}
 
 void APassiveAI::UpdateClosestActorTimer()
 {

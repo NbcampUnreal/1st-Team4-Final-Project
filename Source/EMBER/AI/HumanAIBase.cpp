@@ -9,9 +9,8 @@
 
 AHumanAIBase::AHumanAIBase()
 {
-	StateComponent = CreateDefaultSubobject<UC_StateComponent>(TEXT("State Component"));
 	MoveComponent = CreateDefaultSubobject<UC_CharacterMovementComponent>(TEXT("Move Component"));
-	Behavior = CreateDefaultSubobject<UCBehaviorTreeComponent>(TEXT("BehaviorTree"));
+	/*Behavior = CreateDefaultSubobject<UCBehaviorTreeComponent>(TEXT("BehaviorTree"));*/
 }
 
 void AHumanAIBase::BeginPlay()
@@ -22,8 +21,7 @@ void AHumanAIBase::BeginPlay()
 
 }
 
-void AHumanAIBase::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
-{
-
-}
+//void AHumanAIBase::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+//{
+//}
 

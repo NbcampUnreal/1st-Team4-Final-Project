@@ -6,6 +6,7 @@
 #include "MontageSystemComponent.h"
 #include "StatusComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "AI/BehaviorTree/CBehaviorTreeComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Managers/EquipmentManagerComponent.h"
 
@@ -15,7 +16,8 @@ ABaseAI::ABaseAI()
 	MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("Montage Component"));
 	EquipComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("Equip Component"));
 	AIState = CreateDefaultSubobject<UC_StateComponent>(TEXT("AI State"));
-	
+	Behavior = CreateDefaultSubobject<UCBehaviorTreeComponent>(TEXT("BehaviorTree Component"));
+
 	AIControllerClass = ACAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -27,11 +29,11 @@ void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (ACAIController* AIController = Cast<ACAIController>(GetController()))
-	{
-		BlackboardComp = AIController->GetBlackboardComponent();
-	}
-ACAIController* Controller = Cast<ACAIController>(GetController());
+	//if (ACAIController* AIController = Cast<ACAIController>(GetController()))
+	//{
+	//	BlackboardComp = AIController->GetBlackboardComponent();
+	//}
+	//ACAIController* Controller = Cast<ACAIController>(GetController());
 	// Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAI::OnTargetPerceptionUpdated);
 	SetWalkSpeed();
 }
@@ -125,15 +127,15 @@ void ABaseAI::OnDeath()
 	DetachFromControllerPendingDestroy();
 }
 
-void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
-{
-	//TODOS 원상복귀 해야될 수 있음
-	ACAIController* BaseAIController = Cast<ACAIController>(Cast<AAIController>(GetController()));
-	if (BaseAIController == nullptr)
-		BaseAIController = Cast<ACAIController>(GetController());
-	//ABaseAIController* BaseAIController = Cast<ABaseAIController>(Cast<AAIController>(GetController()));
-	BlackboardComp = BaseAIController->GetBlackboardComponent();
-}
+//void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
+//{
+//	//TODOS 원상복귀 해야될 수 있음
+//	ACAIController* BaseAIController = Cast<ACAIController>(Cast<AAIController>(GetController()));
+//	if (BaseAIController == nullptr)
+//		BaseAIController = Cast<ACAIController>(GetController());
+//	//ABaseAIController* BaseAIController = Cast<ABaseAIController>(Cast<AAIController>(GetController()));
+//	BlackboardComp = BaseAIController->GetBlackboardComponent();
+//}
 
 UBehaviorTree* ABaseAI::GetBehaviorTree() const
 {

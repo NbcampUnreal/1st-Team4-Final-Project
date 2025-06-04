@@ -22,8 +22,8 @@ float ADefensiveAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AC
 	return ActualDamage;
 }
 
-void ADefensiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
-{
-}
+//void ADefensiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
+//{
+//}
 
 
