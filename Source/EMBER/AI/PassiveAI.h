@@ -13,7 +13,7 @@ public:
 	APassiveAI();
 	virtual void BeginPlay() override;
 	
-	void CheckDetection();
+	void CheckDetection(bool IsDetect);
 	//근접한 적 업데이트 타이머
 	void UpdateClosestActorTimer();
 	//근접한 적 업데이트
@@ -26,7 +26,6 @@ public:
 	AActor* ClosestActor;
 
 	FTimerHandle UpdateDistanceTimer;
-	bool bIsDetect;
 	bool bIsHit;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)

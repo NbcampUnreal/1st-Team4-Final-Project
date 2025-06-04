@@ -1,10 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EMBER/AI/AI_Interface.h"
-#include "EMBER/AI/BaseAIController.h"
 #include "GameFramework/Character.h"
-#include "Perception/AISenseConfig_Sight.h"
+#include "Perception/AIPerceptionComponent.h"
 #include "Engine/TargetPoint.h"
 #include "BaseAI.generated.h"
 
@@ -19,7 +17,7 @@ enum class AISoundCategory : uint8
 };
 
 UCLASS()
-class EMBER_API ABaseAI : public ACharacter, public IAI_Interface
+class EMBER_API ABaseAI : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -28,10 +26,6 @@ public:
 	virtual void BeginPlay() override;
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	                         AActor* DamageCauser) override;
-
-	// AI 기본정보
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Type")
-	EAnimalType AnimalType;
 	
 	// AI State
 	UFUNCTION(BlueprintCallable, Category = "AI|State")
@@ -60,13 +54,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AI|Movement")
 	virtual void SetFlySpeed();
-	
-	//Interface 함수
-	virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
-	virtual void SetBlackboardInt(FName KeyName, int value) override;
-	virtual void SetBlackboardFloat(FName KeyName, float value) override;
-	virtual void SetBlackboardVector(FName KeyName, FVector value) override;
-	virtual void SetBlackboardObject(FName KeyName, UObject* object) override;
 
 protected:
 	// AI 기본 정보	
@@ -77,6 +64,8 @@ protected:
 	//TODOS HP 관련 변경 요청
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	TObjectPtr<class UStatusComponent> StatusComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
+	TObjectPtr<class UC_StateComponent> AIState;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	float MaxHP;
@@ -99,17 +88,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|State")
 	bool bIsDie;
 
-	// AI Perception
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Perception")
-	UAIPerceptionComponent* AIPerception;
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Perception")
-	UAISenseConfig_Sight* SightConfig;
-
 	UBlackboardComponent* BlackboardComp;
-	
-	EAnimalState AnimalState;
 };
 
 //TODOS State, Move 컴포넌트 있고어야할듯

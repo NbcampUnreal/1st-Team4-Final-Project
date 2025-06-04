@@ -1,5 +1,6 @@
 #include "AI/Boss/Griffon.h"
 
+#include "C_StateComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/AnimInstance/BaseAIAnimInstance.h"
 #include "AnimInstance/Griffon_AnimInstance.h"
@@ -44,16 +45,18 @@ void AGriffon::Attack()
 
 	UGameplayStatics::ApplyDamage(TargetActor, AttackPower, GetController(), this, nullptr);
 	GetController()->StopMovement();
-	AnimalState = EAnimalState::Attack;
-	AnimInstance->AnimalState = EAnimalState::Attack;
-	AnimInstance->PlayStateMontage();
+
+	AIState->SetActionMode();
+	// AnimalState = EAnimalState::Attack;
+	// AnimInstance->AnimalState = EAnimalState::Attack;
+	// AnimInstance->PlayStateMontage();
 }
 
 void AGriffon::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
 	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
 	
-	SetBlackboardVector("OriginLocation", GetActorLocation());
+	// SetBlackboardVector("OriginLocation", GetActorLocation());
 }
 
 void AGriffon::SetCombatState()
