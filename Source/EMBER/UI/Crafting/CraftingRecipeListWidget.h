@@ -3,16 +3,30 @@
 #include "CoreMinimal.h"
 #include "UI/Common/EmberActivatableWidget.h"
 #include "Crafting/CraftingRecipeManager.h" 
-#include "UI/Crafting/CraftingRecipeListItemData.h"
+#include "UI/Crafting/CraftingRecipeListItemData.h" 
 #include "CraftingRecipeListWidget.generated.h"
 
 class UListView;
 class UScrollBox;
 class UTextBlock;
-class UCraftingListEntryWidget; 
-struct FCraftingRecipeRow;
+struct FCraftingRecipeRow; 
+class UCraftingRecipeListItemData; 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRecipeRowSelectedInListSignature, const FCraftingRecipeRow&, SelectedRecipeRow);
+USTRUCT(BlueprintType)
+struct FNamedCraftingRecipe
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Recipe")
+	FName RecipeRowName;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Recipe")
+	FCraftingRecipeRow RecipeData;
+
+	FNamedCraftingRecipe() : RecipeRowName(NAME_None) {}
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRecipeListItemSelectedSignature, UCraftingRecipeListItemData*, SelectedItemData);
 
 UCLASS()
 class EMBER_API UCraftingRecipeListWidget : public UEmberActivatableWidget
@@ -23,13 +37,13 @@ public:
 	UCraftingRecipeListWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	void SetRecipeList(const TArray<FCraftingRecipeRow>& Recipes);
+	void SetRecipeList(const TArray<FNamedCraftingRecipe>& InNamedRecipes);
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
 	void SetStationTitle(EStationType InStationType);
     
 	UPROPERTY(BlueprintAssignable, Category = "Crafting")
-	FOnRecipeRowSelectedInListSignature OnRecipeSelected;
+	FOnRecipeListItemSelectedSignature OnRecipeListItemSelected;
 
 protected:
 	virtual void NativeConstruct() override;

@@ -6,10 +6,13 @@
 #include "Crafting/CraftingRecipeManager.h"
 #include "GameplayTagsManager.h"
 #include "UI/Data/EmberItemData.h"
+#include "Item/Crafting/CraftingBuilding.h"
 
 UCraftingSystem::UCraftingSystem()
 {
     PrimaryComponentTick.bCanEverTick = false;
+    RecipeManager = nullptr;
+    CurrentStationForSystem = EStationType::None;
 }
 
 void UCraftingSystem::InitializeComponent()
@@ -34,90 +37,46 @@ void UCraftingSystem::BeginPlay()
     Super::BeginPlay();
 }
 
-UItemInstance* UCraftingSystem::StartCrafting(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
+bool UCraftingSystem::RequestServerCraft(AEmberPlayerCharacter* Player, ACraftingBuilding* CraftingStationActor, FName RecipeRowName, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
 {
-    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: Called for Recipe DisplayName: %s"), *Recipe.RecipeDisplayName.ToString());
+    if (!Player || !CraftingStationActor || RecipeRowName.IsNone() || !RecipeManager || !RecipeManager->RecipeDataTable)
+    {
+        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::RequestServerCraft - Invalid parameters."));
+        return false;
+    }
 
-    if (!Player)
+    const FCraftingRecipeRow* RecipeDataPtr = RecipeManager->RecipeDataTable->FindRow<FCraftingRecipeRow>(RecipeRowName, TEXT("RequestServerCraft_ClientCheck"));
+    if (!RecipeDataPtr)
     {
-        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: Player is NULL. Returning nullptr."));
-        return nullptr;
+        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::RequestServerCraft - RecipeRowName '%s' not found in DataTable on Client."), *RecipeRowName.ToString());
+        return false;
     }
-    if (!RecipeManager)
+    const FCraftingRecipeRow& Recipe = *RecipeDataPtr;
+
+    if (!CanCraftRecipeAtStation(Recipe, CraftingStationActor->StationType))
     {
-        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: RecipeManager is not set on CraftingSystem component! Returning nullptr."));
-        return nullptr;
-    }
-    
-    if (!CanCraftRecipeAtStation(Recipe, CurrentStation))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::StartCrafting: Cannot craft recipe at this station. Recipe requires: %s. Returning nullptr."), *UEnum::GetValueAsString(Recipe.CraftingStation));
-        return nullptr;
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::RequestServerCraft - Client check: Cannot craft recipe at this station."));
+        return false;
     }
     
     if (!HasRequiredMaterials(Player, Recipe, InSelectedMainIngredients))
     {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::StartCrafting: Missing required materials. Returning nullptr."));
-        return nullptr;
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::RequestServerCraft - Client check: Missing required materials."));
+        return false;
     }
     
-    EItemRarity FinalRarity = EItemRarity::Common;
-    bool bUsesQuality = Recipe.RequiredMainMaterialCount > 0;
-
-    if (bUsesQuality)
+    TArray<FGameplayTag> SelectedTagsArray;
+    TArray<int32> SelectedQuantitiesArray;
+    for (const auto& Pair : InSelectedMainIngredients)
     {
-        FinalRarity = EvaluateItemRarity(Recipe, InSelectedMainIngredients);
-    }
-
-    if (!ConsumeMaterials(Player, Recipe, InSelectedMainIngredients))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::StartCrafting: ConsumeMaterials FAILED (Note: ConsumeMaterials is currently a stub). Returning nullptr."));
-        return nullptr;
-    }
-    
-    if (!Recipe.ItemTemplateClass)
-    {
-        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: Recipe.ItemTemplateClass is NULL for recipe [%s]. Cannot create item."), *Recipe.RecipeDisplayName.ToString());
-        return nullptr;
+        SelectedTagsArray.Add(Pair.Key);
+        SelectedQuantitiesArray.Add(Pair.Value);
     }
 
-    int32 ItemTemplateIDToUse = UEmberItemData::Get().FindItemTemplateIDByClass(Recipe.ItemTemplateClass);
-
-    if (ItemTemplateIDToUse == INDEX_NONE)
-    {
-        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: FindItemTemplateIDByClass returned INDEX_NONE for class %s. Cannot initialize item instance."), *Recipe.ItemTemplateClass->GetName());
-        return nullptr; 
-    }
-    
-    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: ItemTemplateID %d obtained for class %s. Creating UItemInstance."), ItemTemplateIDToUse, *Recipe.ItemTemplateClass->GetName());
-
-    UItemInstance* NewItem = NewObject<UItemInstance>(Player);
-    if (!NewItem)
-    {
-        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::StartCrafting: Failed to create NewItem UObject instance. Returning nullptr."));
-        return nullptr;
-    }
-    
-    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: NewItem UObject created. Calling NewItem->Init with TemplateID: %d, Rarity: %s"), ItemTemplateIDToUse, *UEnum::GetValueAsString(FinalRarity));
-    
-    NewItem->Init(ItemTemplateIDToUse, FinalRarity); 
-    
-    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: NewItem->Init call completed."));
-    
-    const UItemTemplate* OutputItemTemplateForLog = GetItemTemplateById(ItemTemplateIDToUse); 
-    if (OutputItemTemplateForLog) 
-    {
-        UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: (Our GetItemTemplateById stub) OutputItemTemplate is %s."), *OutputItemTemplateForLog->DisplayName.ToString());
-    }
-    else 
-    {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::StartCrafting: (Our GetItemTemplateById stub) OutputItemTemplate is NULL for ID %d."), ItemTemplateIDToUse);
-    }
-    
-    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::StartCrafting: Function returning NewItem instance."));
-    return NewItem; 
+    CraftingStationActor->Server_ExecuteCrafting(RecipeRowName, SelectedTagsArray, SelectedQuantitiesArray, Player);
+    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::RequestServerCraft - Server_ExecuteCrafting RPC called for %s."), *RecipeRowName.ToString());
+    return true;
 }
-
 bool UCraftingSystem::CanCraftRecipeAtStation(const FCraftingRecipeRow& Recipe, EStationType Station) const
 {
     if (Recipe.bCraftableByCharacter && Station == EStationType::None) return true;
@@ -166,7 +125,6 @@ bool UCraftingSystem::HasRequiredMaterials(AEmberPlayerCharacter* Player, const 
             return false;
         }
     }
-
     return true;
 }
 
@@ -198,7 +156,6 @@ TMap<FGameplayTag, int32> UCraftingSystem::AggregateIngredients(AEmberPlayerChar
 int32 UCraftingSystem::CalculateScore(const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const
 {
     if (Recipe.RequiredMainMaterialCount == 0) return 0;
-
     int32 Score = 0;
     for (const auto& Pair : InSelectedMainIngredients)
     {
@@ -218,60 +175,33 @@ TMap<EItemRarity, float> UCraftingSystem::GetRarityProbabilities(const FCrafting
 {
     TMap<EItemRarity, float> Result;
     bool bUsesQuality = Recipe.RequiredMainMaterialCount > 0;
-
     if (!bUsesQuality)
     {
         Result.Add(EItemRarity::Common, 1.f);
         return Result;
     }
-    
     int32 Score = CalculateScore(Recipe, InSelectedMainIngredients);
-    int32 MaxScore = Recipe.RequiredMainMaterialCount * 6;
-    int32 MinScore = Recipe.RequiredMainMaterialCount * 1;
+    int32 MaxPossibleScore = 0; 
+    for(const FGameplayTag& Tag : Recipe.AllowedMainMaterialTags) MaxPossibleScore += GetMaterialScore(Tag) * Recipe.RequiredMainMaterialCount;
+    if(MaxPossibleScore == 0 && Recipe.RequiredMainMaterialCount > 0) MaxPossibleScore = Recipe.RequiredMainMaterialCount * 6; 
 
-    float Ratio = MaxScore > MinScore ? (float)(Score - MinScore) / (MaxScore - MinScore) : 0.f;
+
+    int32 MinPossibleScore = Recipe.RequiredMainMaterialCount * 1; 
+    float Ratio = MaxPossibleScore > MinPossibleScore ? static_cast<float>(Score - MinPossibleScore) / (MaxPossibleScore - MinPossibleScore) : 0.f;
     Ratio = FMath::Clamp(Ratio, 0.f, 1.f);
 
     float Common = 0.f, Uncommon = 0.f, Rare = 0.f, Unique = 0.f, Legendary = 0.f;
-
-    if (Ratio <= 0.2f)
-    {
-        Common = 1.f;
-    }
-    else if (Ratio <= 0.4f)
-    {
-        float T = (Ratio - 0.2f) / 0.2f;
-        Common = FMath::Lerp(1.f, 0.7f, T);
-        Uncommon = FMath::Lerp(0.f, 0.3f, T);
-    }
-    else if (Ratio <= 0.6f)
-    {
-        float T = (Ratio - 0.4f) / 0.2f;
-        Common = FMath::Lerp(0.7f, 0.2f, T);
-        Uncommon = FMath::Lerp(0.3f, 0.6f, T);
-        Rare = FMath::Lerp(0.f, 0.2f, T);
-    }
-    else if (Ratio <= 0.8f)
-    {
-        float T = (Ratio - 0.6f) / 0.2f;
-        Uncommon = FMath::Lerp(0.6f, 0.25f, T);
-        Rare = FMath::Lerp(0.2f, 0.6f, T);
-        Unique = FMath::Lerp(0.f, 0.15f, T);
-    }
-    else 
-    {
-        float T = (Ratio - 0.8f) / 0.2f;
-        Rare = FMath::Lerp(0.6f, 0.25f, T);
-        Unique = FMath::Lerp(0.15f, 0.63f, T);
-        Legendary = FMath::Lerp(0.f, 0.12f, T);
-    }
+    if (Ratio <= 0.2f) { Common = 1.f; }
+    else if (Ratio <= 0.4f) { float T = (Ratio - 0.2f) / 0.2f; Common = FMath::Lerp(1.f, 0.7f, T); Uncommon = FMath::Lerp(0.f, 0.3f, T); }
+    else if (Ratio <= 0.6f) { float T = (Ratio - 0.4f) / 0.2f; Common = FMath::Lerp(0.7f, 0.2f, T); Uncommon = FMath::Lerp(0.3f, 0.6f, T); Rare = FMath::Lerp(0.f, 0.2f, T); }
+    else if (Ratio <= 0.8f) { float T = (Ratio - 0.6f) / 0.2f; Uncommon = FMath::Lerp(0.6f, 0.25f, T); Rare = FMath::Lerp(0.2f, 0.6f, T); Unique = FMath::Lerp(0.f, 0.15f, T); }
+    else { float T = (Ratio - 0.8f) / 0.2f; Rare = FMath::Lerp(0.6f, 0.25f, T); Unique = FMath::Lerp(0.15f, 0.63f, T); Legendary = FMath::Lerp(0.f, 0.12f, T); }
 
     Result.Add(EItemRarity::Common, Common > 0.f ? Common : 0.f);
     Result.Add(EItemRarity::Uncommon, Uncommon > 0.f ? Uncommon : 0.f);
     Result.Add(EItemRarity::Rare, Rare > 0.f ? Rare : 0.f);
     Result.Add(EItemRarity::Unique, Unique > 0.f ? Unique : 0.f);
     Result.Add(EItemRarity::Legendary, Legendary > 0.f ? Legendary : 0.f);
-
     return Result;
 }
 
@@ -279,22 +209,16 @@ EItemRarity UCraftingSystem::EvaluateItemRarity(const FCraftingRecipeRow& Recipe
 {
     bool bUsesQuality = Recipe.RequiredMainMaterialCount > 0;
     if (!bUsesQuality) return EItemRarity::Common;
-
     TMap<EItemRarity, float> Probs = GetRarityProbabilities(Recipe, InSelectedMainIngredients);
     float Rand = FMath::FRand();
     float Accum = 0.f;
-
     TArray<EItemRarity> RarityOrder = { EItemRarity::Common, EItemRarity::Uncommon, EItemRarity::Rare, EItemRarity::Unique, EItemRarity::Legendary };
-
     for (EItemRarity Rarity : RarityOrder)
     {
         if (Probs.Contains(Rarity))
         {
             Accum += Probs.FindChecked(Rarity);
-            if (Rand < Accum)
-            {
-                return Rarity;
-            }
+            if (Rand < Accum) return Rarity;
         }
     }
     return EItemRarity::Common;
@@ -302,32 +226,16 @@ EItemRarity UCraftingSystem::EvaluateItemRarity(const FCraftingRecipeRow& Recipe
 
 const UItemTemplate* UCraftingSystem::GetItemTemplateById(int32 TemplateID) const
 {
-    UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::GetItemTemplateById - NOT IMPLEMENTED. Returning nullptr. This is a STUB FUNCTION."));
+    UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::GetItemTemplateById - Returning nullptr for TemplateID %d. UEmberItemData::Get().FindItemTemplateByID() must be implemented by teammate to return 'const UItemTemplate*' and handle invalid IDs safely."), TemplateID);
     return nullptr;
 }
 
 bool UCraftingSystem::ConsumeMaterials(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
 {
-    if (!Player || !RecipeManager) return false; 
+    if (!Player) return false; 
     UInventoryManagerComponent* PlayerInventory = Player->FindComponentByClass<UInventoryManagerComponent>();
     if (!PlayerInventory) return false;
-
-    UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: ConsumeMaterials - Material consumption logic needs to be fully implemented based on InventoryManagerComponent capabilities."));
-
-    bool bUsesQuality = Recipe.RequiredMainMaterialCount > 0;
-
-    if (bUsesQuality)
-    {
-        for (const auto& Pair : InSelectedMainIngredients)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Attempting to consume MAIN material %s x %d"), *Pair.Key.ToString(), Pair.Value);
-        }
-    }
-
-    for (const auto& Pair : Recipe.Ingredients)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Attempting to consume GENERAL material %s x %d"), *Pair.Key.ToString(), Pair.Value);
-    }
+    UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: ConsumeMaterials - STUB! Material consumption logic needed here using PlayerInventory."));
     return true; 
 }
 

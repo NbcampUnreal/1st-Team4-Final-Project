@@ -6,17 +6,21 @@
 #include "UI/Common/EmberActivatableWidget.h"
 #include "UI/Crafting/CraftingMainMaterialWidget.h" 
 #include "Crafting/CraftingRecipeManager.h"   
-#include "UI/Crafting/CraftingOutputBoxWidget.h" 
+#include "UI/Crafting/CraftingRecipeListWidget.h" 
+// #include "UI/Crafting/CraftingOutputBoxWidget.h" // 전방 선언으로 대체 또는 필요시 유지
 #include "CraftingWidget.generated.h"
 
 class UCraftingRecipeListWidget;
 class UCraftingIngredientWidget;
 class UCraftingResultWidget;
-struct FCraftingRecipeRow;
 class UCraftingMainMaterialWidget;
 class UWidgetSwitcher;
 class UUserWidget;
-class UCraftingOutputBoxWidget;
+class ACraftingBuilding; 
+class UPanelWidget; 
+class UCraftingRecipeListItemData;
+class UInventoryManagerComponent;
+class UCraftingOutputBoxWidget; // 전방 선언
 
 
 UCLASS()
@@ -31,7 +35,7 @@ public:
     virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
     UFUNCTION(BlueprintCallable, Category = "Crafting")
-    void InitializeForStation(EStationType InStationType, FName OptionalInitialRecipeRowName = NAME_None);
+    void InitializeForStation(ACraftingBuilding* InStationActor, FName OptionalInitialRecipeRowName = NAME_None);
 
 protected:
     void UpdateSelectedRecipe(int32 Direction);
@@ -45,7 +49,7 @@ protected:
     void AttemptCraftCurrentRecipe();
     
     UFUNCTION()
-    void HandleRecipeSelectedFromList(const FCraftingRecipeRow& SelectedRecipeRow);
+    void HandleRecipeSelectedFromList(UCraftingRecipeListItemData* SelectedItemData);
     
     UFUNCTION()
     void HandleMainMaterialSelectionChanged(const FSelectedIngredientsMapWrapper& SelectedIngredientsWrapper);
@@ -57,7 +61,7 @@ protected:
     UPROPERTY(meta = (BindWidgetOptional))
     TObjectPtr<UWidgetSwitcher> CenterContentSwitcher;
 
-    UPROPERTY(meta = (BindWidget))
+    UPROPERTY(meta = (BindWidgetOptional)) 
     TObjectPtr<UCraftingIngredientWidget> GeneralRecipeIngredientsWidget; 
 
     UPROPERTY(meta = (BindWidgetOptional))
@@ -67,8 +71,11 @@ protected:
     TObjectPtr<UCraftingResultWidget> SelectedRecipeDisplayWidget; 
 
     UPROPERTY(meta = (BindWidgetOptional))
-    TObjectPtr<UCraftingOutputBoxWidget> CraftingOutputBoxWidget;
+    TObjectPtr<UPanelWidget> OutputInventoryDisplayContainer; 
 
+    UPROPERTY(EditDefaultsOnly, Category = "Crafting UI")
+    TSubclassOf<UCraftingOutputBoxWidget> StationOutputInventoryWidgetClass; 
+    
     UPROPERTY(meta = (BindWidgetOptional))
     TObjectPtr<UUserWidget> PlayerInventoryDisplayWidget;
 
@@ -76,10 +83,17 @@ protected:
     EStationType CurrentStationTypeForUI;
 
     UPROPERTY(BlueprintReadOnly, Category = "Crafting State")
-    TArray<FCraftingRecipeRow> ActiveRecipeList;
+    TArray<FNamedCraftingRecipe> ActiveRecipeList;
 
 private:
     int32 SelectedRecipeIndex = 0;
     int32 CraftAmount = 1;
     TMap<FGameplayTag, int32> CurrentSelectedMainIngredients;
+    FName SelectedRecipeName = NAME_None;
+
+    UPROPERTY()
+    TObjectPtr<ACraftingBuilding> CurrentStationActorRef;
+    
+    UPROPERTY()
+    TObjectPtr<UCraftingOutputBoxWidget> ActiveOutputInventoryUI;
 };

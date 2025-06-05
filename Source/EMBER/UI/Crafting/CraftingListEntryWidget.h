@@ -24,37 +24,33 @@ class EMBER_API UCraftingListEntryWidget : public UUserWidget, public IUserObjec
 public:
     UCraftingListEntryWidget(const FObjectInitializer& ObjectInitializer);
 
-    UPROPERTY(BlueprintReadOnly, Category="CraftingListEntry", meta = (BindWidget))
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
     TObjectPtr<UTextBlock> RecipeNameText;
 
-    UPROPERTY(BlueprintReadOnly, Category="CraftingListEntry", meta = (BindWidget))
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
     TObjectPtr<UImage> RecipeIcon;
     
-    UPROPERTY(BlueprintReadOnly, Category="CraftingListEntry", meta = (BindWidgetOptional))
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
     TObjectPtr<UBorder> SelectionHighlightBorder;
 
-    UPROPERTY(BlueprintAssignable, Category = "CraftingListEntry")
+    UPROPERTY(BlueprintAssignable, Category = "ListEntry")
     FOnCraftingListEntryClicked OnThisEntryClicked;
-
-    UFUNCTION(BlueprintImplementableEvent, Category = "ListEntry", meta = (DisplayName = "OnUpdateDisplay_BP"))
-    void K2_OnUpdateDisplay(const FText& InRecipeName, UTexture2D* InIconTexture, bool bIsCraftable, bool bIsSelected);
-    
-    UFUNCTION(BlueprintCallable, Category = "CraftingListEntry")
-    void HandleClick();
-
-    UFUNCTION(BlueprintPure, Category = "CraftingListEntry")
-    bool CalculateCraftableStatusInternal(UCraftingRecipeListItemData* InListItemData) const;
-
-    UFUNCTION(BlueprintPure, Category = "CraftingListEntry")
-    UTexture2D* GetIconTextureFromRecipeDataInternal(UCraftingRecipeListItemData* InListItemData) const;
-    
-    UFUNCTION(BlueprintCallable, Category = "CraftingListEntry")
-    void SetCurrentListItemData(UCraftingRecipeListItemData* InData);
-
 
 protected:
     virtual void NativeConstruct() override;
+    virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override; 
+    
+    UFUNCTION(BlueprintImplementableEvent, Category = "ListEntry", meta = (DisplayName = "OnUpdateDisplay_BP"))
+    void K2_OnUpdateDisplay(const FText& InRecipeName, UTexture2D* InIconTexture, bool bIsCraftable, bool bIsSelected);
+    
+    UFUNCTION(BlueprintCallable)
+    void HandleClick();
 
-    UPROPERTY(BlueprintReadOnly, Category="CraftingListEntry")
+    UPROPERTY(BlueprintReadOnly, Category="ListEntry")
     TObjectPtr<UCraftingRecipeListItemData> CurrentListItemDataInternal;
+
+private:
+    void UpdateBasicVisuals(bool bIsNowSelected);
+    bool CalculateCraftableStatus() const;
+    UTexture2D* GetIconTextureFromRecipeData() const;
 };

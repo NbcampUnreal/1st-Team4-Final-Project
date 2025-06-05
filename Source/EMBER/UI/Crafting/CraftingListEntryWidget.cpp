@@ -24,14 +24,9 @@ void UCraftingListEntryWidget::NativeConstruct()
     Super::NativeConstruct();
 }
 
-void UCraftingListEntryWidget::SetCurrentListItemData(UCraftingRecipeListItemData* InData)
+bool UCraftingListEntryWidget::CalculateCraftableStatus() const
 {
-    CurrentListItemDataInternal = InData;
-}
-
-bool UCraftingListEntryWidget::CalculateCraftableStatusInternal(UCraftingRecipeListItemData* InListItemData) const
-{
-    if (!InListItemData) return false;
+    if (!CurrentListItemDataInternal) return false;
 
     AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn());
     UCraftingSystem* CraftingSystem = Player ? Player->FindComponentByClass<UCraftingSystem>() : nullptr;
@@ -39,22 +34,57 @@ bool UCraftingListEntryWidget::CalculateCraftableStatusInternal(UCraftingRecipeL
     if (CraftingSystem && Player)
     {
        TMap<FGameplayTag, int32> EmptySelectedMainIngredients;
-       return CraftingSystem->HasRequiredMaterials(Player, InListItemData->RecipeData, EmptySelectedMainIngredients);
+       return CraftingSystem->HasRequiredMaterials(Player, CurrentListItemDataInternal->RecipeData, EmptySelectedMainIngredients);
     }
     return false;
 }
 
-UTexture2D* UCraftingListEntryWidget::GetIconTextureFromRecipeDataInternal(UCraftingRecipeListItemData* InListItemData) const
+UTexture2D* UCraftingListEntryWidget::GetIconTextureFromRecipeData() const
 {
-    if (InListItemData && InListItemData->RecipeData.ItemTemplateClass)
+    if (CurrentListItemDataInternal && CurrentListItemDataInternal->RecipeData.ItemTemplateClass)
     {
-        const UItemTemplate* ItemTemplateCDO = InListItemData->RecipeData.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
+        const UItemTemplate* ItemTemplateCDO = CurrentListItemDataInternal->RecipeData.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
         if (ItemTemplateCDO)
         {
             return ItemTemplateCDO->IconTexture;
         }
     }
     return nullptr;
+}
+
+void UCraftingListEntryWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
+{
+    CurrentListItemDataInternal = Cast<UCraftingRecipeListItemData>(ListItemObject);
+
+    UpdateBasicVisuals(IsListItemSelected()); 
+    
+    FText RecipeNameForDisplay = FText::FromString(TEXT("Invalid Recipe"));
+    if(CurrentListItemDataInternal) RecipeNameForDisplay = CurrentListItemDataInternal->RecipeData.RecipeDisplayName;
+    
+    UTexture2D* IconTextureForDisplay = GetIconTextureFromRecipeData();
+    bool bCanCraft = CalculateCraftableStatus();
+    
+    K2_OnUpdateDisplay(RecipeNameForDisplay, IconTextureForDisplay, bCanCraft, IsListItemSelected());
+}
+
+void UCraftingListEntryWidget::UpdateBasicVisuals(bool bIsNowSelected)
+{
+    if (RecipeNameText)
+    {
+        if(CurrentListItemDataInternal)
+        {
+            RecipeNameText->SetText(CurrentListItemDataInternal->RecipeData.RecipeDisplayName);
+        }
+        else
+        {
+            RecipeNameText->SetText(FText::FromString(TEXT("...")));
+        }
+    }
+
+    if (SelectionHighlightBorder)
+    {
+        SelectionHighlightBorder->SetVisibility(bIsNowSelected ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+    }
 }
 
 void UCraftingListEntryWidget::HandleClick()

@@ -4,9 +4,11 @@
 #include "GameplayTagContainer.h"
 #include "UI/Common/EmberActivatableWidget.h"
 #include "Crafting/CraftingRecipeManager.h"
+#include "UI/Crafting/CraftingIngredientLineEntry.h"
 #include "CraftingIngredientWidget.generated.h"
 
 class UVerticalBox;
+class UUserWidget;
 struct FCraftingRecipeRow;
 
 UCLASS()
@@ -23,4 +25,7 @@ public:
 protected:
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* IngredientDisplayBox;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UCraftingIngredientLineEntry> IngredientLineEntryWidgetClass; 
 };

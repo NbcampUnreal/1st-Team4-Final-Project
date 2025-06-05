@@ -12,7 +12,7 @@ class UImage;
 class UVerticalBox;
 struct FCraftingRecipeRow;
 class UItemTemplate;
-
+class UCraftingResultIngredientLineEntry;
 
 UCLASS()
 class EMBER_API UCraftingResultWidget : public UEmberActivatableWidget
@@ -46,16 +46,19 @@ protected:
     UPROPERTY(BlueprintReadOnly, Category = "CraftingResult", meta = (BindWidgetOptional))
     TObjectPtr<UTextBlock> InfoTextDisplay; 
 
-    UPROPERTY(BlueprintReadOnly, Category = "CraftingResult", meta = (BindWidgetOptional))
+    UPROPERTY(BlueprintReadOnly, Category = "CraftingResult", meta = (BindWidget))
     TObjectPtr<UVerticalBox> IngredientsDisplayBox;
+
+    UPROPERTY(EditDefaultsOnly, Category = "CraftingResult|UI")
+    TSubclassOf<UCraftingResultIngredientLineEntry> ResultIngredientLineEntryClass;
 
     UFUNCTION(BlueprintImplementableEvent, Category = "CraftingResult", meta = (DisplayName = "OnUpdateIconAndDescription_BP"))
     void K2_OnUpdateIconAndDescription(const UItemTemplate* ItemTemplateData);
 
 private:
-    const FCraftingRecipeRow* CurrentTargetRecipeRowPtr; 
+    const FCraftingRecipeRow* CurrentTargetRecipeRowPtr_EditorOnly;
     TMap<EItemRarity, float> CurrentRarityChances_Cache; 
 
-    const UItemTemplate* GetTemplateFromID(int32 TemplateID) const;
+    const UItemTemplate* GetTemplateFromRecipeRow(const FCraftingRecipeRow& RecipeRow) const;
     void PopulateIngredientsDisplay(const FCraftingRecipeRow& RecipeData, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount);
 };

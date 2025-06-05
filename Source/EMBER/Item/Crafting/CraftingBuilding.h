@@ -3,76 +3,54 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Crafting/CraftingRecipeManager.h"
+#include "GameFlag.h"
+#include "GameplayTagContainer.h"
 #include "CraftingBuilding.generated.h"
 
-class UCraftingWidget;
-struct FCraftingRecipeRow;
-class UCraftingRecipeManager;
-class AEmberPlayerCharacter;
+class UInventoryManagerComponent;
 class UStaticMeshComponent;
-class UBoxComponent;
-class UUserWidget;
+class USphereComponent;
+class UCraftingWidget;
+class AEmberPlayerCharacter;
 
-UCLASS(Abstract)
+UCLASS()
 class EMBER_API ACraftingBuilding : public AActor
 {
     GENERATED_BODY()
-
-public:
+    
+public:    
     ACraftingBuilding();
 
 protected:
     virtual void BeginPlay() override;
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-    TObjectPtr<UStaticMeshComponent> BuildingMesh;
+    TObjectPtr<UStaticMeshComponent> MeshComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-    TObjectPtr<UBoxComponent> InteractionBox;
+    TObjectPtr<USphereComponent> InteractionRange;
 
-    UPROPERTY()
-    TObjectPtr<AEmberPlayerCharacter> OverlappingPlayerCharacter;
+    UPROPERTY(EditDefaultsOnly, Category = "Crafting UI")
+    TSubclassOf<UCraftingWidget> CraftingWidgetClass;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
-    TSubclassOf<UUserWidget> InteractionPromptWidgetClass;
+public:    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
+    EStationType StationType;
 
-    UPROPERTY()
-    TObjectPtr<UUserWidget> InteractionPromptWidgetInstance;
-    
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UCraftingWidget> MainCraftingUIClass; 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Crafting|Output", Replicated)
+    TObjectPtr<UInventoryManagerComponent> OutputInventoryComponent;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crafting")
-    EStationType StationType = EStationType::None;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crafting", meta = (GetOptions = "EditorOnly_GetRecipeRowNames"))
-    FName SelectedRecipeRowName;
-    
-    const FCraftingRecipeRow* CachedSelectedRecipeData;
-
-    UFUNCTION()
-    TArray<FName> EditorOnly_GetRecipeRowNames() const;
-
-
-public:
-    UFUNCTION()
-    virtual void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-    UFUNCTION()
-    virtual void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-    UFUNCTION(BlueprintCallable, Category = "Interaction")
-    virtual void HandleInput();
-
-    UFUNCTION(BlueprintCallable, Category = "Interaction")
-    virtual void OnInteract(AActor* Interactor);
-
-    UFUNCTION(BlueprintCallable, Category = "Interaction")
-    virtual void ShowInteractPrompt();
-
-    UFUNCTION(BlueprintCallable, Category = "Interaction")
-    virtual void HideInteractPrompt();
+    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Crafting")
+    void Server_ExecuteCrafting(FName RecipeRowName, const TArray<FGameplayTag>& SelectedMainIngredientTags, const TArray<int32>& SelectedMainIngredientQuantities, AEmberPlayerCharacter* RequestingPlayer);
 
 private:
-    UCraftingRecipeManager* GetRecipeManagerFromPlayer(AEmberPlayerCharacter* Player) const;
+    UFUNCTION()
+    void OnInteractionRangeOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+    UFUNCTION()
+    void OnInteractionRangeOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+    UPROPERTY()
+    TObjectPtr<UCraftingWidget> ActiveCraftingUI;
 };

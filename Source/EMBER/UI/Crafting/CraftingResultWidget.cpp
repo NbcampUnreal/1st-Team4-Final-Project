@@ -5,17 +5,19 @@
 #include "Crafting/CraftingRecipeManager.h"
 #include "Item/ItemTemplate.h"
 #include "UI/Data/EmberItemData.h"
+#include "UI/Crafting/CraftingResultIngredientLineEntry.h"
 
 
 UCraftingResultWidget::UCraftingResultWidget(const FObjectInitializer& ObjectInitializer) 
     : Super(ObjectInitializer)
 {
-    CurrentTargetRecipeRowPtr = nullptr;
+    CurrentTargetRecipeRowPtr_EditorOnly = nullptr;
     ResultItemNameText = nullptr;
     ItemIconDisplay = nullptr;
     ItemDescriptionText = nullptr;
     InfoTextDisplay = nullptr;
     IngredientsDisplayBox = nullptr;
+    ResultIngredientLineEntryClass = nullptr;
 }
 
 void UCraftingResultWidget::NativeConstruct()
@@ -23,28 +25,31 @@ void UCraftingResultWidget::NativeConstruct()
     Super::NativeConstruct();
 }
 
-const UItemTemplate* UCraftingResultWidget::GetTemplateFromID(int32 TemplateID) const
+const UItemTemplate* UCraftingResultWidget::GetTemplateFromRecipeRow(const FCraftingRecipeRow& RecipeRow) const
 {
-    if (TemplateID != INDEX_NONE)
+    if (RecipeRow.ItemTemplateClass)
     {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingResultWidget::GetTemplateFromID - Returning nullptr for TemplateID %d. UEmberItemData::Get().FindItemTemplateByID() must be fixed by your teammate to return 'const UItemTemplate*' and handle invalid IDs safely to resolve C2440 and enable proper functionality (icon, description, etc.)."), TemplateID);
+        const UItemTemplate* ItemTemplateCDO = RecipeRow.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
+        if (ItemTemplateCDO)
+        {
+            return ItemTemplateCDO;
+        }
     }
     return nullptr;
 }
 
 void UCraftingResultWidget::SetRecipeDetails(const FCraftingRecipeRow& InRecipeRow, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount)
 {
-    CurrentTargetRecipeRowPtr = &InRecipeRow;
+    CurrentTargetRecipeRowPtr_EditorOnly = &InRecipeRow;
     const UItemTemplate* OutputTemplate = nullptr;
 
     if (ResultItemNameText)
     {
         ResultItemNameText->SetText(InRecipeRow.RecipeDisplayName);
     }
-    int32 ItemTemplateID = UEmberItemData::Get().FindItemTemplateIDByClass(InRecipeRow.ItemTemplateClass);
-    const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemTemplateID);
-    
-    K2_OnUpdateIconAndDescription(OutputTemplate);
+
+    OutputTemplate = GetTemplateFromRecipeRow(InRecipeRow);
+    K2_OnUpdateIconAndDescription(OutputTemplate); 
 
     PopulateIngredientsDisplay(InRecipeRow, PlayerOwnedIngredients, CraftingAmount);
 
@@ -101,7 +106,7 @@ void UCraftingResultWidget::UpdateRarityDisplay(const FCraftingRecipeRow& Target
 
 void UCraftingResultWidget::ClearDetails()
 {
-    CurrentTargetRecipeRowPtr = nullptr;
+    CurrentTargetRecipeRowPtr_EditorOnly = nullptr;
     if (ResultItemNameText) ResultItemNameText->SetText(FText::GetEmpty());
     if (ItemDescriptionText) ItemDescriptionText->SetText(FText::GetEmpty());
     if (InfoTextDisplay) InfoTextDisplay->SetText(FText::GetEmpty());
@@ -113,10 +118,24 @@ void UCraftingResultWidget::ClearDetails()
 
 void UCraftingResultWidget::PopulateIngredientsDisplay(const FCraftingRecipeRow& RecipeData, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount)
 {
-    if (!IngredientsDisplayBox) return;
+    if (!IngredientsDisplayBox) 
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingResultWidget::PopulateIngredientsDisplay - IngredientsDisplayBox is NULL."));
+        return;
+    }
     IngredientsDisplayBox->ClearChildren();
 
-    if (RecipeData.RecipeDisplayName.IsEmpty() || CraftingAmount <= 0) return;
+    if (!ResultIngredientLineEntryClass)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingResultWidget::PopulateIngredientsDisplay - ResultIngredientLineEntryClass is not set in WBP_ResultPanel ClassDefaults."));
+        return;
+    }
+
+    if (RecipeData.RecipeDisplayName.IsEmpty() || CraftingAmount <= 0) 
+    {
+        IngredientsDisplayBox->SetVisibility(ESlateVisibility::Collapsed);
+        return;
+    }
 
     bool bIsGeneralCraft = (RecipeData.RequiredMainMaterialCount == 0);
     if (!bIsGeneralCraft) 
@@ -128,28 +147,22 @@ void UCraftingResultWidget::PopulateIngredientsDisplay(const FCraftingRecipeRow&
 
     for (const TPair<FGameplayTag, int32>& RequiredIngredientPair : RecipeData.Ingredients)
     {
-       UTextBlock* IngredientLineText = NewObject<UTextBlock>(this);
-       if (IngredientLineText)
-       {
-          const FGameplayTag& IngredientTag = RequiredIngredientPair.Key;
-          const int32 RequiredPerItem = RequiredIngredientPair.Value;
-          const int32 TotalRequiredForBatch = RequiredPerItem * CraftingAmount;
-          const int32 OwnedAmount = PlayerOwnedIngredients.FindRef(IngredientTag); 
-          
-          FString MaterialName = IngredientTag.GetTagName().ToString();
-          
-          FString DisplayText = FString::Printf(TEXT("%s: %d / %d"), *MaterialName, OwnedAmount, TotalRequiredForBatch);
-          IngredientLineText->SetText(FText::FromString(DisplayText));
+       const FGameplayTag& IngredientTag = RequiredIngredientPair.Key;
+       const int32 RequiredPerItem = RequiredIngredientPair.Value;
+       const int32 TotalRequiredForBatch = RequiredPerItem * CraftingAmount;
+       const int32 OwnedAmount = PlayerOwnedIngredients.FindRef(IngredientTag); 
 
-          if (OwnedAmount < TotalRequiredForBatch)
-          {
-              IngredientLineText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
-          }
-          else
-          {
-              IngredientLineText->SetColorAndOpacity(FSlateColor(FLinearColor::White)); 
-          }
-          IngredientsDisplayBox->AddChild(IngredientLineText);
+       FString MaterialNameStr = IngredientTag.GetTagName().ToString();
+       
+       UCraftingResultIngredientLineEntry* LineEntryWidget = CreateWidget<UCraftingResultIngredientLineEntry>(this, ResultIngredientLineEntryClass);
+       if (LineEntryWidget)
+       {
+           LineEntryWidget->SetLineData(FText::FromString(MaterialNameStr), OwnedAmount, TotalRequiredForBatch, (OwnedAmount >= TotalRequiredForBatch));
+           IngredientsDisplayBox->AddChildToVerticalBox(LineEntryWidget);
+       }
+       else
+       {
+            UE_LOG(LogTemp, Error, TEXT("UCraftingResultWidget::PopulateIngredientsDisplay - Failed to create ResultIngredientLineEntryWidget."));
        }
     }
 }

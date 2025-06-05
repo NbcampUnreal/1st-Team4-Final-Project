@@ -4,6 +4,7 @@
 #include "Components/TextBlock.h"
 #include "Crafting/CraftingRecipeManager.h"
 #include "UI/Crafting/CraftingRecipeListItemData.h"
+#include "Engine/DataTable.h"
 
 UCraftingRecipeListWidget::UCraftingRecipeListWidget(const FObjectInitializer& ObjectInitializer) 
     : Super(ObjectInitializer)
@@ -23,7 +24,7 @@ void UCraftingRecipeListWidget::NativeConstruct()
     }
 }
 
-void UCraftingRecipeListWidget::SetRecipeList(const TArray<FCraftingRecipeRow>& Recipes)
+void UCraftingRecipeListWidget::SetRecipeList(const TArray<FNamedCraftingRecipe>& InNamedRecipes)
 {
     if (!RecipeListView)
     {
@@ -32,12 +33,13 @@ void UCraftingRecipeListWidget::SetRecipeList(const TArray<FCraftingRecipeRow>& 
     
     RecipeListView->ClearListItems();
 
-    for (const FCraftingRecipeRow& Recipe : Recipes)
+    for (const FNamedCraftingRecipe& NamedRecipe : InNamedRecipes)
     {
        UCraftingRecipeListItemData* NewListItemData = NewObject<UCraftingRecipeListItemData>(this);
        if (NewListItemData)
        {
-          NewListItemData->RecipeData = Recipe;
+          NewListItemData->RecipeRowName = NamedRecipe.RecipeRowName;
+          NewListItemData->RecipeData = NamedRecipe.RecipeData;
           RecipeListView->AddItem(NewListItemData);
        }
     }
@@ -86,6 +88,6 @@ void UCraftingRecipeListWidget::HandleRecipeClicked(UObject* ItemObject)
     UCraftingRecipeListItemData* ClickedListItemData = Cast<UCraftingRecipeListItemData>(ItemObject);
     if (ClickedListItemData)
     {
-        OnRecipeSelected.Broadcast(ClickedListItemData->RecipeData);
+        OnRecipeListItemSelected.Broadcast(ClickedListItemData);
     }
 }

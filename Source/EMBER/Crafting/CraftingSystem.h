@@ -11,6 +11,7 @@
 class UInventoryManagerComponent;
 class UItemTemplate;
 class UItemInstance;
+class ACraftingBuilding;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class EMBER_API UCraftingSystem : public UActorComponent
@@ -26,7 +27,7 @@ protected:
 
 public:
     UFUNCTION(BlueprintCallable, Category = "Crafting")
-    UItemInstance* StartCrafting(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
+    bool RequestServerCraft(AEmberPlayerCharacter* Player, ACraftingBuilding* CraftingStationActor, FName RecipeRowName, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
 
     UFUNCTION(BlueprintCallable, Category = "Crafting")
     bool CanCraftRecipeAtStation(const FCraftingRecipeRow& Recipe, EStationType Station) const;
@@ -47,16 +48,17 @@ public:
     int32 GetMaterialScore(const FGameplayTag& MaterialTag) const;
 
     UFUNCTION(BlueprintPure, Category = "Crafting")
-    const UItemTemplate* GetItemTemplateById(int32 TemplateID) const;
+    const UItemTemplate* GetItemTemplateById(int32 TemplateID) const; 
+    
+    UFUNCTION(BlueprintCallable, Category = "Crafting") 
+    bool ConsumeMaterials(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
 
 private:
     void InitializeTagMap();
     int32 CalculateScore(const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
-    bool ConsumeMaterials(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
     
-
 public:
-    EStationType CurrentStation = EStationType::None;
+    EStationType CurrentStationForSystem = EStationType::None; 
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting System")
     TObjectPtr<UCraftingRecipeManager> RecipeManager;
