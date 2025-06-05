@@ -5,7 +5,7 @@
 #include "AI/BehaviorTree/CBehaviorTreeComponent.h"
 #include "CAIController.h"
 #include "C_StateComponent.h"
-#include "HumanAIBase.h"
+#include "AI/Base/HumanAIBase.h"
 
 UCBTService_Passive::UCBTService_Passive()
 {

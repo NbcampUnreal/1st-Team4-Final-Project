@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/BaseAI.h"
+#include "AI/Base/BaseAI.h"
 #include "DefensiveAI.generated.h"
 
 

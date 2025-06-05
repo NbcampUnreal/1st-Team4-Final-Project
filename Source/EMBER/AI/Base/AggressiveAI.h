@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/BaseAI.h"
+#include "AI/Base/BaseAI.h"
 #include "AggressiveAI.generated.h"
 
 /**

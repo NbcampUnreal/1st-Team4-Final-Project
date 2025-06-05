@@ -1,4 +1,4 @@
-#include "AI/PassiveAI.h"
+#include "AI/Base/PassiveAI.h"
 #include "C_StateComponent.h"
 #include "AI/AnimInstance/BaseAIAnimInstance.h"
 #include "BehaviorTree/BehaviorTree.h"
@@ -25,7 +25,7 @@ void APassiveAI::BeginPlay()
 //		UE_LOG(LogTemp, Warning, TEXT("Player Detect"));
 //
 //		EnemyActors.Add(UpdatedActor);
-//		//TODOS State¸¦ º¯°æÇÏ´ø ´Ù¸¥ ÄÚµå·Î ´ëÃ¼ÇØ¾ßÇÒµí?
+//		//TODOS Stateï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ù¸ï¿½ ï¿½Úµï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½Ø¾ï¿½ï¿½Òµï¿½?
 //		//AIState->SetDetectMode();
 //		CheckDetection(true);
 //
@@ -46,7 +46,7 @@ void APassiveAI::BeginPlay()
 //	else if (!Stimulus.WasSuccessfullySensed() && UpdatedActor->Tags.Contains(FName("Player")))
 //	{
 //		AIState->SetIdleMode();
-//		//TODOS State¸¦ º¯°æÇÏ´ø ´Ù¸¥ ÄÚµå·Î ´ëÃ¼ÇØ¾ßÇÒµí?
+//		//TODOS Stateï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ù¸ï¿½ ï¿½Úµï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½Ø¾ï¿½ï¿½Òµï¿½?
 //		//if (AnimalType == EAnimalType::Passive)
 //		{
 //			EnemyActors.Remove(UpdatedActor);

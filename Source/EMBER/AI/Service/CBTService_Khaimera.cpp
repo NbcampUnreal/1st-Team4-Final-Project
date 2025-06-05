@@ -5,7 +5,7 @@
 
 #include "CAIController.h"
 #include "C_StateComponent.h"
-#include "HumanAIBase.h"
+#include "AI/Base/HumanAIBase.h"
 #include "BehaviorTree/CBehaviorTreeComponent.h"
 
 UCBTService_Khaimera::UCBTService_Khaimera()

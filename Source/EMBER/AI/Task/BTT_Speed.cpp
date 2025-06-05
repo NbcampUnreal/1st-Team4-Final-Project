@@ -2,7 +2,7 @@
 
 #include "AIController.h"
 #include "C_CharacterMovementComponent.h"
-#include "HumanAIBase.h"
+#include "AI/Base/HumanAIBase.h"
 
 UBTT_Speed::UBTT_Speed()
 {

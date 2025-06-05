@@ -15,7 +15,7 @@ class EMBER_API ACAI_Weapon_Wolf : public ACAI_Weapon
 	GENERATED_BODY()
 public:
 	FORCEINLINE void EnableCombo() { bEnable = true; }
-	FORCEINLINE void DisableCombo(){bEnable = false}
+	FORCEINLINE void DisableCombo(){bEnable = false;}
 public:
 	ACAI_Weapon_Wolf();
 

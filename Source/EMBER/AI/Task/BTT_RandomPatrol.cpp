@@ -1,6 +1,6 @@
 #include "BTT_RandomPatrol.h"
 #include "CAIController.h"
-#include "HumanAIBase.h"
+#include "AI/Base/HumanAIBase.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/CBehaviorTreeComponent.h"
 #include "Navigation/PathFollowingComponent.h"

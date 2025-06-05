@@ -1,5 +1,5 @@
 #include "BTT_Attack.h"
-#include "BaseAI.h"
+#include "AI/Base/BaseAI.h"
 #include "CAIController.h"
 #include "AnimInstance/BaseAIAnimInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -37,7 +37,7 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& Comp, uint8
 	
 	UGameplayStatics::ApplyDamage(TargetActor, AICharacter->GetAttackPower(), AIController, AICharacter, nullptr);
 	UE_LOG(LogTemp, Warning, L"Attack");
-	//ÇöÀç ¾Ö´Ï¸ÞÀÌ¼ÇÀÌ ¾ø¾î ÀÓ½Ã·Î Succes
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½Ã·ï¿½ Succes
 	return EBTNodeResult::Succeeded;
 	//return EBTNodeResult::InProgress;
 }

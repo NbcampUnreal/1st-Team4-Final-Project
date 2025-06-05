@@ -2,7 +2,7 @@
 
 
 #include "AI/Task/BTT_FlyMoveTo.h"
-#include "AI/BaseAI.h"
+#include "AI/Base/BaseAI.h"
 #include "AI/CAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"

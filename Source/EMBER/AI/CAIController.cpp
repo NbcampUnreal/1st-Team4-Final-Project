@@ -2,8 +2,7 @@
 
 
 #include "AI/CAIController.h"
-
-#include "HumanAIBase.h"
+#include "AI/Base/HumanAIBase.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/CBehaviorTreeComponent.h"

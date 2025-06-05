@@ -1,4 +1,4 @@
-#include "AI/DefensiveAI.h"
+#include "AI/Base/DefensiveAI.h"
 #include "Perception/AIPerceptionComponent.h"
 
 ADefensiveAI::ADefensiveAI()

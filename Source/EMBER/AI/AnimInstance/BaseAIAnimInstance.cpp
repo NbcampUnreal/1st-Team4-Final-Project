@@ -1,5 +1,5 @@
 #include "BaseAIAnimInstance.h"
-#include "BaseAI.h"
+#include "AI/Base/BaseAI.h"
 #include "CAIController.h"
 #include "KismetAnimationLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"

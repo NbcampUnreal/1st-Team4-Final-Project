@@ -1,4 +1,4 @@
-#include "AI/HumanAIBase.h"
+#include "AI/Base/HumanAIBase.h"
 
 #include "C_CharacterMovementComponent.h"
 #include "C_StateComponent.h"

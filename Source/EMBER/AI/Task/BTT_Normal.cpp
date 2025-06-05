@@ -1,5 +1,5 @@
 ﻿#include "BTT_Normal.h"
-#include "BaseAI.h"
+#include "AI/Base/BaseAI.h"
 #include "CAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/AnimInstance/BaseAIAnimInstance.h"
