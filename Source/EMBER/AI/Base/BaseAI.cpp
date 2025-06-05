@@ -22,8 +22,8 @@ ABaseAI::ABaseAI()
 	AIControllerClass = ACAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	WalkSpeed = 200.0f;
-	RunSpeed = 700.0f;
+	// WalkSpeed = 200.0f;
+	// RunSpeed = 700.0f;
 }
 
 void ABaseAI::BeginPlay()
@@ -36,7 +36,7 @@ void ABaseAI::BeginPlay()
 	//}
 	//ACAIController* Controller = Cast<ACAIController>(GetController());
 	// Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAI::OnTargetPerceptionUpdated);
-	SetWalkSpeed();
+	// SetWalkSpeed();
 }
 
 float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
@@ -122,7 +122,7 @@ void ABaseAI::OnDeath()
 
 	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
-		SetWalkSpeed();
+		// SetWalkSpeed();
 		AnimInstance->StopAllMontages(0.0f);
 	}
 	DetachFromControllerPendingDestroy();
@@ -148,21 +148,21 @@ UBehaviorTree* ABaseAI::GetBehaviorTree() const
 	return BehaviorTree;
 }
 
-void ABaseAI::SetWalkSpeed()
-{
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-}
-
-void ABaseAI::SetRunSpeed()
-{
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
-}
-
-void ABaseAI::SetFlySpeed()
-{
-	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
-	GetCharacterMovement()->MaxFlySpeed = FlySpeed;
-	GetCharacterMovement()->GravityScale = 0.0f;
-}
+// void ABaseAI::SetWalkSpeed()
+// {
+// 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+// 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+// }
+//
+// void ABaseAI::SetRunSpeed()
+// {
+// 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+// 	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+// }
+//
+// void ABaseAI::SetFlySpeed()
+// {
+// 	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+// 	GetCharacterMovement()->MaxFlySpeed = FlySpeed;
+// 	GetCharacterMovement()->GravityScale = 0.0f;
+// }

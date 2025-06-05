@@ -40,7 +40,7 @@ EBTNodeResult::Type UBTT_Guard::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 	UCharacterMovementComponent* MovementComp = ControlledAnimal->GetCharacterMovement();
 	if (MovementComp)
 	{
-		ControlledAnimal->SetFlySpeed();
+		// ControlledAnimal->SetFlySpeed();
 		ControlledAnimal->GetCharacterMovement()->StopMovementImmediately();
 		ControlledAnimal->LaunchCharacter(FVector(0, 0, 400), false, true);
 	}

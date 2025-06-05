@@ -20,7 +20,7 @@ float AAggressiveAI::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	if (ActualDamage > 0 && !bIsDie)
 	{
-		SetRunSpeed();
+		// SetRunSpeed();
 	}
 
 	return ActualDamage;
