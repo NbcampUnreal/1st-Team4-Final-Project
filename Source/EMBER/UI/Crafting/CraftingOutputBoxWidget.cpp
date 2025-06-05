@@ -5,8 +5,8 @@
 #include "Components/TextBlock.h"
 #include "UI/Crafting/CraftedItemSlotEntryWidget.h"
 #include "Item/ItemInstance.h"
-#include "Item/ItemTemplate.h"      // UCraftedItemSlotEntryWidget의 SetSlotData가 ItemInstance를 받으므로 간접적으로 필요할 수 있음
-#include "UI/Data/EmberItemData.h" // GetTemplateFromInstance가 있었다면 필요했겠지만, 이제 사용 안 함
+#include "Item/ItemTemplate.h"      
+#include "UI/Data/EmberItemData.h" 
 
 UCraftingOutputBoxWidget::UCraftingOutputBoxWidget(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -20,6 +20,7 @@ UCraftingOutputBoxWidget::UCraftingOutputBoxWidget(const FObjectInitializer& Obj
 void UCraftingOutputBoxWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+    UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::NativeConstruct for %s - Calling RefreshDisplay."), *GetName());
     RefreshDisplay(); 
 }
 
@@ -30,6 +31,7 @@ void UCraftingOutputBoxWidget::NativeDestruct()
         if (DataSourceInventoryManager->OnInventoryEntryChanged.IsBoundToObject(this))
         {
             DataSourceInventoryManager->OnInventoryEntryChanged.RemoveAll(this);
+            UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::NativeDestruct - Unbound OnInventoryEntryChanged from DataSource: %s"), *DataSourceInventoryManager->GetName());
         }
     }
     Super::NativeDestruct();
@@ -37,7 +39,8 @@ void UCraftingOutputBoxWidget::NativeDestruct()
 
 void UCraftingOutputBoxWidget::InitializeDataSource(UInventoryManagerComponent* TargetInventoryManager)
 {
-    UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::InitializeDataSource - Called. Current DataSourceInventoryManager: %s, New TargetInventoryManager: %s"),
+    UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::InitializeDataSource for %s - Called. Current DataSource: %s, New Target: %s"),
+        *GetName(),
         DataSourceInventoryManager ? *DataSourceInventoryManager->GetName() : TEXT("NULL"),
         TargetInventoryManager ? *TargetInventoryManager->GetName() : TEXT("NULL") );
 
@@ -52,9 +55,10 @@ void UCraftingOutputBoxWidget::InitializeDataSource(UInventoryManagerComponent* 
     if (DataSourceInventoryManager)
     {
         DataSourceInventoryManager->OnInventoryEntryChanged.AddUObject(this, &UCraftingOutputBoxWidget::OnOutputInventoryChanged);
-        UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::InitializeDataSource - Bound OnInventoryEntryChanged to new DataSource: %s. Widget: %s"), 
+        UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::InitializeDataSource - Bound OnInventoryEntryChanged to new DataSource: %s (Owner: %s). Widget: %s"), 
             *DataSourceInventoryManager->GetName(),
-            this ? *this->GetName() : TEXT("NULL_WIDGET_SELF_POINTER"));
+            DataSourceInventoryManager->GetOwner() ? *DataSourceInventoryManager->GetOwner()->GetName() : TEXT("NULL_OWNER"),
+            *GetName());
     }
     else
     {
@@ -65,51 +69,42 @@ void UCraftingOutputBoxWidget::InitializeDataSource(UInventoryManagerComponent* 
 
 void UCraftingOutputBoxWidget::OnOutputInventoryChanged(const FIntPoint& ItemSlotPos, UItemInstance* ItemInstance, int32 ItemCount)
 {
-    UE_LOG(LogTemp, Warning, TEXT(">>>> UCraftingOutputBoxWidget::OnOutputInventoryChanged - FIRED! SlotPos: (X=%d, Y=%d), Item: %s, Count: %d. Refreshing display. <<<<"), 
+    UE_LOG(LogTemp, Warning, TEXT(">>>> UCraftingOutputBoxWidget::OnOutputInventoryChanged for %s - FIRED! SlotPos: (X=%d, Y=%d), Item: %s, Count: %d. Refreshing display. <<<<"), 
+        *GetName(),
         ItemSlotPos.X, ItemSlotPos.Y, 
         ItemInstance ? *ItemInstance->GetName() : TEXT("NULL_ItemInstance"), 
         ItemCount);
     RefreshDisplay();
 }
+
 void UCraftingOutputBoxWidget::RefreshDisplay()
 {
     if (!OutputSlotsGridPanel)
     {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshDisplay - OutputSlotsGridPanel is NULL. Check UMG binding."));
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshDisplay for %s - OutputSlotsGridPanel is NULL. Check UMG binding."), *GetName());
         return;
     }
     OutputSlotsGridPanel->ClearChildren();
 
     if (!DataSourceInventoryManager)
     {
-        UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::RefreshDisplay - DataSourceInventoryManager is NULL. Displaying empty."));
+        UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::RefreshDisplay for %s - DataSourceInventoryManager is NULL. Displaying empty."), *GetName());
         return;
     }
     if (!SlotEntryWidgetClass)
     {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshDisplay - SlotEntryWidgetClass is not set in ClassDefaults of WBP_CraftingOutputBox."));
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshDisplay for %s - SlotEntryWidgetClass is not set in ClassDefaults."), *GetName());
         return;
     }
 
     const FIntPoint GridDimensions = DataSourceInventoryManager->GetInventorySlotCount(); 
     const TArray<FInventoryEntry>& AllEntries = DataSourceInventoryManager->GetAllEntries();
 
-    UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::RefreshDisplay - Grid: %dx%d, Inventory Entries Count: %d"), GridDimensions.X, GridDimensions.Y, AllEntries.Num());
-
-    // UInventoryManagerComponent의 슬롯 개수만큼 UI 슬롯을 만듭니다.
-    // AllEntries 배열은 실제 아이템이 있는 항목만 포함할 수도 있고, 빈 슬롯 데이터도 포함할 수 있습니다.
-    // 여기서는 GridDimensions를 기준으로 루프를 돌고, AllEntries에서 해당 인덱스의 데이터를 가져옵니다.
-    // UInventoryManagerComponent의 GetAllEntries()가 모든 슬롯(빈 슬롯 포함)에 대한 데이터를 반환한다고 가정합니다.
-    // 만약 아니라면, GridDimensions.X * GridDimensions.Y 크기의 루프를 돌면서 각 인덱스에 해당하는 아이템을 가져오는 로직이 필요합니다.
-    // 지금은 AllEntries가 모든 슬롯 정보를 순서대로 담고 있다고 가정하고, GridDimensions로 루프를 돕니다.
-
-    int32 MaxSlotsToDisplay = GridDimensions.X * GridDimensions.Y;
-    if (AllEntries.Num() != MaxSlotsToDisplay && AllEntries.Num() > 0) // AllEntries가 아이템 있는 것만 반환하는 경우에 대한 방어적 로그
-    {
-         UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshDisplay - AllEntries count (%d) does not match GridDimensions (%dx%d = %d). UI might not reflect all inventory slots if GetAllEntries() only returns non-empty ones."), 
-            AllEntries.Num(), GridDimensions.X, GridDimensions.Y, MaxSlotsToDisplay);
-    }
-
+    UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::RefreshDisplay for %s - Preparing to display %d entries in a %dx%d grid. DataSource: %s (Owner: %s)"), 
+        *GetName(),
+        AllEntries.Num(), GridDimensions.X, GridDimensions.Y, 
+        *DataSourceInventoryManager->GetName(),
+        DataSourceInventoryManager->GetOwner() ? *DataSourceInventoryManager->GetOwner()->GetName() : TEXT("NULL_OWNER"));
 
     for (int32 Y = 0; Y < GridDimensions.Y; ++Y)
     {
@@ -123,6 +118,10 @@ void UCraftingOutputBoxWidget::RefreshDisplay()
                 {
                     const FInventoryEntry& Entry = AllEntries[CurrentFlatIndex];
                     SlotWidgetInstance->SetSlotData(Entry.GetItemInstance(), Entry.GetItemCount());
+                    if (Entry.GetItemInstance())
+                    {
+                         UE_LOG(LogTemp, Verbose, TEXT("UCraftingOutputBoxWidget: Slot (%d,%d) Data: Item Valid, Count: %d"), X, Y, Entry.GetItemCount());
+                    }
                 }
                 else 
                 {
@@ -141,4 +140,5 @@ void UCraftingOutputBoxWidget::RefreshDisplay()
             }
         }
     }
+    UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::RefreshDisplay for %s - Finished loop. OutputSlotsGridPanel now has %d children."), *GetName(), OutputSlotsGridPanel->GetChildrenCount());
 }
