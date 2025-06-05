@@ -11,7 +11,7 @@ EBTNodeResult::Type UBTT_FindingEnemyTimer::ExecuteTask(UBehaviorTreeComponent& 
 	//IsDetect 키 확인후 타이머 시작 or 정지
 	Owner = &OwnerComp;
 	UBlackboardComponent* Comp = OwnerComp.GetBlackboardComponent();
-	bool bIsDetect = (Comp->GetValueAsEnum("AIState") == static_cast<uint8>(EAnimalState::Detect));
+	bool bIsDetect = (Comp->GetValueAsBool("IsDetect"));
 	CheckDetection(bIsDetect);
 	return EBTNodeResult::InProgress;
 }

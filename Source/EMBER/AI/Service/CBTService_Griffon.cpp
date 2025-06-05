@@ -36,27 +36,18 @@ void UCBTService_Griffon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		return;
 	}
 
-	//Detect됬을 때 설정
-	if (AIState->IsDetect() == true)
-	{
-		AIState->SetDetectMode();
-		return;
-	}
-	
 	//Target이 없으면 Patrol
 	TObjectPtr<ACharacter> target = AIState->GetTarget(); 
 	if(target == nullptr)
 	{
-		AIState->SetPatrolMode();
+		AIState->SetIdleMode();
 		return;
 	}
-	//Target과 가까우면 공격
+	//Target과 가까우면 AttackMode
 	float distance = AI.Get()->GetDistanceTo(target);
 	if(distance < ActionRange)
 	{
 		AIState->SetActionMode();
 		return;
 	}
-	//Default State
-	AIState->SetIdleMode();
 }

@@ -86,10 +86,16 @@ void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimul
 
 	if (Stimulus.IsValid())
 	{
+		if (Actors.Num()==1)
+		{
+			Blackboard->SetValueAsObject("TargetActor", Actor);
+		}
+		UE_LOG(LogTemp,Warning,L"SetDetectMode");
 		Behavior->SetDetectMode();
 	}
 	else if(!Stimulus.IsValid())
 	{
+		UE_LOG(LogTemp,Warning,L"SetUInDetect");
 		if (Actors.Num() <= 0)
 		{
 			Blackboard->SetValueAsObject("TargetActor", nullptr);
@@ -97,7 +103,6 @@ void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimul
 			return;
 		}
 	}
-
 	// UE_LOG(LogTemp, Error, L"%s", *Actors[0]->GetName());
 	// Blackboard->SetValueAsObject("TargetActor", Actors[0]);
 }
