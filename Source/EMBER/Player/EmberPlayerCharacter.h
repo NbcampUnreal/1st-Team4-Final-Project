@@ -74,6 +74,8 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetCurrentStamina() const;
 
+	float NormalSpeed = 400;
+	float SprintSpeed = 600;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
