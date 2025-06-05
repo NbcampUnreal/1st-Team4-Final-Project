@@ -35,6 +35,7 @@ public:
 
 public:
 	ACAIController();
+	TArray<AActor*> Actors;
 
 protected:
 	void OnPossess(APawn* InPawn) override;
