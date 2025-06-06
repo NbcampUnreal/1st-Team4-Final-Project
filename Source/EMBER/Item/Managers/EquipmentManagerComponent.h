@@ -2,8 +2,8 @@
 
 #pragma once
 
+#include "AbilitySystemInterface.h"
 #include "ActiveGameplayEffectHandle.h"
-#include "GameFlag.h"
 #include "Components/PawnComponent.h"
 #include "System/AbilitySystem/Data/EmberAbilitySet.h"
 
@@ -33,8 +33,6 @@ public:
 	void Equip(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
 	void Unequip(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
 
-	AEquipmentBase* GetHandEquipment() const;
-	
 private:
 	void Equip_HandEquipment(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
 	void Equip_Armor(UItemInstance* ItemInstance);

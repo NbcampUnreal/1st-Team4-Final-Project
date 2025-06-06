@@ -50,7 +50,6 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 void AEmberPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-    MovementComponent->OnRun();
 	if(StatusComponent->GetMaxHp() <= 0.0f)
 	    StatusComponent->SetMaxHp(100);
 	if(StatusComponent->GetMaxStamina() <= 0.0f)
@@ -188,7 +187,6 @@ void AEmberPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Look,ETriggerEvent::Triggered,this,&ThisClass::Look);
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Jump, ETriggerEvent::Triggered, this, &ThisClass::Jump);
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Triggered, this, &ThisClass::StartSprint);
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
 }
 
 UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() const
@@ -213,7 +211,7 @@ void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
 {
     if (GetCharacterMovement())
     {
-        GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+        //GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
     }
 }
 
@@ -221,7 +219,7 @@ void AEmberPlayerCharacter::StopSprint(const FInputActionValue& value)
 {
     if (GetCharacterMovement())
     {
-        GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+        //GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
     }
 }
 

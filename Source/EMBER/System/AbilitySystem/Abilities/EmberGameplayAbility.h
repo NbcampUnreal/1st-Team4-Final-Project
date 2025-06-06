@@ -35,9 +35,6 @@ public:
 
 public:
 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
-
-	UFUNCTION(BlueprintCallable, Category = "Lyra|Ability")
-	UEmberAbilitySystemComponent* GetEmberAbilitySystemComponentFromActorInfo() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
 	AEmberPlayerCharacter* GetEmberCharacterFromActorInfo() const;
