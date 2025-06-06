@@ -1,6 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "EmberPlayerCharacter.h"
 
+#include "AbilitySystemComponent.h"
 #include "ArmorComponent.h"
 #include "C_CameraComponent.h"
 #include "EmberPlayerController.h"
@@ -189,6 +190,7 @@ void AEmberPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Jump, ETriggerEvent::Triggered, this, &ThisClass::Jump);
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Triggered, this, &ThisClass::StartSprint);
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
+    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Attack_MainHand, ETriggerEvent::Triggered, this, &ThisClass::Attack);
 }
 
 UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() const
@@ -198,6 +200,7 @@ UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() cons
 
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
 {
+    int fgdfg = 3;
     if(MovementComponent)
     {
         MovementComponent->OnMove(value);
@@ -211,6 +214,7 @@ void AEmberPlayerCharacter::Look(const FInputActionValue& value)
 
 void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
 {
+
     if (GetCharacterMovement())
     {
         GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
@@ -232,7 +236,14 @@ void AEmberPlayerCharacter::Attack(const FInputActionValue& value)
 
     if (!Data.Montages.IsEmpty())
     {
-        MontageComponent->PlayMontage(Data.Montages[Data.MontageIndex]);
+        MontageComponent->PlayMontage(Data.Montages[attackint]);
+        if (attackint == 2)
+        {
+            attackint = 0;
+            return;
+        }
+        attackint++;
+
     }
 }
 
@@ -273,4 +284,11 @@ float AEmberPlayerCharacter::GetCurrentStamina() const
         return StatusComponent->GetStamina();
     }
     return 0.f;
+}
+
+void AEmberPlayerCharacter::OnLeftClick(const FInputActionValue& Value)
+{
+    static const FGameplayTag LeftClickTag = EmberGameplayTags::InputTag_Attack_MainHand;
+    AbilitySystemComponent->TryActivateAbilitiesByTag(FGameplayTagContainer(LeftClickTag));
+
 }
