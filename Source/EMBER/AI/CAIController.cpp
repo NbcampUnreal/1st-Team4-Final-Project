@@ -82,16 +82,27 @@ void ACAIController::BeginPlay()
 
 void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
+	Perception->GetCurrentlyPerceivedActors(nullptr, Actors);
 
-	TArray<AActor*> actors;
-	Perception->GetCurrentlyPerceivedActors(nullptr, actors);
-
-	if (actors.Num() <= 0)
+	if (Stimulus.IsValid())
 	{
-		Blackboard->SetValueAsObject("TargetActor", nullptr);
-		return;
+		if (Actors.Num()==1)
+		{
+			Blackboard->SetValueAsObject("TargetActor", Actor);
+		}
+		UE_LOG(LogTemp,Warning,L"SetDetectMode");
+		Behavior->SetDetectMode();
 	}
-	UE_LOG(LogTemp, Error, L"%s", *actors[0]->GetName());
-	Blackboard->SetValueAsObject("TargetActor", actors[0]);
-	Behavior->SetDetectMode();
+	else if(!Stimulus.IsValid())
+	{
+		UE_LOG(LogTemp,Warning,L"SetUInDetect");
+		if (Actors.Num() <= 0)
+		{
+			Blackboard->SetValueAsObject("TargetActor", nullptr);
+			Behavior->SetIdleMode();
+			return;
+		}
+	}
+	// UE_LOG(LogTemp, Error, L"%s", *Actors[0]->GetName());
+	// Blackboard->SetValueAsObject("TargetActor", Actors[0]);
 }

@@ -93,6 +93,7 @@ TObjectPtr<ACharacter> UCBehaviorTreeComponent::GetTarget()
 void UCBehaviorTreeComponent::SetIdleMode()
 {
 	ChangeType(EAnimalState::Idle);
+	Blackboard->SetValueAsBool("IsDetect", false);
 }
 
 void UCBehaviorTreeComponent::SetGuardMode()
@@ -108,6 +109,7 @@ void UCBehaviorTreeComponent::SetRunMode()
 void UCBehaviorTreeComponent::SetDetectMode()
 {
 	ChangeType(EAnimalState::Detect);
+	Blackboard->SetValueAsBool("IsDetect", true);
 }
 
 void UCBehaviorTreeComponent::SetFlyingMode()

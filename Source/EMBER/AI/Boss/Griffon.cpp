@@ -11,9 +11,9 @@ AGriffon::AGriffon()
 {
 	MaxHP = 20.0f;
 	AttackPower = 10.0f;
-	WalkSpeed = 250.f;
-	RunSpeed = 750.f;
-	FlySpeed = 1200.0f;
+	// WalkSpeed = 250.f;
+	// RunSpeed = 750.f;
+	// FlySpeed = 1200.0f;
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -66,5 +66,5 @@ void AGriffon::Attack()
 
 void AGriffon::SetCombatState()
 {
-	SetRunSpeed();
+	// SetRunSpeed();
 }

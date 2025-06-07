@@ -22,7 +22,7 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 		return EBTNodeResult::Failed;
 	}
 
-	ControlledAnimal->SetRunSpeed();
+	// ControlledAnimal->SetRunSpeed();
 	FVector TargetLocation = Target->GetActorLocation();
 	FVector AI_Location = ControlledAnimal->GetActorLocation();
 	FVector Direction = (AI_Location - TargetLocation).GetSafeNormal(); //방향벡터만 남기고 1로 설정
@@ -41,7 +41,7 @@ void UBTT_Run::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Typ
 	{
 		UE_LOG(LogTemp, Warning, TEXT("On Run Completed"));
 		BlackboardComponent->SetValueAsBool("IsHit", false);
-		ControlledAnimal->SetWalkSpeed();
+		// ControlledAnimal->SetWalkSpeed();
 		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 	}
 	else

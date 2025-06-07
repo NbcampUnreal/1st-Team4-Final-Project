@@ -9,7 +9,6 @@ UCLASS()
 class EMBER_API UBTT_FlyMoveTo : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-	
 public:
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

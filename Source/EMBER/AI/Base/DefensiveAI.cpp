@@ -16,7 +16,7 @@ float ADefensiveAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AC
 
 	if (ActualDamage > 0 && !bIsDie)
 	{
-		SetRunSpeed();
+		// SetRunSpeed();
 	}
 
 	return ActualDamage;

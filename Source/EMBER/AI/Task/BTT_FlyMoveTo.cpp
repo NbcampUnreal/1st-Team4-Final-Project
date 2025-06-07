@@ -40,6 +40,6 @@ void UBTT_FlyMoveTo::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResul
 {
 	UE_LOG(LogTemp, Warning, TEXT("FlyMoveCompleted"));
 	ABaseAI* BaseAI = Cast<ABaseAI>(OwnerCompRef->GetAIOwner()->GetPawn());
-	BaseAI->SetRunSpeed();
+	// BaseAI->SetRunSpeed();
 	FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 }
