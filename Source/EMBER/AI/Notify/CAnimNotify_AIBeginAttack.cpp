@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/CAnimNotify_AIBeginAttack.h"
+#include "CAnimNotify_AIBeginAttack.h"
+
 #include "C_CharacterMovementComponent.h"
 #include "AIComponent/CAIWeaponComponent.h"
 #include "AIWeapon/CAI_Weapon.h"
