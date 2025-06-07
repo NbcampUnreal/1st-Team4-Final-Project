@@ -4,6 +4,7 @@
 #include "AI/Service/CBTService_Griffon.h"
 #include "AI/CAIController.h"
 #include "AI/Boss/Griffon.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 UCBTService_Griffon::UCBTService_Griffon()
 {
@@ -37,17 +38,26 @@ void UCBTService_Griffon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 	}
 
 	//Target이 없으면 Patrol
-	TObjectPtr<ACharacter> target = AIState->GetTarget(); 
-	if(target == nullptr)
+	TObjectPtr<ACharacter> Target = AIState->GetTarget(); 
+	if(Target == nullptr)
 	{
 		AIState->SetIdleMode();
 		return;
 	}
 	//Target과 가까우면 AttackMode
-	float distance = AI.Get()->GetDistanceTo(target);
+	float distance = AI.Get()->GetDistanceTo(Target);
 	if(distance < ActionRange)
 	{
 		AIState->SetActionMode();
+		return;
+	}
+	FVector OriginLocation = Controller->GetBlackboardComponent()->GetValueAsVector("OriginLocation");
+	FVector TargetLocation = Target->GetActorLocation();
+	float Distance = FVector::Dist(OriginLocation, TargetLocation);
+	if (Distance >= 3000.0f)
+	{
+		UE_LOG(LogTemp, Error, L"Distance is too Far in Service");
+		AIState->SetIdleMode();
 		return;
 	}
 }

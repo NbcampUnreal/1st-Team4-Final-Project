@@ -2,7 +2,6 @@
 
 
 #include "AI/BehaviorTree/CBehaviorTreeComponent.h"
-
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
 
@@ -110,6 +109,7 @@ void UCBehaviorTreeComponent::SetDetectMode()
 {
 	ChangeType(EAnimalState::Detect);
 	Blackboard->SetValueAsBool("IsDetect", true);
+	Blackboard->SetValueAsVector("OriginLocation", GetOwner()->GetActorLocation());
 }
 
 void UCBehaviorTreeComponent::SetFlyingMode()

@@ -2,16 +2,16 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTT_Guard.generated.h"
+#include "BTT_Fly.generated.h"
 
 
 UCLASS()
-class EMBER_API UBTT_Guard : public UBTTask_BlackboardBase
+class EMBER_API UBTT_Fly : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
 public:
-	UBTT_Guard();
+	UBTT_Fly();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	
 };

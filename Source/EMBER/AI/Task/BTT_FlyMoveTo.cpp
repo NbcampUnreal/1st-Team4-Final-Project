@@ -15,25 +15,22 @@ EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
 
-	AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
-	if (!TargetActor) return EBTNodeResult::Failed;
-	
 	ACAIController* AIController = Cast<ACAIController>(BaseAI->GetController());
-
-	FVector CurrentLocation = BaseAI->GetActorLocation();
-	FVector TargetLocation = TargetActor->GetActorLocation();
-
-	FVector Direction = (TargetLocation - BaseAI->GetActorLocation()).GetSafeNormal();
-	float Speed = BaseAI->GetCharacterMovement()->MaxFlySpeed;
-
-	BaseAI->GetCharacterMovement()->Velocity = Direction * Speed;
-
+	ABaseAI* AI = Cast<ABaseAI>(BlackboardComp->GetValueAsObject("TargetActor"));
+	if (AI)
+	{
+		FVector CurrentLocation = BaseAI->GetActorLocation();
+		FVector TargetLocation = AI->GetActorLocation();
+		FVector Direction = (TargetLocation - CurrentLocation).GetSafeNormal();
+		float Speed = BaseAI->GetCharacterMovement()->MaxFlySpeed;
+		BaseAI->GetCharacterMovement()->Velocity = Direction * Speed;
+	}
+	
 	AIController->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_FlyMoveTo::OnMoveCompleted);
 	AIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_FlyMoveTo::OnMoveCompleted);
 	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::InProgress;
 }
-
 
 //NavMesh 적용될 떄만 호출가능 (MoveToLocation(), MoveToActor())
 void UBTT_FlyMoveTo::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)

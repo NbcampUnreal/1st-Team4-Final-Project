@@ -19,6 +19,5 @@ public:
 	FTimerHandle UpdateDistanceTimer;
 
 	AActor* ClosestActor;
-	float ClosestDistance = FLT_MAX;
 	UBehaviorTreeComponent* Owner;
 };

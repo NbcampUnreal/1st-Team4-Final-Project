@@ -43,6 +43,7 @@ void UBTT_FindingEnemyTimer::UpdateClosestActorTimer()
 	{
 		UBlackboardComponent* BlackboardComponent = Controller->GetBlackboardComponent();
 		TArray<AActor*> EnemyActors = Controller->Actors;
+		float ClosestDistance = FLT_MAX;
 
 		if (EnemyActors.Num() == 0)
 		{
