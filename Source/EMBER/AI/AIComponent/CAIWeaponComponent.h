@@ -6,7 +6,13 @@
 #include "Components/ActorComponent.h"
 #include "CAIWeaponComponent.generated.h"
 
+UENUM(BlueprintType)
+enum class EAIWeaponType : uint8
+{
+	Bite = 0, Max
+};
 
+class ACAI_Weapon;
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class EMBER_API UCAIWeaponComponent : public UActorComponent
 {
@@ -24,5 +30,16 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+public:
+	void DoAction();
+
+	ACAI_Weapon* GetDoAction();
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	TArray<TSubclassOf<ACAI_Weapon>> WeaponDatas;
+
+private:
+	TObjectPtr<ACharacter> OwnerCharacter;
+	TArray<TObjectPtr<ACAI_Weapon>> Weapons;
 };

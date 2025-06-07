@@ -8,6 +8,7 @@
 #include "StatusComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/BehaviorTree/CBehaviorTreeComponent.h"
+#include "AIComponent/CAIWeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Managers/EquipmentManagerComponent.h"
 
@@ -19,6 +20,7 @@ ABaseAI::ABaseAI()
 	AIState = CreateDefaultSubobject<UC_StateComponent>(TEXT("AI State"));
 	BehaviorTreeComponent = CreateDefaultSubobject<UCBehaviorTreeComponent>(TEXT("BehaviorTree Component"));
 	MoveComponent = CreateDefaultSubobject<UC_CharacterMovementComponent>(TEXT("Move Component"));
+	WeaponComponent = CreateDefaultSubobject<UCAIWeaponComponent>(TEXT("Weapon Component"));
 	AIControllerClass = ACAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 

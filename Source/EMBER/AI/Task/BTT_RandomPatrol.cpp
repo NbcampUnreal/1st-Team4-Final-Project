@@ -8,7 +8,7 @@
 
 UBTT_RandomPatrol::UBTT_RandomPatrol()
 {
-	NodeName = " Boss Patrol";
+	NodeName = " Random Patrol";
 	bNotifyTick = true;
 }
 
