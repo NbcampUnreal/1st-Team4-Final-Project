@@ -147,7 +147,7 @@ void UBTT_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 //	
 //	UGameplayStatics::ApplyDamage(TargetActor, AICharacter->GetAttackPower(), AIController, AICharacter, nullptr);
 //	UE_LOG(LogTemp, Warning, L"Attack");
-//	//???? ????????? ???? ??¡À? Succes
+//	//???? ????????? ???? ??Ã·? Succes
 //	return EBTNodeResult::Succeeded;
 //	//return EBTNodeResult::InProgress;
 //}

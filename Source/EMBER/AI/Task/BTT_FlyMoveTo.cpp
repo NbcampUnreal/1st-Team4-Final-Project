@@ -16,11 +16,11 @@ EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	if (!BlackboardComp) return EBTNodeResult::Failed;
 
 	ACAIController* AIController = Cast<ACAIController>(BaseAI->GetController());
-	ABaseAI* AI = Cast<ABaseAI>(BlackboardComp->GetValueAsObject("TargetActor"));
-	if (AI)
+	AActor* TargetActorRef = Cast<AActor>(BlackboardComp->GetValueAsObject(TargetActor.SelectedKeyName));
+	if (TargetActorRef)
 	{
 		FVector CurrentLocation = BaseAI->GetActorLocation();
-		FVector TargetLocation = AI->GetActorLocation();
+		FVector TargetLocation = TargetActorRef->GetActorLocation();
 		FVector Direction = (TargetLocation - CurrentLocation).GetSafeNormal();
 		float Speed = BaseAI->GetCharacterMovement()->MaxFlySpeed;
 		BaseAI->GetCharacterMovement()->Velocity = Direction * Speed;
@@ -37,6 +37,6 @@ void UBTT_FlyMoveTo::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResul
 {
 	UE_LOG(LogTemp, Warning, TEXT("FlyMoveCompleted"));
 	ABaseAI* BaseAI = Cast<ABaseAI>(OwnerCompRef->GetAIOwner()->GetPawn());
-	// BaseAI->SetRunSpeed();
+	BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 }
