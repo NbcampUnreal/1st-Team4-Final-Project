@@ -69,11 +69,12 @@ protected:
 	TObjectPtr<class UStatusComponent> StatusComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	TObjectPtr<class UC_StateComponent> AIState;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "AI|Behavior")
-	TObjectPtr<UCBehaviorTreeComponent> BehaviorTreeComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,Category = "AI/Weapon")
+	TObjectPtr<class UCAIWeaponComponent> WeaponComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Move")
 	TObjectPtr<class UC_CharacterMovementComponent> MoveComponent;
-
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "AI|Behavior")
+	TObjectPtr<UCBehaviorTreeComponent> BehaviorTreeComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "AI/BehaviorTree")
 	UBehaviorTree* BehaviorTree;
 	

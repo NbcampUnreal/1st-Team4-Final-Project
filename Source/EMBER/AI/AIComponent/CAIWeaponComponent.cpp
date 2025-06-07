@@ -3,14 +3,13 @@
 
 #include "AI/AIComponent/CAIWeaponComponent.h"
 
+#include "AIWeapon/CAI_Weapon.h"
+#include "GameFramework/Character.h"
+
 // Sets default values for this component's properties
 UCAIWeaponComponent::UCAIWeaponComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -18,9 +17,28 @@ UCAIWeaponComponent::UCAIWeaponComponent()
 void UCAIWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
+	UE_LOG(LogTemp, Log, L"%s", *GetOwner()->GetName());
+	OwnerCharacter = Cast<ACharacter>(GetOwner());
+	if(OwnerCharacter == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Owner is null");
+		return;
+	}
+	int32 index{};
+	for (int32 i = 0; i < WeaponDatas.Num(); i++)
+	{
+		if(WeaponDatas[i] != nullptr)
+		{
+			ACAI_Weapon* weapon = GetWorld()->SpawnActor<ACAI_Weapon>(WeaponDatas[i]);
+			if (weapon != nullptr)
+			{
+				weapon->SpawnPlay(OwnerCharacter);
+				Weapons.Add(weapon);
+			}
+		}
+		else
+			UE_LOG(LogTemp, Error, TEXT("weapon class is null"));
+	}
 }
 
 
@@ -30,5 +48,26 @@ void UCAIWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UCAIWeaponComponent::DoAction()
+{
+	if(GetDoAction() == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Weapon is null");
+		return;
+	}
+	GetDoAction()->DoAction();
+}
+
+ACAI_Weapon* UCAIWeaponComponent::GetDoAction()
+{
+	if(Weapons[0] == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Weapon is null");
+		return nullptr;
+	}
+
+	return Weapons[0];
 }
 
