@@ -132,4 +132,6 @@ protected:
 	UFUNCTION()
 	void OnLeftClick(const FInputActionValue& Value);
 	int attackint = 0;
+	float NormalSpeed = 200.0f;
+	float SprintSpeed = 350.0f;
 };
