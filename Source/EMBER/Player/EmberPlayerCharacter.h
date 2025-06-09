@@ -20,7 +20,7 @@ class UCameraComponent;
 class UC_CharacterMovementComponent;
 class UAbilitySystemComponent;
 class UCharacterInputComponent;
-
+class UGameplayAbility;
 struct FInputActionValue;
 UCLASS()
 
@@ -123,4 +123,13 @@ private:
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Team")
 	uint8 TeamID = 1;
+
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UGameplayAbility> LeftClickAbilityClass;
+
+	UFUNCTION()
+	void OnLeftClick(const FInputActionValue& Value);
+	int attackint = 0;
 };

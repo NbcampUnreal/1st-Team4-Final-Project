@@ -1,5 +1,5 @@
 #include "BTD_IsWithinOriginArea.h"
-#include "BaseAIController.h"
+#include "CAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTD_IsWithinOriginArea::UBTD_IsWithinOriginArea()
@@ -8,7 +8,7 @@ UBTD_IsWithinOriginArea::UBTD_IsWithinOriginArea()
 
 bool UBTD_IsWithinOriginArea::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
-	ABaseAIController* AIController = Cast<ABaseAIController>(OwnerComp.GetAIOwner());
+	ACAIController* AIController = Cast<ACAIController>(OwnerComp.GetAIOwner());
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 
 	if (!AIController || !BlackboardComponent) return false;

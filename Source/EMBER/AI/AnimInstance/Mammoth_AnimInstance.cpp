@@ -1,19 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "AI/AnimInstance/Mammoth_AnimInstance.h"
 
 void UMammoth_AnimInstance::AnimNotify_Idle()
 {
-	AnimalState = EAnimalState::Idle;
+	DesiredActionType = EAnimActionType::Idle;
 }
 
 void UMammoth_AnimInstance::AnimNotify_Run()
 {
-	AnimalState = EAnimalState::Run;
+	DesiredActionType = EAnimActionType::Run;
 }
 
 void UMammoth_AnimInstance::AnimNotify_Eat()
 {
-	AnimalState = EAnimalState::Eating;
+	DesiredActionType = EAnimActionType::Eat;
 }

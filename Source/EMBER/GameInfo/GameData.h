@@ -79,12 +79,16 @@ struct FDamageData
     FSound2D HitSound;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TArray<TObjectPtr<UAnimMontage>> Montages;
+
+public:
+    void SendDamage(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther);
 };
 
 USTRUCT(BlueprintType)
 struct FAttackData
 {
     GENERATED_BODY()
+public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float PlayRate;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -99,6 +103,9 @@ struct FAttackData
     bool bCanMove;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bCanFixedCamera;
+
+public:
+    void DoAction(ACharacter* InOwner);
 };
 
 USTRUCT(BlueprintType)

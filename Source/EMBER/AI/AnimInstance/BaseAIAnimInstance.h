@@ -1,14 +1,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI_Interface.h"
-#include "BaseAIController.h"
 #include "Animation/AnimInstance.h"
 #include "BaseAIAnimInstance.generated.h"
 
 UENUM(BlueprintType)
 enum class EAnimActionType : uint8
 {
+	Idle,
+	Run,
+	Eat,
+	Death,
+	
 	AttackNormal,
 	AttackJump,
 	AttackRun,
@@ -21,7 +24,7 @@ enum class EAnimActionType : uint8
 };
 
 UCLASS()
-class EMBER_API UBaseAIAnimInstance : public UAnimInstance, public IAI_Interface
+class EMBER_API UBaseAIAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
@@ -40,12 +43,18 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
 	bool bIsAirborne;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Anim")
+	EAnimActionType DesiredActionType;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Anim")
+	EAnimActionType FallbackActionType;
 	
-	virtual void PlayMontage(EAnimActionType Desired, EAnimActionType Fallback);
-	virtual void PlayStateMontage(); //AnimalState에 따라 자동으로 몽타주 재생
+	virtual void PlayMontage();
+	//virtual void PlayStateMontage(); //AnimalState에 따라 자동으로 몽타주 재생
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EAnimalState AnimalState;
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// EAnimalState AnimalState;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Anim")
@@ -64,15 +73,5 @@ protected:
 	UAnimMontage* DeathMontage;
 
 	virtual UAnimMontage* GetMontageToPlay(EAnimActionType ActionType) const;
-	virtual UAnimMontage* GetMontageToPlay();
-
-	virtual void SetBlackboardBool(FName KeyName, bool bValue) override;
-	virtual void SetBlackboardInt(FName KeyName, int value) override;
-	virtual void SetBlackboardFloat(FName KeyName, float value) override;
-	virtual void SetBlackboardVector(FName KeyName, FVector value) override;
-	virtual void SetBlackboardObject(FName KeyName, UObject* object) override;
-
-	UBlackboardComponent* BlackboardComp;
-
-	
+	//virtual UAnimMontage* GetMontageToPlay();
 };

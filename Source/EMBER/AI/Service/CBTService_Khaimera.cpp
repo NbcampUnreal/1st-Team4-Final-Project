@@ -5,7 +5,7 @@
 
 #include "CAIController.h"
 #include "C_StateComponent.h"
-#include "HumanAIBase.h"
+#include "AI/Base/HumanAIBase.h"
 #include "BehaviorTree/CBehaviorTreeComponent.h"
 
 UCBTService_Khaimera::UCBTService_Khaimera()
@@ -44,6 +44,24 @@ void UCBTService_Khaimera::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 		UE_LOG(LogTemp, Error, L"aistate is null");
 		return;
 	}
+
+	if (bDrawDebug)
+	{
+		FVector start = ai->GetActorLocation();
+		start.Z -= 25;
+
+		FVector end = start;
+
+		DrawDebugCylinder(ai->GetWorld(), start, end, ActionRange, 10, FColor::Red, false, Interval);
+	}
+
+	if(state->IsDeadMode() == true)
+	{
+		//controller->StopMovement();
+		aiState->SetDeadMode();
+		return;
+	}
+
 	if(state->IsHittdMode() == true)
 	{
 		aiState->SetHittedMode();
@@ -64,5 +82,5 @@ void UCBTService_Khaimera::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 		return;
 	}
 
-	aiState->SetApproachMode();
+	aiState->SetChaseMode();
 }
