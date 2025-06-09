@@ -17,23 +17,16 @@ void UItemInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 	DOREPLIFETIME(ThisClass, ItemTemplateID);
 	DOREPLIFETIME(ThisClass, ItemRarity);
-	DOREPLIFETIME(ThisClass, ItemCount);
 }
 
 void UItemInstance::Init(int32 InItemTemplateID, EItemRarity InItemRarity)
 {
-	Init(InItemTemplateID, InItemRarity, 1);
-}
-
-void UItemInstance::Init(int32 InItemTemplateID, EItemRarity InItemRarity, int32 InItemCount)
-{
-	if (InItemTemplateID <= INDEX_NONE || InItemRarity == EItemRarity::Count || InItemCount <= INDEX_NONE)
+	if (InItemTemplateID <= INDEX_NONE || InItemRarity == EItemRarity::Count)
 		return;
 
 	ItemTemplateID = InItemTemplateID;
 	ItemRarity = InItemRarity;
-	ItemCount = InItemCount;
-	
+
 	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemTemplateID);
 	for (const UItemFragment* Fragment : ItemTemplate.Fragments)
 	{

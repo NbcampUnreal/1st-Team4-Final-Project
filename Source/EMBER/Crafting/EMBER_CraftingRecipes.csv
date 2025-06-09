@@ -1,0 +1,15 @@
+Name,RecipeDisplayName,ItemTemplateClass,Ingredients,AllowedMainMaterialTags,RequiredMainMaterialCount,CraftingTime,bCraftableByCharacter,CraftingStation
+Item_String ,끈,,"(((TagName=""Item.Material.Fiber""),4))",(GameplayTags=()),0,2,TRUE,CraftingTable
+Item_Bandage,붕대,,,(GameplayTags=()),,,TRUE,
+Item_Meat_Small_Cooked,구운 작은 고기,,,(GameplayTags=()),,,FALSE,
+Item_Meat_Large_Cooked,구운 큰 고기,,,(GameplayTags=()),,,FALSE,
+Item_Stew,스튜,,,(GameplayTags=()),,,FALSE,
+Deployable_Crafting_Table,제작대,,"(((TagName=""Item.Material.Log""),5),((TagName=""Item.Material.String""),8))",(GameplayTags=()),0,10,TRUE,CraftingTable
+Deployable_Furnace,가마,,,(GameplayTags=()),,12,FALSE,
+Deployable_Campfire,모닥불,,"(((TagName=""Item.Material.Wood""),10),((TagName=""Item.Material.Rock""),5))",(GameplayTags=()),0,7,TRUE,CraftingTable
+Item_Trap,덫,,,(GameplayTags=()),,,FALSE,
+Item_Torch,횃불,/Script/Engine.BlueprintGeneratedClass'/Game/Item/Data/ItemTemplates/Utility/CBT_ItemTemplate_Torch.CBT_ItemTemplate_Torch_C',"(((TagName=""Item.Material.Wood""),5),((TagName=""Item.Material.String""),5))",(GameplayTags=()),0,5,TRUE,CraftingTable
+Item_Bag,가방,,,(GameplayTags=()),,,FALSE,
+Tool_Pickaxe,곡괭이,,,(GameplayTags=()),,,FALSE,
+Tool_Axe,도끼,,,(GameplayTags=()),,,FALSE,
+Weapon_,,,,,,,,
