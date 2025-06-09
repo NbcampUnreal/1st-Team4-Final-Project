@@ -3,9 +3,13 @@
 
 #include "EmberGameplayAbility_MeleeAttack.h"
 
+#include "EmberPlayerCharacter.h"
+#include "System/AbilitySystem/EmberAbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "Equipment/EquipmentBase.h"
 #include "GameInfo/GameplayTags.h"
+#include "kismet/GameplayStatics.h"
 
 UEmberGameplayAbility_MeleeAttack::UEmberGameplayAbility_MeleeAttack(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -21,6 +25,12 @@ void UEmberGameplayAbility_MeleeAttack::ActivateAbility(const FGameplayAbilitySp
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	if (UAbilityTask_WaitGameplayEvent* GameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EmberGameplayTags::GameplayEvent_Trace, nullptr, false, true))
+	{
+		GameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnHitTarget);
+		GameplayEventTask->ReadyForActivation();
+	}
+	
 	if (UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("MeleeAttack"), AttackMontage, DefaultAttackRate, NAME_None, false, 1.f, 0.f, false))
 	{
 		PlayMontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnMontageFinished);
@@ -31,6 +41,47 @@ void UEmberGameplayAbility_MeleeAttack::ActivateAbility(const FGameplayAbilitySp
 	{
 		GameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnMontageEventTriggered);
 		GameplayEventTask->ReadyForActivation();
+	}
+}
+
+void UEmberGameplayAbility_MeleeAttack::OnHitTarget(FGameplayEventData Payload)
+{
+	if (HasAuthority(&CurrentActivationInfo) == false)
+		return;
+	
+	AEquipmentBase* WeaponActor = const_cast<AEquipmentBase*>(Cast<AEquipmentBase>(Payload.Instigator));
+	if (WeaponActor == nullptr)
+		return;
+	
+	UEmberAbilitySystemComponent* SourceASC = GetEmberAbilitySystemComponentFromActorInfo();
+	if (SourceASC == nullptr)
+		return;
+	
+	if (SourceASC->FindAbilitySpecFromHandle(CurrentSpecHandle) == nullptr)
+		return;
+
+	// TODO : 무기 데미지 가져오기
+	float BaseDamage = 10.0f;
+	
+	FGameplayAbilityTargetDataHandle TargetDataHandle(MoveTemp(const_cast<FGameplayAbilityTargetDataHandle&>(Payload.TargetData)));
+	
+	for (int32 i = 0; i < TargetDataHandle.Data.Num(); i++)
+	{
+		const TSharedPtr<FGameplayAbilityTargetData>& TargetData = TargetDataHandle.Data[i];
+
+		FHitResult* HitResult = const_cast<FHitResult*>(TargetData->GetHitResult());
+		if (HitResult == nullptr)
+			continue;
+
+		UGameplayStatics::ApplyPointDamage(
+			HitResult->GetActor(),
+			BaseDamage,
+			HitResult->Location,
+			*HitResult,
+			Payload.Instigator ? Payload.Instigator->GetInstigatorController() : nullptr,
+			GetEmberCharacterFromActorInfo(),
+			UDamageType::StaticClass()
+		);
 	}
 }
 

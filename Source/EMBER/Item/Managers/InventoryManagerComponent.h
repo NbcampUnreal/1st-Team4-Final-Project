@@ -108,6 +108,7 @@ public:
 	int32 CanMoveOrMergeItem(UInventoryManagerComponent* OtherComponent, const FIntPoint& FromItemSlotPos, const FIntPoint& ToItemSlotPos) const;
 	int32 CanMoveOrMergeItem(UInventoryEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, const FIntPoint& ToItemSlotPos) const;
 
+	int32 CanAddItem(UItemInstance* ItemInstance, TArray<FIntPoint>& OutToItemSlotPoses, TArray<int32>& OutToItemCounts);
 	int32 CanAddItem(int32 ItemTemplateID, EItemRarity ItemRarity, int32 ItemCount, TArray<FIntPoint>& OutToItemSlotPoses, TArray<int32>& OutToItemCounts) const;
 	
 public:

@@ -5,6 +5,7 @@
 #include "EmberInteractionInfo.generated.h"
 
 class IEmberInteractable;
+class UGameplayAbility;
 
 USTRUCT(BlueprintType)
 struct FEmberInteractionInfo
@@ -36,4 +37,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bVisible = false;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UGameplayAbility> AbilityToGrant;
 };

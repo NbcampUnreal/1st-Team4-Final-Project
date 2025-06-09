@@ -36,6 +36,7 @@ void UC_CameraComponent::DisableControlRotation()
 
 void UC_CameraComponent::OnLook(const FInputActionValue& Value)
 {
+	bFixedCamera = false;
 	if(bFixedCamera == true)
 		return;
 

@@ -3,7 +3,10 @@
 
 #include "EmberGameplayAbility_Interact_Active.h"
 
+#include "AbilitySystemComponent.h"
+#include "EmberPlayerCharacter.h"
 #include "GameInfo/GameplayTags.h"
+#include "Interaction/Actors/EmberWorldInteractable.h"
 
 UEmberGameplayAbility_Interact_Active::UEmberGameplayAbility_Interact_Active(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -39,5 +42,40 @@ void UEmberGameplayAbility_Interact_Active::ActivateAbility(const FGameplayAbili
 		return;
 	}
 
-	// TODO : 수풀 획득 구현
+	if (InitializeAbility(const_cast<AActor*>(TriggerEventData->Target.Get())) == false)
+	{
+		CancelAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true);
+		return;
+	}
+
+	TriggerInteraction();
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+}
+
+bool UEmberGameplayAbility_Interact_Active::TriggerInteraction()
+{
+	bool bCanActivate = false;
+	bool bTriggerSuccessful = false;
+
+	FGameplayEventData Payload;
+	Payload.EventTag = EmberGameplayTags::Ability_Interact;
+	Payload.Instigator = GetAvatarActorFromActorInfo();
+	Payload.Target = InteractableActor;
+	
+	if (UAbilitySystemComponent* AbilitySystem = GetAbilitySystemComponentFromActorInfo())
+	{
+		if (FGameplayAbilitySpec* AbilitySpec = AbilitySystem->FindAbilitySpecFromClass(InteractionInfo.AbilityToGrant))
+		{
+			bCanActivate = AbilitySpec->Ability->CanActivateAbility(AbilitySpec->Handle, AbilitySystem->AbilityActorInfo.Get());
+			bTriggerSuccessful = AbilitySystem->TriggerAbilityFromGameplayEvent(
+				AbilitySpec->Handle,
+				AbilitySystem->AbilityActorInfo.Get(),
+				EmberGameplayTags::Ability_Interact,
+				&Payload,
+				*AbilitySystem
+			);
+		}
+	}
+
+	return bCanActivate || bTriggerSuccessful;
 }
