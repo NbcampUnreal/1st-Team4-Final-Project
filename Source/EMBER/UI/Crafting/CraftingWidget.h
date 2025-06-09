@@ -7,7 +7,6 @@
 #include "UI/Crafting/CraftingMainMaterialWidget.h" 
 #include "Crafting/CraftingRecipeManager.h"   
 #include "UI/Crafting/CraftingRecipeListWidget.h" 
-// #include "UI/Crafting/CraftingOutputBoxWidget.h" // 전방 선언으로 대체 또는 필요시 유지
 #include "CraftingWidget.generated.h"
 
 class UCraftingRecipeListWidget;
@@ -17,10 +16,9 @@ class UCraftingMainMaterialWidget;
 class UWidgetSwitcher;
 class UUserWidget;
 class ACraftingBuilding; 
-class UPanelWidget; 
 class UCraftingRecipeListItemData;
-class UInventoryManagerComponent;
-class UCraftingOutputBoxWidget; // 전방 선언
+class UCraftingOutputBoxWidget;
+class UItemInstance;
 
 
 UCLASS()
@@ -32,6 +30,7 @@ public:
     UCraftingWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
     virtual void NativeConstruct() override;
+    virtual void NativeDestruct() override;
     virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
     UFUNCTION(BlueprintCallable, Category = "Crafting")
@@ -39,7 +38,6 @@ public:
 
 protected:
     void UpdateSelectedRecipe(int32 Direction);
-    void ChangeCategory();
     void AdjustCraftAmount(int32 Delta);
     void RefreshAll();
     void ClearSelectedMainIngredients();
@@ -69,12 +67,9 @@ protected:
     
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UCraftingResultWidget> SelectedRecipeDisplayWidget; 
-
-    UPROPERTY(meta = (BindWidgetOptional))
-    TObjectPtr<UPanelWidget> OutputInventoryDisplayContainer; 
-
-    UPROPERTY(EditDefaultsOnly, Category = "Crafting UI")
-    TSubclassOf<UCraftingOutputBoxWidget> StationOutputInventoryWidgetClass; 
+    
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UCraftingOutputBoxWidget> CraftingOutputBoxWidget;
     
     UPROPERTY(meta = (BindWidgetOptional))
     TObjectPtr<UUserWidget> PlayerInventoryDisplayWidget;
@@ -86,14 +81,11 @@ protected:
     TArray<FNamedCraftingRecipe> ActiveRecipeList;
 
 private:
-    int32 SelectedRecipeIndex = 0;
-    int32 CraftAmount = 1;
+    int32 SelectedRecipeIndex;
+    int32 CraftAmount;
     TMap<FGameplayTag, int32> CurrentSelectedMainIngredients;
-    FName SelectedRecipeName = NAME_None;
+    FName SelectedRecipeName;
 
     UPROPERTY()
     TObjectPtr<ACraftingBuilding> CurrentStationActorRef;
-    
-    UPROPERTY()
-    TObjectPtr<UCraftingOutputBoxWidget> ActiveOutputInventoryUI;
 };

@@ -7,6 +7,8 @@
 #include "GameplayTagsManager.h"
 #include "UI/Data/EmberItemData.h"
 #include "Item/Crafting/CraftingBuilding.h"
+#include "UI/Crafting/CraftingWidget.h"
+
 
 UCraftingSystem::UCraftingSystem()
 {
@@ -37,33 +39,37 @@ void UCraftingSystem::BeginPlay()
     Super::BeginPlay();
 }
 
-bool UCraftingSystem::RequestServerCraft(AEmberPlayerCharacter* Player, ACraftingBuilding* CraftingStationActor, FName RecipeRowName, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
+FCraftingResult UCraftingSystem::Client_PreCraftCheck(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
 {
-    if (!Player || !CraftingStationActor || RecipeRowName.IsNone() || !RecipeManager || !RecipeManager->RecipeDataTable)
-    {
-        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::RequestServerCraft - Invalid parameters."));
-        return false;
-    }
+    FCraftingResult Result;
+    Result.bWasSuccessful = false;
 
-    const FCraftingRecipeRow* RecipeDataPtr = RecipeManager->RecipeDataTable->FindRow<FCraftingRecipeRow>(RecipeRowName, TEXT("RequestServerCraft_ClientCheck"));
-    if (!RecipeDataPtr)
+    if (!Player || !RecipeManager)
     {
-        UE_LOG(LogTemp, Error, TEXT("UCraftingSystem::RequestServerCraft - RecipeRowName '%s' not found in DataTable on Client."), *RecipeRowName.ToString());
-        return false;
+        return Result;
     }
-    const FCraftingRecipeRow& Recipe = *RecipeDataPtr;
-
-    if (!CanCraftRecipeAtStation(Recipe, CraftingStationActor->StationType))
+    
+    if (!CanCraftRecipeAtStation(Recipe, CurrentStationForSystem))
     {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::RequestServerCraft - Client check: Cannot craft recipe at this station."));
-        return false;
+        return Result;
     }
     
     if (!HasRequiredMaterials(Player, Recipe, InSelectedMainIngredients))
     {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::RequestServerCraft - Client check: Missing required materials."));
-        return false;
+        return Result;
     }
+    
+    Result.bWasSuccessful = true;
+    Result.Rarity = EvaluateItemRarity(Recipe, InSelectedMainIngredients);
+    Result.ItemTemplateClass = Recipe.ItemTemplateClass;
+
+    return Result;
+}
+
+
+bool UCraftingSystem::RequestServerCraft(AEmberPlayerCharacter* Player, ACraftingBuilding* CraftingStationActor, FName RecipeRowName, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
+{
+    if (!Player || !CraftingStationActor || RecipeRowName.IsNone()) return false;
     
     TArray<FGameplayTag> SelectedTagsArray;
     TArray<int32> SelectedQuantitiesArray;
@@ -74,9 +80,9 @@ bool UCraftingSystem::RequestServerCraft(AEmberPlayerCharacter* Player, ACraftin
     }
 
     CraftingStationActor->Server_ExecuteCrafting(RecipeRowName, SelectedTagsArray, SelectedQuantitiesArray, Player);
-    UE_LOG(LogTemp, Log, TEXT("UCraftingSystem::RequestServerCraft - Server_ExecuteCrafting RPC called for %s."), *RecipeRowName.ToString());
     return true;
 }
+
 bool UCraftingSystem::CanCraftRecipeAtStation(const FCraftingRecipeRow& Recipe, EStationType Station) const
 {
     if (Recipe.bCraftableByCharacter && Station == EStationType::None) return true;
@@ -103,31 +109,24 @@ bool UCraftingSystem::HasRequiredMaterials(AEmberPlayerCharacter* Player, const 
                 ProvidedMainCount += Pair.Value;
             }
         }
-        if (ProvidedMainCount < Recipe.RequiredMainMaterialCount)
-        {
-            return false;
-        }
+        if (ProvidedMainCount < Recipe.RequiredMainMaterialCount) return false;
+        
         for (const auto& SelectedPair : InSelectedMainIngredients)
         {
             const int32* OwnedCount = PlayerOwnedIngredients.Find(SelectedPair.Key);
-            if (!OwnedCount || *OwnedCount < SelectedPair.Value)
-            {
-                return false;
-            }
+            if (!OwnedCount || *OwnedCount < SelectedPair.Value) return false;
         }
     }
 
     for (const auto& RequiredPair : Recipe.Ingredients)
     {
+        if (RequiredPair.Value <= 0) continue;
         const int32* OwnedCount = PlayerOwnedIngredients.Find(RequiredPair.Key);
-        if (!OwnedCount || *OwnedCount < RequiredPair.Value)
-        {
-            return false;
-        }
+        if (!OwnedCount || *OwnedCount < RequiredPair.Value) return false;
     }
+
     return true;
 }
-
 
 TMap<FGameplayTag, int32> UCraftingSystem::AggregateIngredients(AEmberPlayerCharacter* Player) const
 {
@@ -185,7 +184,6 @@ TMap<EItemRarity, float> UCraftingSystem::GetRarityProbabilities(const FCrafting
     for(const FGameplayTag& Tag : Recipe.AllowedMainMaterialTags) MaxPossibleScore += GetMaterialScore(Tag) * Recipe.RequiredMainMaterialCount;
     if(MaxPossibleScore == 0 && Recipe.RequiredMainMaterialCount > 0) MaxPossibleScore = Recipe.RequiredMainMaterialCount * 6; 
 
-
     int32 MinPossibleScore = Recipe.RequiredMainMaterialCount * 1; 
     float Ratio = MaxPossibleScore > MinPossibleScore ? static_cast<float>(Score - MinPossibleScore) / (MaxPossibleScore - MinPossibleScore) : 0.f;
     Ratio = FMath::Clamp(Ratio, 0.f, 1.f);
@@ -224,18 +222,10 @@ EItemRarity UCraftingSystem::EvaluateItemRarity(const FCraftingRecipeRow& Recipe
     return EItemRarity::Common;
 }
 
-const UItemTemplate* UCraftingSystem::GetItemTemplateById(int32 TemplateID) const
-{
-    UE_LOG(LogTemp, Warning, TEXT("UCraftingSystem::GetItemTemplateById - Returning nullptr for TemplateID %d. UEmberItemData::Get().FindItemTemplateByID() must be implemented by teammate to return 'const UItemTemplate*' and handle invalid IDs safely."), TemplateID);
-    return nullptr;
-}
-
-bool UCraftingSystem::ConsumeMaterials(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
+bool UCraftingSystem::ConsumeMaterials_Server(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
 {
     if (!Player) return false; 
-    UInventoryManagerComponent* PlayerInventory = Player->FindComponentByClass<UInventoryManagerComponent>();
-    if (!PlayerInventory) return false;
-    UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: ConsumeMaterials - STUB! Material consumption logic needed here using PlayerInventory."));
+    UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: ConsumeMaterials_Server - STUB! Material consumption logic needed here."));
     return true; 
 }
 

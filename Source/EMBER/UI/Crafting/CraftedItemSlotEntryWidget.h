@@ -2,13 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "GameFlag.h"
 #include "CraftedItemSlotEntryWidget.generated.h"
 
 class UImage;
 class UTextBlock;
-class UItemInstance;
 class UItemTemplate;
-class UCraftingSystem;
 class USizeBox;
 
 UCLASS()
@@ -20,7 +19,7 @@ public:
     UCraftedItemSlotEntryWidget(const FObjectInitializer& ObjectInitializer);
 
     UFUNCTION(BlueprintCallable, Category = "CraftedItemSlot")
-    void SetSlotData(UItemInstance* InItemInstance, int32 InQuantity);
+    void SetSlotData(TSubclassOf<UItemTemplate> InItemTemplateClass, EItemRarity InRarity, int32 InQuantity);
 
 protected:
     UPROPERTY(BlueprintReadOnly, Category = "CraftedItemSlot", meta = (BindWidgetOptional))
@@ -31,18 +30,22 @@ protected:
 
     UPROPERTY(BlueprintReadOnly, Category = "CraftedItemSlot", meta = (BindWidgetOptional))
     TObjectPtr<UTextBlock> QuantityText;
-
-    UPROPERTY(BlueprintReadOnly, Category = "CraftedItemSlot")
-    TObjectPtr<UItemInstance> CachedItemInstance;
-
-    UPROPERTY(BlueprintReadOnly, Category = "CraftedItemSlot")
-    int32 CachedQuantity;
-
+    
     UFUNCTION(BlueprintImplementableEvent, Category = "CraftedItemSlot", meta = (DisplayName = "OnDisplayDataUpdated_BP"))
     void K2_OnDisplayDataUpdated();
 
-private:
+    UFUNCTION(BlueprintPure, Category = "CraftedItemSlot")
     const UItemTemplate* GetItemTemplate() const;
+
+private:
     void UpdateWidgetAppearance();
-    UCraftingSystem* GetCraftingSystem() const;
+
+    UPROPERTY(BlueprintReadOnly, Category = "CraftedItemSlot", meta=(AllowPrivateAccess="true"))
+    TSubclassOf<UItemTemplate> CachedItemTemplateClass;
+
+    UPROPERTY(BlueprintReadOnly, Category = "CraftedItemSlot", meta=(AllowPrivateAccess="true"))
+    EItemRarity CachedRarity;
+
+    UPROPERTY(BlueprintReadOnly, Category = "CraftedItemSlot", meta=(AllowPrivateAccess="true"))
+    int32 CachedQuantity;
 };

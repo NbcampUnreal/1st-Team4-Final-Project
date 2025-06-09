@@ -1,29 +1,30 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Math/IntPoint.h" // FIntPoint 사용을 위해 추가
 #include "UI/Common/EmberActivatableWidget.h"
-#include "Item/ItemInstance.h" 
+#include "GameFlag.h"
 #include "CraftingOutputBoxWidget.generated.h"
 
-class UInventoryManagerComponent;
 class UUniformGridPanel;
 class UCraftedItemSlotEntryWidget;
 class UItemTemplate;
 class UTextBlock;
 
 USTRUCT(BlueprintType)
-struct FCraftingOutputSlotEntry 
+struct FCraftingOutputSlotEntry
 {
     GENERATED_BODY()
 
     UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "OutputSlot")
-    TObjectPtr<UItemInstance> ItemInstance;
+    TSubclassOf<UItemTemplate> ItemTemplateClass;
+
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "OutputSlot")
+    EItemRarity Rarity;
 
     UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "OutputSlot")
     int32 Quantity;
 
-    FCraftingOutputSlotEntry() : ItemInstance(nullptr), Quantity(0) {}
+    FCraftingOutputSlotEntry() : ItemTemplateClass(nullptr), Rarity(EItemRarity::Common), Quantity(0) {}
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOutputBoxContentsChanged);
@@ -36,28 +37,49 @@ class EMBER_API UCraftingOutputBoxWidget : public UEmberActivatableWidget
 public:
     UCraftingOutputBoxWidget(const FObjectInitializer& ObjectInitializer);
 
-    UFUNCTION(BlueprintCallable, Category = "Crafting Output Display")
-    void InitializeDataSource(UInventoryManagerComponent* TargetInventoryManager);
+    UFUNCTION(BlueprintCallable, Category = "CraftingOutput")
+    bool TryAddItem(TSubclassOf<UItemTemplate> InItemTemplateClass, EItemRarity InRarity, int32 InQuantity);
+
+    UFUNCTION(BlueprintCallable, Category = "CraftingOutput")
+    TSubclassOf<UItemTemplate> GetItemTemplateClassFromSlot(int32 FlatSlotIndex, EItemRarity& OutRarity, int32& OutQuantity);
+    
+    UFUNCTION(BlueprintCallable, Category = "CraftingOutput")
+    void ClearSlot(int32 FlatSlotIndex);
+
+    UFUNCTION(BlueprintPure, Category = "CraftingOutput")
+    bool IsFull() const;
+
+    UFUNCTION(BlueprintPure, Category = "CraftingOutput")
+    int32 GetMaxSlots() const;
+
+    UFUNCTION(BlueprintCallable, Category = "Layout")
+    void SetGridDimensions(int32 InNumRows, int32 InNumColumns);
+
+    UPROPERTY(BlueprintAssignable, Category = "CraftingOutput")
+    FOnOutputBoxContentsChanged OnContentsChanged;
 
 protected:
     virtual void NativeConstruct() override;
-    virtual void NativeDestruct() override;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Crafting Output Display", meta = (BindWidgetOptional))
-    TObjectPtr<UTextBlock> TitleTextWidget;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CraftingOutput|Layout", meta = (ClampMin = "1", UIMin = "1"))
+    int32 NumRows;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Crafting Output Display", meta = (BindWidget))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CraftingOutput|Layout", meta = (ClampMin = "1", UIMin = "1"))
+    int32 NumColumns;
+
+    UPROPERTY(BlueprintReadOnly, Category = "CraftingOutput")
+    TArray<FCraftingOutputSlotEntry> OutputSlotEntries;
+
+    UPROPERTY(EditDefaultsOnly, Category = "CraftingOutput")
+    TSubclassOf<UCraftedItemSlotEntryWidget> CraftedItemSlotEntryClass;
+
+    UPROPERTY(BlueprintReadOnly, Category = "CraftingOutput", meta = (BindWidgetOptional))
     TObjectPtr<UUniformGridPanel> OutputSlotsGridPanel;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Crafting Output Display|UI")
-    TSubclassOf<UCraftedItemSlotEntryWidget> SlotEntryWidgetClass;
+    UPROPERTY(BlueprintReadOnly, Category = "CraftingOutput", meta = (BindWidgetOptional))
+    TObjectPtr<UTextBlock> TitleTextWidget;
 
 private:
-    UFUNCTION()
-    void OnOutputInventoryChanged(const FIntPoint& ItemSlotPos, UItemInstance* ItemInstance, int32 ItemCount);
-
-    void RefreshDisplay();
-
-    UPROPERTY()
-    TObjectPtr<UInventoryManagerComponent> DataSourceInventoryManager;
+    void RefreshSlotsUI();
+    const UItemTemplate* GetTemplateFromClass(TSubclassOf<UItemTemplate> InClass) const;
 };

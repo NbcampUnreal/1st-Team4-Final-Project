@@ -5,13 +5,34 @@
 #include "GameplayTagContainer.h"
 #include "Crafting/CraftingRecipeManager.h"
 #include "GameFlag.h"
-#include "Player/EmberPlayerCharacter.h"
 #include "CraftingSystem.generated.h"
 
 class UInventoryManagerComponent;
 class UItemTemplate;
 class UItemInstance;
 class ACraftingBuilding;
+class AEmberPlayerCharacter;
+class UCraftingWidget;
+
+USTRUCT(BlueprintType)
+struct FCraftingResult
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category="CraftingResult")
+    bool bWasSuccessful;
+
+    UPROPERTY(BlueprintReadOnly, Category="CraftingResult")
+    TSubclassOf<UItemTemplate> ItemTemplateClass;
+
+    UPROPERTY(BlueprintReadOnly, Category="CraftingResult")
+    EItemRarity Rarity;
+
+    FCraftingResult()
+        : bWasSuccessful(false), ItemTemplateClass(nullptr), Rarity(EItemRarity::Common)
+    {}
+};
+
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class EMBER_API UCraftingSystem : public UActorComponent
@@ -26,6 +47,9 @@ protected:
     virtual void BeginPlay() override;
 
 public:
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    FCraftingResult Client_PreCraftCheck(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
+
     UFUNCTION(BlueprintCallable, Category = "Crafting")
     bool RequestServerCraft(AEmberPlayerCharacter* Player, ACraftingBuilding* CraftingStationActor, FName RecipeRowName, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
 
@@ -46,13 +70,9 @@ public:
     
     UFUNCTION(BlueprintPure, Category = "Crafting")
     int32 GetMaterialScore(const FGameplayTag& MaterialTag) const;
-
-    UFUNCTION(BlueprintPure, Category = "Crafting")
-    const UItemTemplate* GetItemTemplateById(int32 TemplateID) const; 
     
-    UFUNCTION(BlueprintCallable, Category = "Crafting") 
-    bool ConsumeMaterials(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
-
+    bool ConsumeMaterials_Server(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
+    
 private:
     void InitializeTagMap();
     int32 CalculateScore(const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;

@@ -3,165 +3,41 @@
 #include "UI/Crafting/CraftingIngredientWidget.h"
 #include "UI/Crafting/CraftingResultWidget.h"
 #include "UI/Crafting/CraftingMainMaterialWidget.h"
-#include "UI/Crafting/CraftingOutputBoxWidget.h" 
+#include "UI/Crafting/CraftingOutputBoxWidget.h"
 #include "Crafting/CraftingSystem.h"
 #include "Crafting/CraftingRecipeManager.h"
 #include "Player/EmberPlayerCharacter.h"
+#include "Item/Crafting/CraftingBuilding.h"
 #include "Item/ItemInstance.h"
-#include "Item/ItemTemplate.h" 
-#include "UI/Data/EmberItemData.h" 
+#include "Item/ItemTemplate.h"
+#include "UI/Data/EmberItemData.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/WidgetSwitcher.h"
-#include "Components/TextBlock.h"
-#include "Item/Crafting/CraftingBuilding.h"
-#include "Item/Managers/InventoryManagerComponent.h" 
 #include "Components/PanelWidget.h"
 #include "Components/Border.h"
-
 
 UCraftingWidget::UCraftingWidget(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
     , CurrentStationTypeForUI(EStationType::None)
     , SelectedRecipeIndex(-1)
     , CraftAmount(1)
+    , SelectedRecipeName(NAME_None)
 {
     CurrentStationActorRef = nullptr;
-    ActiveOutputInventoryUI = nullptr;
-    StationOutputInventoryWidgetClass = nullptr;
     RecipeListWidget = nullptr;
     CenterContentSwitcher = nullptr;
     GeneralRecipeIngredientsWidget = nullptr;
     MainMaterialSelectorWidget = nullptr;
     SelectedRecipeDisplayWidget = nullptr;
-    OutputInventoryDisplayContainer = nullptr;
+    CraftingOutputBoxWidget = nullptr;
     PlayerInventoryDisplayWidget = nullptr;
-}
-
-void UCraftingWidget::InitializeForStation(ACraftingBuilding* InStationActor, FName OptionalInitialRecipeRowName)
-{
-    UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::InitializeForStation - Entry - InStationActor: %s"), InStationActor ? *InStationActor->GetName() : TEXT("NULL at Entry"));
-
-    CurrentStationActorRef = InStationActor;
-    UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::InitializeForStation - After Assignment - CurrentStationActorRef: %s"), CurrentStationActorRef ? *CurrentStationActorRef->GetName() : TEXT("NULL after assignment"));
-
-    CurrentStationActorRef = InStationActor;
-    if (CurrentStationActorRef)
-    {
-        CurrentStationTypeForUI = CurrentStationActorRef->StationType;
-    }
-    else
-    {
-        CurrentStationTypeForUI = EStationType::None; 
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::InitializeForStation - InStationActor is NULL."));
-    }
-    
-    SelectedRecipeIndex = -1; 
-    SelectedRecipeName = NAME_None;
-
-    PopulateActiveRecipeList();
-    
-    if (!OptionalInitialRecipeRowName.IsNone() && ActiveRecipeList.Num() > 0)
-    {
-        for (int32 i = 0; i < ActiveRecipeList.Num(); ++i)
-        {
-            if (ActiveRecipeList[i].RecipeRowName == OptionalInitialRecipeRowName) 
-            {
-                SelectedRecipeIndex = i;
-                SelectedRecipeName = ActiveRecipeList[i].RecipeRowName;
-                break;
-            }
-        }
-    }
-    
-    if (ActiveRecipeList.Num() > 0 && SelectedRecipeIndex == -1)
-    {
-        SelectedRecipeIndex = 0;
-        SelectedRecipeName = ActiveRecipeList[0].RecipeRowName;
-    }
-
-    ClearSelectedMainIngredients();
-
-    if (OutputInventoryDisplayContainer)
-    {
-        OutputInventoryDisplayContainer->ClearChildren();
-        if (ActiveOutputInventoryUI)
-        {
-            ActiveOutputInventoryUI->RemoveFromParent();
-            ActiveOutputInventoryUI = nullptr;
-        }
-
-        if (StationOutputInventoryWidgetClass && CurrentStationActorRef && CurrentStationActorRef->OutputInventoryComponent)
-        {
-            ActiveOutputInventoryUI = CreateWidget<UCraftingOutputBoxWidget>(this, StationOutputInventoryWidgetClass);
-            if (ActiveOutputInventoryUI)
-            {                
-                ActiveOutputInventoryUI->InitializeDataSource(CurrentStationActorRef->OutputInventoryComponent);
-                
-                if (UBorder* BorderContainer = Cast<UBorder>(OutputInventoryDisplayContainer))
-                {
-                    BorderContainer->SetContent(ActiveOutputInventoryUI);
-                }
-                else
-                {
-                    OutputInventoryDisplayContainer->AddChild(ActiveOutputInventoryUI); 
-                }
-                UE_LOG(LogTemp, Log, TEXT("UCraftingWidget::InitializeForStation - Station Output Inventory UI (UCraftingOutputBoxWidget) created and initialized."));
-            }
-            else
-            {
-                 UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::InitializeForStation - Failed to create StationOutputInventoryWidgetClass instance (expected UCraftingOutputBoxWidget)."));
-            }
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::InitializeForStation - StationOutputInventoryWidgetClass, CurrentStationActorRef, or its OutputInventoryComponent is NULL. Cannot create output UI."));
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::InitializeForStation - OutputInventoryDisplayContainer is NULL. Check UMG Binding in WBP_CraftingMain."));
-    }
-
-    RefreshAll();
-}
-
-void UCraftingWidget::PopulateActiveRecipeList()
-{
-    ActiveRecipeList.Empty();
-
-    AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn());
-    if (!Player) return;
-    UCraftingSystem* CraftingSystem = Player->FindComponentByClass<UCraftingSystem>();
-    if (!CraftingSystem || !CraftingSystem->RecipeManager || !CraftingSystem->RecipeManager->RecipeDataTable) return;
-    
-    TArray<FName> RowNames = CraftingSystem->RecipeManager->RecipeDataTable->GetRowNames();
-    for (const FName& RowName : RowNames)
-    {
-        FCraftingRecipeRow* RecipeRowPtr = CraftingSystem->RecipeManager->RecipeDataTable->FindRow<FCraftingRecipeRow>(RowName, TEXT("PopulateActiveRecipeList"));
-        if (RecipeRowPtr)
-        {
-            bool bStationMatch = (RecipeRowPtr->CraftingStation == CurrentStationTypeForUI);
-            if (RecipeRowPtr->bCraftableByCharacter && CurrentStationTypeForUI == EStationType::None)
-            {
-                bStationMatch = true; 
-            }
-
-            if (bStationMatch)
-            {
-                FNamedCraftingRecipe NamedRecipe;
-                NamedRecipe.RecipeRowName = RowName;
-                NamedRecipe.RecipeData = *RecipeRowPtr;
-                ActiveRecipeList.Add(NamedRecipe);
-            }
-        }
-    }
 }
 
 void UCraftingWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    if (MainMaterialSelectorWidget) 
+    if (MainMaterialSelectorWidget)
     {
         MainMaterialSelectorWidget->OnSelectionChanged.RemoveAll(this);
         MainMaterialSelectorWidget->OnSelectionChanged.AddDynamic(this, &UCraftingWidget::HandleMainMaterialSelectionChanged);
@@ -174,15 +50,84 @@ void UCraftingWidget::NativeConstruct()
     }
 }
 
+void UCraftingWidget::NativeDestruct()
+{
+    Super::NativeDestruct();
+}
+
 FReply UCraftingWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
     const FKey Key = InKeyEvent.GetKey();
-    if (Key == EKeys::W) { UpdateSelectedRecipe(-1); return FReply::Handled(); }
-    else if (Key == EKeys::S) { UpdateSelectedRecipe(1); return FReply::Handled(); }
-    else if (Key == EKeys::E) { AttemptCraftCurrentRecipe(); return FReply::Handled(); }
-    else if (Key == EKeys::A) { AdjustCraftAmount(-1); return FReply::Handled(); }
-    else if (Key == EKeys::D) { AdjustCraftAmount(1); return FReply::Handled(); }
+    if (Key == EKeys::W)        { UpdateSelectedRecipe(-1); return FReply::Handled(); }
+    else if (Key == EKeys::S)   { UpdateSelectedRecipe(1);  return FReply::Handled(); }
+    else if (Key == EKeys::E)   { AttemptCraftCurrentRecipe(); return FReply::Handled(); }
+    else if (Key == EKeys::A)   { AdjustCraftAmount(-1); return FReply::Handled(); }
+    else if (Key == EKeys::D)   { AdjustCraftAmount(1);  return FReply::Handled(); }
+
     return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+}
+
+void UCraftingWidget::InitializeForStation(ACraftingBuilding* InStationActor, FName OptionalInitialRecipeRowName)
+{
+    CurrentStationActorRef = InStationActor;
+    
+    if (AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn()))
+    {
+        if(UCraftingSystem* CraftingSystem = Player->FindComponentByClass<UCraftingSystem>())
+        {
+            CurrentStationTypeForUI = InStationActor ? InStationActor->StationType : EStationType::None;
+            CraftingSystem->CurrentStationForSystem = CurrentStationTypeForUI;
+        }
+    }
+
+    SelectedRecipeIndex = -1;
+    SelectedRecipeName = NAME_None;
+    PopulateActiveRecipeList();
+
+    if (!OptionalInitialRecipeRowName.IsNone())
+    {
+        for (int32 i = 0; i < ActiveRecipeList.Num(); ++i)
+        {
+            if (ActiveRecipeList[i].RecipeRowName == OptionalInitialRecipeRowName)
+            {
+                SelectedRecipeIndex = i;
+                SelectedRecipeName = OptionalInitialRecipeRowName;
+                break;
+            }
+        }
+    }
+
+    if (ActiveRecipeList.Num() > 0 && SelectedRecipeIndex == -1)
+    {
+        SelectedRecipeIndex = 0;
+        SelectedRecipeName = ActiveRecipeList[0].RecipeRowName;
+    }
+
+    ClearSelectedMainIngredients();
+    RefreshAll();
+}
+
+void UCraftingWidget::PopulateActiveRecipeList()
+{
+    ActiveRecipeList.Empty();
+
+    AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn());
+    if (!Player) return;
+    UCraftingSystem* Sys = Player->FindComponentByClass<UCraftingSystem>();
+    if (!Sys || !Sys->RecipeManager || !Sys->RecipeManager->RecipeDataTable) return;
+    
+    UDataTable* DT = Sys->RecipeManager->RecipeDataTable;
+    for (const FName& RowName : DT->GetRowNames())
+    {
+        if (FCraftingRecipeRow* RowPtr = DT->FindRow<FCraftingRecipeRow>(RowName, TEXT("CraftingWidget")))
+        {
+            bool bMatch = (RowPtr->CraftingStation == CurrentStationTypeForUI) || (RowPtr->bCraftableByCharacter && CurrentStationTypeForUI == EStationType::None);
+            if (bMatch)
+            {
+                ActiveRecipeList.Add(FNamedCraftingRecipe{ RowName, *RowPtr });
+            }
+        }
+    }
 }
 
 void UCraftingWidget::ClearSelectedMainIngredients()
@@ -196,36 +141,24 @@ void UCraftingWidget::ClearSelectedMainIngredients()
 
 void UCraftingWidget::UpdateSelectedRecipe(int32 Direction)
 {
-    if (ActiveRecipeList.Num() == 0) 
+    if (ActiveRecipeList.Num() == 0)
     {
         SelectedRecipeIndex = -1;
         SelectedRecipeName = NAME_None;
-        ClearSelectedMainIngredients();
-        RefreshAll(); 
-        return;
-    }
-
-    SelectedRecipeIndex = (SelectedRecipeIndex + Direction + ActiveRecipeList.Num()) % ActiveRecipeList.Num();
-    if(ActiveRecipeList.IsValidIndex(SelectedRecipeIndex))
-    {
-        SelectedRecipeName = ActiveRecipeList[SelectedRecipeIndex].RecipeRowName;
     }
     else
     {
-        SelectedRecipeName = NAME_None;
+        SelectedRecipeIndex = (SelectedRecipeIndex + Direction + ActiveRecipeList.Num()) % ActiveRecipeList.Num();
+        SelectedRecipeName = ActiveRecipeList.IsValidIndex(SelectedRecipeIndex) ? ActiveRecipeList[SelectedRecipeIndex].RecipeRowName : NAME_None;
     }
     ClearSelectedMainIngredients();
     RefreshAll();
 }
 
-void UCraftingWidget::ChangeCategory()
-{
-}
-
 void UCraftingWidget::AdjustCraftAmount(int32 Delta)
 {
     CraftAmount = FMath::Clamp(CraftAmount + Delta, 1, 99);
-    RefreshAll(); 
+    RefreshAll();
 }
 
 void UCraftingWidget::RefreshAll()
@@ -238,34 +171,35 @@ void UCraftingWidget::RefreshAll()
 
     if (RecipeListWidget)
     {
-       RecipeListWidget->SetRecipeList(ActiveRecipeList); 
-       RecipeListWidget->SetStationTitle(CurrentStationTypeForUI);
+        RecipeListWidget->SetRecipeList(ActiveRecipeList);
+        RecipeListWidget->SetStationTitle(CurrentStationTypeForUI);
     }
-    
+
+    TMap<FGameplayTag,int32> PlayerIngredients;
     AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn());
     UCraftingSystem* CraftingSystem = Player ? Player->FindComponentByClass<UCraftingSystem>() : nullptr;
-    
-    TMap<FGameplayTag, int32> PlayerAggregatedIngredients;
-    if(Player && CraftingSystem)
+    if (Player && CraftingSystem)
     {
-        PlayerAggregatedIngredients = CraftingSystem->AggregateIngredients(Player);
+        PlayerIngredients = CraftingSystem->AggregateIngredients(Player);
     }
 
     if (SelectedRecipeDisplayWidget)
     {
         if (SelectedRecipeDataPtr)
         {
-            SelectedRecipeDisplayWidget->SetRecipeDetails(*SelectedRecipeDataPtr, PlayerAggregatedIngredients, CraftAmount);
-            
-            bool bIsQualityRecipeForDisplay = (SelectedRecipeDataPtr->RequiredMainMaterialCount > 0);
-            if (bIsQualityRecipeForDisplay && CraftingSystem)
+            SelectedRecipeDisplayWidget->SetRecipeDetails(*SelectedRecipeDataPtr, PlayerIngredients, CraftAmount);
+
+            if (SelectedRecipeDataPtr->RequiredMainMaterialCount > 0)
             {
-                TMap<EItemRarity, float> RarityChances = CraftingSystem->GetRarityProbabilities(*SelectedRecipeDataPtr, CurrentSelectedMainIngredients);
-                SelectedRecipeDisplayWidget->UpdateRarityDisplay(*SelectedRecipeDataPtr, RarityChances);
+                if(CraftingSystem)
+                {
+                    auto Chances = CraftingSystem->GetRarityProbabilities(*SelectedRecipeDataPtr, CurrentSelectedMainIngredients);
+                    SelectedRecipeDisplayWidget->UpdateRarityDisplay(*SelectedRecipeDataPtr, Chances);
+                }
             }
-            else if (!bIsQualityRecipeForDisplay && CraftingSystem) 
+            else
             {
-                 SelectedRecipeDisplayWidget->UpdateRarityDisplay(*SelectedRecipeDataPtr, TMap<EItemRarity, float>());
+                SelectedRecipeDisplayWidget->UpdateRarityDisplay(*SelectedRecipeDataPtr, {});
             }
         }
         else
@@ -274,127 +208,97 @@ void UCraftingWidget::RefreshAll()
         }
     }
 
-    bool bIsQualityRecipeOverall = (SelectedRecipeDataPtr && SelectedRecipeDataPtr->RequiredMainMaterialCount > 0);
+    bool bIsQualityRecipe = (SelectedRecipeDataPtr && SelectedRecipeDataPtr->RequiredMainMaterialCount > 0);
     if (CenterContentSwitcher)
     {
-        if (bIsQualityRecipeOverall)
+        if (bIsQualityRecipe)
         {
-            if (MainMaterialSelectorWidget && CraftingSystem && Player && SelectedRecipeDataPtr)
-            {
-                TArray<FSelectableMainMaterialInfo> SelectableInfos;
-                for(const auto& Pair : PlayerAggregatedIngredients)
-                {
-                    if(SelectedRecipeDataPtr->AllowedMainMaterialTags.HasTag(Pair.Key))
-                    {
-                        FSelectableMainMaterialInfo Info;
-                        Info.MaterialTag = Pair.Key;
-                        Info.AvailableCountInInventory = Pair.Value;
-                        Info.Grade = CraftingSystem->GetMaterialScore(Pair.Key);
-                        
-                        FString DisplayNameStr = Pair.Key.GetTagName().ToString();
-                        Info.DisplayName = FText::FromString(DisplayNameStr); 
-                        SelectableInfos.Add(Info);
-                    }
-                }
-                MainMaterialSelectorWidget->InitializeSelector(SelectableInfos, SelectedRecipeDataPtr->RequiredMainMaterialCount);
-                MainMaterialSelectorWidget->SetVisibility(ESlateVisibility::Visible);
-                CenterContentSwitcher->SetActiveWidget(MainMaterialSelectorWidget);
-                if (GeneralRecipeIngredientsWidget)
-                {
-                     GeneralRecipeIngredientsWidget->SetVisibility(ESlateVisibility::Collapsed);
-                }
-            }
-            else 
-            {
-                if(MainMaterialSelectorWidget) MainMaterialSelectorWidget->SetVisibility(ESlateVisibility::Collapsed);
-                if (GeneralRecipeIngredientsWidget) GeneralRecipeIngredientsWidget->SetVisibility(ESlateVisibility::Collapsed);
-                
-                if (MainMaterialSelectorWidget) CenterContentSwitcher->SetActiveWidget(MainMaterialSelectorWidget);
-                else if (GeneralRecipeIngredientsWidget) CenterContentSwitcher->SetActiveWidget(GeneralRecipeIngredientsWidget);
-            }
+            if (MainMaterialSelectorWidget) CenterContentSwitcher->SetActiveWidget(MainMaterialSelectorWidget);
         }
-        else 
+        else
         {
-            if (MainMaterialSelectorWidget) MainMaterialSelectorWidget->SetVisibility(ESlateVisibility::Collapsed);
-            if (GeneralRecipeIngredientsWidget) GeneralRecipeIngredientsWidget->SetVisibility(ESlateVisibility::Collapsed); 
-            
-            if (MainMaterialSelectorWidget) CenterContentSwitcher->SetActiveWidget(MainMaterialSelectorWidget); 
-            else if (GeneralRecipeIngredientsWidget) CenterContentSwitcher->SetActiveWidget(GeneralRecipeIngredientsWidget);
-            else if (CenterContentSwitcher->GetChildrenCount() > 0) CenterContentSwitcher->SetActiveWidgetIndex(0);
+            if (GeneralRecipeIngredientsWidget) CenterContentSwitcher->SetActiveWidget(GeneralRecipeIngredientsWidget);
         }
     }
+    if (MainMaterialSelectorWidget) MainMaterialSelectorWidget->SetVisibility(bIsQualityRecipe ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+    if (GeneralRecipeIngredientsWidget) GeneralRecipeIngredientsWidget->SetVisibility(!bIsQualityRecipe ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+
+    if (CraftingOutputBoxWidget)
+    {
+        CraftingOutputBoxWidget->SetVisibility(ESlateVisibility::Visible);
+    }
     
-    if (PlayerInventoryDisplayWidget) PlayerInventoryDisplayWidget->SetVisibility(ESlateVisibility::Visible);
+    if (PlayerInventoryDisplayWidget)
+    {
+        PlayerInventoryDisplayWidget->SetVisibility(ESlateVisibility::Visible);
+    }
 }
 
 void UCraftingWidget::AttemptCraftCurrentRecipe()
 {
     if (!ActiveRecipeList.IsValidIndex(SelectedRecipeIndex)) return;
-
-    const FNamedCraftingRecipe& SelectedNamedRecipe = ActiveRecipeList[SelectedRecipeIndex];
-    const FCraftingRecipeRow& SelectedRecipeRef = SelectedNamedRecipe.RecipeData;
-    FName RecipeNameToCraft = SelectedNamedRecipe.RecipeRowName;
-
+    
     AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn());
-    if (!Player) return;
+    UCraftingSystem* Sys = Player ? Player->FindComponentByClass<UCraftingSystem>() : nullptr;
+    if (!Sys || !Player) return;
 
-    UCraftingSystem* CraftingSystem = Player->FindComponentByClass<UCraftingSystem>();
-    if (!CraftingSystem) return;
-    
-    if (!CurrentStationActorRef)
+    const FNamedCraftingRecipe& NamedRecipe = ActiveRecipeList[SelectedRecipeIndex];
+    TMap<FGameplayTag,int32> MainToUse;
+    if (NamedRecipe.RecipeData.RequiredMainMaterialCount > 0)
     {
-        UE_LOG(LogTemp, Error, TEXT("UCraftingWidget::AttemptCraftCurrentRecipe - CurrentStationActorRef is NULL. Cannot determine target station."));
-        return;
-    }
-    
-    TMap<FGameplayTag, int32> MainIngredientsToUse;
-    bool bUsesQualitySystem = (SelectedRecipeRef.RequiredMainMaterialCount > 0);
-
-    if (bUsesQualitySystem)
-    {
-        MainIngredientsToUse = CurrentSelectedMainIngredients;
-        int32 TotalSelectedCount = 0;
-        for (const auto& Elem : MainIngredientsToUse) { TotalSelectedCount += Elem.Value; }
-        if (TotalSelectedCount != SelectedRecipeRef.RequiredMainMaterialCount) return; 
+        MainToUse = CurrentSelectedMainIngredients;
     }
     
     for (int32 i = 0; i < CraftAmount; ++i)
     {
-        if (CraftingSystem)
+        FCraftingResult CraftResult = Sys->Client_PreCraftCheck(Player, NamedRecipe.RecipeData, MainToUse);
+        if (CraftResult.bWasSuccessful)
         {
-            CraftingSystem->RequestServerCraft(Player, CurrentStationActorRef, RecipeNameToCraft, MainIngredientsToUse);
+            if (CraftingOutputBoxWidget)
+            {
+                if (!CraftingOutputBoxWidget->TryAddItem(CraftResult.ItemTemplateClass, CraftResult.Rarity, 1))
+                {
+                    break;
+                }
+            }
+            if(CurrentStationActorRef)
+            {
+                 Sys->RequestServerCraft(Player, CurrentStationActorRef, NamedRecipe.RecipeRowName, MainToUse);
+            }
+            else 
+            {
+                 UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::AttemptCraftCurrentRecipe - No station actor. Bare-hands craft server request needs to be implemented."));
+            }
         }
-    }
-    
-    ClearSelectedMainIngredients(); 
-    RefreshAll(); 
-}
-
-void UCraftingWidget::HandleRecipeSelectedFromList(UCraftingRecipeListItemData* SelectedItemData)
-{
-    if(!SelectedItemData) return;
-
-    bool bFound = false;
-    for (int32 i = 0; i < ActiveRecipeList.Num(); ++i)
-    {
-        if (ActiveRecipeList[i].RecipeRowName == SelectedItemData->RecipeRowName) 
+        else
         {
-            SelectedRecipeIndex = i;
-            SelectedRecipeName = ActiveRecipeList[i].RecipeRowName;
-            bFound = true;
             break;
         }
     }
 
-    if (bFound)
+    ClearSelectedMainIngredients();
+    RefreshAll();
+}
+
+void UCraftingWidget::HandleRecipeSelectedFromList(UCraftingRecipeListItemData* SelectedItemData)
+{
+    if (!SelectedItemData) return;
+
+    for (int32 i = 0; i < ActiveRecipeList.Num(); ++i)
     {
-        ClearSelectedMainIngredients();
-        RefreshAll();
+        if (ActiveRecipeList[i].RecipeRowName == SelectedItemData->RecipeRowName)
+        {
+            SelectedRecipeIndex = i;
+            SelectedRecipeName = SelectedItemData->RecipeRowName;
+            ClearSelectedMainIngredients();
+            RefreshAll();
+            return;
+        }
     }
 }
 
-void UCraftingWidget::HandleMainMaterialSelectionChanged(const FSelectedIngredientsMapWrapper& SelectedIngredientsWrapper)
+void UCraftingWidget::HandleMainMaterialSelectionChanged(const FSelectedIngredientsMapWrapper& Wrapper)
 {
-    CurrentSelectedMainIngredients = SelectedIngredientsWrapper.IngredientsMap;
+    CurrentSelectedMainIngredients = Wrapper.IngredientsMap;
     RefreshAll();
 }

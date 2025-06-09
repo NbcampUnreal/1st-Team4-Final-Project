@@ -1,144 +1,194 @@
 #include "UI/Crafting/CraftingOutputBoxWidget.h"
-#include "Item/Managers/InventoryManagerComponent.h"
-#include "Components/UniformGridPanel.h"
-#include "Components/UniformGridSlot.h"
-#include "Components/TextBlock.h"
 #include "UI/Crafting/CraftedItemSlotEntryWidget.h"
 #include "Item/ItemInstance.h"
-#include "Item/ItemTemplate.h"      
-#include "UI/Data/EmberItemData.h" 
+#include "Item/ItemTemplate.h"
+#include "Components/UniformGridPanel.h"
+#include "Components/UniformGridSlot.h"
+#include "Components/TextBlock.h"      
 
 UCraftingOutputBoxWidget::UCraftingOutputBoxWidget(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
-    DataSourceInventoryManager = nullptr;
+    NumRows = 1;
+    NumColumns = 5; 
+    CraftedItemSlotEntryClass = nullptr;
     OutputSlotsGridPanel = nullptr;
-    SlotEntryWidgetClass = nullptr;
     TitleTextWidget = nullptr;
 }
 
 void UCraftingOutputBoxWidget::NativeConstruct()
 {
     Super::NativeConstruct();
-    UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::NativeConstruct for %s - Calling RefreshDisplay."), *GetName());
-    RefreshDisplay(); 
+    RefreshSlotsUI();
 }
 
-void UCraftingOutputBoxWidget::NativeDestruct()
+const UItemTemplate* UCraftingOutputBoxWidget::GetTemplateFromClass(TSubclassOf<UItemTemplate> InClass) const
 {
-    if (DataSourceInventoryManager)
+    if (InClass)
     {
-        if (DataSourceInventoryManager->OnInventoryEntryChanged.IsBoundToObject(this))
-        {
-            DataSourceInventoryManager->OnInventoryEntryChanged.RemoveAll(this);
-            UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::NativeDestruct - Unbound OnInventoryEntryChanged from DataSource: %s"), *DataSourceInventoryManager->GetName());
-        }
+        return InClass->GetDefaultObject<UItemTemplate>();
     }
-    Super::NativeDestruct();
+    return nullptr;
 }
 
-void UCraftingOutputBoxWidget::InitializeDataSource(UInventoryManagerComponent* TargetInventoryManager)
-{
-    UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::InitializeDataSource for %s - Called. Current DataSource: %s, New Target: %s"),
-        *GetName(),
-        DataSourceInventoryManager ? *DataSourceInventoryManager->GetName() : TEXT("NULL"),
-        TargetInventoryManager ? *TargetInventoryManager->GetName() : TEXT("NULL") );
-
-    if (DataSourceInventoryManager && DataSourceInventoryManager->OnInventoryEntryChanged.IsBoundToObject(this))
-    {
-        DataSourceInventoryManager->OnInventoryEntryChanged.RemoveAll(this);
-        UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::InitializeDataSource - Unbound OnInventoryEntryChanged from old DataSource."));
-    }
-
-    DataSourceInventoryManager = TargetInventoryManager;
-
-    if (DataSourceInventoryManager)
-    {
-        DataSourceInventoryManager->OnInventoryEntryChanged.AddUObject(this, &UCraftingOutputBoxWidget::OnOutputInventoryChanged);
-        UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::InitializeDataSource - Bound OnInventoryEntryChanged to new DataSource: %s (Owner: %s). Widget: %s"), 
-            *DataSourceInventoryManager->GetName(),
-            DataSourceInventoryManager->GetOwner() ? *DataSourceInventoryManager->GetOwner()->GetName() : TEXT("NULL_OWNER"),
-            *GetName());
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::InitializeDataSource - Initialized with NULL TargetInventoryManager."));
-    }
-    RefreshDisplay();
-}
-
-void UCraftingOutputBoxWidget::OnOutputInventoryChanged(const FIntPoint& ItemSlotPos, UItemInstance* ItemInstance, int32 ItemCount)
-{
-    UE_LOG(LogTemp, Warning, TEXT(">>>> UCraftingOutputBoxWidget::OnOutputInventoryChanged for %s - FIRED! SlotPos: (X=%d, Y=%d), Item: %s, Count: %d. Refreshing display. <<<<"), 
-        *GetName(),
-        ItemSlotPos.X, ItemSlotPos.Y, 
-        ItemInstance ? *ItemInstance->GetName() : TEXT("NULL_ItemInstance"), 
-        ItemCount);
-    RefreshDisplay();
-}
-
-void UCraftingOutputBoxWidget::RefreshDisplay()
+void UCraftingOutputBoxWidget::RefreshSlotsUI()
 {
     if (!OutputSlotsGridPanel)
     {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshDisplay for %s - OutputSlotsGridPanel is NULL. Check UMG binding."), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshSlotsUI - OutputSlotsGridPanel is NULL. Check UMG binding."));
         return;
     }
+    if (!CraftedItemSlotEntryClass)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshSlotsUI - SlotEntryWidgetClass is not set in ClassDefaults."));
+        return;
+    }
+
     OutputSlotsGridPanel->ClearChildren();
+    
+    const int32 CurrentMaxSlots = GetMaxSlots();
+    
+    OutputSlotEntries.SetNum(CurrentMaxSlots);
 
-    if (!DataSourceInventoryManager)
+    UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::RefreshSlotsUI - Array size is now %d. Populating grid..."), OutputSlotEntries.Num());
+
+    for (int32 i = 0; i < OutputSlotEntries.Num(); ++i)
     {
-        UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::RefreshDisplay for %s - DataSourceInventoryManager is NULL. Displaying empty."), *GetName());
-        return;
-    }
-    if (!SlotEntryWidgetClass)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshDisplay for %s - SlotEntryWidgetClass is not set in ClassDefaults."), *GetName());
-        return;
-    }
-
-    const FIntPoint GridDimensions = DataSourceInventoryManager->GetInventorySlotCount(); 
-    const TArray<FInventoryEntry>& AllEntries = DataSourceInventoryManager->GetAllEntries();
-
-    UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::RefreshDisplay for %s - Preparing to display %d entries in a %dx%d grid. DataSource: %s (Owner: %s)"), 
-        *GetName(),
-        AllEntries.Num(), GridDimensions.X, GridDimensions.Y, 
-        *DataSourceInventoryManager->GetName(),
-        DataSourceInventoryManager->GetOwner() ? *DataSourceInventoryManager->GetOwner()->GetName() : TEXT("NULL_OWNER"));
-
-    for (int32 Y = 0; Y < GridDimensions.Y; ++Y)
-    {
-        for (int32 X = 0; X < GridDimensions.X; ++X)
+        UCraftedItemSlotEntryWidget* EntryWidget = CreateWidget<UCraftedItemSlotEntryWidget>(this, CraftedItemSlotEntryClass);
+        if (EntryWidget)
         {
-            int32 CurrentFlatIndex = Y * GridDimensions.X + X;
-            UCraftedItemSlotEntryWidget* SlotWidgetInstance = CreateWidget<UCraftedItemSlotEntryWidget>(this, SlotEntryWidgetClass);
-            if (SlotWidgetInstance)
+            const FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[i];
+            EntryWidget->SetSlotData(SlotEntry.ItemTemplateClass, SlotEntry.Rarity, SlotEntry.Quantity);
+            
+            const int32 TargetRow = i / NumColumns;
+            const int32 TargetColumn = i % NumColumns;
+            UUniformGridSlot* GridSlot = OutputSlotsGridPanel->AddChildToUniformGrid(EntryWidget, TargetRow, TargetColumn);
+            if(GridSlot)
             {
-                if (AllEntries.IsValidIndex(CurrentFlatIndex))
-                {
-                    const FInventoryEntry& Entry = AllEntries[CurrentFlatIndex];
-                    SlotWidgetInstance->SetSlotData(Entry.GetItemInstance(), Entry.GetItemCount());
-                    if (Entry.GetItemInstance())
-                    {
-                         UE_LOG(LogTemp, Verbose, TEXT("UCraftingOutputBoxWidget: Slot (%d,%d) Data: Item Valid, Count: %d"), X, Y, Entry.GetItemCount());
-                    }
-                }
-                else 
-                {
-                    SlotWidgetInstance->SetSlotData(nullptr, 0);
-                }
-                UUniformGridSlot* GridSlot = OutputSlotsGridPanel->AddChildToUniformGrid(SlotWidgetInstance, Y, X);
-                if(GridSlot)
-                {
-                    GridSlot->SetHorizontalAlignment(HAlign_Fill); 
-                    GridSlot->SetVerticalAlignment(VAlign_Fill);
-                }
-            }
-            else
-            {
-                UE_LOG(LogTemp, Error, TEXT("UCraftingOutputBoxWidget::RefreshDisplay - Failed to create SlotEntryWidgetClass instance."));
+                GridSlot->SetHorizontalAlignment(HAlign_Fill); 
+                GridSlot->SetVerticalAlignment(VAlign_Fill); 
             }
         }
     }
-    UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::RefreshDisplay for %s - Finished loop. OutputSlotsGridPanel now has %d children."), *GetName(), OutputSlotsGridPanel->GetChildrenCount());
+    OnContentsChanged.Broadcast(); 
+}
+
+bool UCraftingOutputBoxWidget::TryAddItem(TSubclassOf<UItemTemplate> InItemTemplateClass, EItemRarity InRarity, int32 InQuantity)
+{
+    if (!InItemTemplateClass || InQuantity <= 0) return false;
+
+    const UItemTemplate* TemplateOfItemToAdd = InItemTemplateClass->GetDefaultObject<UItemTemplate>();
+    if(!TemplateOfItemToAdd) return false;
+    
+    const int32 MaxStackSize = TemplateOfItemToAdd->MaxStackCount > 0 ? TemplateOfItemToAdd->MaxStackCount : 1;
+    
+    int32 RemainingQuantity = InQuantity;
+
+    UE_LOG(LogTemp, Log, TEXT("TryAddItem: Attempting to add %s. Checking %d slots."), *InItemTemplateClass->GetName(), OutputSlotEntries.Num());
+
+    if (MaxStackSize > 1)
+    {
+        for (int32 i = 0; i < OutputSlotEntries.Num(); ++i)
+        {
+            FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[i];
+            if (SlotEntry.ItemTemplateClass == InItemTemplateClass && SlotEntry.Rarity == InRarity && SlotEntry.Quantity < MaxStackSize)
+            {
+                int32 CanAddAmount = FMath::Min(RemainingQuantity, MaxStackSize - SlotEntry.Quantity);
+                SlotEntry.Quantity += CanAddAmount;
+                RemainingQuantity -= CanAddAmount;
+                if (RemainingQuantity <= 0) break;
+            }
+        }
+    }
+    
+    if (RemainingQuantity > 0)
+    {
+        for (int32 i = 0; i < OutputSlotEntries.Num(); ++i)
+        {
+            FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[i];
+
+            UE_LOG(LogTemp, Log, TEXT("TryAddItem: Checking Slot [%d]. ItemTemplateClass: %s, Quantity: %d."), 
+                i, 
+                SlotEntry.ItemTemplateClass ? *SlotEntry.ItemTemplateClass->GetName() : TEXT("NULL"), 
+                SlotEntry.Quantity);
+            
+            if (SlotEntry.ItemTemplateClass == nullptr || SlotEntry.Quantity == 0)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("TryAddItem: Found an empty slot at index %d! Placing item."), i);
+                SlotEntry.ItemTemplateClass = InItemTemplateClass;
+                SlotEntry.Rarity = InRarity;
+                
+                int32 CanAddAmount = FMath::Min(RemainingQuantity, MaxStackSize);
+                SlotEntry.Quantity = CanAddAmount;
+                RemainingQuantity -= CanAddAmount;
+
+                if (RemainingQuantity <= 0) break;
+            }
+        }
+    }
+
+    RefreshSlotsUI();
+    
+    if (RemainingQuantity > 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CraftingOutputBoxWidget: Output box is full. Could not add all items (%d remaining)."), RemainingQuantity);
+        return false;
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("TryAddItem: Successfully added item(s)."));
+    return true;
+}
+
+TSubclassOf<UItemTemplate> UCraftingOutputBoxWidget::GetItemTemplateClassFromSlot(int32 FlatSlotIndex, EItemRarity& OutRarity, int32& OutQuantity)
+{
+    OutRarity = EItemRarity::Common;
+    OutQuantity = 0;
+
+    if (OutputSlotEntries.IsValidIndex(FlatSlotIndex))
+    {
+        const FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[FlatSlotIndex];
+        OutRarity = SlotEntry.Rarity;
+        OutQuantity = SlotEntry.Quantity;
+        return SlotEntry.ItemTemplateClass;
+    }
+    return nullptr;
+}
+
+void UCraftingOutputBoxWidget::ClearSlot(int32 FlatSlotIndex)
+{
+    if (OutputSlotEntries.IsValidIndex(FlatSlotIndex))
+    {
+        OutputSlotEntries[FlatSlotIndex] = FCraftingOutputSlotEntry();
+        RefreshSlotsUI();
+    }
+}
+
+bool UCraftingOutputBoxWidget::IsFull() const
+{
+    for (const FCraftingOutputSlotEntry& SlotEntry : OutputSlotEntries)
+    {
+        if (!SlotEntry.ItemTemplateClass) return false; 
+        
+        const UItemTemplate* Template = GetTemplateFromClass(SlotEntry.ItemTemplateClass);
+        if (!Template) continue;
+        
+        const int32 MaxStack = Template->MaxStackCount > 0 ? Template->MaxStackCount : 1;
+        if (SlotEntry.Quantity < MaxStack)
+        {
+            return false;
+        }
+    }
+    return true; 
+}
+
+int32 UCraftingOutputBoxWidget::GetMaxSlots() const
+{
+    return NumRows * NumColumns;
+}
+
+void UCraftingOutputBoxWidget::SetGridDimensions(int32 InNumRows, int32 InNumColumns)
+{
+    NumRows = FMath::Max(1, InNumRows);
+    NumColumns = FMath::Max(1, InNumColumns);
+    RefreshSlotsUI();
 }
