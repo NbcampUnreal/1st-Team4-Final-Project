@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "Navigation/PathFollowingComponent.h"
-#include "BaseAI.h"
+#include "AI/Base/BaseAI.h"
 #include "BTT_Run.generated.h"
 
 UCLASS()

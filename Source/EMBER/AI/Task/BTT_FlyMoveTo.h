@@ -1,17 +1,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EmberPlayerCharacter.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "Navigation/PathFollowingComponent.h" 
+#include "Navigation/PathFollowingComponent.h"
 #include "BTT_FlyMoveTo.generated.h"
 
 UCLASS()
 class EMBER_API UBTT_FlyMoveTo : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-	
-public:
 
+public:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	UFUNCTION()
@@ -19,4 +19,6 @@ public:
 
 	UBehaviorTreeComponent* OwnerCompRef;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MoveTarget")
+	FBlackboardKeySelector TargetActor;
 };

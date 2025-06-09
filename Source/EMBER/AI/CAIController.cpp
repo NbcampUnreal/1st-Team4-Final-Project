@@ -2,21 +2,21 @@
 
 
 #include "AI/CAIController.h"
-
-#include "HumanAIBase.h"
+#include "AI/Base/HumanAIBase.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/CBehaviorTreeComponent.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
 
 ACAIController::ACAIController()
 {
 	Blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
 	Perception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception"));
 
-	//»ı¼ºÀÚ µ¿ÀûÇÒ´ç 
+	//ìƒì„±ì ë™ì í• ë‹¹ 
 	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight"));
-	//·±Å¸ÀÓ µ¿ÀûÇÒ´ç
+	//ëŸ°íƒ€ì„ ë™ì í• ë‹¹
 	//NewObject<>()
 
 	Sight->SightRadius = 600.0f;
@@ -29,18 +29,18 @@ ACAIController::ACAIController()
 
 	Perception->ConfigureSense(*Sight);
 	Perception->SetDominantSense(*Sight->GetSenseImplementation());
-	//GetSenseImplementation ÀÚ·áÇü Å¸ÀÔÀ» ³Ñ°ÜÁÖ´Â ÇÔ¼ö
+	//GetSenseImplementation ìë£Œí˜• íƒ€ì…ì„ ë„˜ê²¨ì£¼ëŠ” í•¨ìˆ˜
 }
 
 void ACAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	AI = Cast<AHumanAIBase>(InPawn);
+	AI = Cast<ABaseAI>(InPawn);
 
-	if(AI->GetBehaviorTree() == nullptr)
+	if (AI->GetBehaviorTree() == nullptr)
 	{
-		UE_LOG(LogTemp, Error, L"BehaviorTree is null");
+		UE_LOG(LogTemp, Error, L"Behavior is null");
 		return;
 	}
 
@@ -62,19 +62,47 @@ void ACAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Perception->OnPerceptionUpdated.AddDynamic(this, &ACAIController::OnPerceptionUpdate);
+	// Perception->OnPerceptionUpdated.AddDynamic(this, &ACAIController::OnPerceptionUpdate);
+	Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ACAIController::OnTargetPerceptionUpdated);
 }
 
-void ACAIController::OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
-{
-	TArray<AActor*> actors;
-	Perception->GetCurrentlyPerceivedActors(nullptr, actors);
+// void ACAIController::OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
+// {
+// 	TArray<AActor*> actors;
+// 	Perception->GetCurrentlyPerceivedActors(nullptr, actors);
+//
+// 	if (actors.Num() <= 0)
+// 	{
+// 		Blackboard->SetValueAsObject("TargetActor", nullptr);
+// 		return;
+// 	}
+// 	UE_LOG(LogTemp, Error, L"%s", *actors[0]->GetName());
+// 	Blackboard->SetValueAsObject("TargetActor", actors[0]);
+// }
 
-	if (actors.Num() <= 0)
+void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
+	Perception->GetCurrentlyPerceivedActors(nullptr, Actors);
+
+	if (Stimulus.IsValid())
 	{
-		Blackboard->SetValueAsObject("Target", nullptr);
-		return;
+		if (Actors.Num() == 1)
+		{
+			Blackboard->SetValueAsObject("TargetActor", Actor);
+		}
+		UE_LOG(LogTemp, Warning, L"SetDetectMode");
+		Behavior->SetDetectMode();
 	}
-	UE_LOG(LogTemp, Error, L"%s", *actors[0]->GetName());
-	Blackboard->SetValueAsObject("Target", actors[0]);
+	else if (!Stimulus.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, L"SetUInDetect");
+		if (Actors.Num() <= 0)
+		{
+			Blackboard->SetValueAsObject("TargetActor", nullptr);
+			Behavior->SetIdleMode();
+			return;
+		}
+	}
+	// UE_LOG(LogTemp, Error, L"%s", *Actors[0]->GetName());
+	// Blackboard->SetValueAsObject("TargetActor", Actors[0]);
 }

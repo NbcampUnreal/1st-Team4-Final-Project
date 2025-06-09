@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/DefensiveAI.h"
+#include "AI/Base/DefensiveAI.h"
 #include "Mammoth.generated.h"
 
 /**
