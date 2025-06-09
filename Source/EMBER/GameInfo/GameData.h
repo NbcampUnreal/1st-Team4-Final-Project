@@ -5,6 +5,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFlag.h"
 #include "Animation/AnimMontage.h"
+#include "Engine/DamageEvents.h"
 #include "GAmeData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -107,6 +108,15 @@ public:
 public:
     void DoAction(ACharacter* InOwner);
 };
+
+USTRUCT()
+struct FActionDamageEvent : public FDamageEvent
+{
+    GENERATED_BODY()
+public:
+    FDamageData* DamageData;
+};
+
 
 USTRUCT(BlueprintType)
 struct FCharacterStatus

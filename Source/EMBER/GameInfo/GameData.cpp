@@ -2,13 +2,19 @@
 
 #include "C_CameraComponent.h"
 #include "C_CharacterMovementComponent.h"
+#include "AIWeapon/CAI_Weapon.h"
+#include "DamageType/CCustomDamageType.h"
+#include "Engine/DamageEvents.h"
 #include "GameFramework/Character.h"
 #include "kismet/GameplayStatics.h"
 
 //FDamageData
 void FDamageData::SendDamage(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
 {
-    UGameplayStatics::ApplyDamage(InOther, Damage, InAttacker->GetController(), InAttackCauser, UDamageType::StaticClass());
+    FActionDamageEvent e;
+    e.DamageData = this;
+    //UGameplayStatics::ApplyDamage(InOther, Damage, InAttacker->GetController(), InAttackCauser, damageType);
+    InOther->TakeDamage(Damage, e, InAttacker->GetController(), InAttackCauser);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 //FAttackData

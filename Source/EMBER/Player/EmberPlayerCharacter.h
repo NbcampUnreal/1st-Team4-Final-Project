@@ -133,5 +133,21 @@ protected:
 
 	UFUNCTION()
 	void OnLeftClick(const FInputActionValue& Value);
+public:
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
+		AActor* DamageCauser) override;
+private:
+	void Hitted();
+protected:
 	int attackint = 0;
+
+private:
+	struct FDamageData
+	{
+		float Power;
+		class ACharacter* Character;
+		class AActor* Causer;
+
+		struct FActionDamageEvent* Event;
+	} DamageData;
 };

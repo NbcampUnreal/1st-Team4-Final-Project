@@ -16,6 +16,8 @@
 #include "Managers/EquipmentManagerComponent.h"
 #include "..\GameInfo/GameplayTags.h"
 #include "EnhancedInputSubsystems.h"
+#include "DamageType/CCustomDamageType.h"
+#include "Engine/DamageEvents.h"
 #include "Input/EmberEnhancedInputComponent.h"
 
 
@@ -291,4 +293,33 @@ void AEmberPlayerCharacter::OnLeftClick(const FInputActionValue& Value)
     static const FGameplayTag LeftClickTag = EmberGameplayTags::InputTag_Attack_MainHand;
     AbilitySystemComponent->TryActivateAbilitiesByTag(FGameplayTagContainer(LeftClickTag));
 
+}
+
+float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+    if (Damage <= 0.0f)
+    {
+	    UE_LOG(LogTemp, Error, L"Damage is 0");
+    }
+    else
+    {
+        DamageData.Causer = DamageCauser;
+        DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
+        DamageData.Power = Damage;
+        DamageData.Event = (FActionDamageEvent*)&DamageEvent;
+    }
+
+    return Damage;
+}
+
+void AEmberPlayerCharacter::Hitted()
+{
+    if(DamageData.Power <= 0.0f)
+        return;
+
+    if (DamageData.Event->DamageData->Montages.Num() > 0)
+        PlayAnimMontage(DamageData.Event->DamageData->Montages[0], DamageData.Event->DamageData->PlayRate);
+    StatusComponent->Damage(DamageData.Power);
 }
