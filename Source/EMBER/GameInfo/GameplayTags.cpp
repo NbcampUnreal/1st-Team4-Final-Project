@@ -48,4 +48,5 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_Tick,						"GameplayEvent.Montage.Tick");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_End,						"GameplayEvent.Montage.End");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Trace,								"GameplayEvent.Trace");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Reward_Item,						"GameplayEvent.Reward.Item");
 }

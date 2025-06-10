@@ -66,6 +66,7 @@ enum class EEquipmentType : uint8
 	Armor,
 	Weapon,
 	Utility,
+	Crafting,
 	
 	Count	UMETA(Hidden)
 };
@@ -76,6 +77,14 @@ enum class EUtilityType : uint8
 	Drink,
 	LightSource,
 	Food,
+
+	Count	UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class ECraftingType : uint8
+{
+	Ore,
 
 	Count	UMETA(Hidden)
 };

@@ -34,7 +34,11 @@ public:
 public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	bool TryPickupItem(AEmberPickupableItemBase* PickupableItemActor);
+	
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	bool TryAutoPickupItem(UItemInstance* ItemInstance);
 
+	
 protected:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UInventoryManagerComponent* GetMyInventoryManager() const;

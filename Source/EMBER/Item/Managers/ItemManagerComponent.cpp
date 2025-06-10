@@ -113,6 +113,34 @@ bool UItemManagerComponent::TryPickupItem(AEmberPickupableItemBase* PickupableIt
 	return false;
 }
 
+bool UItemManagerComponent::TryAutoPickupItem(UItemInstance* ItemInstance)
+{
+	if (HasAuthority() == false)
+		return false;
+	
+	if (ItemInstance == nullptr)
+		return false;
+	
+	UInventoryManagerComponent* MyInventoryManager = GetMyInventoryManager();
+	if (MyInventoryManager == nullptr)
+		return false;
+	
+	TArray<FIntPoint> ToItemSlotPoses;
+	TArray<int32> ToItemCounts;
+	int32 MovableCount = MyInventoryManager->CanAddItem(ItemInstance, ToItemSlotPoses, ToItemCounts);
+	int32 PickupItemCount = ItemInstance->GetItemCount();
+	if (MovableCount == PickupItemCount)
+	{
+		for (int32 i = 0; i < ToItemSlotPoses.Num(); i++)
+		{
+			MyInventoryManager->AddItem_Unsafe(ToItemSlotPoses[i], ItemInstance, ToItemCounts[i]);
+		}
+		return true;
+	}
+
+	return false;
+}
+
 UInventoryManagerComponent* UItemManagerComponent::GetMyInventoryManager() const
 {
 	UInventoryManagerComponent* MyInventoryManager = nullptr;
