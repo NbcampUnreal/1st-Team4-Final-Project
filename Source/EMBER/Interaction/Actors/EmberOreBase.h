@@ -2,12 +2,14 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "GameData.h"
 #include "EmberWorldInteractable.h"
+#include "Notify/AnimNotifyState_SendGameplayEvent.h"
 #include "EmberOreBase.generated.h"
 
 struct FChaosBreakEvent;
 class AFieldSystemActor;
+class UItemTemplate;
 
 UCLASS()
 class EMBER_API AEmberOreBase : public AEmberWorldInteractable
@@ -19,21 +21,62 @@ public:
 
 public:
 	virtual void BeginPlay() override;
-
+	
 protected:
 	UFUNCTION()
-	void HandlePointDamage(AActor* DamagedActor, float Damage, AController* InstigatedBy, FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const UDamageType* DamageType, AActor* DamageCauser);
+	void HandlePointDamage(AActor* DamagedActor, float Damage, AController* InstigatedBy, FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const UDamageType* DamageType, AActor* InDamageCauser);
 
 	UFUNCTION()
 	void HandleBreakEvent(const FChaosBreakEvent& BreakEvent);
-	
+
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Ore")
-	TObjectPtr<UChildActorComponent> AnchorField;
+	void InitResource();
+
+	void HandleRewardItem(int32 RewardItemCount);
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Ore|ChaosPhsics")
+	UFUNCTION(NetMulticast, Reliable)
+	void SetDynamic(FVector Position);
+
+protected:
+	/* ChaosPhsics */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ore")
+	TObjectPtr<UChildActorComponent> AnchorField;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ore|ChaosPhsics")
 	TObjectPtr<UGeometryCollectionComponent> GeometryCollection;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Ore|ChaosPhsics")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ore|ChaosPhsics")
 	TSubclassOf<AFieldSystemActor> ChaosImpactClass;
+
+	/* Resource */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ore|Resource")
+	int MaxResourceCount = 5;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ore|Resource")
+	float ConsumedResourceCount = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ore|Resource")
+	float UnitElementPerResource = 0;
+
+	float CurrentBrokenElements = 0;
+
+	/* Item */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ore|RewardItem")
+	TSubclassOf<UItemTemplate> RewardItemClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ore|RewardItem")
+	EItemRarity RewardItemRarity;
+
+	int32 ItemID;
+	
+	/* Reward Event */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ore|Event")
+	FGameplayTag EventTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ore|Event")
+	FGameplayEventData EventData;
+	
+private:
+	UPROPERTY()
+	AActor* DamageCauser;
 };
