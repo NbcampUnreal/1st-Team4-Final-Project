@@ -216,7 +216,7 @@ void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
 
     if (GetCharacterMovement())
     {
-        GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+        MovementComponent->SetSpeed(ESpeedType::Sprint);
     }
 }
 
@@ -224,7 +224,7 @@ void AEmberPlayerCharacter::StopSprint(const FInputActionValue& value)
 {
     if (GetCharacterMovement())
     {
-        GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+        MovementComponent->SetSpeed(ESpeedType::Walk);
     }
 }
 
