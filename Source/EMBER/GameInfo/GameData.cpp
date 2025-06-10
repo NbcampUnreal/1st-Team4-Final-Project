@@ -1,5 +1,42 @@
 ﻿#include "GameData.h"
 
+#include "C_CameraComponent.h"
+#include "C_CharacterMovementComponent.h"
+#include "GameFramework/Character.h"
+#include "kismet/GameplayStatics.h"
+
+//FDamageData
+void FDamageData::SendDamage(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
+{
+    UGameplayStatics::ApplyDamage(InOther, Damage, InAttacker->GetController(), InAttackCauser, UDamageType::StaticClass());
+}
+/////////////////////////////////////////////////////////////////////////////////////////////
+//FAttackData
+void FAttackData::DoAction(ACharacter* InOwner)
+{
+    UC_CharacterMovementComponent* movement = Cast<UC_CharacterMovementComponent>(InOwner->GetComponentByClass(UC_CharacterMovementComponent::StaticClass()));
+    if(movement != nullptr)
+    {
+        if (bCanMove == true)
+            movement->EnableMove();
+        else
+            movement->DisableMove();
+    }
+    UC_CameraComponent* camera = Cast<UC_CameraComponent>(InOwner->GetComponentByClass(UC_CameraComponent::StaticClass()));
+	if(camera != nullptr)
+	{
+        if (bCanFixedCamera == true)
+            camera->EnableFixedCamera();
+        else
+            camera->DisableFixedCamera();
+	}
+
+    if (Montages[0] != nullptr)
+        InOwner->PlayAnimMontage(Montages[0], PlayRate);
+}
+
+////////////////////////////////////////////////////////////////////////////
+
 float FCharacterStatus::GetCurrentHP() const
 {
     return CurrentHP;

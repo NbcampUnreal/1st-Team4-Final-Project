@@ -1,5 +1,6 @@
 #include "AI/Boss/Griffon.h"
 
+#include "C_StateComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/AnimInstance/BaseAIAnimInstance.h"
 #include "AnimInstance/Griffon_AnimInstance.h"
@@ -9,11 +10,10 @@
 AGriffon::AGriffon()
 {
 	MaxHP = 20.0f;
-	AnimalType = EAnimalType::Griffon;
 	AttackPower = 10.0f;
-	WalkSpeed = 250.f;
-	RunSpeed = 750.f;
-	FlySpeed = 1200.0f;
+	// WalkSpeed = 250.f;
+	// RunSpeed = 750.f;
+	// FlySpeed = 1200.0f;
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -39,24 +39,32 @@ void AGriffon::Tick(float DeltaTime)
 
 void AGriffon::Attack()
 {
-	AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(("TargetActor")));
+	//AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(("TargetActor")));
+	AActor* TargetActor = Cast<AActor>(BehaviorTreeComponent.Get()->GetTarget());
+	if(TargetActor == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Target is Null");
+		return;
+	}
 	UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance());
 
 	UGameplayStatics::ApplyDamage(TargetActor, AttackPower, GetController(), this, nullptr);
 	GetController()->StopMovement();
-	AnimalState = EAnimalState::Attack;
-	AnimInstance->AnimalState = EAnimalState::Attack;
-	AnimInstance->PlayStateMontage();
+
+	AIState->SetActionMode();
+	// AnimalState = EAnimalState::Attack;
+	// AnimInstance->AnimalState = EAnimalState::Attack;
+	// AnimInstance->PlayStateMontage();
 }
 
-void AGriffon::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
-{
-	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
-	
-	SetBlackboardVector("OriginLocation", GetActorLocation());
-}
+//void AGriffon::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
+//{
+//	Super::OnTargetPerceptionUpdated(UpdatedActor, Stimulus);
+//	
+//	// SetBlackboardVector("OriginLocation", GetActorLocation());
+//}
 
 void AGriffon::SetCombatState()
 {
-	SetRunSpeed();
+	// SetRunSpeed();
 }

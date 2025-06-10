@@ -1,7 +1,6 @@
 ﻿#include "BTT_Patrol.h"
-#include "BaseAI.h"
-#include "AIController.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "AI/Base/BaseAI.h"
+#include "CAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTT_Patrol::UBTT_Patrol()
@@ -12,7 +11,7 @@ UBTT_Patrol::UBTT_Patrol()
 EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	OwnerCompRef = &OwnerComp;
-	ABaseAIController* BaseAIController = Cast<ABaseAIController>(OwnerComp.GetAIOwner());
+	ACAIController* BaseAIController = Cast<ACAIController>(OwnerComp.GetAIOwner());
 	if (!BaseAIController)
 	{
 		UE_LOG(LogTemp, Error, TEXT("BaseAIController is nullptr!"));

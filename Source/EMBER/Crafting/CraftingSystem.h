@@ -2,37 +2,87 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "CraftingRecipe.h" 
-#include "Player/EmberPlayerCharacter.h"  
+#include "GameplayTagContainer.h"
+#include "Crafting/CraftingRecipeManager.h"
+#include "GameFlag.h"
 #include "CraftingSystem.generated.h"
+
+class UInventoryManagerComponent;
+class UItemTemplate;
+class UItemInstance;
+class ACraftingBuilding;
+class AEmberPlayerCharacter;
+class UCraftingWidget;
+
+USTRUCT(BlueprintType)
+struct FCraftingResult
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category="CraftingResult")
+    bool bWasSuccessful;
+
+    UPROPERTY(BlueprintReadOnly, Category="CraftingResult")
+    TSubclassOf<UItemTemplate> ItemTemplateClass;
+
+    UPROPERTY(BlueprintReadOnly, Category="CraftingResult")
+    EItemRarity Rarity;
+
+    FCraftingResult()
+        : bWasSuccessful(false), ItemTemplateClass(nullptr), Rarity(EItemRarity::Common)
+    {}
+};
+
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class EMBER_API UCraftingSystem : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	UCraftingSystem();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
-	TArray<UCraftingRecipe*> Recipes;
-
-	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	void StartCrafting(AEmberPlayerCharacter* Player, const FString& ItemName);
-
-	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	TMap<FString, int32> AggregateIngredients(AEmberPlayerCharacter* Player);
+    UCraftingSystem();
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
-	UAnimMontage* ProcessingAnimation;
+    virtual void InitializeComponent() override;
+    virtual void BeginPlay() override;
 
-	void AddItemToInventory(AEmberPlayerCharacter* Player, const FString& ItemName);
+public:
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    FCraftingResult Client_PreCraftCheck(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
 
-	virtual void BeginPlay() override;
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    bool RequestServerCraft(AEmberPlayerCharacter* Player, ACraftingBuilding* CraftingStationActor, FName RecipeRowName, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    bool CanCraftRecipeAtStation(const FCraftingRecipeRow& Recipe, EStationType Station) const;
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    bool HasRequiredMaterials(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    TMap<FGameplayTag, int32> AggregateIngredients(AEmberPlayerCharacter* Player) const;
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    TMap<EItemRarity, float> GetRarityProbabilities(const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
+
+    UFUNCTION(BlueprintCallable, Category = "Crafting")
+    EItemRarity EvaluateItemRarity(const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
+    
+    UFUNCTION(BlueprintPure, Category = "Crafting")
+    int32 GetMaterialScore(const FGameplayTag& MaterialTag) const;
+    
+    bool ConsumeMaterials_Server(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
+    
+private:
+    void InitializeTagMap();
+    int32 CalculateScore(const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
+    
+public:
+    EStationType CurrentStationForSystem = EStationType::None; 
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting System")
+    TObjectPtr<UCraftingRecipeManager> RecipeManager;
 
 private:
-	UCraftingRecipe* GetRecipeByName(const FString& RecipeName) const;
-
-	TMap<FString, int32> SearchNearChestsIngredients(AEmberPlayerCharacter* Player);
+    TMap<FGameplayTag, int32> TagToScoreMap;
 };

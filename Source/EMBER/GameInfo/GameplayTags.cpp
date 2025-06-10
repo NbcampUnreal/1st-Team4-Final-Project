@@ -22,7 +22,6 @@ namespace EmberGameplayTags
 
 	// Ability
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Interact,								"Ability.Interact");
-	UE_DEFINE_GAMEPLAY_TAG(Ability_Interact_Object,							"Ability.Interact.Object");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Attack,									"Ability.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Attack_1,								"Ability.Attack.1");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Attack_2,								"Ability.Attack.2");
@@ -47,5 +46,4 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_Begin,						"GameplayEvent.Montage.Begin");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_Tick,						"GameplayEvent.Montage.Tick");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_End,						"GameplayEvent.Montage.End");
-	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Trace,								"GameplayEvent.Trace");
 }
