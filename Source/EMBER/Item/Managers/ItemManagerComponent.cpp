@@ -6,9 +6,6 @@
 #include "GameFlag.h"
 #include "InventoryEquipmentManagerComponent.h"
 #include "InventoryManagerComponent.h"
-#include "ItemInstance.h"
-#include "Interaction/Actors/Pickup/EmberPickupableItemBase.h"
-#include "UI/Data/EmberItemData.h"
 
 UItemManagerComponent::UItemManagerComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -78,68 +75,4 @@ void UItemManagerComponent::Server_EquipmentToEquipment_Implementation(UInventor
 	
 }
 
-bool UItemManagerComponent::TryPickupItem(AEmberPickupableItemBase* PickupableItemActor)
-{
-	if (HasAuthority() == false)
-		return false;
-
-	if (IsValid(PickupableItemActor) == false)
-		return false;
-
-	UInventoryManagerComponent* MyInventoryManager = GetMyInventoryManager();
-	UInventoryEquipmentManagerComponent* MyInventoryEquipmentManager = GetMyInventoryEquipmentManager();
-	if (MyInventoryManager == nullptr || MyInventoryEquipmentManager == nullptr)
-		return false;
-
-	const FPickupInfo& PickupInfo = PickupableItemActor->GetPickupInfo();
-	if (PickupInfo.ItemInstance == nullptr)
-		return false;
-	
-	TArray<FIntPoint> ToItemSlotPoses;
-	TArray<int32> ToItemCounts;
-	int32 MovableCount = MyInventoryManager->CanAddItem(PickupInfo.ItemInstance, ToItemSlotPoses, ToItemCounts);
-	int32 PickupItemCount = PickupInfo.ItemInstance->GetItemCount();
-	if (MovableCount == PickupItemCount)
-	{
-		for (int32 i = 0; i < ToItemSlotPoses.Num(); i++)
-		{
-			MyInventoryManager->AddItem_Unsafe(ToItemSlotPoses[i], PickupInfo.ItemInstance, ToItemCounts[i]);
-		}
-			
-		PickupableItemActor->Destroy();
-		return true;
-	}
-
-	return false;
-}
-
-UInventoryManagerComponent* UItemManagerComponent::GetMyInventoryManager() const
-{
-	UInventoryManagerComponent* MyInventoryManager = nullptr;
-	
-	if (AController* Controller = Cast<AController>(GetOwner()))
-	{
-		if (APawn* Pawn = Controller->GetPawn())
-		{
-			MyInventoryManager = Pawn->GetComponentByClass<UInventoryManagerComponent>();
-		}
-	}
-
-	return MyInventoryManager;
-}
-
-UInventoryEquipmentManagerComponent* UItemManagerComponent::GetMyInventoryEquipmentManager() const
-{
-	UInventoryEquipmentManagerComponent* MyInventoryEquipmentManager = nullptr;
-	
-	if (AController* Controller = Cast<AController>(GetOwner()))
-	{
-		if (APawn* Pawn = Controller->GetPawn())
-		{
-			MyInventoryEquipmentManager = Pawn->GetComponentByClass<UInventoryEquipmentManagerComponent>();
-		}
-	}
-
-	return MyInventoryEquipmentManager;
-}
 

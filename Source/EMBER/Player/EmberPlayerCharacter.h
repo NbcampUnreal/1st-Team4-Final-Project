@@ -90,8 +90,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetCurrentStamina() const;
 
-	float NormalSpeed = 400;
-	float SprintSpeed = 600;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -155,6 +153,10 @@ public:
 
 protected:
 	int attackint = 0;
+
+	float NormalSpeed = 200.0f;
+	float SprintSpeed = 350.0f;
+
 	
 private:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;

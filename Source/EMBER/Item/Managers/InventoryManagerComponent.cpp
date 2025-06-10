@@ -234,18 +234,6 @@ int32 UInventoryManagerComponent::CanMoveOrMergeItem(UInventoryEquipmentManagerC
 	return 0;
 }
 
-int32 UInventoryManagerComponent::CanAddItem(UItemInstance* ItemInstance, TArray<FIntPoint>& OutToItemSlotPoses, TArray<int32>& OutToItemCounts)
-{
-	if (ItemInstance == nullptr)
-		return 0;
-
-	int32 ItemTemplateID = ItemInstance->GetItemTemplateID();
-	int32 ItemCount = ItemInstance->GetItemCount();
-	EItemRarity ItemRarity = ItemInstance->GetItemRarity();
-
-	return CanAddItem(ItemTemplateID, ItemRarity, ItemCount, OutToItemSlotPoses, OutToItemCounts);
-}
-
 
 int32 UInventoryManagerComponent::CanAddItem(int32 ItemTemplateID, EItemRarity ItemRarity, int32 ItemCount, TArray<FIntPoint>& OutToItemSlotPoses, TArray<int32>& OutToItemCounts) const
 {
