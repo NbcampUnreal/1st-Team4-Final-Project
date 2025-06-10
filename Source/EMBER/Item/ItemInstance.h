@@ -28,6 +28,7 @@ public:
 
 public:
 	void Init(int32 InItemTemplateID, EItemRarity InItemRarity);
+	void Init(int32 InItemTemplateID, EItemRarity InItemRarity, int32 InItemCount);
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
@@ -40,6 +41,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	EItemRarity GetItemRarity() const { return ItemRarity; }
 
+	UFUNCTION()
+	int32 GetItemCount() const { return ItemCount; }
+	
 	UFUNCTION()
 	const FGameplayTagStackContainer& GetAttributeContainer() const { return AttributeContainer; }
 	
@@ -60,6 +64,9 @@ private:
 	UPROPERTY(Replicated)
 	EItemRarity ItemRarity = EItemRarity::Common;
 
+	UPROPERTY(Replicated)
+	int32 ItemCount = INDEX_NONE;
+	
 	UPROPERTY(Replicated)
 	FGameplayTagStackContainer AttributeContainer;
 };

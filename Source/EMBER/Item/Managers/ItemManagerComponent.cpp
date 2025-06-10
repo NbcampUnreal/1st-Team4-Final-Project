@@ -8,7 +8,6 @@
 #include "InventoryManagerComponent.h"
 #include "ItemInstance.h"
 #include "Interaction/Actors/Pickup/EmberPickupableItemBase.h"
-#include "UI/Data/EmberItemData.h"
 
 UItemManagerComponent::UItemManagerComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

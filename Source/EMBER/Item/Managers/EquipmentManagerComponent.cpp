@@ -172,6 +172,11 @@ void UEquipmentManagerComponent::Unequip(EEquipmentSlotType EquipmentSlotType, U
 	}
 }
 
+AEquipmentBase* UEquipmentManagerComponent::GetHandEquipment() const
+{
+	return SpawnedHandEquipment;
+}
+
 void UEquipmentManagerComponent::Equip_HandEquipment(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance)
 {
 	if (ItemInstance == nullptr)
