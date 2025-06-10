@@ -5,6 +5,7 @@
 #include "EmberInteractionInfo.h"
 #include "UObject/Interface.h"
 #include "EmberInteractable.generated.h"
+
 class UAbilitySystemComponent;
 struct FEmberInteractionQuery;
 
@@ -32,10 +33,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	virtual UMeshComponent* GetMeshComponent() const { return nullptr; }
-
-	UFUNCTION(BlueprintCallable)
-	virtual UMeshComponent* Get() const { return nullptr; }
 	
 	UFUNCTION(BlueprintCallable)
-	virtual bool CanInteraction(UAbilitySystemComponent* ASC) const = 0;
+	virtual bool CanInteraction(UAbilitySystemComponent* ASC) const { return true; }
 };

@@ -86,6 +86,7 @@ public:
 	//~IAbilitySystemInterface Overrides
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	//~End of IAbilitySystemInterface Overrides
+	void SetAbilitySystemComponent(UAbilitySystemComponent* InASC) { AbilitySystemComponent = InASC; }
 	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;

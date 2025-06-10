@@ -24,6 +24,9 @@ protected:
 
 private:
 	UFUNCTION()
+	void OnHitTarget(FGameplayEventData Payload);
+	
+	UFUNCTION()
 	void OnMontageEventTriggered(FGameplayEventData Payload);
 	
 	UFUNCTION()
