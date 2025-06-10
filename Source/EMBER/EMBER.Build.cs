@@ -31,9 +31,15 @@ public class EMBER : ModuleRules
 						"CommonGame",
 						"AnimGraphRuntime",
 						"NavigationSystem",
+<<<<<<< Updated upstream
 						"FieldSystemEngine",
 						"GeometryCollectionEngine",
                         "AIModule"
+=======
+                        "AIModule",
+                        "Slate",
+                        "SlateCore",
+>>>>>>> Stashed changes
                     });
         PublicIncludePaths.AddRange(
                     new string[]

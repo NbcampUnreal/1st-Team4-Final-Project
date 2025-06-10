@@ -26,7 +26,7 @@ ACraftingBuilding::ACraftingBuilding()
 
     InteractionRange = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionRange"));
     InteractionRange->SetupAttachment(RootComponent);
-    InteractionRange->SetSphereRadius(500.0f); 
+    InteractionRange->SetSphereRadius(200.0f); 
     InteractionRange->SetCollisionProfileName(TEXT("Trigger")); 
     InteractionRange->SetGenerateOverlapEvents(true);
 
