@@ -16,7 +16,6 @@
 #include "Managers/EquipmentManagerComponent.h"
 #include "..\GameInfo/GameplayTags.h"
 #include "EnhancedInputSubsystems.h"
-#include "DamageType/CCustomDamageType.h"
 #include "Engine/DamageEvents.h"
 #include "Input/EmberEnhancedInputComponent.h"
 #include "Kismet/KismetMathLibrary.h"

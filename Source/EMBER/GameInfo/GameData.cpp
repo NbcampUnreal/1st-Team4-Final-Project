@@ -4,7 +4,6 @@
 #include "C_CharacterMovementComponent.h"
 #include "MontageSystemComponent.h"
 #include "AIWeapon/CAI_Weapon.h"
-#include "DamageType/CCustomDamageType.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/Character.h"
 #include "kismet/GameplayStatics.h"
