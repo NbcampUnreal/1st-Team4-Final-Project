@@ -4,7 +4,7 @@
 
 #include "GameData.h"
 #include "EmberWorldInteractable.h"
-#include "Notify/AnimNotifyState_SendGameplayEvent.h"
+#include "Abilities/GameplayAbilityTypes.h"
 #include "EmberOreBase.generated.h"
 
 struct FChaosBreakEvent;

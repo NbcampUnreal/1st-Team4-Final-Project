@@ -3,11 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI_Interface.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "CBehaviorTreeComponent.generated.h"
 
+UENUM(BlueprintType)
+enum class EAnimalState : uint8
+{
+	Idle UMETA(DisplayName = "Idle"),
+	Guard UMETA(DisplayName = "Guard"),//���
+	Detect UMETA(DisplayName = "Detect"),
+	Run UMETA(DisplayName = "Running"),//����
+	Patrol UMETA(DisplayName = "Patrol"),
+	Chase UMETA(DisplayName = "Chase"),
+	Attack UMETA(DisplayName = "Attack"),
+	Hit UMETA(DisplayName = "Hit"),
+	Death UMETA(DisplayName = "Death"),
+	Flying UMETA(DisplayName = "Flying"),//
+};
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAnimalStateChaged, EAnimalState, InPrevType, EAnimalState, InNewType);
 
 UCLASS()
 class EMBER_API UCBehaviorTreeComponent : public UBehaviorTreeComponent
@@ -28,11 +42,14 @@ private:
 
 public:
 	bool IsWaitMode();
-	bool IsApproachMode();
-	bool IsActionMode();
+	bool IsGuardMode();
+	bool IsRunMode();
+	bool IsDetect();
+	bool IsFlyingMode();
 	bool IsPatrolMode();
+	bool IsChaseMode();
+	bool IsActionMode();
 	bool IsHittedMode();
-	bool IsAvoidMode();
 	bool IsDeadMode();
 
 public:
@@ -41,14 +58,24 @@ public:
 	FVector GetPatrolLocation();
 	void SetPatrolLocation(const FVector& InLocation);
 
-	void SetWaitMode();
-	void SetApproachMode();
-	void SetActionMode();
+	void SetIdleMode();
+	void SetGuardMode();
+	void SetRunMode();
+	void SetDetectMode();
+	void SetFlyingMode();
 	void SetPatrolMode();
+	void SetChaseMode();
+	void SetActionMode();
 	void SetHittedMode();
-	void SetAvoidMode();
 	void SetDeadMode();
 
+	void SetBlackboard_Bool(FName Keyname, bool Value);
+	void SetBlackboard_String(FName Keyname, FString Value);
+	void SetBlackboard_Int(FName Keyname, int Value);
+	void SetBlackboard_Float(FName Keyname, float Value);
+	void SetBlackboard_Enum(FName Keyname, EAnimalState Value);
+	void SetBlackboard_Object(FName Keyname, UObject* Value);
+	void SetBlackboard_Vector(FName Keyname, FVector Value);
 private:
 	void ChangeType(EAnimalState InType);
 
@@ -58,7 +85,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Key")
 	FName AIStateTypeKey = "AIState";
 	UPROPERTY(EditAnywhere, Category = "Key")
-	FName TargetKey = "Target";
+	FName TargetKey = "TargetActor";
 	UPROPERTY(EditAnywhere, Category = "Key")
 	FName PatrolLocationKey = "Patrol_Location";
 

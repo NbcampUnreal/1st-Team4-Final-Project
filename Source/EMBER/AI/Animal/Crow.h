@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/PassiveAI.h"
+#include "AI/Base/PassiveAI.h"
 #include "Crow.generated.h"
 
 

@@ -6,18 +6,36 @@
 #include "AIController.h"
 #include "CAIController.generated.h"
 
+class ABaseAI;
+struct FAIStimulus;
 class UAISenseConfig_Sight;
 class AHumanAIBase;
 class UCBehaviorTreeComponent;
-/**
- * 
- */
+
+UENUM(BlueprintType)
+enum class
+	EAnimalType : uint8
+{
+	Passive UMETA(DisplayName = "Passive"),
+	Defensive UMETA(DisplayName = "Defensive"),
+	Aggressive UMETA(DisplayName = "Aggressive"),
+	Crow UMETA(DisplayName = "Crow"),
+	Griffon UMETA(DisplayName = "Griffon"),
+	Dragon UMETA(DisplayName = "Dragon"),
+	Human UMETA(DisplayName = "Hunam")
+};
+
 UCLASS()
 class EMBER_API ACAIController : public AAIController
 {
 	GENERATED_BODY()
+
+public:
+	FORCEINLINE TObjectPtr<UAIPerceptionComponent> GetPercption() { return Perception; }
+
 public:
 	ACAIController();
+	TArray<AActor*> Actors;
 
 protected:
 	void OnPossess(APawn* InPawn) override;
@@ -25,14 +43,18 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	// 	UFUNCTION()
+	// 	void OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors);
 	UFUNCTION()
-	void OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors);
-private:
+	virtual void OnTargetPerceptionUpdated(AActor* Target, FAIStimulus Stimulus);
+
+	//UFUNCTION()
+	//virtual void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+
+protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAIPerceptionComponent> Perception;
-
-private:
-	TObjectPtr<AHumanAIBase> AI;
+	TObjectPtr<ABaseAI> AI;
 	TObjectPtr<UCBehaviorTreeComponent> Behavior;
 	TObjectPtr<UAISenseConfig_Sight> Sight;
 };

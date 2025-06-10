@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/PassiveAI.h"
+#include "AI/Base/PassiveAI.h"
 #include "Griffon.generated.h"
 
 UCLASS()
@@ -16,7 +16,7 @@ public:
 
 	void Attack();
 	
-	virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
+	//virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
 
 	void SetCombatState();
 };

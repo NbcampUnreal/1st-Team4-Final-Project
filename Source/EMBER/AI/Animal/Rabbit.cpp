@@ -10,8 +10,6 @@
 ARabbit::ARabbit()
 {
 	MaxHP = 100;
-	WalkSpeed = 150.f;
-	RunSpeed = 450.f;
 }
 
 void ARabbit::OnDeath()

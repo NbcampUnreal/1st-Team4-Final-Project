@@ -76,7 +76,6 @@ enum class EUtilityType : uint8
 {
 	Drink,
 	LightSource,
-	Food,
 
 	Count	UMETA(Hidden)
 };

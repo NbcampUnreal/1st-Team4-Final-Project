@@ -11,37 +11,12 @@ AEmberWorldInteractable::AEmberWorldInteractable(const FObjectInitializer& Objec
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
-	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
-	SetRootComponent(SceneComponent);
-	
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	MeshComponent->SetCollisionProfileName(TEXT("Interactable"));
 	MeshComponent->SetCanEverAffectNavigation(true);
-	MeshComponent->SetupAttachment(SceneComponent);
+	SetRootComponent(MeshComponent);
 
 	InteractionInfo.bVisible = false;
-}
-
-void AEmberWorldInteractable::OnInteractActiveStarted(AActor* Interactor)
-{
-	if (IsValid(Interactor) == false)
-		return;
-
-	if (HasAuthority())
-	{
-		CachedInteractors = Interactor;
-	}
-}
-
-void AEmberWorldInteractable::OnInteractionSuccess(AActor* Interactor)
-{
-	if (IsValid(Interactor) == false)
-		return;
-
-	if (HasAuthority())
-	{
-			
-	}
 }
 
 FEmberInteractionInfo AEmberWorldInteractable::GetPreInteractionInfo( const FEmberInteractionQuery& InteractionQuery) const

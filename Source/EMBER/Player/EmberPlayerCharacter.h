@@ -20,7 +20,7 @@ class UCameraComponent;
 class UC_CharacterMovementComponent;
 class UAbilitySystemComponent;
 class UCharacterInputComponent;
-
+class UGameplayAbility;
 struct FInputActionValue;
 UCLASS()
 
@@ -74,8 +74,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetCurrentStamina() const;
 
-	float NormalSpeed = 400;
-	float SprintSpeed = 600;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -126,4 +124,15 @@ private:
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Team")
 	uint8 TeamID = 1;
+
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UGameplayAbility> LeftClickAbilityClass;
+
+	UFUNCTION()
+	void OnLeftClick(const FInputActionValue& Value);
+	int attackint = 0;
+	float NormalSpeed = 200.0f;
+	float SprintSpeed = 350.0f;
 };
