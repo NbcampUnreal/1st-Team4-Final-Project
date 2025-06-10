@@ -16,7 +16,10 @@
 #include "Managers/EquipmentManagerComponent.h"
 #include "..\GameInfo/GameplayTags.h"
 #include "EnhancedInputSubsystems.h"
+#include "Engine/DamageEvents.h"
 #include "Input/EmberEnhancedInputComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 
 AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
@@ -51,6 +54,7 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 void AEmberPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+    UE_LOG(LogTemp, Error, L"start max hp %f hp %f ", StatusComponent->GetMaxHp(), StatusComponent->GetHp());
     MovementComponent->OnRun();
 	if(StatusComponent->GetMaxHp() <= 0.0f)
 	    StatusComponent->SetMaxHp(100);
@@ -190,7 +194,6 @@ void AEmberPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Jump, ETriggerEvent::Triggered, this, &ThisClass::Jump);
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Triggered, this, &ThisClass::StartSprint);
     WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Attack_MainHand, ETriggerEvent::Triggered, this, &ThisClass::Attack);
 }
 
 UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() const
@@ -217,7 +220,7 @@ void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
 
     if (GetCharacterMovement())
     {
-        GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+        MovementComponent->SetSpeed(ESpeedType::Sprint);
     }
 }
 
@@ -225,7 +228,7 @@ void AEmberPlayerCharacter::StopSprint(const FInputActionValue& value)
 {
     if (GetCharacterMovement())
     {
-        GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+        MovementComponent->SetSpeed(ESpeedType::Walk);
     }
 }
 
@@ -234,9 +237,9 @@ void AEmberPlayerCharacter::Attack(const FInputActionValue& value)
     // EquipmentComponent에서 현재 무기 타입 가져오기
     FAttackData Data = EquipmentManagerComponent->GetAttackInfo();
 
-    if (!Data.Montages.IsEmpty())
+    if (!Data.Montages)
     {
-        MontageComponent->PlayMontage(Data.Montages[attackint]);
+        MontageComponent->PlayMontage(Data.Montages);
         if (attackint == 2)
         {
             attackint = 0;
@@ -291,4 +294,62 @@ void AEmberPlayerCharacter::OnLeftClick(const FInputActionValue& Value)
     static const FGameplayTag LeftClickTag = EmberGameplayTags::InputTag_Attack_MainHand;
     AbilitySystemComponent->TryActivateAbilitiesByTag(FGameplayTagContainer(LeftClickTag));
 
+}
+
+float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+    if (HasAuthority() == false)
+        return 0.0f;
+
+	float damage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	if (damage <= 0.0f)
+    {
+	    UE_LOG(LogTemp, Error, L"Damage is 0");
+        return damage;
+    }
+
+    //StatusComponent->OnRep_Damage(damage);
+
+	DamageData.Causer = DamageCauser;
+    DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
+    DamageData.Power = damage;
+    FActionDamageEvent* event = (FActionDamageEvent*)&DamageEvent;
+    DamageData.Montage = event->DamageData->Montages;
+    DamageData.PlayRate = event->DamageData->PlayRate;
+    MulticastHitted(damage, DamageEvent, EventInstigator, DamageCauser);
+
+    return damage;
+}
+
+void AEmberPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    DOREPLIFETIME(AEmberPlayerCharacter, DamageData);
+}
+
+void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
+                                                           AActor* DamageCauser)
+{
+    MontageComponent->PlayMontage(DamageData.Montage, DamageData.PlayRate);
+    StatusComponent->Damage(DamageData.Power);
+	if(HasAuthority() == true)
+    {
+	    UE_LOG(LogTemp, Error, L"server hp %f", StatusComponent->GetHp());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, L"hp %f", StatusComponent->GetHp());
+    }
+
+    if(DamageData.Character != nullptr)
+        SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation())); 
+
+}
+
+void AEmberPlayerCharacter::OnRep_Hitted()
+{
+    if (DamageData.Character != nullptr)
+        SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
 }

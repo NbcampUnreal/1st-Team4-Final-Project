@@ -62,6 +62,19 @@ void AEmberPlayerController::PostProcessInput(const float DeltaTime, const bool 
 	Super::PostProcessInput(DeltaTime, bGamePaused);
 }
 
+void AEmberPlayerController::AcknowledgePossession(class APawn* InPawn)
+{
+	Super::AcknowledgePossession(InPawn);
+
+	AEmberPlayerState* EmberPlayerState = GetPlayerState<AEmberPlayerState>();
+	check(EmberPlayerState);
+	
+	if (AEmberPlayerCharacter* EmberCharacter = Cast<AEmberPlayerCharacter>(InPawn))
+	{
+		EmberCharacter->SetAbilitySystemComponent(EmberPlayerState->GetAbilitySystemComponent());
+	}
+}
+
 UEmberAbilitySystemComponent* AEmberPlayerController::GetEmberAbilitySystemComponent() const
 {
 	const AEmberPlayerState* EmberPS = CastChecked<AEmberPlayerState>(PlayerState, ECastCheckedType::NullAllowed);

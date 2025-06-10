@@ -23,6 +23,7 @@ public:
 protected:
 	//~APlayerController Overrides
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
+	virtual void AcknowledgePossession(class APawn* InPawn) override;
 	//~End of APlayerController Overrides
 	
 private:

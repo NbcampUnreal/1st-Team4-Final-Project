@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "AbilitySystemInterface.h"
 #include "ActiveGameplayEffectHandle.h"
+#include "GameFlag.h"
 #include "Components/PawnComponent.h"
 #include "System/AbilitySystem/Data/EmberAbilitySet.h"
 
@@ -33,6 +33,9 @@ public:
 	void Equip(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
 	void Unequip(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
 
+	AEquipmentBase* GetHandEquipment() const;
+	void SetEquipmentActor(AEquipmentBase* InHandEquipment) { SpawnedHandEquipment = InHandEquipment; }
+	
 private:
 	void Equip_HandEquipment(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
 	void Equip_Armor(UItemInstance* ItemInstance);
@@ -44,6 +47,7 @@ public:
 	FAttackData GetAttackInfo() const;
 	UFUNCTION()
 	void GetMontageIndex() const;
+	
 private:
 	UFUNCTION()
 	void OnRep_ItemTemplateID(int32 PrevItemTemplateID);
@@ -57,6 +61,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<AEquipmentBase> SpawnedHandEquipment;
+	
 public:
 	void Attack();
 
