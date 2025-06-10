@@ -40,10 +40,10 @@ void FAttackData::DoAction(ACharacter* InOwner)
             camera->DisableFixedCamera();
 	}
     UMontageSystemComponent* montage = Cast<UMontageSystemComponent>(InOwner->GetComponentByClass(UMontageSystemComponent::StaticClass()));
-    if(montage == nullptr || Montages[0] == nullptr)
+    if(montage == nullptr || Montages == nullptr)
         return;
     
-    montage->PlayMontage(Montages[0], PlayRate);
+    montage->PlayMontage(Montages, PlayRate);
     /*if (Montages[0] != nullptr)
     {
 	    

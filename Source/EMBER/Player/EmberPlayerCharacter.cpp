@@ -238,9 +238,9 @@ void AEmberPlayerCharacter::Attack(const FInputActionValue& value)
     // EquipmentComponent에서 현재 무기 타입 가져오기
     FAttackData Data = EquipmentManagerComponent->GetAttackInfo();
 
-    if (!Data.Montages.IsEmpty())
+    if (!Data.Montages)
     {
-        MontageComponent->PlayMontage(Data.Montages[attackint]);
+        MontageComponent->PlayMontage(Data.Montages);
         if (attackint == 2)
         {
             attackint = 0;
@@ -317,7 +317,7 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
     DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
     DamageData.Power = damage;
     FActionDamageEvent* event = (FActionDamageEvent*)&DamageEvent;
-    DamageData.Montage = event->DamageData->Montages[0];
+    DamageData.Montage = event->DamageData->Montages;
     DamageData.PlayRate = event->DamageData->PlayRate;
     MulticastHitted(damage, DamageEvent, EventInstigator, DamageCauser);
 

@@ -73,13 +73,13 @@ struct FDamageData
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float Damage;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float PlayRate;
+    float PlayRate = 1.0f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FEffectData HitEffect;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FSound2D HitSound;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TArray<TObjectPtr<UAnimMontage>> Montages;
+    TObjectPtr<UAnimMontage> Montages;
 
 public:
     void SendDamage(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther);
@@ -91,13 +91,13 @@ struct FAttackData
     GENERATED_BODY()
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float PlayRate;
+    float PlayRate = 1.0f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FEffectData AttackEffect;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FSound2D AttackSound;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TArray<TObjectPtr<UAnimMontage>> Montages;
+    TObjectPtr<UAnimMontage> Montages;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 MontageIndex;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -283,10 +283,10 @@ void UEquipmentManagerComponent::Attack()
 	// EquipmentComponent에서 현재 무기 타입 가져오기
 	FAttackData Data = GetAttackInfo();
 	GetMontageIndex();
-	if (StateComponent->IsIdleMode() == true && !Data.Montages.IsEmpty())
+	if (StateComponent->IsIdleMode() == true && !Data.Montages)
 	{
 		StateComponent->SetActionMode();
-		MontageComponent->PlayMontage(Data.Montages[Data.MontageIndex]);
+		MontageComponent->PlayMontage(Data.Montages);
 	}
 }
 
@@ -301,7 +301,7 @@ void UEquipmentManagerComponent::GetMontageIndex() const
 	if (UItemFragment_Equipable_Weapon* WeaponFragment = ItemTemplate.FindFragmentByClass<
 		UItemFragment_Equipable_Weapon>())
 	{
-		WeaponFragment->IncrementMontageIndex();
+		//WeaponFragment->IncrementMontageIndex();
 	}
 }
 
