@@ -72,6 +72,9 @@ void UAnimNotifyState_PerformTrace::NotifyEnd(USkeletalMeshComponent* MeshCompon
 
 void UAnimNotifyState_PerformTrace::PerformTrace(USkeletalMeshComponent* MeshComponent)
 {
+	if (WeaponActor.IsValid() == false)
+		return;
+	
 	FTransform CurrentSocketTransform = WeaponActor->MeshComponent->GetSocketTransform(TraceParams.TraceSocketName);
 	float Distance = (PreviousSocketTransform.GetLocation() - CurrentSocketTransform.GetLocation()).Length();
 
@@ -114,7 +117,7 @@ void UAnimNotifyState_PerformTrace::PerformTrace(USkeletalMeshComponent* MeshCom
 #if UE_EDITOR
 		if (GIsEditor)
 		{
-			if (true && TraceDebugParams.bDrawDebugShape)
+			if (false && TraceDebugParams.bDrawDebugShape)
 			{
 				FColor Color = (HitResults.Num() > 0) ? TraceDebugParams.HitColor : TraceDebugParams.TraceColor;
 				

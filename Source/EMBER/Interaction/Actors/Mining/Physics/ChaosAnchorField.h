@@ -17,18 +17,20 @@ class EMBER_API AChaosAnchorField : public AFieldSystemActor
 
 public:
 	AChaosAnchorField(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
-private:
-	UPROPERTY()
+	
+	virtual void PostInitializeComponents() override;
+	
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 	
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UUniformInteger> UniformInteger;
 	
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UCullingField> CullingField;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UBoxFalloff> BoxFalloff;
 
 private:

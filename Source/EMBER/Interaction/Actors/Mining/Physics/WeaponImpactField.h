@@ -26,7 +26,7 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
-
+	
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
@@ -36,31 +36,31 @@ private:
 	
 private:
 	/** Radial Push 벡터 */
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<URadialVector> RadialVectorForce;
 	
 	/** Strain용 거리 기반 감소 필드 */
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<URadialFalloff> RadialFalloffStrain;
 
 	/** Force용 거리 기반 Falloff */
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<URadialFalloff> RadialFalloffForce;
 	
 	/** 임의 방향 벡터 (Torque) */
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<URandomVector> RandomVector;
 
 	/** 일정 방향 벡터 (Torque) */
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UUniformVector> UniformVector;
 
 	/** Torque 합성 필드 (Random + Uniform) */
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UOperatorField> OperatorFieldTorque;
 
 	/** Force 조합 필드 (Falloff * Vector) */
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UOperatorField> OperatorFieldForce;
 
 /* Sphere */

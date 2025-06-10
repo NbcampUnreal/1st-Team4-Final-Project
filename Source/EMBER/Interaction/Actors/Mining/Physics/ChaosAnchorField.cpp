@@ -12,13 +12,20 @@ AChaosAnchorField::AChaosAnchorField(const FObjectInitializer& ObjectInitializer
 	StaticMeshComponent->SetupAttachment(RootComponent);
 
 	BoxFalloff = CreateDefaultSubobject<UBoxFalloff>(TEXT("BoxFalloff"));
-	BoxFalloff->SetBoxFalloff(FieldMagnitude, MinRange, MaxRange, 0.f, StaticMeshComponent->GetComponentTransform(), EFieldFalloffType::Field_FallOff_None);
-	
 	UniformInteger = CreateDefaultSubobject<UUniformInteger>(TEXT("UniformInteger"));
-	UniformInteger->SetUniformInteger(static_cast<int32>(Chaos::EObjectStateType::Static));
-	
 	CullingField = CreateDefaultSubobject<UCullingField>(TEXT("CullingField"));
+}
+
+void AChaosAnchorField::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	BoxFalloff->SetBoxFalloff(FieldMagnitude, MinRange, MaxRange, 0.f, StaticMeshComponent->GetComponentTransform(), EFieldFalloffType::Field_FallOff_None);
+	UniformInteger->SetUniformInteger(static_cast<int32>(Chaos::EObjectStateType::Static));
 	CullingField->SetCullingField(BoxFalloff, UniformInteger, EFieldCullingOperationType::Field_Culling_Outside);
 
+	FieldSystemComponent->ResetFieldSystem();
 	FieldSystemComponent->AddFieldCommand(true, EFieldPhysicsType::Field_DynamicState, nullptr, CullingField);
+
 }
+
