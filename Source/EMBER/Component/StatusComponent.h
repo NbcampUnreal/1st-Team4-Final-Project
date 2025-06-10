@@ -50,6 +50,8 @@ public:
 	void SetMaxXp(int32 InAmount);
 	void SetMaxLevel(int32 InAmount);
 
+	UFUNCTION()
+	void OnRep_Damage();
 	void Damage(float InAmount);
 	void UseStamina(float InAmount);
 	void UseTemperature(float InAmount);
@@ -63,9 +65,9 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Status")
-	float MaxHP;
+	float MaxHP = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Status")
-	float MaxStamina;
+	float MaxStamina = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Status")
 	float MaxTemperature = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Status")
@@ -84,6 +86,7 @@ private:
 	int32 MaxLevel = 30;
 
 private:
+	UPROPERTY(ReplicatedUsing = "OnRep_Damage")
 	float HP;
 	float Stamina;
 	float Temperature;
@@ -97,4 +100,7 @@ private:
 	ACharacter* OwnerCharacter;
 
 	int32 Level;
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 };

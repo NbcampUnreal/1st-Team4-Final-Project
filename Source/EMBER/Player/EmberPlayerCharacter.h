@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "C_CameraComponent.h"
+#include "GameData.h"
 #include "GenericTeamAgentInterface.h"
 #include "Input/CharacterInputComponent.h"
 #include "Component/MontageSystemComponent.h"
@@ -22,8 +23,23 @@ class UAbilitySystemComponent;
 class UCharacterInputComponent;
 class UGameplayAbility;
 struct FInputActionValue;
-UCLASS()
 
+USTRUCT()
+struct FDamagesData
+{
+	GENERATED_BODY()
+	UPROPERTY()
+	float Power;
+	UPROPERTY()
+	class ACharacter* Character;
+	UPROPERTY()
+	class AActor* Causer;
+	UPROPERTY()
+	UAnimMontage* Montage;
+	UPROPERTY()
+	float PlayRate;
+};
+UCLASS()
 class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
@@ -136,18 +152,18 @@ protected:
 public:
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
 		AActor* DamageCauser) override;
-private:
-	void Hitted();
+
 protected:
 	int attackint = 0;
+	
+private:
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastHitted(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+	UFUNCTION()
+	void OnRep_Hitted();
 
 private:
-	struct FDamageData
-	{
-		float Power;
-		class ACharacter* Character;
-		class AActor* Causer;
-
-		struct FActionDamageEvent* Event;
-	} DamageData;
+	UPROPERTY(ReplicatedUsing = "OnRep_Hitted")
+	FDamagesData DamageData;
 };

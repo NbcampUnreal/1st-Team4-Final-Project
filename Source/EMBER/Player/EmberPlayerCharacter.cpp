@@ -19,6 +19,8 @@
 #include "DamageType/CCustomDamageType.h"
 #include "Engine/DamageEvents.h"
 #include "Input/EmberEnhancedInputComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 
 AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
@@ -53,6 +55,7 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 void AEmberPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+    UE_LOG(LogTemp, Error, L"start max hp %f hp %f ", StatusComponent->GetMaxHp(), StatusComponent->GetHp());
     MovementComponent->OnRun();
 	if(StatusComponent->GetMaxHp() <= 0.0f)
 	    StatusComponent->SetMaxHp(100);
@@ -298,28 +301,57 @@ void AEmberPlayerCharacter::OnLeftClick(const FInputActionValue& Value)
 float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-    if (Damage <= 0.0f)
+    if (HasAuthority() == false)
+        return 0.0f;
+
+	float damage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	if (damage <= 0.0f)
     {
 	    UE_LOG(LogTemp, Error, L"Damage is 0");
+        return damage;
+    }
+
+    //StatusComponent->OnRep_Damage(damage);
+
+	DamageData.Causer = DamageCauser;
+    DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
+    DamageData.Power = damage;
+    FActionDamageEvent* event = (FActionDamageEvent*)&DamageEvent;
+    DamageData.Montage = event->DamageData->Montages[0];
+    DamageData.PlayRate = event->DamageData->PlayRate;
+    MulticastHitted(damage, DamageEvent, EventInstigator, DamageCauser);
+
+    return damage;
+}
+
+void AEmberPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    DOREPLIFETIME(AEmberPlayerCharacter, DamageData);
+}
+
+void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
+                                                           AActor* DamageCauser)
+{
+    MontageComponent->PlayMontage(DamageData.Montage, DamageData.PlayRate);
+    StatusComponent->Damage(DamageData.Power);
+	if(HasAuthority() == true)
+    {
+	    UE_LOG(LogTemp, Error, L"server hp %f", StatusComponent->GetHp());
     }
     else
     {
-        DamageData.Causer = DamageCauser;
-        DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
-        DamageData.Power = Damage;
-        DamageData.Event = (FActionDamageEvent*)&DamageEvent;
+        UE_LOG(LogTemp, Error, L"hp %f", StatusComponent->GetHp());
     }
 
-    return Damage;
+    if(DamageData.Character != nullptr)
+        SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation())); 
+
 }
 
-void AEmberPlayerCharacter::Hitted()
+void AEmberPlayerCharacter::OnRep_Hitted()
 {
-    if(DamageData.Power <= 0.0f)
-        return;
-
-    if (DamageData.Event->DamageData->Montages.Num() > 0)
-        PlayAnimMontage(DamageData.Event->DamageData->Montages[0], DamageData.Event->DamageData->PlayRate);
-    StatusComponent->Damage(DamageData.Power);
+    if (DamageData.Character != nullptr)
+        SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
 }
