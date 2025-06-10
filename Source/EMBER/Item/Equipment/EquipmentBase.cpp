@@ -9,14 +9,15 @@
 #include "Fragments/ItemFragment_Equipable_Attachment.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Character.h"
+#include "Managers/EquipmentManagerComponent.h"
 #include "UI/Data/EmberItemData.h"
 
 AEquipmentBase::AEquipmentBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	bReplicates = true;
+
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
-
-	bReplicates = true;
 
 	ArrowComponent = CreateDefaultSubobject<UArrowComponent>("ArrowComponent");
 	ArrowComponent->PrimaryComponentTick.bStartWithTickEnabled = false;
@@ -99,6 +100,17 @@ void AEquipmentBase::HandleReplicatedEquipment()
 	
 	if (ItemTemplateID <= 0 || EquipmentSlotType == EEquipmentSlotType::Count)
 		return;
+
+	if (GetOwner() &&
+		(EquipmentSlotType == EEquipmentSlotType::Primary_LeftHand ||
+		EquipmentSlotType == EEquipmentSlotType::Primary_RightHand ||
+		EquipmentSlotType == EEquipmentSlotType::Primary_TwoHand))
+	{
+		if (UEquipmentManagerComponent* EquipManager = GetOwner()->FindComponentByClass<UEquipmentManagerComponent>())
+		{
+			EquipManager->SetEquipmentActor(this);
+		}
+	}
 	
 	ProcessEquip();
 	

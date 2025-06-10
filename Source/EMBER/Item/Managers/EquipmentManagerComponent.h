@@ -46,6 +46,9 @@ public:
 	FAttackData GetAttackInfo() const;
 	UFUNCTION()
 	void GetMontageIndex() const;
+
+	void SetEquipmentActor(AEquipmentBase* InHandEquipment) { SpawnedHandEquipment = InHandEquipment; }
+	
 private:
 	UFUNCTION()
 	void OnRep_ItemTemplateID(int32 PrevItemTemplateID);
@@ -59,6 +62,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<AEquipmentBase> SpawnedHandEquipment;
+	
 public:
 	void Attack();
 

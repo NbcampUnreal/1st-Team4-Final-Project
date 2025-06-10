@@ -55,6 +55,8 @@ protected:
 		{
 			return *CastChecked<GameDataClass>(*pResult);
 		}
+
+		UE_LOG(LogTemp, Log, TEXT("Loading GameData from path: %s"), *DataPath.ToString());
 		
 		return *CastChecked<const GameDataClass>(LoadGameDataOfClass(GameDataClass::StaticClass(), DataPath, GameDataClass::StaticClass()->GetFName()));
 	}
