@@ -1,6 +1,7 @@
 #include "Component/StatusComponent.h"
 
 #include "GameFramework/Character.h"
+#include "Net/UnrealNetwork.h"
 
 UStatusComponent::UStatusComponent()
 {
@@ -77,6 +78,11 @@ void UStatusComponent::SetMaxLevel(int32 InAmount)
 	MaxLevel = InAmount;
 }
 
+void UStatusComponent::OnRep_Damage()
+{
+	UE_LOG(LogTemp, Error, L"onrep hp %f", HP);
+}
+
 void UStatusComponent::Damage(float InAmount)
 {
 	HP += (InAmount * -1.0f);
@@ -144,4 +150,10 @@ void UStatusComponent::LevelUp()
 	Level++;
 
 	//TODOS 레벨업시 적용할거 작성
+}
+
+void UStatusComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UStatusComponent, HP);
 }

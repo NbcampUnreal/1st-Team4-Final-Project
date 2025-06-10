@@ -2,13 +2,21 @@
 
 #include "C_CameraComponent.h"
 #include "C_CharacterMovementComponent.h"
+#include "MontageSystemComponent.h"
+#include "AIWeapon/CAI_Weapon.h"
+#include "Engine/DamageEvents.h"
 #include "GameFramework/Character.h"
 #include "kismet/GameplayStatics.h"
 
 //FDamageData
 void FDamageData::SendDamage(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
 {
-    UGameplayStatics::ApplyDamage(InOther, Damage, InAttacker->GetController(), InAttackCauser, UDamageType::StaticClass());
+    if(InAttacker->HasAuthority() == false)
+        return;
+    FActionDamageEvent e;
+    e.DamageData = this;
+    //UGameplayStatics::ApplyDamage(InOther, Damage, InAttacker->GetController(), InAttackCauser, damageType);
+    InOther->TakeDamage(Damage, e, InAttacker->GetController(), InAttackCauser);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 //FAttackData
@@ -30,9 +38,16 @@ void FAttackData::DoAction(ACharacter* InOwner)
         else
             camera->DisableFixedCamera();
 	}
-
-    if (Montages[0] != nullptr)
+    UMontageSystemComponent* montage = Cast<UMontageSystemComponent>(InOwner->GetComponentByClass(UMontageSystemComponent::StaticClass()));
+    if(montage == nullptr || Montages == nullptr)
+        return;
+    
+    montage->PlayMontage(Montages, PlayRate);
+    /*if (Montages[0] != nullptr)
+    {
+	    
         InOwner->PlayAnimMontage(Montages[0], PlayRate);
+    }*/
 }
 
 ////////////////////////////////////////////////////////////////////////////
