@@ -33,111 +33,128 @@ const UItemTemplate* UCraftingOutputBoxWidget::GetTemplateFromClass(TSubclassOf<
 
 void UCraftingOutputBoxWidget::RefreshSlotsUI()
 {
-    if (!OutputSlotsGridPanel)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshSlotsUI - OutputSlotsGridPanel is NULL. Check UMG binding."));
-        return;
-    }
-    if (!CraftedItemSlotEntryClass)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingOutputBoxWidget::RefreshSlotsUI - SlotEntryWidgetClass is not set in ClassDefaults."));
-        return;
-    }
-
-    OutputSlotsGridPanel->ClearChildren();
-    
-    const int32 CurrentMaxSlots = GetMaxSlots();
-    
-    OutputSlotEntries.SetNum(CurrentMaxSlots);
-
-    UE_LOG(LogTemp, Log, TEXT("UCraftingOutputBoxWidget::RefreshSlotsUI - Array size is now %d. Populating grid..."), OutputSlotEntries.Num());
-
+    UE_LOG(LogTemp, Warning, TEXT("=== RefreshSlotsUI - 현재 슬롯 상태 ==="));
     for (int32 i = 0; i < OutputSlotEntries.Num(); ++i)
     {
+        const auto& TestSlot = OutputSlotEntries[i];
+        UE_LOG(LogTemp, Warning, TEXT("Slot %d: Class=%s / Qty=%d"),
+            i,
+            TestSlot.ItemTemplateClass ? *TestSlot.ItemTemplateClass->GetName() : TEXT("NULL"),
+            TestSlot.Quantity);
+    }
+    if (!OutputSlotsGridPanel || !CraftedItemSlotEntryClass)
+    {
+        UE_LOG(LogTemp, Error, TEXT("OutputSlotsGridPanel or CraftedItemSlotEntryClass is NULL."));
+        return;
+    }
+
+    const int32 CurrentMaxSlots = GetMaxSlots();
+
+    // Create widgets if not already created
+    while (OutputSlotEntries.Num() < CurrentMaxSlots)
+    {
+        OutputSlotEntries.Add(FCraftingOutputSlotEntry());
+    }
+
+    while (OutputSlotWidgets.Num() < CurrentMaxSlots)
+    {
         UCraftedItemSlotEntryWidget* EntryWidget = CreateWidget<UCraftedItemSlotEntryWidget>(this, CraftedItemSlotEntryClass);
-        if (EntryWidget)
+        OutputSlotWidgets.Add(EntryWidget);
+
+        const int32 Index = OutputSlotWidgets.Num() - 1;
+        const int32 TargetRow = Index / NumColumns;
+        const int32 TargetColumn = Index % NumColumns;
+
+        UUniformGridSlot* GridSlot = OutputSlotsGridPanel->AddChildToUniformGrid(EntryWidget, TargetRow, TargetColumn);
+        if (GridSlot)
         {
-            const FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[i];
-            EntryWidget->SetSlotData(SlotEntry.ItemTemplateClass, SlotEntry.Rarity, SlotEntry.Quantity);
-            
-            const int32 TargetRow = i / NumColumns;
-            const int32 TargetColumn = i % NumColumns;
-            UUniformGridSlot* GridSlot = OutputSlotsGridPanel->AddChildToUniformGrid(EntryWidget, TargetRow, TargetColumn);
-            if(GridSlot)
-            {
-                GridSlot->SetHorizontalAlignment(HAlign_Fill); 
-                GridSlot->SetVerticalAlignment(VAlign_Fill); 
-            }
+            GridSlot->SetHorizontalAlignment(HAlign_Fill);
+            GridSlot->SetVerticalAlignment(VAlign_Fill);
         }
     }
-    OnContentsChanged.Broadcast(); 
+
+    // Update all widgets with current slot data
+    for (int32 i = 0; i < OutputSlotWidgets.Num(); ++i)
+    {
+        if (OutputSlotWidgets[i])
+        {
+            const FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[i];
+            UE_LOG(LogTemp, Warning, TEXT("[UI] -> SetSlotData(%d) - Class=%s / Rarity=%d / Qty=%d"),
+                i,
+                SlotEntry.ItemTemplateClass ? *SlotEntry.ItemTemplateClass->GetName() : TEXT("NULL"),
+                static_cast<uint8>(SlotEntry.Rarity),
+                SlotEntry.Quantity);
+            OutputSlotWidgets[i]->SetSlotData(SlotEntry.ItemTemplateClass, SlotEntry.Rarity, SlotEntry.Quantity);
+        }
+    }
+
+    OnContentsChanged.Broadcast();
 }
+
 
 bool UCraftingOutputBoxWidget::TryAddItem(TSubclassOf<UItemTemplate> InItemTemplateClass, EItemRarity InRarity, int32 InQuantity)
 {
     if (!InItemTemplateClass || InQuantity <= 0) return false;
 
     const UItemTemplate* TemplateOfItemToAdd = InItemTemplateClass->GetDefaultObject<UItemTemplate>();
-    if(!TemplateOfItemToAdd) return false;
-    
+    if (!TemplateOfItemToAdd) return false;
+
     const int32 MaxStackSize = TemplateOfItemToAdd->MaxStackCount > 0 ? TemplateOfItemToAdd->MaxStackCount : 1;
-    
     int32 RemainingQuantity = InQuantity;
-
-    UE_LOG(LogTemp, Log, TEXT("TryAddItem: Attempting to add %s. Checking %d slots."), *InItemTemplateClass->GetName(), OutputSlotEntries.Num());
-
-    if (MaxStackSize > 1)
+    UE_LOG(LogTemp, Warning, TEXT("PRE-UI ItemTemplateClass: %s, Qty: %d"),
+        *InItemTemplateClass->GetName(),
+        InQuantity);
+    // ✅ 아이템 스택 추가 (기존과 동일)
+    for (int32 i = 0; i < OutputSlotEntries.Num(); ++i)
     {
-        for (int32 i = 0; i < OutputSlotEntries.Num(); ++i)
+        const auto& TestSlot = OutputSlotEntries[i];
+        UE_LOG(LogTemp, Warning, TEXT("  Slot %d - Class: %s / Qty: %d"),
+            i,
+            TestSlot.ItemTemplateClass ? *TestSlot.ItemTemplateClass->GetName() : TEXT("NULL"),
+            TestSlot.Quantity);
+        FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[i];
+        if (SlotEntry.ItemTemplateClass == InItemTemplateClass && SlotEntry.Rarity == InRarity && SlotEntry.Quantity < MaxStackSize)
         {
-            FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[i];
-            if (SlotEntry.ItemTemplateClass == InItemTemplateClass && SlotEntry.Rarity == InRarity && SlotEntry.Quantity < MaxStackSize)
-            {
-                int32 CanAddAmount = FMath::Min(RemainingQuantity, MaxStackSize - SlotEntry.Quantity);
-                SlotEntry.Quantity += CanAddAmount;
-                RemainingQuantity -= CanAddAmount;
-                if (RemainingQuantity <= 0) break;
-            }
+            const int32 CanAddAmount = FMath::Min(RemainingQuantity, MaxStackSize - SlotEntry.Quantity);
+            SlotEntry.Quantity += CanAddAmount;
+            RemainingQuantity -= CanAddAmount;
+            if (RemainingQuantity <= 0) break;
         }
     }
-    
+
+    // ✅ 빈 슬롯에 새로 삽입
     if (RemainingQuantity > 0)
     {
         for (int32 i = 0; i < OutputSlotEntries.Num(); ++i)
         {
             FCraftingOutputSlotEntry& SlotEntry = OutputSlotEntries[i];
-
-            UE_LOG(LogTemp, Log, TEXT("TryAddItem: Checking Slot [%d]. ItemTemplateClass: %s, Quantity: %d."), 
-                i, 
-                SlotEntry.ItemTemplateClass ? *SlotEntry.ItemTemplateClass->GetName() : TEXT("NULL"), 
-                SlotEntry.Quantity);
-            
-            if (SlotEntry.ItemTemplateClass == nullptr || SlotEntry.Quantity == 0)
+            if (!SlotEntry.ItemTemplateClass || SlotEntry.Quantity <= 0)
             {
-                UE_LOG(LogTemp, Warning, TEXT("TryAddItem: Found an empty slot at index %d! Placing item."), i);
                 SlotEntry.ItemTemplateClass = InItemTemplateClass;
                 SlotEntry.Rarity = InRarity;
-                
-                int32 CanAddAmount = FMath::Min(RemainingQuantity, MaxStackSize);
-                SlotEntry.Quantity = CanAddAmount;
-                RemainingQuantity -= CanAddAmount;
+                SlotEntry.Quantity = FMath::Min(RemainingQuantity, MaxStackSize);
+                RemainingQuantity -= SlotEntry.Quantity;
 
                 if (RemainingQuantity <= 0) break;
             }
         }
     }
-
-    RefreshSlotsUI();
-    
-    if (RemainingQuantity > 0)
+    UE_LOG(LogTemp, Warning, TEXT("=== OutputSlotEntries 상태 (TryAddItem 이후) ==="));
+    for (int32 i = 0; i < OutputSlotEntries.Num(); ++i)
     {
-        UE_LOG(LogTemp, Warning, TEXT("CraftingOutputBoxWidget: Output box is full. Could not add all items (%d remaining)."), RemainingQuantity);
-        return false;
+        const auto& TestSlot = OutputSlotEntries[i];
+        UE_LOG(LogTemp, Warning, TEXT("Slot %d: Class=%s / Rarity=%d / Qty=%d"),
+            i,
+            TestSlot.ItemTemplateClass ? *TestSlot.ItemTemplateClass->GetName() : TEXT("NULL"),
+            static_cast<uint8>(TestSlot.Rarity),
+            TestSlot.Quantity);
     }
+    // ✅ 슬롯 데이터 반영된 뒤 UI 갱신
+    RefreshSlotsUI();
 
-    UE_LOG(LogTemp, Log, TEXT("TryAddItem: Successfully added item(s)."));
-    return true;
+    return (RemainingQuantity <= 0);
 }
+
 
 TSubclassOf<UItemTemplate> UCraftingOutputBoxWidget::GetItemTemplateClassFromSlot(int32 FlatSlotIndex, EItemRarity& OutRarity, int32& OutQuantity)
 {

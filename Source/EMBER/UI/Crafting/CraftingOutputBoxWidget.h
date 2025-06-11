@@ -79,6 +79,9 @@ protected:
     UPROPERTY(BlueprintReadOnly, Category = "CraftingOutput", meta = (BindWidgetOptional))
     TObjectPtr<UTextBlock> TitleTextWidget;
 
+    UPROPERTY()
+    TArray<UCraftedItemSlotEntryWidget*> OutputSlotWidgets;
+
 private:
     void RefreshSlotsUI();
     const UItemTemplate* GetTemplateFromClass(TSubclassOf<UItemTemplate> InClass) const;
