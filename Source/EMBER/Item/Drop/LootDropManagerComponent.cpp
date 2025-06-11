@@ -1,8 +1,8 @@
-#include "LootDropManagerComponent.h"
-#include "LootTable.h"
+#include "Item/Drop/LootDropManagerComponent.h"
+#include "Item/Drop/LootTable.h"
 #include "Engine/DataTable.h"
 #include "Item/ItemTemplate.h"
-#include "PickupItemActor.h"
+#include "Item/Drop/PickupItemActor.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Kismet/GameplayStatics.h"
@@ -116,7 +116,7 @@ void ULootDropManagerComponent::OnMonsterDiedMessageReceived(FGameplayTag Channe
 					APickupItemActor* NewPickup = World->SpawnActor<APickupItemActor>(PickupItemActorClass, SpawnLocation, SpawnRotation, SpawnParams);
 					if (NewPickup)
 					{
-						NewPickup->InitializePickup(DropItem.ItemTemplateClass, QuantityToDrop, FinalRarity);
+						NewPickup->InitializeForLootDrop(DropItem.ItemTemplateClass, QuantityToDrop, FinalRarity);
 						UE_LOG(LogTemp, Log, TEXT("[SERVER] LootDropManager: Spawned pickup item '%s' (Rarity: %s) x%d at %s"), 
 							*DropItem.ItemTemplateClass->GetName(), *UEnum::GetValueAsString(FinalRarity), QuantityToDrop, *SpawnLocation.ToString());
 					}
