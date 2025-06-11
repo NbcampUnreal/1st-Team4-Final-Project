@@ -92,7 +92,6 @@ TObjectPtr<ACharacter> UCBehaviorTreeComponent::GetTarget()
 void UCBehaviorTreeComponent::SetIdleMode()
 {
 	ChangeType(EAnimalState::Idle);
-	Blackboard->SetValueAsBool("IsDetect", false);
 }
 
 void UCBehaviorTreeComponent::SetGuardMode()
@@ -108,7 +107,6 @@ void UCBehaviorTreeComponent::SetRunMode()
 void UCBehaviorTreeComponent::SetDetectMode()
 {
 	ChangeType(EAnimalState::Detect);
-	Blackboard->SetValueAsBool("IsDetect", true);
 	Blackboard->SetValueAsVector("OriginLocation", GetOwner()->GetActorLocation());
 }
 
@@ -183,7 +181,6 @@ void UCBehaviorTreeComponent::SetBlackboard_Vector(FName Keyname, FVector Value)
 {
 	Blackboard->SetValueAsVector(Keyname, Value);
 }
-
 
 #pragma endregion
 
