@@ -5,6 +5,7 @@
 
 #include "C_CameraComponent.h"
 #include "C_CharacterMovementComponent.h"
+#include "GameData.h"
 #include "Managers/EquipmentManagerComponent.h"
 
 void UAnimNotify_BeginPlay::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
