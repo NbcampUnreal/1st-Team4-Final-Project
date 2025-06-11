@@ -94,12 +94,12 @@ void AEmberTreeBase::HandleBreakEvent(const FChaosBreakEvent& BreakEvent)
 	// 메스 구하기
 	CurrentBrokenMass += BreakEvent.Mass;
 
-	GEngine->AddOnScreenDebugMessage(
+	/*GEngine->AddOnScreenDebugMessage(
 		-1,                   // Key (-1 = 새 메시지)
 		5.0f,                 // Duration (5초 동안 표시)
 		FColor::Green,        // 글자색
 		FString::Printf(TEXT("TotalMass: %.2f, BrokenMass: %.2f"), TotalGeometryMass, CurrentBrokenMass)
-	);
+	);*/
 	
 	// 획득 가능한 자원 계산
 	int MaxCollectableResourceCount = static_cast<int32>(CurrentBrokenMass / UnitMassPerResource);
