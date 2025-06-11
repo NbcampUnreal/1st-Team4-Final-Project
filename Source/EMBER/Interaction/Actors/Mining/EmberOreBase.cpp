@@ -1,6 +1,5 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "EmberOreBase.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
@@ -9,8 +8,8 @@
 #include "Field/FieldSystemActor.h"
 #include "GameInfo/GameplayTags.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Interaction/Physics/WeaponImpactField.h"
 #include "kismet/GameplayStatics.h"
-#include "Mining/Physics/WeaponImpactField.h"
 #include "UI/Data/EmberItemData.h"
 
 AEmberOreBase::AEmberOreBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
