@@ -3,8 +3,8 @@
 #pragma once
 
 #include "GameData.h"
-#include "EmberWorldInteractable.h"
 #include "Abilities/GameplayAbilityTypes.h"
+#include "Interaction/Actors/EmberWorldInteractable.h"
 #include "EmberOreBase.generated.h"
 
 struct FChaosBreakEvent;

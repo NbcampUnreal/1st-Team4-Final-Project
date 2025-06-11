@@ -1,19 +1,20 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EmberOreBase.h"
+#include "EmberTreeBase.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "ItemInstance.h"
 #include "ItemTemplate.h"
-#include "Field/FieldSystemActor.h"
 #include "GameInfo/GameplayTags.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Interaction/Physics/WeaponImpactField.h"
 #include "kismet/GameplayStatics.h"
-#include "Mining/Physics/WeaponImpactField.h"
 #include "UI/Data/EmberItemData.h"
 
-AEmberOreBase::AEmberOreBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+class AWeaponImpactField;
+
+AEmberTreeBase::AEmberTreeBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	bReplicates = true;
 	
@@ -22,6 +23,8 @@ AEmberOreBase::AEmberOreBase(const FObjectInitializer& ObjectInitializer) : Supe
 	AnchorField = CreateDefaultSubobject<UChildActorComponent>("AnchorField");
 	AnchorField->SetHiddenInGame(true);
 	AnchorField->SetupAttachment(GetRootComponent());
+
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	
 	GeometryCollection = CreateDefaultSubobject<UGeometryCollectionComponent>("GeometryCollection");
 	GeometryCollection->SetGenerateOverlapEvents(true);
@@ -30,10 +33,12 @@ AEmberOreBase::AEmberOreBase(const FObjectInitializer& ObjectInitializer) : Supe
 	GeometryCollection->CanCharacterStepUpOn = ECB_No;
 	GeometryCollection->SetupAttachment(GetRootComponent());
 
+	RequiredTags.AddTag(EmberGameplayTags::Ability_Logging);
+	
 	EventTag = EmberGameplayTags::GameplayEvent_Reward_Item;
 }
 
-void AEmberOreBase::BeginPlay()
+void AEmberTreeBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
@@ -45,9 +50,9 @@ void AEmberOreBase::BeginPlay()
 	InitResource();
 }
 
-void AEmberOreBase::HandlePointDamage(AActor* DamagedActor, float Damage, AController* InstigatedBy,
-                                      FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection,
-                                      const UDamageType* DamageType, AActor* InDamageCauser)
+void AEmberTreeBase::HandlePointDamage(AActor* DamagedActor, float Damage, AController* InstigatedBy,
+                                       FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection,
+                                       const UDamageType* DamageType, AActor* InDamageCauser)
 {
 	if (HasAuthority() == false)
 		return;
@@ -71,8 +76,8 @@ void AEmberOreBase::HandlePointDamage(AActor* DamagedActor, float Damage, AContr
 	if (WeaponImpact)
 	{
 		// TODO : 무기에 따른 충돌 물리 계산 필요
-		float ForceMagnitude = 37000.f;
-		float SphereScaleMultiplier = 2.f;
+		float ForceMagnitude = 3000.f;
+		float SphereScaleMultiplier = 0.58f;
 		
 		WeaponImpact->Init(ForceMagnitude, SphereScaleMultiplier);
 		UGameplayStatics::FinishSpawningActor(WeaponImpact, SpawnTransform);
@@ -81,18 +86,23 @@ void AEmberOreBase::HandlePointDamage(AActor* DamagedActor, float Damage, AContr
 	DamageCauser = InDamageCauser;
 }
 
-void AEmberOreBase::HandleBreakEvent(const FChaosBreakEvent& BreakEvent)
+void AEmberTreeBase::HandleBreakEvent(const FChaosBreakEvent& BreakEvent)
 {
 	if (HasAuthority() == false)
 		return;
-
-	// 부서진 암석의 개수
-	CurrentBrokenElements += 1;
 	
-	// TODO: 꺠지는 사운드 재생
+	// 메스 구하기
+	CurrentBrokenMass += BreakEvent.Mass;
+
+	/*GEngine->AddOnScreenDebugMessage(
+		-1,                   // Key (-1 = 새 메시지)
+		5.0f,                 // Duration (5초 동안 표시)
+		FColor::Green,        // 글자색
+		FString::Printf(TEXT("TotalMass: %.2f, BrokenMass: %.2f"), TotalGeometryMass, CurrentBrokenMass)
+	);*/
 	
 	// 획득 가능한 자원 계산
-	int MaxCollectableResourceCount = static_cast<int32>(CurrentBrokenElements / UnitElementPerResource);
+	int MaxCollectableResourceCount = static_cast<int32>(CurrentBrokenMass / UnitMassPerResource);
 	int CollectableResourceCount = MaxCollectableResourceCount - ConsumedResourceCount;
 	
 	if (CollectableResourceCount > 0)
@@ -102,44 +112,61 @@ void AEmberOreBase::HandleBreakEvent(const FChaosBreakEvent& BreakEvent)
 		// 소비한 자원 개수 재설정
 		ConsumedResourceCount += CollectableResourceCount;
 
-		// 자원을 모두 소비한 경우에는 액터 삭제
-		if (ConsumedResourceCount >= MaxResourceCount)
+		// 액터 삭제 조건
+		if (CurrentBrokenMass >= (TotalGeometryMass * MassDestructionThresholdRatio))
 		{
-			Destroy();
+			// 쓰러지는 나무 사운드 재생
+			GeometryCollection->DestroyComponent();
+			
+			// 상단 메쉬 컴포넌트 중력 적용
+			MeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+			MeshComponent->SetSimulatePhysics(true);
+			MeshComponent->SetEnableGravity(true);
+			
+			FTimerHandle TimerHandle;
+			GetWorldTimerManager().SetTimer(TimerHandle,[this]()
+			{
+				Destroy();
+			},3.0f,false);
 		}
 	}
 }
 
-void AEmberOreBase::InitResource()
+void AEmberTreeBase::InitResource()
 {
 	if (RewardItemClass)
 	{
-		ItemID = UEmberItemData::Get().FindItemTemplateIDByClass(RewardItemClass);
+		CachedItemID = UEmberItemData::Get().FindItemTemplateIDByClass(RewardItemClass);
 	}
 	
 	if (GeometryCollection)
 	{
-		int32 NumElements = GeometryCollection->GetNumElements("Transform");
-		UnitElementPerResource = NumElements / MaxResourceCount;
-		CurrentBrokenElements = UnitElementPerResource * 2;
+		TotalGeometryMass = GeometryCollection->GetMass();
+		UnitMassPerResource = (TotalGeometryMass * MassDestructionThresholdRatio) / MaxResourceCount;
 	}
 }
 
-void AEmberOreBase::HandleRewardItem(int32 RewardItemCount)
+void AEmberTreeBase::HandleRewardItem(int32 RewardItemCount)
 {
 	if (DamageCauser)
 	{
 		UItemInstance* ItemInstance = NewObject<UItemInstance>();
-		ItemInstance->Init(ItemID, RewardItemRarity, RewardItemCount);
+		ItemInstance->Init(CachedItemID, RewardItemRarity, RewardItemCount);
 		
 		EventData.OptionalObject = ItemInstance;
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(DamageCauser, EventTag, EventData);
 	}
 }
 
-void AEmberOreBase::SetDynamic_Implementation(FVector Position)
+void AEmberTreeBase::SetDynamic_Implementation(FVector Position)
 {
-	float Radius = 220.f;
-	
-	GeometryCollection->ApplyKinematicField(Radius, Position);
+	if (GeometryCollection)
+	{
+		FVector Origin;
+		FVector BoxBound;
+		float SphereRadius;
+		
+		UKismetSystemLibrary::GetComponentBounds(GeometryCollection,Origin, BoxBound, SphereRadius);
+		GeometryCollection->ApplyKinematicField(SphereRadius, Position);
+	}
 }
