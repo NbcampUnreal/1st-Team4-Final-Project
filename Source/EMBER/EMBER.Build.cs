@@ -33,7 +33,9 @@ public class EMBER : ModuleRules
 						"NavigationSystem",
 						"FieldSystemEngine",
 						"GeometryCollectionEngine",
-                        "AIModule"
+                        "AIModule",
+                        "Slate",
+                        "SlateCore",
                     });
         PublicIncludePaths.AddRange(
                     new string[]

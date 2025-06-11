@@ -84,6 +84,7 @@ UENUM(BlueprintType)
 enum class ECraftingType : uint8
 {
 	Ore,
+	Tree,
 
 	Count	UMETA(Hidden)
 };
