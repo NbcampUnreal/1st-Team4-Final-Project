@@ -17,7 +17,7 @@ AEmberWorldInteractable::AEmberWorldInteractable(const FObjectInitializer& Objec
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	MeshComponent->SetCollisionProfileName(TEXT("Interactable"));
 	MeshComponent->SetCanEverAffectNavigation(true);
-	MeshComponent->SetupAttachment(SceneComponent);
+	MeshComponent->SetupAttachment(GetRootComponent());
 
 	InteractionInfo.bVisible = false;
 }
