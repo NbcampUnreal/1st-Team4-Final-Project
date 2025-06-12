@@ -4,8 +4,8 @@
 #include "AI/Service/CBTService_Passive.h"
 #include "AI/BehaviorTree/CBehaviorTreeComponent.h"
 #include "CAIController.h"
-#include "C_StateComponent.h"
 #include "AI/Base/HumanAIBase.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 UCBTService_Passive::UCBTService_Passive()
 {
@@ -18,55 +18,45 @@ void UCBTService_Passive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	TObjectPtr<ACAIController> controller = Cast<ACAIController>(OwnerComp.GetOwner());
-	if (controller.Get() == nullptr)
+	TObjectPtr<ACAIController> Controller = Cast<ACAIController>(OwnerComp.GetOwner());
+	if (Controller.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"controller is null");
 		return;
 	}
-	TObjectPtr<ABaseAI> AI = Cast<ABaseAI>(controller->GetPawn());
+	TObjectPtr<ABaseAI> AI = Cast<ABaseAI>(Controller->GetPawn());
 	if (AI.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"ai is null");
 		return;
 	}
-	TObjectPtr<UC_StateComponent> state = Cast<UC_StateComponent>(AI->GetComponentByClass(UC_StateComponent::StaticClass()));
-	if (state.Get() == nullptr)
-	{
-		UE_LOG(LogTemp, Error, L"state is null");
-		return;
-	}
-	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
+	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(
+		AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
 	if (AIState.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"aistate is null");
 		return;
 	}
 
-	if (bDrawDebug)
+	AActor* TagetActor = Cast<AActor>(Controller->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
+
+	if (TagetActor)
 	{
-		FVector start = AI->GetActorLocation();
-		start.Z -= 25;
+		FVector TargetLocation = TagetActor->GetActorLocation();
+		FVector AILocation = AI->GetActorLocation();
 
-		FVector end = start;
-		DrawDebugCylinder(AI->GetWorld(), start, end, RunRange, 10, FColor::Red, false, Interval);
+		float Distance = FVector::Dist(TargetLocation, AILocation);
+
+		if (Distance < RunRange)
+		{
+			AIState->SetRunMode();
+		}
+		return;
 	}
-	
-	//Target이 없으면 Idle
-	// TObjectPtr<ACharacter> Target = AIState->GetTarget(); 
-	// if(Target == nullptr)
-	// {
-	// 	AIState->SetIdleMode();
-	// 	return;
-	// }
-	
-	// //Target과 가까우면 도망
-	// float distance = AI.Get()->GetDistanceTo(Target);
-	// if(distance < RunRange)
-	// {
-	// 	AIState->SetRunMode();
-	// 	return;
-	// }
 
-	
+	if (AIState->IsHittedMode())
+	{
+		AIState->SetRunMode();
+		return;
+	}
 }
