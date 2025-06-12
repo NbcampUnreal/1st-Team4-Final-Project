@@ -76,6 +76,7 @@ enum class EUtilityType : uint8
 {
 	Drink,
 	LightSource,
+	Food,
 
 	Count	UMETA(Hidden)
 };
@@ -85,6 +86,12 @@ enum class ECraftingType : uint8
 {
 	Ore,
 	Tree,
+	Bone,
+	Fur,
+	Meat,
+	Wood,
+	Fiber,
+	Fruit,
 
 	Count	UMETA(Hidden)
 };
