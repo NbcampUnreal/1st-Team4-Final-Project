@@ -76,8 +76,8 @@ void UEmberAbilityTask_WaitForInteractableTraceHit::PerformTrace()
 
 	UpdateInteractionInfos(InteractionQuery, Interactables);
 
-#if 1
-	if (true)
+#if UE_EDITOR
+	if (false)
 	{
 		FColor DebugColor = HitResult.bBlockingHit ? FColor::Red : FColor::Green;
 		if (HitResult.bBlockingHit)

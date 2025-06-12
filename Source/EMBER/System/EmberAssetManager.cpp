@@ -11,10 +11,10 @@ void UEmberAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
 
-	GetUIData();
 	GetItemData();
 	GetAssetData();
 	GetPawnData();
+	GetUIData();
 }
 
 UEmberAssetManager& UEmberAssetManager::Get()
@@ -52,24 +52,14 @@ const UEmberPawnData& UEmberAssetManager::GetPawnData()
 UPrimaryDataAsset* UEmberAssetManager::LoadGameDataOfClass(TSubclassOf<UPrimaryDataAsset> DataClass, const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath, FPrimaryAssetType PrimaryAssetType)
 {
 	UPrimaryDataAsset* Asset = nullptr;
-
-	if (DataClassPath.IsNull())
-		return nullptr;
 	
-	if (GIsEditor)
+	if (DataClassPath.IsNull())
 	{
-		Asset = DataClassPath.LoadSynchronous();
-		LoadPrimaryAssetsWithType(PrimaryAssetType);
+		return nullptr;
 	}
-	else
-	{
-		TSharedPtr<FStreamableHandle> Handle = LoadPrimaryAssetsWithType(PrimaryAssetType);
-		if (Handle.IsValid())
-		{
-			Handle->WaitUntilComplete(0.0f, false);
-			Asset = Cast<UPrimaryDataAsset>(Handle->GetLoadedAsset());
-		}
-	}
+	
+	Asset = DataClassPath.LoadSynchronous();
+	LoadPrimaryAssetsWithType(PrimaryAssetType);
 
 	if (Asset)
 	{

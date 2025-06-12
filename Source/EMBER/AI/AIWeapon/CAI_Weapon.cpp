@@ -50,8 +50,8 @@ void ACAI_Weapon::SpawnPlay_Implementation(ACharacter* InOwner)
 			shape->OnComponentEndOverlap.AddDynamic(this, &ACAI_Weapon::OnComponentEndOverlap);
 			Collisions.Add(child);
 		}
-		OffCollision();
 	}
+	OffCollision();
 }
 
 void ACAI_Weapon::DoAction()
@@ -77,11 +77,23 @@ void ACAI_Weapon::End_DoAction()
 
 void ACAI_Weapon::OnCollision()
 {
-	
+	UE_LOG(LogTemp, Warning, L"collision");
+	for (USceneComponent* collision : Collisions)
+	{
+		UPrimitiveComponent* coll = Cast<UPrimitiveComponent >(collision);
+		if (coll != nullptr)
+			coll->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
 }
 
 void ACAI_Weapon::OffCollision()
 {
+	for (USceneComponent* collision : Collisions)
+	{
+		UPrimitiveComponent* coll = Cast<UPrimitiveComponent >(collision);
+		if (coll != nullptr)
+			coll->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
 
 void ACAI_Weapon::AttachTo(FName InSocketName)
@@ -124,4 +136,6 @@ void ACAI_Weapon::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent
 		return;
 	if (OwnerCharacter->GetClass() == OtherActor->GetClass())
 		return;
+
+	Hitted.Empty();
 }

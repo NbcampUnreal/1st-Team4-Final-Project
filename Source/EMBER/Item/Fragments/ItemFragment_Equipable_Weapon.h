@@ -35,6 +35,6 @@ protected:
 	FAttackData AttackInfo;
 
 public:
-	void IncrementMontageIndex();
+	//void IncrementMontageIndex();
 	FAttackData GetAttackInfo() const;
 };

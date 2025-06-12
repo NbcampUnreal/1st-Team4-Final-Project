@@ -7,6 +7,7 @@
 #include "Player/EmberPlayerCharacter.h"
 #include "Player/EmberPlayerController.h"
 #include "AbilitySystemComponent.h"
+#include "System/AbilitySystem/EmberAbilitySystemComponent.h"
 
 UEmberGameplayAbility::UEmberGameplayAbility(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -41,6 +42,11 @@ void UEmberGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActo
 			}
 		}
 	}
+}
+
+UEmberAbilitySystemComponent* UEmberGameplayAbility::GetEmberAbilitySystemComponentFromActorInfo() const
+{
+	return (CurrentActorInfo ? Cast<UEmberAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get()) : nullptr);
 }
 
 AEmberPlayerCharacter* UEmberGameplayAbility::GetEmberCharacterFromActorInfo() const

@@ -96,8 +96,14 @@ protected:
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	// float FlySpeed;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI|Info")
+	FName MonsterID;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|State")
 	bool bIsDie;
+
+	UPROPERTY()
+	TObjectPtr<AActor> LastDamageCauser;
 
 	//UAIPerceptionComponent* PerceptionComponent;
 	//UBlackboardComponent* BlackboardComp;

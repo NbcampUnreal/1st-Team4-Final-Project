@@ -48,6 +48,7 @@ private:
 	UFUNCTION()
 	virtual void OnTargetPerceptionUpdated(AActor* Target, FAIStimulus Stimulus);
 
+
 	//UFUNCTION()
 	//virtual void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 

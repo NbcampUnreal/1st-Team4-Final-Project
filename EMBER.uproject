@@ -11,7 +11,8 @@
 			"AdditionalDependencies": [
 				"Engine",
 				"AIModule",
-				"GameplayAbilities"
+				"GameplayAbilities",
+				"Blutility"
 			]
 		}
 	],
@@ -76,6 +77,14 @@
 		},
 		{
 			"Name": "PCGWaterInterop",
+			"Enabled": true
+		},
+		{
+			"Name": "FieldSystemPlugin",
+			"Enabled": true
+		},
+		{
+			"Name": "ActorPalette",
 			"Enabled": true
 		}
 	]

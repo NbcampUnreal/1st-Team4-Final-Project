@@ -50,7 +50,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Collision")
 	TObjectPtr< USceneComponent > Root;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Collision")
-	TArray< TObjectPtr< USceneComponent > > Collisions;
+	TArray< TObjectPtr< USceneComponent  > > Collisions;
 	UPROPERTY(EditAnywhere, Category = "AttackData")
 	TArray<FAttackData> AttackDatas;
 	UPROPERTY(EditAnywhere, Category = "HitData")
