@@ -8,6 +8,9 @@
 EBTNodeResult::Type UBTT_Guard::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Owner = &OwnerComp;
+	ABaseAI*AI = Cast<ABaseAI>( OwnerComp.GetOwner());
+	UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>( AI->GetMesh()->GetAnimInstance());
+AnimInstance->
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UBTT_Guard::ActorRotateUpdate, 3.0f, true);
 	return EBTNodeResult::InProgress;
 }
@@ -38,13 +41,10 @@ void UBTT_Guard::ActorRotateUpdate()
 	// //플레이어가 왼쪽인지 오른쪽인지 판별
 	// bool bDirection = (Cross.Z < 0);
 
-	AnimInstance->StopAllMontages(1.0f);
-	Controller->StopMovement();
-
-	FVector DirectionToTarget = (Target->GetActorLocation() - AI->GetActorLocation()).GetSafeNormal();
-	FRotator TargetRotation = DirectionToTarget.Rotation();
-
-	AI->SetActorRotation(TargetRotation);
+	// FVector DirectionToTarget = (Target->GetActorLocation() - AI->GetActorLocation()).GetSafeNormal();
+	// FRotator TargetRotation = DirectionToTarget.Rotation();
+	//
+	// AI->SetActorRotation(TargetRotation);
 
 	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
 	if (!AIState->IsDetect())
