@@ -216,7 +216,7 @@ void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
 
     if (GetCharacterMovement())
     {
-        MovementComponent->SetSpeed(ESpeedType::Sprint);
+        MovementComponent->OnSprint();
     }
 }
 
@@ -224,7 +224,7 @@ void AEmberPlayerCharacter::StopSprint(const FInputActionValue& value)
 {
     if (GetCharacterMovement())
     {
-        MovementComponent->SetSpeed(ESpeedType::Walk);
+        MovementComponent->OnWalk();
     }
 }
 
