@@ -11,6 +11,8 @@
 #include "AIComponent/CAIWeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Managers/EquipmentManagerComponent.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
+#include "Item/Drop/LootTable.h"
 
 ABaseAI::ABaseAI()
 {
@@ -62,6 +64,8 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 			}
 		}
 	}
+	
+    LastDamageCauser = DamageCauser;
 
 	if (ActualDamage > 0 && !bIsDie)
 	{
@@ -115,6 +119,22 @@ void ABaseAI::OnDeath()
 
 	//퍼셉션 제거
 	// Perception->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
+
+	if (HasAuthority())
+	{
+		FMonsterDiedMessage DeathMessage;
+		DeathMessage.MonsterID = this->MonsterID;
+		DeathMessage.DeathLocation = this->GetActorLocation();
+		DeathMessage.KillerActor = this->LastDamageCauser;
+
+		if (UWorld* World = GetWorld())
+		{
+			UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(World);
+			FGameplayTag MessageChannel = FGameplayTag::RequestGameplayTag(FName("Event.Monster.Died")); 
+			MessageSubsystem.BroadcastMessage(MessageChannel, DeathMessage);
+			UE_LOG(LogTemp, Log, TEXT("[SERVER] ABaseAI: Broadcasted FMonsterDiedMessage for %s"), *MonsterID.ToString());
+		}
+	}
 
 	//이동, 애니메이션 제거
 	if (GetController())
