@@ -61,16 +61,18 @@ void UBaseAIAnimInstance::PlayMontage()
 	Montage_JumpToSection(AnimSectionMap[FinalType], MontageToPlay);
 }
 
-// void UBaseAIAnimInstance::PlayStateMontage()
-// {
-// 	UAnimMontage* PlayingMontage = GetMontageToPlay();
-// 	UE_LOG(LogTemp, Warning, TEXT("Montage: %s"), *UEnum::GetValueAsString(AnimalState));
-// 	if (PlayingMontage)
-// 	{
-// 		UE_LOG(LogTemp,Error, TEXT("Montage: %s"), *PlayingMontage->GetName());
-// 		Montage_Play(PlayingMontage);
-// 	}
-// }
+void UBaseAIAnimInstance::PlayStateMontage(EAnimActionType Action)
+{
+	UAnimMontage* PlayingMontage = GetMontageToPlay(Action);
+	if (PlayingMontage)
+	{
+		Montage_Play(PlayingMontage);
+	}
+	else
+	{
+		UE_LOG(LogTemp,Error,TEXT("%s"),TEXT("Montage null"));
+	}
+}
 
 UAnimMontage* UBaseAIAnimInstance::GetMontageToPlay(EAnimActionType ActionType) const
 {

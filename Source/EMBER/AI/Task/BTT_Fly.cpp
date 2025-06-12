@@ -7,7 +7,7 @@
 
 UBTT_Fly::UBTT_Fly()
 {
-	NodeName = "GuardState";
+	NodeName = "Fly";
 }
 
 EBTNodeResult::Type UBTT_Fly::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

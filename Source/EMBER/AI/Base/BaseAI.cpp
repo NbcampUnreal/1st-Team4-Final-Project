@@ -46,19 +46,19 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 {
 	if (!HasAuthority()) return 0;
 	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	
+
 	AIState->SetHittdMode();
+	BehaviorTreeComponent->SetHittedMode();
 	if (AAIController* AIController = Cast<AAIController>(GetController()))
 	{
 		if (UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent())
 		{
-			BlackboardComponent->SetValueAsBool("IsHit", true);
-			BlackboardComponent->SetValueAsObject("TargetActor", DamageCauser);
-
+			// BlackboardComponent->SetValueAsBool("IsHit", true);
+			BehaviorTreeComponent->SetBlackboard_Object("TargetActor", DamageCauser);
 			if (!BlackboardComponent->GetValueAsBool("IsOriginLocationSet"))
 			{
-				BlackboardComponent->SetValueAsVector("OriginLocation", GetActorLocation());
-				BlackboardComponent->SetValueAsBool("IsOriginLocationSet", true);
+				BehaviorTreeComponent->SetBlackboard_Vector("OriginLocation",GetActorLocation());
+				BehaviorTreeComponent->SetBlackboard_Bool("IsOriginLocationSet", true);
 			}
 		}
 	}
@@ -142,7 +142,7 @@ void ABaseAI::OnDeath()
 
 UBehaviorTree* ABaseAI::GetBehaviorTree() const
 {
-	if(BehaviorTree == nullptr)
+	if (BehaviorTree == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"Behavior Tree is null");
 		return nullptr;

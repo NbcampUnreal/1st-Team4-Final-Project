@@ -25,13 +25,13 @@ void UBTT_FindingEnemyTimer::CheckDetection(bool IsDetect)
 			GetWorld()->GetTimerManager().SetTimer(UpdateDistanceTimer, this,
 			                                       &UBTT_FindingEnemyTimer::UpdateClosestActorTimer,
 			                                       1.0f, true);
-			UE_LOG(LogTemp, Warning, TEXT("Timer Started"));
+			// UE_LOG(LogTemp, Warning, TEXT("Timer Started"));
 		}
 	}
 	else
 	{
 		GetWorld()->GetTimerManager().ClearTimer(UpdateDistanceTimer);
-		UE_LOG(LogTemp, Warning, TEXT("Timer Stopped"));
+		// UE_LOG(LogTemp, Warning, TEXT("Timer Stopped"));
 	}
 }
 
@@ -75,6 +75,6 @@ void UBTT_FindingEnemyTimer::UpdateClosestActorTimer()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AI is null"));
+		UE_LOG(LogTemp, Warning, TEXT("Timer: AI is null"));
 	}
 }

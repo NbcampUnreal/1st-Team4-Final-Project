@@ -16,25 +16,18 @@ EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	{
 		UE_LOG(LogTemp, Error, TEXT("BaseAIController is nullptr!"));
 		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Failed);
-		return EBTNodeResult::Failed;
 	}
 
 	BlackboardComp = OwnerComp.GetBlackboardComponent(); //블랙보드 참조
 	ABaseAI* ControlledAnimal = Cast<ABaseAI>(BaseAIController->GetPawn()); //사용되는 액터 참조
 	
-	if (ControlledAnimal == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Miss Animal"));
-		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Failed);
-	}
 	if (ControlledAnimal->PatrolPoint.Num() == 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("empty PatrolPoint"));
 		BlackboardComp->SetValueAsBool("IsRest",true);
 		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Failed);
 	}
-
-	if (ControlledAnimal->PatrolPoint.Num() > 0)
+	else if (ControlledAnimal->PatrolPoint.Num() > 0)
 	{
 		int32 CurrentIndex = BlackboardComp->GetValueAsInt("PatrolIndex"); //현재 위치인덱스
 		CurrentIndex = (CurrentIndex + 1) % ControlledAnimal->PatrolPoint.Num(); //다음이동인덱스 업데이트
