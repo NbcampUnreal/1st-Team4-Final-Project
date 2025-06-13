@@ -202,3 +202,19 @@ public:
     void SetMaxXP(const float Amount);
     void LevelUp(const int32 Amount);
 };
+
+USTRUCT()
+struct FDamagesData
+{
+    GENERATED_BODY()
+    UPROPERTY()
+    float Power;
+    UPROPERTY()
+    class ACharacter* Character;
+    UPROPERTY()
+    class AActor* Causer;
+    UPROPERTY()
+    UAnimMontage* Montage;
+    UPROPERTY()
+    float PlayRate;
+};

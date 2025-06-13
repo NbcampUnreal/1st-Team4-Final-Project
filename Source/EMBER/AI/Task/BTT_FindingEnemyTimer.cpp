@@ -6,6 +6,11 @@
 #include "BehaviorTree/BlackboardComponent.h"
 
 
+UBTT_FindingEnemyTimer::UBTT_FindingEnemyTimer()
+{
+	NodeName = TEXT("Finder");
+}
+
 EBTNodeResult::Type UBTT_FindingEnemyTimer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	//IsDetect 키 확인후 타이머 시작 or 정지
@@ -25,13 +30,13 @@ void UBTT_FindingEnemyTimer::CheckDetection(bool IsDetect)
 			GetWorld()->GetTimerManager().SetTimer(UpdateDistanceTimer, this,
 			                                       &UBTT_FindingEnemyTimer::UpdateClosestActorTimer,
 			                                       1.0f, true);
-			UE_LOG(LogTemp, Warning, TEXT("Timer Started"));
+			// UE_LOG(LogTemp, Warning, TEXT("Timer Started"));
 		}
 	}
 	else
 	{
 		GetWorld()->GetTimerManager().ClearTimer(UpdateDistanceTimer);
-		UE_LOG(LogTemp, Warning, TEXT("Timer Stopped"));
+		// UE_LOG(LogTemp, Warning, TEXT("Timer Stopped"));
 	}
 }
 
@@ -75,6 +80,6 @@ void UBTT_FindingEnemyTimer::UpdateClosestActorTimer()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AI is null"));
+		UE_LOG(LogTemp, Warning, TEXT("Timer: AI is null"));
 	}
 }

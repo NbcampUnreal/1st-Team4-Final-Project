@@ -4,12 +4,12 @@
 #include "AI/Service/CBTService_Passive.h"
 #include "AI/BehaviorTree/CBehaviorTreeComponent.h"
 #include "CAIController.h"
-#include "C_StateComponent.h"
 #include "AI/Base/HumanAIBase.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 UCBTService_Passive::UCBTService_Passive()
 {
-	NodeName = "Defensive";
+	NodeName = "Passive";
 	Interval = 1.0f;
 	RandomDeviation = 0.0f;
 }
@@ -18,64 +18,45 @@ void UCBTService_Passive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	TObjectPtr<ACAIController> controller = Cast<ACAIController>(OwnerComp.GetOwner());
-	if (controller.Get() == nullptr)
+	TObjectPtr<ACAIController> Controller = Cast<ACAIController>(OwnerComp.GetOwner());
+	if (Controller.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"controller is null");
 		return;
 	}
-	TObjectPtr<ABaseAI> ai = Cast<ABaseAI>(controller->GetPawn());
-	if (ai.Get() == nullptr)
+	TObjectPtr<ABaseAI> AI = Cast<ABaseAI>(Controller->GetPawn());
+	if (AI.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"ai is null");
 		return;
 	}
-	TObjectPtr<UC_StateComponent> state = Cast<UC_StateComponent>(ai->GetComponentByClass(UC_StateComponent::StaticClass()));
-	if (state.Get() == nullptr)
-	{
-		UE_LOG(LogTemp, Error, L"state is null");
-		return;
-	}
-	TObjectPtr<UCBehaviorTreeComponent> aiState = Cast<UCBehaviorTreeComponent>(ai->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
-	if (aiState.Get() == nullptr)
+	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(
+		AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
+	if (AIState.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"aistate is null");
 		return;
 	}
 
-	if (bDrawDebug)
+	AActor* TagetActor = Cast<AActor>(Controller->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
+
+	if (TagetActor)
 	{
-		FVector start = ai->GetActorLocation();
-		start.Z -= 25;
+		FVector TargetLocation = TagetActor->GetActorLocation();
+		FVector AILocation = AI->GetActorLocation();
 
-		FVector end = start;
+		float Distance = FVector::Dist(TargetLocation, AILocation);
 
-		DrawDebugCylinder(ai->GetWorld(), start, end, RunRange, 10, FColor::Red, false, Interval);
-	}
-
-	if (state->IsDeadMode() == true)
-	{
-		//controller->StopMovement();
-		aiState->SetDeadMode();
-		return;
-	}
-
-	if (state->IsHittdMode() == true)
-	{
-		aiState->SetHittedMode();
-		return;
-	}
-
-	TObjectPtr<ACharacter> target = aiState->GetTarget();
-	if (target != nullptr)
-	{
-		float distance = ai.Get()->GetDistanceTo(target);
-		if(distance < RunRange)
+		if (Distance < RunRange)
 		{
-			aiState->SetRunMode();
-			return;
+			AIState->SetRunMode();
 		}
+		return;
 	}
 
-	aiState->SetPatrolMode();
+	if (AIState->IsHittedMode())
+	{
+		AIState->SetRunMode();
+		return;
+	}
 }

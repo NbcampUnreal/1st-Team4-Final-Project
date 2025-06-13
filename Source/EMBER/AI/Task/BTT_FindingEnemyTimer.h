@@ -10,7 +10,8 @@ class EMBER_API UBTT_FindingEnemyTimer : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 public:
-	
+
+	UBTT_FindingEnemyTimer();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	void CheckDetection(bool IsDetect);

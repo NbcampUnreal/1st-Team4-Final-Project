@@ -16,13 +16,22 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 	ControlledAnimal = Cast<ABaseAI>(Controller->GetPawn());
 	AActor* Target = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
 
-	if (Target == nullptr)
+	BehaviorComp = Cast<UCBehaviorTreeComponent>(
+		ControlledAnimal->GetComponentByClass(UBehaviorTreeComponent::StaticClass()));
+	if (BehaviorComp == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("RunTarget is null"));
+		UE_LOG(LogTemp, Error, L"BehaviorComp is null");
 		return EBTNodeResult::Failed;
 	}
 
-	// ControlledAnimal->SetRunSpeed();
+	if (Target == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("RunTarget is null"));
+		return EBTNodeResult::InProgress;
+	}
+	Controller->StopMovement();
+	ControlledAnimal->GetMesh()->GetAnimInstance()->StopAllMontages(1.0f);
+
 	FVector TargetLocation = Target->GetActorLocation();
 	FVector AI_Location = ControlledAnimal->GetActorLocation();
 	FVector Direction = (AI_Location - TargetLocation).GetSafeNormal(); //방향벡터만 남기고 1로 설정
@@ -40,14 +49,14 @@ void UBTT_Run::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Typ
 	if (Result == EPathFollowingResult::Success)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("On Run Completed"));
-		BlackboardComponent->SetValueAsBool("IsHit", false);
-		// ControlledAnimal->SetWalkSpeed();
+		BehaviorComp->SetIdleMode();
+		BlackboardComponent->SetValueAsObject("TargetActor", nullptr);
 		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("RunCompleted failed"));
-		BlackboardComponent->SetValueAsBool("IsHit", false);
-		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
+		UE_LOG(LogTemp, Error, TEXT("Run failed"));
+		// BlackboardComponent->SetValueAsObject("TargetActor", nullptr);
+		// FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 	}
 }

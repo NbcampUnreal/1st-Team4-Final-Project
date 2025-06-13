@@ -11,6 +11,10 @@
 #include "AIComponent/CAIWeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Managers/EquipmentManagerComponent.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
+#include "Item/Drop/LootTable.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 ABaseAI::ABaseAI()
 {
@@ -44,32 +48,81 @@ void ABaseAI::BeginPlay()
 float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
                           AActor* DamageCauser)
 {
-	if (!HasAuthority()) return 0;
+	if (!HasAuthority()) 
+		return 0;
 	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	
-	AIState->SetHittdMode();
-	if (AAIController* AIController = Cast<AAIController>(GetController()))
-	{
-		if (UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent())
-		{
-			BlackboardComponent->SetValueAsBool("IsHit", true);
-			BlackboardComponent->SetValueAsObject("TargetActor", DamageCauser);
 
-			if (!BlackboardComponent->GetValueAsBool("IsOriginLocationSet"))
-			{
-				BlackboardComponent->SetValueAsVector("OriginLocation", GetActorLocation());
-				BlackboardComponent->SetValueAsBool("IsOriginLocationSet", true);
-			}
-		}
+	if(ActualDamage <= 0.0f)
+	{
+		UE_LOG(LogTemp, Error, L"Damage is 0");
+		return ActualDamage;
 	}
+
+	DamageData.Causer = DamageCauser;
+	DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
+	DamageData.Power = ActualDamage;
+	FActionDamageEvent* event = (FActionDamageEvent*)&DamageEvent;
+	DamageData.Montage = event->DamageData->Montages;
+	DamageData.PlayRate = event->DamageData->PlayRate;
+	MulticastHitted(ActualDamage, DamageEvent, EventInstigator, DamageCauser);
+
+
+	//AIState->SetHittdMode();
+	//BehaviorTreeComponent->SetHittedMode();
+	//if (AAIController* AIController = Cast<AAIController>(GetController()))
+	//{
+	//	if (UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent())
+	//	{
+	//		// BlackboardComponent->SetValueAsBool("IsHit", true);
+	//		BehaviorTreeComponent->SetBlackboard_Object("TargetActor", DamageCauser);
+	//		if (!BlackboardComponent->GetValueAsBool("IsOriginLocationSet"))
+	//		{
+	//			BehaviorTreeComponent->SetBlackboard_Vector("OriginLocation",GetActorLocation());
+	//			BehaviorTreeComponent->SetBlackboard_Bool("IsOriginLocationSet", true);
+	//		}
+	//	}
+	//}
+
+   /* LastDamageCauser = DamageCauser;
 
 	if (ActualDamage > 0 && !bIsDie)
 	{
 		CurrentHP -= ActualDamage;
 		if (CurrentHP <= 0.f) OnDeath();
-	}
+	}*/
 
 	return ActualDamage;
+}
+
+void ABaseAI::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ABaseAI, DamageData);
+}
+
+void ABaseAI::MulticastHitted_Implementation(float Damage, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	MontageComponent->PlayMontage(DamageData.Montage, DamageData.PlayRate);
+	StatusComponent->Damage(DamageData.Power);
+	if (HasAuthority() == true)
+	{
+		UE_LOG(LogTemp, Error, L"server hp %f", StatusComponent->GetHp());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, L"hp %f", StatusComponent->GetHp());
+	}
+
+	if (DamageData.Character != nullptr)
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
+
+}
+
+void ABaseAI::OnRep_Hitted()
+{
+	if (DamageData.Character != nullptr)
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
 }
 
 void ABaseAI::OnAttack()
@@ -116,6 +169,22 @@ void ABaseAI::OnDeath()
 	//퍼셉션 제거
 	// Perception->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
 
+	if (HasAuthority())
+	{
+		FMonsterDiedMessage DeathMessage;
+		DeathMessage.MonsterID = this->MonsterID;
+		DeathMessage.DeathLocation = this->GetActorLocation();
+		DeathMessage.KillerActor = this->LastDamageCauser;
+
+		if (UWorld* World = GetWorld())
+		{
+			UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(World);
+			FGameplayTag MessageChannel = FGameplayTag::RequestGameplayTag(FName("Event.Monster.Died")); 
+			MessageSubsystem.BroadcastMessage(MessageChannel, DeathMessage);
+			UE_LOG(LogTemp, Log, TEXT("[SERVER] ABaseAI: Broadcasted FMonsterDiedMessage for %s"), *MonsterID.ToString());
+		}
+	}
+
 	//이동, 애니메이션 제거
 	if (GetController())
 	{
@@ -142,7 +211,7 @@ void ABaseAI::OnDeath()
 
 UBehaviorTree* ABaseAI::GetBehaviorTree() const
 {
-	if(BehaviorTree == nullptr)
+	if (BehaviorTree == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"Behavior Tree is null");
 		return nullptr;

@@ -51,7 +51,7 @@ public:
 	EAnimActionType FallbackActionType;
 	
 	virtual void PlayMontage();
-	//virtual void PlayStateMontage(); //AnimalState에 따라 자동으로 몽타주 재생
+	virtual auto PlayStateMontage(EAnimActionType Action) -> void; //AnimalState에 따라 자동으로 몽타주 재생
 	
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	// EAnimalState AnimalState;
