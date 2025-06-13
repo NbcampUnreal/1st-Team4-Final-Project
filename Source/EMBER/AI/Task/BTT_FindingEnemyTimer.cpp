@@ -6,6 +6,11 @@
 #include "BehaviorTree/BlackboardComponent.h"
 
 
+UBTT_FindingEnemyTimer::UBTT_FindingEnemyTimer()
+{
+	NodeName = TEXT("Finder");
+}
+
 EBTNodeResult::Type UBTT_FindingEnemyTimer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	//IsDetect 키 확인후 타이머 시작 or 정지
