@@ -74,9 +74,8 @@ enum class EEquipmentType : uint8
 UENUM(BlueprintType)
 enum class EUtilityType : uint8
 {
-	Drink,
+	Consumable,
 	LightSource,
-	Food,
 
 	Count	UMETA(Hidden)
 };
@@ -92,6 +91,7 @@ enum class ECraftingType : uint8
 	Wood,
 	Fiber,
 	Fruit,
+	String,
 
 	Count	UMETA(Hidden)
 };
