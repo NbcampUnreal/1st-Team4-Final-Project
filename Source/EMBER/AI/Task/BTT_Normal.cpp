@@ -15,11 +15,8 @@ EBTNodeResult::Type UBTT_Normal::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	ABaseAI* ControlledAI = Cast<ABaseAI>(Controller->GetPawn());
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
-	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(ControlledAI->GetMesh()->GetAnimInstance()))
-	{
-		// AnimInstance->AnimalState = EAnimalState::Idle;
-		// AnimInstance->PlayStateMontage();
-	}
-	
-	return EBTNodeResult::InProgress;
+
+	Controller->GetBlackboardComponent()->SetValueAsBool("IsRest", false);
+
+	return EBTNodeResult::Succeeded;
 }

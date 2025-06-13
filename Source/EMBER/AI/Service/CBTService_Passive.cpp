@@ -9,7 +9,7 @@
 
 UCBTService_Passive::UCBTService_Passive()
 {
-	NodeName = "Defensive";
+	NodeName = "Passive";
 	Interval = 1.0f;
 	RandomDeviation = 0.0f;
 }
@@ -24,20 +24,20 @@ void UCBTService_Passive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		UE_LOG(LogTemp, Error, L"controller is null");
 		return;
 	}
-	TObjectPtr<ABaseAI> ai = Cast<ABaseAI>(controller->GetPawn());
-	if (ai.Get() == nullptr)
+	TObjectPtr<ABaseAI> AI = Cast<ABaseAI>(controller->GetPawn());
+	if (AI.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"ai is null");
 		return;
 	}
-	TObjectPtr<UC_StateComponent> state = Cast<UC_StateComponent>(ai->GetComponentByClass(UC_StateComponent::StaticClass()));
+	TObjectPtr<UC_StateComponent> state = Cast<UC_StateComponent>(AI->GetComponentByClass(UC_StateComponent::StaticClass()));
 	if (state.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"state is null");
 		return;
 	}
-	TObjectPtr<UCBehaviorTreeComponent> aiState = Cast<UCBehaviorTreeComponent>(ai->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
-	if (aiState.Get() == nullptr)
+	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
+	if (AIState.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"aistate is null");
 		return;
@@ -45,37 +45,28 @@ void UCBTService_Passive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 	if (bDrawDebug)
 	{
-		FVector start = ai->GetActorLocation();
+		FVector start = AI->GetActorLocation();
 		start.Z -= 25;
 
 		FVector end = start;
-
-		DrawDebugCylinder(ai->GetWorld(), start, end, RunRange, 10, FColor::Red, false, Interval);
+		DrawDebugCylinder(AI->GetWorld(), start, end, RunRange, 10, FColor::Red, false, Interval);
 	}
+	
+	//Target이 없으면 Idle
+	// TObjectPtr<ACharacter> Target = AIState->GetTarget(); 
+	// if(Target == nullptr)
+	// {
+	// 	AIState->SetIdleMode();
+	// 	return;
+	// }
+	
+	// //Target과 가까우면 도망
+	// float distance = AI.Get()->GetDistanceTo(Target);
+	// if(distance < RunRange)
+	// {
+	// 	AIState->SetRunMode();
+	// 	return;
+	// }
 
-	if (state->IsDeadMode() == true)
-	{
-		//controller->StopMovement();
-		aiState->SetDeadMode();
-		return;
-	}
-
-	if (state->IsHittdMode() == true)
-	{
-		aiState->SetHittedMode();
-		return;
-	}
-
-	TObjectPtr<ACharacter> target = aiState->GetTarget();
-	if (target != nullptr)
-	{
-		float distance = ai.Get()->GetDistanceTo(target);
-		if(distance < RunRange)
-		{
-			aiState->SetRunMode();
-			return;
-		}
-	}
-
-	aiState->SetPatrolMode();
+	
 }
