@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameData.h"
 #include "GameFramework/Character.h"
 #include "AI/BehaviorTree/CBehaviorTreeComponent.h"
 #include "Perception/AIPerceptionComponent.h"
@@ -105,8 +106,16 @@ protected:
 	UPROPERTY()
 	TObjectPtr<AActor> LastDamageCauser;
 
-	//UAIPerceptionComponent* PerceptionComponent;
-	//UBlackboardComponent* BlackboardComp;
+private:
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastHitted(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+	UFUNCTION()
+	void OnRep_Hitted();
+
+private:
+	UPROPERTY(ReplicatedUsing = "OnRep_Hitted")
+	FDamagesData DamageData;
 };
 
 //TODOS State, Move 컴포넌트 있고어야할듯
