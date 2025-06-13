@@ -1,9 +1,8 @@
 #include "Item/Crafting/EternalFlame.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "AbilitySystemInterface.h"
-#include "AbilitySystemComponent.h"
-#include "GameplayEffect.h"
+#include "Interaction/EmberTemperature.h"
+#include "Player/EmberPlayerCharacter.h" // 캐스팅에 필요
 
 AEternalFlame::AEternalFlame()
 {
@@ -33,24 +32,12 @@ void AEternalFlame::BeginPlay()
 
 void AEternalFlame::OnWarmingZoneOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!HasAuthority() || !WarmingGameplayEffect || !OtherActor) return;
+	if (!HasAuthority() || !OtherActor) return;
 
-	IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(OtherActor);
-	if (!AbilitySystemInterface) return;
-
-	UAbilitySystemComponent* AbilitySystemComponent = AbilitySystemInterface->GetAbilitySystemComponent();
-	if (!AbilitySystemComponent) return;
-
-	if (WarmedActorsMap.Contains(OtherActor)) return;
-
-	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
-	EffectContext.AddSourceObject(this);
-
-	FActiveGameplayEffectHandle NewEffectHandle = AbilitySystemComponent->ApplyGameplayEffectToSelf(WarmingGameplayEffect->GetDefaultObject<UGameplayEffect>(), 1.0f, EffectContext);
-
-	if (NewEffectHandle.IsValid())
+	IEmberTemperature* TemperatureHandler = Cast<IEmberTemperature>(OtherActor);
+	if (TemperatureHandler)
 	{
-		WarmedActorsMap.Add(OtherActor, NewEffectHandle);
+		TemperatureHandler->Execute_ApplyWarmingEffect(OtherActor);
 		UE_LOG(LogTemp, Log, TEXT("EternalFlame: Applied warming effect to %s"), *OtherActor->GetName());
 	}
 }
@@ -58,17 +45,11 @@ void AEternalFlame::OnWarmingZoneOverlapBegin(UPrimitiveComponent* OverlappedCom
 void AEternalFlame::OnWarmingZoneOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (!HasAuthority() || !OtherActor) return;
-
-	FActiveGameplayEffectHandle* FoundHandle = WarmedActorsMap.Find(OtherActor);
-	if (!FoundHandle || !FoundHandle->IsValid()) return;
-
-	IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(OtherActor);
-	if (!AbilitySystemInterface) return;
-
-	UAbilitySystemComponent* AbilitySystemComponent = AbilitySystemInterface->GetAbilitySystemComponent();
-	if (!AbilitySystemComponent) return;
-
-	AbilitySystemComponent->RemoveActiveGameplayEffect(*FoundHandle);
-	WarmedActorsMap.Remove(OtherActor);
-	UE_LOG(LogTemp, Log, TEXT("EternalFlame: Removed warming effect from %s"), *OtherActor->GetName());
+	
+	IEmberTemperature* TemperatureHandler = Cast<IEmberTemperature>(OtherActor);
+	if (TemperatureHandler)
+	{
+		TemperatureHandler->Execute_RemoveWarmingEffect(OtherActor);
+		UE_LOG(LogTemp, Log, TEXT("EternalFlame: Removed warming effect from %s"), *OtherActor->GetName());
+	}
 }
