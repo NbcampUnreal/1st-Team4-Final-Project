@@ -50,52 +50,38 @@ void ULootDropManagerComponent::OnMonsterDiedMessageReceived(FGameplayTag Channe
 {
 	if (!GetOwner() || !GetOwner()->HasAuthority()) return;
 
-	UE_LOG(LogTemp, Log, TEXT("[SERVER] LootDropManager: Received FMonsterDiedMessage for MonsterID: %s"), *Message.MonsterID.ToString());
-
-	if (!MasterLootTable)
-	{
-		UE_LOG(LogTemp, Error, TEXT("[SERVER] LootDropManager: MasterLootTable is not set!"));
-		return;
-	}
-
-	if (!PickupItemActorClass)
-	{
-		UE_LOG(LogTemp, Error, TEXT("[SERVER] LootDropManager: PickupItemActorClass is not set!"));
-		return;
-	}
+	if (!MasterLootTable || !PickupItemActorClass) return;
 
 	const FMonsterLootProfile* LootProfile = MasterLootTable->FindRow<FMonsterLootProfile>(Message.MonsterID, TEXT("OnMonsterDiedMessageReceived"));
-	if (!LootProfile)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[SERVER] LootDropManager: No loot profile found for MonsterID: %s in DT_MasterLootTable."), *Message.MonsterID.ToString());
-		return;
-	}
+	if (!LootProfile) return;
 
 	UWorld* World = GetWorld();
 	if (!World) return;
 
-	for (const FLootDropItem& DropItem : LootProfile->LootDrops)
+	TArray<FLootResultData> FinalLootResults;
+
+	for (const FLootDropItem& DropRule : LootProfile->LootDrops)
 	{
 		const float RandomRollForDrop = FMath::FRand();
-		if (RandomRollForDrop < DropItem.DropChance)
+		if (RandomRollForDrop < DropRule.DropChance)
 		{
-			if (DropItem.ItemTemplateClass && DropItem.QuantityRange.Y > 0 && DropItem.PossibleRarities.Num() > 0)
+			if (DropRule.ItemTemplateClass && DropRule.QuantityRange.Y > 0 && DropRule.PossibleRarities.Num() > 0)
 			{
-				const int32 QuantityToDrop = FMath::RandRange(DropItem.QuantityRange.X, DropItem.QuantityRange.Y);
+				const int32 QuantityToDrop = FMath::RandRange(DropRule.QuantityRange.X, DropRule.QuantityRange.Y);
 
 				if (QuantityToDrop > 0)
 				{
+					EItemRarity FinalRarity = EItemRarity::Common;
 					float TotalWeight = 0.f;
-					for (const FRarityDropInfo& RarityInfo : DropItem.PossibleRarities)
+					for (const FRarityDropInfo& RarityInfo : DropRule.PossibleRarities)
 					{
 						TotalWeight += RarityInfo.Weight;
 					}
-
-					EItemRarity FinalRarity = EItemRarity::Common;
+					
 					if (TotalWeight > 0.f)
 					{
 						float RandomRollForRarity = FMath::FRand() * TotalWeight;
-						for (const FRarityDropInfo& RarityInfo : DropItem.PossibleRarities)
+						for (const FRarityDropInfo& RarityInfo : DropRule.PossibleRarities)
 						{
 							if (RandomRollForRarity < RarityInfo.Weight)
 							{
@@ -105,23 +91,31 @@ void ULootDropManagerComponent::OnMonsterDiedMessageReceived(FGameplayTag Channe
 							RandomRollForRarity -= RarityInfo.Weight;
 						}
 					}
-					
-					const FVector SpawnLocation = Message.DeathLocation + FVector(FMath::RandRange(-50, 50), FMath::RandRange(-50, 50), 20.0f);
-					const FRotator SpawnRotation = FRotator::ZeroRotator;
-					
-					FActorSpawnParameters SpawnParams;
-					SpawnParams.Owner = GetOwner();
-					SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-					APickupItemActor* NewPickup = World->SpawnActor<APickupItemActor>(PickupItemActorClass, SpawnLocation, SpawnRotation, SpawnParams);
-					if (NewPickup)
-					{
-						NewPickup->InitializeForLootDrop(DropItem.ItemTemplateClass, QuantityToDrop, FinalRarity);
-						UE_LOG(LogTemp, Log, TEXT("[SERVER] LootDropManager: Spawned pickup item '%s' (Rarity: %s) x%d at %s"), 
-							*DropItem.ItemTemplateClass->GetName(), *UEnum::GetValueAsString(FinalRarity), QuantityToDrop, *SpawnLocation.ToString());
-					}
+					FLootResultData ResultData;
+					ResultData.ItemTemplateClass = DropRule.ItemTemplateClass;
+					ResultData.Quantity = QuantityToDrop;
+					ResultData.Rarity = FinalRarity;
+					FinalLootResults.Add(ResultData);
 				}
 			}
+		}
+	}
+
+	if (!FinalLootResults.IsEmpty())
+	{
+		const FVector SpawnLocation = Message.DeathLocation + FVector(0, 0, 50.0f);
+		const FRotator SpawnRotation = FRotator::ZeroRotator;
+		
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = GetOwner();
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		APickupItemActor* NewPouch = World->SpawnActor<APickupItemActor>(PickupItemActorClass, SpawnLocation, SpawnRotation, SpawnParams);
+		if (NewPouch)
+		{
+			NewPouch->InitializeLootPouch(FinalLootResults);
+			UE_LOG(LogTemp, Log, TEXT("[SERVER] LootDropManager: Spawned loot pouch for %s with %d item types."), *Message.MonsterID.ToString(), FinalLootResults.Num());
 		}
 	}
 }

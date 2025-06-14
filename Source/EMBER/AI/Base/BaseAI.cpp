@@ -13,6 +13,8 @@
 #include "Managers/EquipmentManagerComponent.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Item/Drop/LootTable.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 ABaseAI::ABaseAI()
 {
@@ -46,34 +48,81 @@ void ABaseAI::BeginPlay()
 float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
                           AActor* DamageCauser)
 {
-	if (!HasAuthority()) return 0;
+	if (!HasAuthority()) 
+		return 0;
 	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
-	AIState->SetHittdMode();
-	BehaviorTreeComponent->SetHittedMode();
-	if (AAIController* AIController = Cast<AAIController>(GetController()))
+	if(ActualDamage <= 0.0f)
 	{
-		if (UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent())
-		{
-			// BlackboardComponent->SetValueAsBool("IsHit", true);
-			BehaviorTreeComponent->SetBlackboard_Object("TargetActor", DamageCauser);
-			if (!BlackboardComponent->GetValueAsBool("IsOriginLocationSet"))
-			{
-				BehaviorTreeComponent->SetBlackboard_Vector("OriginLocation",GetActorLocation());
-				BehaviorTreeComponent->SetBlackboard_Bool("IsOriginLocationSet", true);
-			}
-		}
+		UE_LOG(LogTemp, Error, L"Damage is 0");
+		return ActualDamage;
 	}
-	
-    LastDamageCauser = DamageCauser;
+
+	DamageData.Causer = DamageCauser;
+	DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
+	DamageData.Power = ActualDamage;
+	FActionDamageEvent* event = (FActionDamageEvent*)&DamageEvent;
+	DamageData.Montage = event->DamageData->Montages;
+	DamageData.PlayRate = event->DamageData->PlayRate;
+	MulticastHitted(ActualDamage, DamageEvent, EventInstigator, DamageCauser);
+
+
+	//AIState->SetHittdMode();
+	//BehaviorTreeComponent->SetHittedMode();
+	//if (AAIController* AIController = Cast<AAIController>(GetController()))
+	//{
+	//	if (UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent())
+	//	{
+	//		// BlackboardComponent->SetValueAsBool("IsHit", true);
+	//		BehaviorTreeComponent->SetBlackboard_Object("TargetActor", DamageCauser);
+	//		if (!BlackboardComponent->GetValueAsBool("IsOriginLocationSet"))
+	//		{
+	//			BehaviorTreeComponent->SetBlackboard_Vector("OriginLocation",GetActorLocation());
+	//			BehaviorTreeComponent->SetBlackboard_Bool("IsOriginLocationSet", true);
+	//		}
+	//	}
+	//}
+
+   /* LastDamageCauser = DamageCauser;
 
 	if (ActualDamage > 0 && !bIsDie)
 	{
 		CurrentHP -= ActualDamage;
 		if (CurrentHP <= 0.f) OnDeath();
-	}
+	}*/
 
 	return ActualDamage;
+}
+
+void ABaseAI::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ABaseAI, DamageData);
+}
+
+void ABaseAI::MulticastHitted_Implementation(float Damage, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	MontageComponent->PlayMontage(DamageData.Montage, DamageData.PlayRate);
+	StatusComponent->Damage(DamageData.Power);
+	if (HasAuthority() == true)
+	{
+		UE_LOG(LogTemp, Error, L"server hp %f", StatusComponent->GetHp());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, L"hp %f", StatusComponent->GetHp());
+	}
+
+	if (DamageData.Character != nullptr)
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
+
+}
+
+void ABaseAI::OnRep_Hitted()
+{
+	if (DamageData.Character != nullptr)
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
 }
 
 void ABaseAI::OnAttack()
