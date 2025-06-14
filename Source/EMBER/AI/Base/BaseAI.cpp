@@ -57,7 +57,7 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 		UE_LOG(LogTemp, Error, L"Damage is 0");
 		return ActualDamage;
 	}
-
+//TODOS 작업
 	DamageData.Causer = DamageCauser;
 	DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
 	DamageData.Power = ActualDamage;

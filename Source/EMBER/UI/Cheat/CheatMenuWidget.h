@@ -44,5 +44,8 @@ protected:
 	TObjectPtr<UCheatListWidget> CheatList_Armor;
 
 	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UCheatListWidget> CheatList_Crafting;
+
+	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UButton> Button_Exit;
 };
