@@ -463,6 +463,21 @@ bool UInventoryEquipmentManagerComponent::IsSameComponent(const UInventoryEquipm
 	return this == OtherComponent;
 }
 
+EUtilitySlotType UInventoryEquipmentManagerComponent::ConvertToUtilitySlotType(EEquipmentSlotType EquipmentSlotType)
+{
+	EUtilitySlotType UtilitySlotType = EUtilitySlotType::Count;
+
+	switch (EquipmentSlotType)
+	{
+	case EEquipmentSlotType::Utility_Primary:		UtilitySlotType = EUtilitySlotType::Primary;	break;
+	case EEquipmentSlotType::Utility_Secondary:		UtilitySlotType = EUtilitySlotType::Secondary;	break;
+	case EEquipmentSlotType::Utility_Tertiary:		UtilitySlotType = EUtilitySlotType::Tertiary;	break;
+	case EEquipmentSlotType::Utility_Quaternary:	UtilitySlotType = EUtilitySlotType::Quaternary;	break;
+	}
+
+	return UtilitySlotType;
+}
+
 UEquipmentManagerComponent* UInventoryEquipmentManagerComponent::GetEquipmentManager() const
 {
 	UEquipmentManagerComponent* EquipmentManager = nullptr;

@@ -170,3 +170,29 @@ enum class EWeaponSlotType : uint8
 
 	Count	UMETA(Hidden)
 };
+
+UENUM(BlueprintType)
+enum class EUtilitySlotType : uint8
+{
+	Primary,
+	Secondary,
+	Tertiary,
+	Quaternary,
+
+	Count	UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class EEquipState : uint8
+{
+	Unarmed,
+	
+	Weapon_Primary,
+
+	Utility_Primary,
+	Utility_Secondary,
+	Utility_Tertiary,
+	Utility_Quaternary,
+
+	Count	UMETA(Hidden)
+};

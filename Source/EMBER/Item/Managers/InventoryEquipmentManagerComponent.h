@@ -104,7 +104,7 @@ protected:
 	virtual bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 	virtual void ReadyForReplication() override;
 	//~End of UPawnComponent Overrides
-
+	
 public:
 	void AddEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, UItemInstance* FromItemInstance, int32 FromItemCount);
 	UItemInstance* RemoveEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, int32 ItemCount);
@@ -123,6 +123,9 @@ public:
 	bool IsSlotEquipped(EEquipmentSlotType EquipmentSlotType) const;
 	bool IsSameComponent(const UInventoryEquipmentManagerComponent* OtherComponent) const;
 
+public:
+	static EUtilitySlotType ConvertToUtilitySlotType(EEquipmentSlotType EquipmentSlotType);
+	
 public:
 	UEquipmentManagerComponent* GetEquipmentManager() const;
 	

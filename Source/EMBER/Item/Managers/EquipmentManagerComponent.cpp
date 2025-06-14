@@ -283,6 +283,10 @@ void UEquipmentManagerComponent::OnRep_ItemTemplateID(int32 PrevItemTemplateID)
 	}*/
 }
 
+void UEquipmentManagerComponent::OnRep_CurrentEquipState(EEquipState PrevEquipState)
+{
+}
+
 void UEquipmentManagerComponent::Attack()
 {
 	// EquipmentComponent에서 현재 무기 타입 가져오기

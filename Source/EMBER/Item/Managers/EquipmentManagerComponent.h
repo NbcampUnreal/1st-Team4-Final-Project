@@ -33,14 +33,18 @@ public:
 	void Equip(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
 	void Unequip(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
 
+public:
+	EEquipState GetCurrentEquipState() const { return CurrentEquipState; }
+	
 	AEquipmentBase* GetHandEquipment() const;
 	void SetEquipmentActor(AEquipmentBase* InHandEquipment) { SpawnedHandEquipment = InHandEquipment; }
 	
-private:
+protected:
 	void Equip_HandEquipment(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
 	void Equip_Armor(UItemInstance* ItemInstance);
 	void Unequip_HandEquipment();
 	void Unequip_Armor(UItemInstance* ItemInstance);
+
 	
 public:
 	UFUNCTION()
@@ -52,6 +56,9 @@ private:
 	UFUNCTION()
 	void OnRep_ItemTemplateID(int32 PrevItemTemplateID);
 
+	UFUNCTION()
+	void OnRep_CurrentEquipState(EEquipState PrevEquipState);
+	
 private:
 	UPROPERTY(ReplicatedUsing=OnRep_ItemTemplateID)
 	int32 ItemTemplateID = INDEX_NONE;
@@ -71,6 +78,10 @@ private:
 
 	UPROPERTY(Replicated)
 	FActiveGameplayEffectHandle BaseStatHandle;
+
+private:
+	UPROPERTY(ReplicatedUsing=OnRep_CurrentEquipState)
+	EEquipState CurrentEquipState = EEquipState::Count;
 	
 private:
 	ACharacter* OwnerCharacter;
