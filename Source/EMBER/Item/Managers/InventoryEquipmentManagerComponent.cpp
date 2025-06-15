@@ -36,7 +36,7 @@ void FEquipmentEntry::Init(UItemInstance* InItemInstance, int32 InItemCount)
 	ItemCount = FMath::Clamp(InItemCount, 1, ItemTemplate.MaxStackCount);
 	
 	EEquipmentType FromEquipmentType = EquippableFragment->EquipmentType;
-	if (InventoryEquipmentManager->IsMatchingSlotType(FromEquipmentType, EquipmentSlotType))
+	if (FromEquipmentType == EEquipmentType::Weapon)
 	{
 		EquipmentManager->Equip(EquipmentSlotType, ItemInstance);
 	}
@@ -86,6 +86,16 @@ void FEquipmentList::PostReplicatedChange(const TArrayView<int32> ChangedIndices
 	{
 		const FEquipmentEntry& Entry = Entries[ChangedIndex];
 		BroadcastChangedMessage((EEquipmentSlotType)ChangedIndex, Entry.GetItemInstance(), Entry.GetItemCount());
+	}
+}
+
+void FEquipmentList::CustomMarkItemDirty(AActor* Owner, FEquipmentEntry& Entry)
+{
+	MarkItemDirty(Entry);
+	
+	if (Owner && Owner->IsNetMode(NM_ListenServer))
+	{
+		BroadcastChangedMessage(Entry.EquipmentSlotType, Entry.GetItemInstance(), Entry.GetItemCount());
 	}
 }
 
@@ -191,7 +201,7 @@ void UInventoryEquipmentManagerComponent::AddEquipment_Unsafe(EEquipmentSlotType
 		}
 	}
 	
-	EquipmentList.MarkItemDirty(Entry);
+	EquipmentList.CustomMarkItemDirty(GetOwner(), Entry);
 }
 
 UItemInstance* UInventoryEquipmentManagerComponent::RemoveEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, int32 ItemCount)
@@ -211,7 +221,7 @@ UItemInstance* UInventoryEquipmentManagerComponent::RemoveEquipment_Unsafe(EEqui
 		}
 	}
 
-	EquipmentList.MarkItemDirty(Entry);
+	EquipmentList.CustomMarkItemDirty(GetOwner(), Entry);
 	return ItemInstance;
 }
 

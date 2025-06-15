@@ -69,7 +69,18 @@ void UItemManagerComponent::Server_InventoryToInventory_Implementation(UInventor
 
 void UItemManagerComponent::Server_EquipmentToInventory_Implementation(UInventoryEquipmentManagerComponent* FromEquipmentManager, EEquipmentSlotType FromEquipmentSlotType, UInventoryManagerComponent* ToInventoryManager, const FIntPoint& ToItemSlotPos)
 {
-	
+	if (HasAuthority() == false)
+		return;
+
+	if (FromEquipmentManager == nullptr || ToInventoryManager == nullptr)
+		return;
+
+	int32 MovableCount = ToInventoryManager->CanMoveOrMergeItem(FromEquipmentManager, FromEquipmentSlotType, ToItemSlotPos);
+	if (MovableCount > 0)
+	{
+		UItemInstance* RemovedItemInstance = FromEquipmentManager->RemoveEquipment_Unsafe(FromEquipmentSlotType, MovableCount);
+		ToInventoryManager->AddItem_Unsafe(ToItemSlotPos, RemovedItemInstance, MovableCount);
+	}
 }
 
 void UItemManagerComponent::Server_EquipmentToEquipment_Implementation(UInventoryEquipmentManagerComponent* FromEquipmentManager, EEquipmentSlotType FromEquipmentSlotType, UInventoryEquipmentManagerComponent* ToEquipmentManager, EEquipmentSlotType ToEquipmentSlotType)

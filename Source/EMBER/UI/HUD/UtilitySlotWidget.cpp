@@ -89,4 +89,9 @@ void UUtilitySlotWidget::OnEquipmentEntryChanged(EEquipmentSlotType EquipmentSlo
 			Text_Count->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
+	else
+	{
+		Image_Icon->SetVisibility(ESlateVisibility::Hidden);
+		Text_Count->SetVisibility(ESlateVisibility::Hidden);
+	}
 }

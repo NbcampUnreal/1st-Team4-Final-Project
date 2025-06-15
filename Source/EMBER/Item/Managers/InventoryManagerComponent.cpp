@@ -4,9 +4,11 @@
 #include "InventoryManagerComponent.h"
 
 #include "GameFlag.h"
+#include "InventoryEquipmentManagerComponent.h"
 #include "ItemTemplate.h"
 #include "ItemInstance.h"
 #include "Engine/ActorChannel.h"
+#include "Iris/ReplicationState/ReplicationStateUtil.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/Data/EmberItemData.h"
 
@@ -86,6 +88,16 @@ void FInventoryList::PostReplicatedChange(const TArrayView<int32> ChangedIndices
 		FInventoryEntry& Entry = Entries[AddedIndex];
 		const FIntPoint ItemSlotPos = FIntPoint(AddedIndex % InventorySlotCount.X, AddedIndex / InventorySlotCount.X);
 		BroadcastChangedMessage(ItemSlotPos, Entry.ItemInstance, Entry.ItemCount);
+	}
+}
+
+void FInventoryList::CustomMarkItemDirty(AActor* Owner, FInventoryEntry& ToEntry, const FIntPoint& ToItemSlotPos)
+{
+	MarkItemDirty(ToEntry);
+
+	if (Owner && Owner->IsNetMode(NM_ListenServer))
+	{
+		BroadcastChangedMessage(ToItemSlotPos, ToEntry.GetItemInstance(), ToEntry.GetItemCount());
 	}
 }
 
@@ -220,9 +232,9 @@ int32 UInventoryManagerComponent::CanMoveOrMergeItem(UInventoryManagerComponent*
 	return IsEmpty(ToItemSlotPos, FromItemSlotCount) ? FromItemCount : 0;
 }
 
-int32 UInventoryManagerComponent::CanMoveOrMergeItem(UInventoryEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, const FIntPoint& ToItemSlotPos) const
+int32 UInventoryManagerComponent::CanMoveOrMergeItem(UInventoryEquipmentManagerComponent* FromInventoryEquipmentManager, EEquipmentSlotType FromEquipmentSlotType, const FIntPoint& ToItemSlotPos) const
 {
-	if (OtherComponent == nullptr)
+	if (FromInventoryEquipmentManager == nullptr)
 		return 0;
 
 	if (FromEquipmentSlotType == EEquipmentSlotType::Count)
@@ -230,8 +242,43 @@ int32 UInventoryManagerComponent::CanMoveOrMergeItem(UInventoryEquipmentManagerC
 	
 	if (ToItemSlotPos.X < 0 || ToItemSlotPos.Y < 0 || ToItemSlotPos.X >= InventorySlotCount.X || ToItemSlotPos.Y >= InventorySlotCount.Y)
 		return 0;
+
+	// 장비창에서 드래그한 아이템이 유효한지 확인
+	const UItemInstance* FromItemInstance = FromInventoryEquipmentManager->GetItemInstance(FromEquipmentSlotType);
+	const int32 FromItemCount = FromInventoryEquipmentManager->GetItemCount(FromEquipmentSlotType);
+
+	if (FromItemInstance == nullptr || FromItemCount <= 0)
+		return 0;
 	
-	return 0;
+	// 인벤토리의 드래그한 위치에 아이템이 있는지 확인
+	const UItemInstance* ToItemInstance = GetItemInstance(ToItemSlotPos);
+	const int32 ToItemCount = GetItemCount(ToItemSlotPos);
+	
+	const int32 FromTemplateID = FromItemInstance->GetItemTemplateID();
+	const UItemTemplate& FromItemTemplate = UEmberItemData::Get().FindItemTemplateByID(FromTemplateID);
+
+	if (ToItemInstance)
+	{
+		const int32 ToTemplateID = ToItemInstance->GetItemTemplateID();
+		if (FromTemplateID != ToTemplateID)
+			return 0;
+
+		if (FromItemInstance->GetItemRarity() != ToItemInstance->GetItemRarity())
+			return 0;
+		
+		if (FromItemTemplate.MaxStackCount < 2)
+			return 0;
+
+		return FMath::Min(FromItemCount + ToItemCount, FromItemTemplate.MaxStackCount) - ToItemCount;
+	}
+	else
+	{
+		const FIntPoint& FromItemSlotCount = FromItemTemplate.SlotCount;
+		if (ToItemSlotPos.X + FromItemSlotCount.X > InventorySlotCount.X || ToItemSlotPos.Y + FromItemSlotCount.Y > InventorySlotCount.Y)
+			return 0;
+
+		return IsEmpty(ToItemSlotPos, FromItemSlotCount) ? FromItemCount : 0;
+	}
 }
 
 int32 UInventoryManagerComponent::CanAddItem(UItemInstance* ItemInstance, TArray<FIntPoint>& OutToItemSlotPoses, TArray<int32>& OutToItemCounts)
@@ -355,14 +402,14 @@ int32 UInventoryManagerComponent::TryAddItemByRarity(TSubclassOf<UItemTemplate> 
 			if (ToEntry.ItemInstance)
 			{
 				ToEntry.ItemCount += ToItemCount;
-				InventoryList.MarkItemDirty(ToEntry);
 			}
 			else
 			{
 				AddedItemInstances.Add(ToEntry.Init(ItemTemplateID, ToItemCount, ItemRarity));
 				MarkSlotChecks(true, ToItemSlotPos, ItemTemplate.SlotCount);
-				InventoryList.MarkItemDirty(ToEntry);
 			}
+
+			InventoryList.CustomMarkItemDirty(GetOwner(), ToEntry, ToItemSlotPos);
 		}
 
 		if (IsUsingRegisteredSubObjectList() && IsReadyForReplication())
@@ -391,7 +438,7 @@ void UInventoryManagerComponent::AddItem_Unsafe(const FIntPoint& ItemSlotPos, UI
 	if (Entry.GetItemInstance())
 	{
 		Entry.ItemCount += ItemCount;
-		InventoryList.MarkItemDirty(Entry);
+		InventoryList.CustomMarkItemDirty(GetOwner() ,Entry, ItemSlotPos);
 	}
 	else
 	{
@@ -408,7 +455,7 @@ void UInventoryManagerComponent::AddItem_Unsafe(const FIntPoint& ItemSlotPos, UI
 		}
 
 		MarkSlotChecks(true, ItemSlotPos, ItemTemplate.SlotCount);
-		InventoryList.MarkItemDirty(Entry);
+		InventoryList.CustomMarkItemDirty(GetOwner() ,Entry, ItemSlotPos);
 	}
 }
 
@@ -433,7 +480,7 @@ UItemInstance* UInventoryManagerComponent::RemoveItem_Unsafe(const FIntPoint& It
 		}
 	}
 	
-	InventoryList.MarkItemDirty(Entry);
+	InventoryList.CustomMarkItemDirty(GetOwner() ,Entry, ItemSlotPos);
 	return ItemInstance;
 }
 

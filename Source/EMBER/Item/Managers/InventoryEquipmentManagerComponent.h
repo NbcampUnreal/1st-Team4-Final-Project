@@ -64,6 +64,9 @@ public:
 	void PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize);
 	//~End of FFastArraySerializer Overrides
 
+public:
+	void CustomMarkItemDirty(AActor* Owner, FEquipmentEntry& Entry);
+	
 private:
 	void BroadcastChangedMessage(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance, int32 ItemCount);
 	
