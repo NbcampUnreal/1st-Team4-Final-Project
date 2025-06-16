@@ -37,6 +37,11 @@ bool UCBehaviorTreeComponent::IsRunMode()
 	return GetType() == EAnimalState::Run;
 }
 
+bool UCBehaviorTreeComponent::IsAvoidMode()
+{
+	return GetType() == EAnimalState::Avoid;
+}
+
 bool UCBehaviorTreeComponent::IsDetect()
 {
 	return GetType() == EAnimalState::Detect;
@@ -86,6 +91,11 @@ TObjectPtr<ACharacter> UCBehaviorTreeComponent::GetTarget()
 	}
 	return Cast<ACharacter>(Blackboard->GetValueAsObject(TargetKey));
 }
+
+FVector UCBehaviorTreeComponent::GetAvoidLocation()
+{
+	return Blackboard->GetValueAsVector(AvoidLocationKey);
+}
 #pragma endregion
 
 #pragma region SetState
@@ -102,6 +112,11 @@ void UCBehaviorTreeComponent::SetGuardMode()
 void UCBehaviorTreeComponent::SetRunMode()
 {
 	ChangeType(EAnimalState::Run);
+}
+
+void UCBehaviorTreeComponent::SetAvoidMode()
+{
+	ChangeType(EAnimalState::Avoid);
 }
 
 void UCBehaviorTreeComponent::SetDetectMode()

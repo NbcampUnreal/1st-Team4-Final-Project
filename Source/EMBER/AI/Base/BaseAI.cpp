@@ -13,6 +13,8 @@
 #include "Managers/EquipmentManagerComponent.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Item/Drop/LootTable.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 ABaseAI::ABaseAI()
 {
@@ -46,34 +48,89 @@ void ABaseAI::BeginPlay()
 float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
                           AActor* DamageCauser)
 {
-	if (!HasAuthority()) return 0;
+	if (StatusComponent->GetHp() <= 0.0f)
+		return 0;
+	if (!HasAuthority()) 
+		return 0;
 	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
+	if(ActualDamage <= 0.0f)
+	{
+		UE_LOG(LogTemp, Error, L"Damage is 0");
+		return ActualDamage;
+	}
+//TODOS 작업
+	DamageData.Causer = DamageCauser;
+	DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
+	DamageData.Power = ActualDamage;
+	//FActionDamageEvent* event = (FActionDamageEvent*)&DamageEvent;
+	//if (event->DamageData->Montages != nullptr)
+	//	DamageData.Montage = event->DamageData->Montages;
+	//if (event->DamageData->PlayRate)
+	//	DamageData.PlayRate = event->DamageData->PlayRate;
 	AIState->SetHittdMode();
-	BehaviorTreeComponent->SetHittedMode();
-	if (AAIController* AIController = Cast<AAIController>(GetController()))
-	{
-		if (UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent())
-		{
-			// BlackboardComponent->SetValueAsBool("IsHit", true);
-			BehaviorTreeComponent->SetBlackboard_Object("TargetActor", DamageCauser);
-			if (!BlackboardComponent->GetValueAsBool("IsOriginLocationSet"))
-			{
-				BehaviorTreeComponent->SetBlackboard_Vector("OriginLocation",GetActorLocation());
-				BehaviorTreeComponent->SetBlackboard_Bool("IsOriginLocationSet", true);
-			}
-		}
-	}
+	MulticastHitted(ActualDamage, DamageEvent, EventInstigator, DamageCauser);
 	
-    LastDamageCauser = DamageCauser;
+	//BehaviorTreeComponent->SetHittedMode();
+	//if (AAIController* AIController = Cast<AAIController>(GetController()))
+	//{
+	//	if (UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent())
+	//	{
+	//		// BlackboardComponent->SetValueAsBool("IsHit", true);
+	//		BehaviorTreeComponent->SetBlackboard_Object("TargetActor", DamageCauser);
+	//		if (!BlackboardComponent->GetValueAsBool("IsOriginLocationSet"))
+	//		{
+	//			BehaviorTreeComponent->SetBlackboard_Vector("OriginLocation",GetActorLocation());
+	//			BehaviorTreeComponent->SetBlackboard_Bool("IsOriginLocationSet", true);
+	//		}
+	//	}
+	//}
 
-	if (ActualDamage > 0 && !bIsDie)
-	{
-		CurrentHP -= ActualDamage;
-		if (CurrentHP <= 0.f) OnDeath();
-	}
+   LastDamageCauser = DamageCauser;
+
+	// if (ActualDamage > 0 && !bIsDie)
+	// {
+	// 	CurrentHP -= ActualDamage;
+	// 	if (CurrentHP <= 0.f) OnDeath();
+	// }
 
 	return ActualDamage;
+}
+
+void ABaseAI::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ABaseAI, DamageData);
+}
+
+void ABaseAI::MulticastHitted_Implementation(float Damage, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	StatusComponent->Damage(DamageData.Power);
+	if (StatusComponent->GetHp() <= 0.0f)
+	{
+		OnDeath();
+		return;
+	}
+	MontageComponent.Get()->PlayMontage(EStateType::Hitted);
+	if (HasAuthority() == true)
+	{
+		UE_LOG(LogTemp, Error, L"server hp %f", StatusComponent->GetHp());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, L"hp %f", StatusComponent->GetHp());
+	}
+
+	if (DamageData.Character != nullptr)
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
+
+}
+
+void ABaseAI::OnRep_Hitted()
+{
+	if (DamageData.Character != nullptr)
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
 }
 
 void ABaseAI::OnAttack()
@@ -142,11 +199,12 @@ void ABaseAI::OnDeath()
 		GetController()->StopMovement();
 	}
 
-	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
-	{
-		// SetWalkSpeed();
-		AnimInstance->StopAllMontages(0.0f);
-	}
+	MontageComponent->PlayMontage(EStateType::Dead);
+	//if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
+	//{
+	//	// SetWalkSpeed();
+	//	AnimInstance->StopAllMontages(0.0f);
+	//}
 	DetachFromControllerPendingDestroy();
 }
 

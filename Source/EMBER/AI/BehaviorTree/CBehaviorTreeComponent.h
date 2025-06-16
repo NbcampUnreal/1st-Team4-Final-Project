@@ -13,6 +13,7 @@ enum class EAnimalState : uint8
 	Guard UMETA(DisplayName = "Guard"),//���
 	Detect UMETA(DisplayName = "Detect"),
 	Run UMETA(DisplayName = "Running"),//����
+	Avoid UMETA(DisplayName = "Avoid"),
 	Patrol UMETA(DisplayName = "Patrol"),
 	Chase UMETA(DisplayName = "Chase"),
 	Attack UMETA(DisplayName = "Attack"),
@@ -44,6 +45,7 @@ public:
 	bool IsWaitMode();
 	bool IsGuardMode();
 	bool IsRunMode();
+	bool IsAvoidMode();
 	bool IsDetect();
 	bool IsFlyingMode();
 	bool IsPatrolMode();
@@ -55,12 +57,14 @@ public:
 public:
 	TObjectPtr<ACharacter> GetTarget();
 
+	FVector GetAvoidLocation();
 	FVector GetPatrolLocation();
 	void SetPatrolLocation(const FVector& InLocation);
 
 	void SetIdleMode();
 	void SetGuardMode();
 	void SetRunMode();
+	void SetAvoidMode();
 	void SetDetectMode();
 	void SetFlyingMode();
 	void SetPatrolMode();
@@ -88,6 +92,8 @@ private:
 	FName TargetKey = "TargetActor";
 	UPROPERTY(EditAnywhere, Category = "Key")
 	FName PatrolLocationKey = "Patrol_Location";
+	UPROPERTY(EditAnywhere, Category = "Key")
+	FName AvoidLocationKey = "Avoid_Location";
 
 private:
 	TObjectPtr<UBlackboardComponent> Blackboard;

@@ -21,6 +21,7 @@ enum class ECheatEntryType : uint8
 	Tool,
 	Armor,
 	Utility,
+	Crafting,
 	Animation
 };
 

@@ -40,3 +40,4 @@ void UBTT_FlyMoveTo::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResul
 	BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 }
+

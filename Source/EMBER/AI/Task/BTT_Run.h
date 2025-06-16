@@ -22,4 +22,5 @@ public:
 	UBehaviorTreeComponent* OwnerCompRef;
 	ABaseAI* ControlledAnimal;
 	UBlackboardComponent* BlackboardComponent;
+	TObjectPtr<UCBehaviorTreeComponent> BehaviorComp;
 };

@@ -13,10 +13,12 @@ UCLASS()
 class EMBER_API UBTT_Guard : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-	
+
+	UBTT_Guard();
+
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	void ActorRotateUpdate();
 
-	UBehaviorTreeComponent *Owner;
+	UBehaviorTreeComponent* Owner;
 	FTimerHandle TimerHandle;
 };
