@@ -21,6 +21,12 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Movement_Sprint);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Movement_Jump);
 	
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickSlot_Weapon_Primary);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickSlot_Utility_Primary);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickSlot_Utility_Secondary);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickSlot_Utility_Tertiary);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickSlot_Utility_Quaternary);
+	
 	// Ability
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Interact);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Interact_Object);
@@ -33,6 +39,7 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Interact_Active);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Logging);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Mining);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ChangeEquip);
 	
 	// ItemAttribute
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemAttribute_BaseDamage);
@@ -43,6 +50,7 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_ActionHint);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Logging);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Mining);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_ChangeEquip);
 
 	// Gameplay Event
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_Begin);
@@ -50,5 +58,6 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_End);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Trace);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Reward_Item);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_ChangeEquip);
 	
 }

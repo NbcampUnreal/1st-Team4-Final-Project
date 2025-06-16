@@ -24,24 +24,27 @@ void FEquipmentEntry::Init(UItemInstance* InItemInstance, int32 InItemCount)
 	const UItemFragment_Equipable* EquippableFragment = InItemInstance->FindFragmentByClass<UItemFragment_Equipable>();
 	if (EquippableFragment == nullptr)
 		return;
-	
+
 	if (ItemInstance)
 	{
-		EquipmentManager->Unequip(EquipmentSlotType, InItemInstance);
+		EquipmentManager->Unequip(EquipmentSlotType);
 	}
 	
 	ItemInstance = InItemInstance;
 
+	if (InventoryEquipmentManager == nullptr)
+		return;
+	
 	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemInstance->GetItemTemplateID());
 	ItemCount = FMath::Clamp(InItemCount, 1, ItemTemplate.MaxStackCount);
 	
-	EEquipmentType FromEquipmentType = EquippableFragment->EquipmentType;
-	if (InventoryEquipmentManager->IsMatchingSlotType(FromEquipmentType, EquipmentSlotType))
+	if (InventoryEquipmentManager->IsSameEquipState(EquipmentSlotType, EquipmentManager->GetCurrentEquipState()))
 	{
 		EquipmentManager->Equip(EquipmentSlotType, ItemInstance);
 	}
 }
 
+PRAGMA_DISABLE_OPTIMIZATION
 UItemInstance* FEquipmentEntry::Reset()
 {
 	UEquipmentManagerComponent* EquipmentManager = InventoryEquipmentManager->GetEquipmentManager();
@@ -50,15 +53,21 @@ UItemInstance* FEquipmentEntry::Reset()
 
 	if (ItemInstance)
 	{
-		EquipmentManager->Unequip(EquipmentSlotType, ItemInstance);
+		EquipmentManager->Unequip(EquipmentSlotType);
 	}
 	
 	UItemInstance* RemovedItemInstance = ItemInstance;
 	ItemInstance = nullptr;
 	ItemCount = 0;
+
+	if (InventoryEquipmentManager->IsEquipmentSlotEmptyByEquipState(EquipmentManager->GetCurrentEquipState()))
+	{
+		EquipmentManager->ChangeEquipState(EEquipState::Unarmed);
+	}
 	
 	return RemovedItemInstance;
 }
+PRAGMA_ENABLE_OPTIMIZATION
 
 bool FEquipmentList::NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams)
 {
@@ -89,6 +98,16 @@ void FEquipmentList::PostReplicatedChange(const TArrayView<int32> ChangedIndices
 	}
 }
 
+void FEquipmentList::CustomMarkItemDirty(AActor* Owner, FEquipmentEntry& Entry)
+{
+	MarkItemDirty(Entry);
+	
+	if (Owner && Owner->IsNetMode(NM_ListenServer))
+	{
+		BroadcastChangedMessage(Entry.EquipmentSlotType, Entry.GetItemInstance(), Entry.GetItemCount());
+	}
+}
+
 void FEquipmentList::BroadcastChangedMessage(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance, int32 ItemCount)
 {
 	if (InventoryEquipmentManager->OnEquipmentEntryChanged.IsBound())
@@ -105,6 +124,8 @@ UInventoryEquipmentManagerComponent::UInventoryEquipmentManagerComponent(const F
 	bWantsInitializeComponent = true;
 	SetIsReplicatedByDefault(true);
 	bReplicateUsingRegisteredSubObjectList = true;
+
+	CurrentEquipState = EEquipState::Weapon_Primary;
 }
 
 void UInventoryEquipmentManagerComponent::InitializeComponent()
@@ -191,7 +212,7 @@ void UInventoryEquipmentManagerComponent::AddEquipment_Unsafe(EEquipmentSlotType
 		}
 	}
 	
-	EquipmentList.MarkItemDirty(Entry);
+	EquipmentList.CustomMarkItemDirty(GetOwner(), Entry);
 }
 
 UItemInstance* UInventoryEquipmentManagerComponent::RemoveEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, int32 ItemCount)
@@ -211,7 +232,7 @@ UItemInstance* UInventoryEquipmentManagerComponent::RemoveEquipment_Unsafe(EEqui
 		}
 	}
 
-	EquipmentList.MarkItemDirty(Entry);
+	EquipmentList.CustomMarkItemDirty(GetOwner(), Entry);
 	return ItemInstance;
 }
 
@@ -416,15 +437,19 @@ bool UInventoryEquipmentManagerComponent::IsMatchingSlotType(const UItemFragment
 		
 		const UItemFragment_Equipable_Weapon* FromWeaponFragment = Cast<UItemFragment_Equipable_Weapon>(FromEquippableFragment);
 		EWeaponHandType FromWeaponHandType = FromWeaponFragment->WeaponHandType;
-			
-		if (FromWeaponHandType == EWeaponHandType::OneHand)
+
+		if (IsSameWeaponHandType(ToEquipmentSlotType, FromWeaponHandType) == false)
 		{
-			return GetItemInstance(EEquipmentSlotType::Primary_TwoHand) == nullptr;
+			return false;
 		}
+
 		if (FromWeaponHandType == EWeaponHandType::TwoHand)
 		{
-			return GetItemInstance(EEquipmentSlotType::Primary_LeftHand) == nullptr;
+			return GetItemInstance(EEquipmentSlotType::Primary_LeftHand) == nullptr
+				|| GetItemInstance(EEquipmentSlotType::Primary_RightHand) == nullptr;
 		}
+
+		return true;
 	}
 	else if (FromEquippableFragment->EquipmentType == EEquipmentType::Armor)
 	{
@@ -458,9 +483,76 @@ bool UInventoryEquipmentManagerComponent::IsSlotEquipped(EEquipmentSlotType Equi
 	return Entry.GetItemInstance() != nullptr;
 }
 
+bool UInventoryEquipmentManagerComponent::IsSameEquipState(EEquipmentSlotType EquipmentSlotType, EEquipState WeaponEquipState) const
+{
+	if (WeaponEquipState == EEquipState::Unarmed)
+		return EquipmentSlotType == EEquipmentSlotType::Unarmed_LeftHand || EquipmentSlotType == EEquipmentSlotType::Unarmed_RightHand;
+	if (WeaponEquipState == EEquipState::Weapon_Primary)
+		return EquipmentSlotType == EEquipmentSlotType::Primary_LeftHand || EquipmentSlotType == EEquipmentSlotType::Primary_RightHand || EquipmentSlotType == EEquipmentSlotType::Primary_TwoHand;
+	if (WeaponEquipState == EEquipState::Utility_Primary)
+		return EquipmentSlotType == EEquipmentSlotType::Utility_Primary;
+	if (WeaponEquipState == EEquipState::Utility_Secondary)
+		return EquipmentSlotType == EEquipmentSlotType::Utility_Secondary;
+	if (WeaponEquipState == EEquipState::Utility_Tertiary)
+		return EquipmentSlotType == EEquipmentSlotType::Utility_Tertiary;
+	if (WeaponEquipState == EEquipState::Utility_Quaternary)
+		return EquipmentSlotType == EEquipmentSlotType::Utility_Quaternary;
+
+	return false;
+}
+
+bool UInventoryEquipmentManagerComponent::IsSameWeaponHandType(EEquipmentSlotType EquipmentSlotType, EWeaponHandType WeaponHandType) const
+{
+	if (WeaponHandType == EWeaponHandType::LeftHand)
+		return EquipmentSlotType == EEquipmentSlotType::Primary_LeftHand;
+	if (WeaponHandType == EWeaponHandType::RightHand)
+		return EquipmentSlotType == EEquipmentSlotType::Primary_RightHand;
+	if (WeaponHandType == EWeaponHandType::TwoHand)
+		return EquipmentSlotType == EEquipmentSlotType::Primary_TwoHand;
+
+	return false;
+}
+
 bool UInventoryEquipmentManagerComponent::IsSameComponent(const UInventoryEquipmentManagerComponent* OtherComponent) const
 {
 	return this == OtherComponent;
+}
+
+bool UInventoryEquipmentManagerComponent::IsEquipmentSlotEmptyByEquipState(EEquipState EquipState)
+{
+	if (EquipState == EEquipState::Count)
+		return true;
+
+	if (EquipState == EEquipState::Unarmed)
+		return false;
+
+	bool bAllEmpty = true;
+	for (EEquipmentSlotType SlotType : UEquipmentManagerComponent::GetEquipmentSlotsByEquipState(EquipState))
+	{
+		const FEquipmentEntry& Entry = EquipmentList.Entries[(int32)SlotType];
+		if (Entry.ItemInstance)
+		{
+			bAllEmpty = false;
+			break;
+		}
+	}
+
+	return bAllEmpty;
+}
+
+EUtilitySlotType UInventoryEquipmentManagerComponent::ConvertToUtilitySlotType(EEquipmentSlotType EquipmentSlotType)
+{
+	EUtilitySlotType UtilitySlotType = EUtilitySlotType::Count;
+
+	switch (EquipmentSlotType)
+	{
+	case EEquipmentSlotType::Utility_Primary:		UtilitySlotType = EUtilitySlotType::Primary;	break;
+	case EEquipmentSlotType::Utility_Secondary:		UtilitySlotType = EUtilitySlotType::Secondary;	break;
+	case EEquipmentSlotType::Utility_Tertiary:		UtilitySlotType = EUtilitySlotType::Tertiary;	break;
+	case EEquipmentSlotType::Utility_Quaternary:	UtilitySlotType = EUtilitySlotType::Quaternary;	break;
+	}
+
+	return UtilitySlotType;
 }
 
 UEquipmentManagerComponent* UInventoryEquipmentManagerComponent::GetEquipmentManager() const

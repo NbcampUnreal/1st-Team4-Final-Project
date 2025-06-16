@@ -3,6 +3,7 @@
 
 #include "EquipmentBase.h"
 
+#include "EmberPlayerCharacter.h"
 #include "MontageSystemComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
@@ -10,6 +11,7 @@
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Character.h"
 #include "Managers/EquipmentManagerComponent.h"
+#include "System/AbilitySystem/EmberAbilitySystemComponent.h"
 #include "UI/Data/EmberItemData.h"
 
 AEquipmentBase::AEquipmentBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -37,10 +39,39 @@ AEquipmentBase::AEquipmentBase(const FObjectInitializer& ObjectInitializer) : Su
 	TraceDebugCollision->PrimaryComponentTick.bStartWithTickEnabled = false;
 }
 
+void AEquipmentBase::Destroyed()
+{
+	Super::Destroyed();
+
+	if (AEmberPlayerCharacter* EmberCharacter = Cast<AEmberPlayerCharacter>(GetOwner()))
+	{
+		if (UEquipmentManagerComponent* EquipmentManager = EmberCharacter->FindComponentByClass<UEquipmentManagerComponent>())
+		{
+			TArray<FEquipEntry>& Entries = EquipmentManager->GetAllEntries();
+			if (Entries[(int32)EquipmentSlotType].GetEquipmentActor() == this)
+			{
+				Entries[(int32)EquipmentSlotType].SetEquipmentActor(nullptr);
+			}
+		}
+	}
+	
+	Super::Destroyed();
+}
+
 void AEquipmentBase::Init(int32 InTemplateID, EEquipmentSlotType InEquipmentSlotType)
 {
 	ItemTemplateID = InTemplateID;
 	EquipmentSlotType = InEquipmentSlotType;
+}
+
+void AEquipmentBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (HasAuthority())
+	{
+		OnRep_EquipmentSlotType();
+	}
 }
 
 void AEquipmentBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -101,18 +132,20 @@ void AEquipmentBase::HandleReplicatedEquipment()
 	if (ItemTemplateID <= 0 || EquipmentSlotType == EEquipmentSlotType::Count)
 		return;
 
-	if (GetOwner() &&
-		(EquipmentSlotType == EEquipmentSlotType::Primary_LeftHand ||
-		EquipmentSlotType == EEquipmentSlotType::Primary_RightHand ||
-		EquipmentSlotType == EEquipmentSlotType::Primary_TwoHand))
+	if (GetOwner())
 	{
-		if (UEquipmentManagerComponent* EquipManager = GetOwner()->FindComponentByClass<UEquipmentManagerComponent>())
+		if (UEquipmentManagerComponent* EquipmentManager = GetOwner()->FindComponentByClass<UEquipmentManagerComponent>())
 		{
-			EquipManager->SetEquipmentActor(this);
+			if (EquipmentManager->GetEquippedItemInstance(EquipmentSlotType))
+			{
+				EquipmentManager->SetEquipmentActor(EquipmentSlotType, this);
+
+				ProcessEquip();
+				bInitialized = true;
+				return;
+			}
 		}
 	}
-	
-	ProcessEquip();
-	
-	bInitialized = true;
+		
+	GetWorldTimerManager().SetTimerForNextTick(this, &ThisClass::HandleReplicatedEquipment);
 }

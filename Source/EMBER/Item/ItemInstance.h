@@ -43,6 +43,9 @@ public:
 
 	UFUNCTION()
 	int32 GetItemCount() const { return ItemCount; }
+
+	UFUNCTION()
+	int32 GetStatCountByTag(FGameplayTag StatTag) const;
 	
 	UFUNCTION()
 	const FGameplayTagStackContainer& GetAttributeContainer() const { return AttributeContainer; }

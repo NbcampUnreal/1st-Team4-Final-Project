@@ -17,14 +17,14 @@ public:
 
 public:
 	template<class UserObject,typename CallbackFunc>
-	void BindNativeInputAction(const UEmberInputConfig* InInputConfig,const FGameplayTag& InInputTag,ETriggerEvent TriggerEvent,UserObject* ContextObject,CallbackFunc Func);
+	void BindNativeAction(const UEmberInputConfig* InInputConfig,const FGameplayTag& InInputTag,ETriggerEvent TriggerEvent,UserObject* ContextObject,CallbackFunc Func);
 
 	template<class UserClass, typename StartedFuncType, typename PressedFuncType, typename ReleasedFuncType>
 	void BindAbilityActions(const UEmberInputConfig* InputConfig, UserClass* Object, StartedFuncType StartedFunc, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, TArray<uint32>& BindHandles);
 };
 
 template<class UserObject, typename CallbackFunc>
-void UEmberEnhancedInputComponent::BindNativeInputAction(const UEmberInputConfig* InputConfig, const FGameplayTag& InputTag, ETriggerEvent TriggerEvent, UserObject* ContextObject, CallbackFunc Func)
+void UEmberEnhancedInputComponent::BindNativeAction(const UEmberInputConfig* InputConfig, const FGameplayTag& InputTag, ETriggerEvent TriggerEvent, UserObject* ContextObject, CallbackFunc Func)
 {
 	check(InputConfig);
 	if (const UInputAction* IA = InputConfig->FindNativeInputActionForTag(InputTag))

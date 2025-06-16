@@ -54,6 +54,7 @@ public:
 	void RemoveStack(FGameplayTag Tag, int32 StackCount);
 
 public:
+	int32 GetStackCount(FGameplayTag Tag) const;
 	const TArray<FEmberGameplayTagStack>& GetStacks() const { return Stacks; }
 	
 private:
