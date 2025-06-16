@@ -96,8 +96,9 @@ void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimul
 	{
 		Actors.RemoveSingle(Actor);
 		UE_LOG(LogTemp, Warning, TEXT("Actors.Num(): %d"), Actors.Num());
-		if (Actors.Num() == 0 && !Behavior->IsHittedMode())
+		if (Actors.Num() == 0 && !Behavior->IsRunMode()&& !Behavior->IsHittedMode())
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Perception: Target Lost"), Actors.Num());
 			Behavior->SetIdleMode();
 			Blackboard->SetValueAsObject("TargetActor", nullptr);
 			return;

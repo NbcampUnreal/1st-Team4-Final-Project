@@ -117,7 +117,7 @@ void UAnimNotifyState_PerformTrace::PerformTrace(USkeletalMeshComponent* MeshCom
 #if UE_EDITOR
 		if (GIsEditor)
 		{
-			if (false && TraceDebugParams.bDrawDebugShape)
+			if (true && TraceDebugParams.bDrawDebugShape)
 			{
 				FColor Color = (HitResults.Num() > 0) ? TraceDebugParams.HitColor : TraceDebugParams.TraceColor;
 				

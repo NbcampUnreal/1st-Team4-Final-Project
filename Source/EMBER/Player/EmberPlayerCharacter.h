@@ -24,21 +24,7 @@ class UCharacterInputComponent;
 class UGameplayAbility;
 struct FInputActionValue;
 
-USTRUCT()
-struct FDamagesData
-{
-	GENERATED_BODY()
-	UPROPERTY()
-	float Power;
-	UPROPERTY()
-	class ACharacter* Character;
-	UPROPERTY()
-	class AActor* Causer;
-	UPROPERTY()
-	UAnimMontage* Montage;
-	UPROPERTY()
-	float PlayRate;
-};
+
 UCLASS()
 class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface
 {
