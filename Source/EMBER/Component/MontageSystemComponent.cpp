@@ -12,14 +12,37 @@ UMontageSystemComponent::UMontageSystemComponent()
 void UMontageSystemComponent::BeginPlay()
 {
     Super::BeginPlay();
-
-    if (AActor* Owner = GetOwner())
+    OwnerCharacter = Cast<ACharacter>(GetOwner());
+    if (OwnerCharacter == nullptr)
     {
-        MeshComp = Owner->FindComponentByClass<USkeletalMeshComponent>();
-        if (MeshComp)
+        UE_LOG(LogTemp, Error, L"Owner Character is null");
+        return;
+    }
+ 
+    MeshComp = OwnerCharacter->FindComponentByClass<USkeletalMeshComponent>();
+    if (MeshComp)
+    {
+        AnimInstance = MeshComp->GetAnimInstance();
+    }
+ 
+
+    TArray<FMontagesData*> datas;
+    if (DataTable == nullptr)
+    {
+        UE_LOG(LogTemp, Error, L"DataTable is null");
+        return;
+    }
+    DataTable->GetAllRows<FMontagesData>("", datas);
+    for (int32 i = 0; i < (int32)EStateType::Max; i++)
+    {
+        for (FMontagesData* data : datas)
         {
-            AnimInstance = MeshComp->GetAnimInstance();
-        }
+            if ((EStateType)i == data->Type)
+            {
+                Datas[i] = data;
+                continue;
+            }
+        }//for(data)
     }
 }
 
@@ -60,18 +83,51 @@ void UMontageSystemComponent::PlayMontage(UAnimMontage* Montage, float PlayRate,
         UE_LOG(LogTemp, Warning, TEXT("Montage is null!"));
         return;
     }
-
-    if (AActor* Owner = GetOwner())
+    
+    if (OwnerCharacter == nullptr)
     {
-        if (Owner->HasAuthority())
-        {
-            // 서버인 경우 바로 호출
-            MulticastPlayMontage(Montage, PlayRate, SectionName);
-        }
-        else
-        {
-            // 클라이언트인 경우 서버에 요청
-            ServerPlayMontage(Montage, PlayRate, SectionName);
-        }
+        UE_LOG(LogTemp, Error, L"Owner Character is null");
+        return;
+    }
+    
+    if (OwnerCharacter->HasAuthority())
+    {
+        // 서버인 경우 바로 호출
+        MulticastPlayMontage(Montage, PlayRate, SectionName);
+    }
+    else
+    {
+        // 클라이언트인 경우 서버에 요청
+        ServerPlayMontage(Montage, PlayRate, SectionName);
+    }
+
+}
+
+void UMontageSystemComponent::PlayMontage(EStateType InType)
+{
+    if (OwnerCharacter == nullptr)
+    {
+        UE_LOG(LogTemp, Error, L"Owner Character is null");
+        return;
+    }
+
+    FMontagesData* data = Datas[(int32)InType];
+
+    if (data == nullptr || data->Montage == nullptr)
+    {
+        GLog->Log(ELogVerbosity::Error, "None montages data");
+
+        return;
+    }
+    
+    if (OwnerCharacter->HasAuthority())
+    {
+        // 서버인 경우 바로 호출
+        MulticastPlayMontage(data->Montage, data->PlayRate);
+    }
+    else
+    {
+        // 클라이언트인 경우 서버에 요청
+        ServerPlayMontage(data->Montage,data->PlayRate);
     }
 }

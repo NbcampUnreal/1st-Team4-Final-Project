@@ -35,6 +35,8 @@ public:
 
 	ACAI_Weapon* GetDoAction();
 
+	void DestroyWeapon();
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TArray<TSubclassOf<ACAI_Weapon>> WeaponDatas;

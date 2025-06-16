@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameData.h"
 #include "System/AbilitySystem/Abilities/EmberGameplayAbility.h"
 #include "EmberGameplayAbility_MeleeAttack.generated.h"
 
@@ -38,4 +39,7 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="D1|Equipment")
 	float DefaultAttackRate = 1.f;
+
+private:
+	FDamageData HittedData; 
 };

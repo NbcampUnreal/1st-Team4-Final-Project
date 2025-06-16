@@ -9,6 +9,7 @@
 UBTT_Hitte::UBTT_Hitte()
 {
 	NodeName = L"Hitted";
+	bNotifyTick = true;
 }
 
 EBTNodeResult::Type UBTT_Hitte::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -52,4 +53,27 @@ EBTNodeResult::Type UBTT_Hitte::AbortTask(UBehaviorTreeComponent& OwnerComp, uin
 void UBTT_Hitte::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
+	ACAIController* controller = Cast<ACAIController>(OwnerComp.GetOwner());
+	if (controller == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"task Controller is null");
+		return;
+	}
+	ABaseAI* ai = Cast<ABaseAI>(controller->GetPawn());
+	if (ai == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"task ai is null");
+		return;
+	}
+	UC_StateComponent* state = Cast<UC_StateComponent>(ai->GetComponentByClass(UC_StateComponent::StaticClass()));
+	if (state == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"task state is null");
+		return;
+	}
+	if (state->IsHittdMode() == false)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		return;
+	}
 }
