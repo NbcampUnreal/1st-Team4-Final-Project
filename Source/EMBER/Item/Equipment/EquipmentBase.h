@@ -17,12 +17,14 @@ class EMBER_API AEquipmentBase : public AActor
 	
 public:
 	AEquipmentBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
+	
 public:
 	void Init(int32 InTemplateID, EEquipmentSlotType InEquipmentSlotType);
 	
 protected:
 	//~AActor Overrides
+	virtual void BeginPlay() override;
+	virtual void Destroyed() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	//~End of Overrides
 
