@@ -28,6 +28,10 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	//~End of Overrides
 
+public:
+	int32 GetItemTemplateID() const { return ItemTemplateID; }
+	EEquipmentSlotType GetEquipmentSlotType() const { return EquipmentSlotType; }
+	
 private:
 	void ProcessEquip();
 	

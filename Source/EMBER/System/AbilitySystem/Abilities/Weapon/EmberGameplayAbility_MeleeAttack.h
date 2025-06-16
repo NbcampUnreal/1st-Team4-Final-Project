@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "GameData.h"
+#include "GameplayAbility_Equipment.h"
 #include "System/AbilitySystem/Abilities/EmberGameplayAbility.h"
 #include "EmberGameplayAbility_MeleeAttack.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class EMBER_API UEmberGameplayAbility_MeleeAttack : public UEmberGameplayAbility
+class EMBER_API UEmberGameplayAbility_MeleeAttack : public UGameplayAbility_Equipment
 {
 	GENERATED_BODY()
 
