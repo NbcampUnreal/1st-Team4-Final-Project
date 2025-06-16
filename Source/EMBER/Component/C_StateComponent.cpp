@@ -10,7 +10,8 @@ void UC_StateComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UC_StateComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UC_StateComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                      FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
@@ -40,6 +41,11 @@ bool UC_StateComponent::IsDeadMode() const
 	return CurrentStateType == EStateType::Dead;
 }
 
+bool UC_StateComponent::IsDetectMode() const
+{
+	return CurrentStateType == EStateType::Detect;
+}
+
 void UC_StateComponent::SetIdleMode()
 {
 	CurrentStateType = EStateType::Idle;
@@ -65,6 +71,11 @@ void UC_StateComponent::SetDeadMode()
 	CurrentStateType = EStateType::Dead;
 }
 
+void UC_StateComponent::SetDetectMode()
+{
+	CurrentStateType = EStateType::Detect;
+}
+
 void UC_StateComponent::ChangeType(EStateType InType)
 {
 	EStateType prevType = CurrentStateType;
@@ -74,4 +85,3 @@ void UC_StateComponent::ChangeType(EStateType InType)
 	if (OnStateTypeChanged.IsBound())
 		OnStateTypeChanged.Broadcast(prevType, CurrentStateType);
 }
-
