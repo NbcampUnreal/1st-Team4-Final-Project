@@ -17,6 +17,8 @@ public:
 	// void UpdateClosestActorTimer();
 	//	virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
 
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void OnDeath() override;
 	TArray<AActor*> EnemyActors;
 	AActor* ClosestActor;

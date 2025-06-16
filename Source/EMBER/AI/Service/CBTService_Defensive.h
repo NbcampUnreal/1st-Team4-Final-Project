@@ -21,4 +21,7 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Debug")
 	bool bDrawDebug;
+
+private:
+	bool bisHit;
 };

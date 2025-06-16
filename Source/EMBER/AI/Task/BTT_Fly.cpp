@@ -1,4 +1,4 @@
-﻿#include "BTT_Fly.h"
+#include "BTT_Fly.h"
 #include "AI/Base/BaseAI.h"
 #include "CAIController.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
