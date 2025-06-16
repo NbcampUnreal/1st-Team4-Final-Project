@@ -55,6 +55,7 @@ public:
 	bool IsDeadMode();
 
 public:
+	void SetTarget(TObjectPtr<ACharacter> Target);
 	TObjectPtr<ACharacter> GetTarget();
 
 	FVector GetAvoidLocation();
