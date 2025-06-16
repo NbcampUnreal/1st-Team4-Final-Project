@@ -76,3 +76,8 @@ void FGameplayTagStackContainer::RemoveStack(FGameplayTag Tag, int32 StackCount)
 		}
 	}
 }
+
+int32 FGameplayTagStackContainer::GetStackCount(FGameplayTag Tag) const
+{
+	return TagToCountMap.FindRef(Tag);
+}

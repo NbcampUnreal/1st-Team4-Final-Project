@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFlag.h"
 #include "GameplayTagContainer.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "AnimNotifyState_PerformTrace.generated.h"
@@ -58,6 +59,9 @@ private:
 
 
 public:
+	UPROPERTY(EditAnywhere)
+	EWeaponHandType WeaponHandType = EWeaponHandType::RightHand;
+	
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<ENetRole> ExecuteNetRole = ROLE_Authority;
 
