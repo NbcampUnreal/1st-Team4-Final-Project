@@ -12,6 +12,7 @@ class UStaticMeshComponent;
 class USphereComponent;
 class UCraftingWidget;
 class AEmberPlayerCharacter;
+class UAnimMontage;
 
 UCLASS()
 class EMBER_API ACraftingBuilding : public AActor
@@ -33,6 +34,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "Crafting UI")
     TSubclassOf<UCraftingWidget> CraftingWidgetClass;
+    
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Crafting")
+    TObjectPtr<UAnimMontage> CraftingAnimation;
 
 public:    
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
@@ -43,6 +47,9 @@ public:
 
     UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Crafting")
     void Server_ExecuteCrafting(FName RecipeRowName, const TArray<FGameplayTag>& SelectedMainIngredientTags, const TArray<int32>& SelectedMainIngredientQuantities, AEmberPlayerCharacter* RequestingPlayer);
+
+    UFUNCTION(BlueprintPure, Category = "Crafting")
+    UAnimMontage* GetCraftingAnimation() const { return CraftingAnimation; }
 
 private:
     UFUNCTION()

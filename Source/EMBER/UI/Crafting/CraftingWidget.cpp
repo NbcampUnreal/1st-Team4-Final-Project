@@ -15,6 +15,8 @@
 #include "Components/WidgetSwitcher.h"
 #include "Components/PanelWidget.h"
 #include "Components/Border.h"
+#include "Item/Crafting/CraftingBuilding.h"
+#include "Component/MontageSystemComponent.h"
 
 UCraftingWidget::UCraftingWidget(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -241,6 +243,17 @@ void UCraftingWidget::AttemptCraftCurrentRecipe()
     AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn());
     UCraftingSystem* Sys = Player ? Player->FindComponentByClass<UCraftingSystem>() : nullptr;
     if (!Sys || !Player) return;
+    
+    if (CurrentStationActorRef)
+    {
+        if (UAnimMontage* StationAnimation = CurrentStationActorRef->GetCraftingAnimation())
+        {
+            if (UMontageSystemComponent* MontageComp = Player->FindComponentByClass<UMontageSystemComponent>())
+            {
+                MontageComp->PlayMontage(StationAnimation);
+            }
+        }
+    }
 
     const FNamedCraftingRecipe& NamedRecipe = ActiveRecipeList[SelectedRecipeIndex];
     TMap<FGameplayTag,int32> MainToUse;
