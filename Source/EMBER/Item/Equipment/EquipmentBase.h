@@ -14,7 +14,7 @@ UCLASS(Abstract, BlueprintType)
 class EMBER_API AEquipmentBase : public AActor
 {
 	GENERATED_BODY()
-
+	
 public:
 	AEquipmentBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 

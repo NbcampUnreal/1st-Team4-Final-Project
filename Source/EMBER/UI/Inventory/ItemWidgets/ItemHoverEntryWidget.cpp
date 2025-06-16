@@ -123,7 +123,7 @@ void UItemHoverEntryWidget::RefreshUI(const UItemInstance* ItemInstance)
 			FText UtilityTypeText;
 			switch (UtilityFragment->UtilityType)
 			{
-			case EUtilityType::Drink:		UtilityTypeText = LOCTEXT("UtilityType-Drink",			"Drink");			break;
+			case EUtilityType::Consumable:		UtilityTypeText = LOCTEXT("UtilityType-Drink",			"Drink");			break;
 			case EUtilityType::LightSource: UtilityTypeText = LOCTEXT("UtilityType-LightSource",	"Light Source");	break;
 			}
 			Text_ItemType->SetText(UtilityTypeText);

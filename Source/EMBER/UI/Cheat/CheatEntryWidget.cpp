@@ -36,6 +36,7 @@ void UCheatEntryWidget::InitializeUI(ECheatEntryType InCheatEntryType, TSubclass
 	case ECheatEntryType::SecondaryWeapon:
 	case ECheatEntryType::Armor:
 	case ECheatEntryType::Utility:
+	case ECheatEntryType::Crafting:
 		ItemTemplateClass = InItemTemplateClass;
 		if (ItemTemplateClass)
 		{

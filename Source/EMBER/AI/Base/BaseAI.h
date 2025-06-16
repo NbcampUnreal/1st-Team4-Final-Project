@@ -58,7 +58,10 @@ public:
 	//
 	// UFUNCTION(BlueprintCallable, Category = "AI|Movement")
 	// virtual void SetFlySpeed();
+public:
+	void Hitted();
 
+	
 protected:
 	// AI 기본 정보	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
