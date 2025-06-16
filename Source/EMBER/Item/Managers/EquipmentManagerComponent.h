@@ -137,7 +137,8 @@ protected:
 
 public:
 	static EEquipState ConvertToEquipState(EUtilitySlotType UtilitySlotType);
-	
+	static EEquipmentSlotType ConvertToEquipmentSlotType(EWeaponHandType WeaponHandType, EEquipState EquipState);
+
 /* EquipState */
 public:
 	void EquipByQuickSlot(EEquipState NewEquipState);
@@ -155,6 +156,7 @@ public:
 	void SetEquipmentActor(EEquipmentSlotType EquipmentSlotType, AEquipmentBase* InEquipmentActor);
 
 	AEquipmentBase* GetHandEquipment() const;
+	AEquipmentBase* GetEquippedActor(EWeaponHandType WeaponHandType) const;
 	UInventoryEquipmentManagerComponent* GetInventoryEquipmentManager() const;
 	UItemInstance* GetEquippedItemInstance(EEquipmentSlotType EquipmentSlotType) const;
 

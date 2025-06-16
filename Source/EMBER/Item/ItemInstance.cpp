@@ -49,6 +49,11 @@ void UItemInstance::AddOrRemoveStatTagStack(FGameplayTag StatTag, int32 StackCou
 	AttributeContainer.AddOrRemoveStack(StatTag, StackCount);
 }
 
+int32 UItemInstance::GetStatCountByTag(FGameplayTag StatTag) const
+{
+	return AttributeContainer.GetStackCount(StatTag);
+}
+
 const UItemFragment* UItemInstance::FindFragmentByClass(TSubclassOf<UItemFragment> FragmentClass) const
 {
 	if (ItemTemplateID > INDEX_NONE && FragmentClass)

@@ -394,7 +394,17 @@ void UEquipmentManagerComponent::Unequip(EEquipmentSlotType EquipmentSlotType)
 AEquipmentBase* UEquipmentManagerComponent::GetHandEquipment() const
 {
 	// TODO : 향후 수정 코드
-	return EquipList.Entries[(int32)EEquipmentSlotType::Primary_LeftHand].GetEquipmentActor();
+	return EquipList.Entries[(int32)EEquipmentSlotType::Primary_RightHand].GetEquipmentActor();
+}
+
+AEquipmentBase* UEquipmentManagerComponent::GetEquippedActor(EWeaponHandType WeaponHandType) const
+{
+	if (WeaponHandType == EWeaponHandType::Count)
+		return nullptr;
+	
+	const TArray<FEquipEntry>& Entries = EquipList.Entries;
+	const int32 EntryIndex = (int32)ConvertToEquipmentSlotType(WeaponHandType, CurrentEquipState);
+	return Entries.IsValidIndex(EntryIndex) ? Entries[EntryIndex].GetEquipmentActor() : nullptr;
 }
 
 void UEquipmentManagerComponent::Equip_Armor(UItemInstance* ItemInstance)
@@ -428,6 +438,47 @@ EEquipState UEquipmentManagerComponent::ConvertToEquipState(EUtilitySlotType Uti
 	}
 
 	return EquipState;
+}
+
+EEquipmentSlotType UEquipmentManagerComponent::ConvertToEquipmentSlotType(EWeaponHandType WeaponHandType, EEquipState EquipState)
+{
+	EEquipmentSlotType EquipmentSlotType = EEquipmentSlotType::Count;
+
+	if (EquipState == EEquipState::Unarmed)
+	{
+		switch (WeaponHandType)
+		{
+		case EWeaponHandType::LeftHand:  EquipmentSlotType = EEquipmentSlotType::Unarmed_LeftHand;  break;
+		case EWeaponHandType::RightHand: EquipmentSlotType = EEquipmentSlotType::Unarmed_RightHand; break;
+		}
+	}
+	else if (EquipState == EEquipState::Weapon_Primary)
+	{
+		switch (WeaponHandType)
+		{
+		case EWeaponHandType::LeftHand:  EquipmentSlotType = EEquipmentSlotType::Primary_LeftHand;  break;
+		case EWeaponHandType::RightHand: EquipmentSlotType = EEquipmentSlotType::Primary_RightHand; break;
+		case EWeaponHandType::TwoHand:   EquipmentSlotType = EEquipmentSlotType::Primary_TwoHand;   break;
+		}
+	}
+	else if (EquipState == EEquipState::Utility_Primary)
+	{
+		EquipmentSlotType = EEquipmentSlotType::Utility_Primary;
+	}
+	else if (EquipState == EEquipState::Utility_Secondary)
+	{
+		EquipmentSlotType = EEquipmentSlotType::Utility_Secondary;
+	}
+	else if (EquipState == EEquipState::Utility_Tertiary)
+	{
+		EquipmentSlotType = EEquipmentSlotType::Utility_Tertiary;
+	}
+	else if (EquipState == EEquipState::Utility_Quaternary)
+	{
+		EquipmentSlotType = EEquipmentSlotType::Utility_Quaternary;
+	}
+	
+	return EquipmentSlotType;
 }
 
 void UEquipmentManagerComponent::EquipByQuickSlot(EEquipState NewEquipState)
@@ -634,7 +685,6 @@ UItemInstance* UEquipmentManagerComponent::GetEquippedItemInstance(EEquipmentSlo
 	const TArray<FEquipEntry>& Entries = EquipList.Entries;
 	const int32 EntryIndex = (int32)EquipmentSlotType;
 	return Entries.IsValidIndex(EntryIndex) ? Entries[EntryIndex].GetItemInstance() : nullptr;
-
 }
 
 FAttackData UEquipmentManagerComponent::GetAttackInfo() const
