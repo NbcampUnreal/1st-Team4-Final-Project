@@ -5,7 +5,7 @@
 #include "StatusComponent.generated.h"
 
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Custom),meta = (BlueprintSpawnableComponent))
 class EMBER_API UStatusComponent : public UActorComponent
 {
 	GENERATED_BODY()

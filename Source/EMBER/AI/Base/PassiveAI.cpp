@@ -1,7 +1,10 @@
 #include "AI/Base/PassiveAI.h"
+
+#include "CAIController.h"
 #include "C_StateComponent.h"
 #include "AI/AnimInstance/BaseAIAnimInstance.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 APassiveAI::APassiveAI()
 {
@@ -14,6 +17,39 @@ APassiveAI::APassiveAI()
 void APassiveAI::BeginPlay()
 {
 	ABaseAI::BeginPlay();
+}
+
+float APassiveAI::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+                             class AController* EventInstigator, AActor* DamageCauser)
+{
+	// UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance());
+	// ACAIController* AIController = Cast<ACAIController>(GetController());
+	// AActor* TargetActor = Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
+	//
+	// GetController()->StopMovement();
+	// AnimInstance->StopAllMontages(0.5f);
+	// AnimInstance->PlayStateMontage(EAnimActionType::HitFront);
+	
+	//  FVector MyLocation = GetActorLocation();
+	//  FVector TargetLocation = FVector(TargetActor->GetActorLocation());
+	//
+	//  FVector ForwardVector = GetActorForwardVector();
+	//  FVector ToTarget = (TargetLocation - MyLocation).GetSafeNormal();
+	//  FVector Cross = FVector::CrossProduct(ForwardVector, ToTarget);
+	//
+	// //플레이어가 왼쪽인지 오른쪽인지 판별
+	//  bool bDirection = (Cross.Z < 0);
+	// if (bDirection)
+	// {
+	// 	AnimInstance->PlayStateMontage(EAnimActionType::HitLeft);
+	// }
+	// else
+	// {
+	// 	AnimInstance->PlayStateMontage(EAnimActionType::HitRight);
+	// }
+	
+
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
 //void APassiveAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)

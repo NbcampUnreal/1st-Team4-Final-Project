@@ -5,7 +5,25 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Animation/AnimInstance.h"
+#include "GameInfo/GameFlag.h"
 #include "MontageSystemComponent.generated.h"
+
+USTRUCT()
+struct FMontagesData
+    : public FTableRowBase
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere)
+    EStateType Type;
+
+    UPROPERTY(EditAnywhere)
+    class UAnimMontage* Montage;
+
+    UPROPERTY(EditAnywhere)
+    float PlayRate = 1;
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class EMBER_API UMontageSystemComponent : public UActorComponent
@@ -27,6 +45,13 @@ private:
     USkeletalMeshComponent* MeshComp;
     UPROPERTY()
     UAnimInstance* AnimInstance;
+    UPROPERTY(EditAnywhere, Category = "DataTable")
+    UDataTable* DataTable;
+    
 public:
     void PlayMontage(UAnimMontage* Montage, float PlayRate = 1.f,FName SectionName = NAME_None);
+    void PlayMontage(EStateType InType);
+private:
+    FMontagesData* Datas[(int32)EStateType::Max];
+    ACharacter* OwnerCharacter;
 };

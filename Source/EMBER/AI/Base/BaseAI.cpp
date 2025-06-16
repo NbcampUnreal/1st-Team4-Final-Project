@@ -48,6 +48,8 @@ void ABaseAI::BeginPlay()
 float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
                           AActor* DamageCauser)
 {
+	if (StatusComponent->GetHp() <= 0.0f)
+		return 0;
 	if (!HasAuthority()) 
 		return 0;
 	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
@@ -57,17 +59,18 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 		UE_LOG(LogTemp, Error, L"Damage is 0");
 		return ActualDamage;
 	}
-
+//TODOS 작업
 	DamageData.Causer = DamageCauser;
 	DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
 	DamageData.Power = ActualDamage;
-	FActionDamageEvent* event = (FActionDamageEvent*)&DamageEvent;
-	DamageData.Montage = event->DamageData->Montages;
-	DamageData.PlayRate = event->DamageData->PlayRate;
+	//FActionDamageEvent* event = (FActionDamageEvent*)&DamageEvent;
+	//if (event->DamageData->Montages != nullptr)
+	//	DamageData.Montage = event->DamageData->Montages;
+	//if (event->DamageData->PlayRate)
+	//	DamageData.PlayRate = event->DamageData->PlayRate;
+	AIState->SetHittdMode();
 	MulticastHitted(ActualDamage, DamageEvent, EventInstigator, DamageCauser);
-
-
-	//AIState->SetHittdMode();
+	
 	//BehaviorTreeComponent->SetHittedMode();
 	//if (AAIController* AIController = Cast<AAIController>(GetController()))
 	//{
@@ -83,13 +86,13 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	//	}
 	//}
 
-   /* LastDamageCauser = DamageCauser;
+   LastDamageCauser = DamageCauser;
 
-	if (ActualDamage > 0 && !bIsDie)
-	{
-		CurrentHP -= ActualDamage;
-		if (CurrentHP <= 0.f) OnDeath();
-	}*/
+	// if (ActualDamage > 0 && !bIsDie)
+	// {
+	// 	CurrentHP -= ActualDamage;
+	// 	if (CurrentHP <= 0.f) OnDeath();
+	// }
 
 	return ActualDamage;
 }
@@ -103,8 +106,13 @@ void ABaseAI::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 void ABaseAI::MulticastHitted_Implementation(float Damage, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)
 {
-	MontageComponent->PlayMontage(DamageData.Montage, DamageData.PlayRate);
 	StatusComponent->Damage(DamageData.Power);
+	if (StatusComponent->GetHp() <= 0.0f)
+	{
+		OnDeath();
+		return;
+	}
+	MontageComponent.Get()->PlayMontage(EStateType::Hitted);
 	if (HasAuthority() == true)
 	{
 		UE_LOG(LogTemp, Error, L"server hp %f", StatusComponent->GetHp());
@@ -191,11 +199,12 @@ void ABaseAI::OnDeath()
 		GetController()->StopMovement();
 	}
 
-	if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
-	{
-		// SetWalkSpeed();
-		AnimInstance->StopAllMontages(0.0f);
-	}
+	MontageComponent->PlayMontage(EStateType::Dead);
+	//if (UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance()))
+	//{
+	//	// SetWalkSpeed();
+	//	AnimInstance->StopAllMontages(0.0f);
+	//}
 	DetachFromControllerPendingDestroy();
 }
 

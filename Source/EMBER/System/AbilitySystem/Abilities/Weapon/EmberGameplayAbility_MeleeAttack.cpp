@@ -8,6 +8,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Equipment/EquipmentBase.h"
+#include "GameFramework/SaveGame.h"
 #include "GameInfo/GameplayTags.h"
 #include "kismet/GameplayStatics.h"
 
@@ -73,14 +74,15 @@ void UEmberGameplayAbility_MeleeAttack::OnHitTarget(FGameplayEventData Payload)
 		FHitResult* HitResult = const_cast<FHitResult*>(TargetData->GetHitResult());
 		if (HitResult == nullptr)
 			continue;
-
+		//HittedData.Damage = BaseDamage;
+		//HittedData.SendDamage(GetEmberCharacterFromActorInfo(), WeaponActor, Cast<ACharacter>(HitResult->GetActor()));
 		UGameplayStatics::ApplyPointDamage(
 			HitResult->GetActor(),
 			BaseDamage,
 			HitResult->Location,
 			*HitResult,
-			Payload.Instigator ? Payload.Instigator->GetInstigatorController() : nullptr,
-			GetEmberCharacterFromActorInfo(),
+			GetEmberCharacterFromActorInfo()->GetInstigatorController(),
+			WeaponActor,
 			UDamageType::StaticClass()
 		);
 	}
