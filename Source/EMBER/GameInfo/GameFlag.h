@@ -99,7 +99,8 @@ enum class ECraftingType : uint8
 UENUM(BlueprintType)
 enum class EWeaponHandType : uint8
 {
-	OneHand,
+	LeftHand,
+	RightHand,
 	TwoHand,
 
 	Count	UMETA(Hidden)
@@ -108,6 +109,9 @@ enum class EWeaponHandType : uint8
 UENUM(BlueprintType)
 enum class EEquipmentSlotType : uint8
 {
+	Unarmed_LeftHand,
+	Unarmed_RightHand,
+	
 	Primary_LeftHand,
 	Primary_RightHand,
 	Primary_TwoHand,
@@ -166,7 +170,6 @@ UENUM(BlueprintType)
 enum class EWeaponSlotType : uint8
 {
 	Primary,
-	Secondary,
 
 	Count	UMETA(Hidden)
 };

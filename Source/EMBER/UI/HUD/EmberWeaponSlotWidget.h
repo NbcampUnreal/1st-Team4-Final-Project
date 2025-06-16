@@ -3,65 +3,77 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFlag.h"
 #include "Blueprint/UserWidget.h"
-#include "UtilitySlotWidget.generated.h"
+#include "Managers/EquipmentManagerComponent.h"
+#include "EmberWeaponSlotWidget.generated.h"
 
-enum class EUtilitySlotType : uint8;
-class UItemInstance;
-class UTextBlock;
+class UD1ItemTemplate;
 class UImage;
+class UOverlay;
+class UTextBlock;
+class UCommonVisibilitySwitcher;
 class UInventoryEquipmentManagerComponent;
-class UEquipmentManagerComponent;
 
 UCLASS()
-class EMBER_API UUtilitySlotWidget : public UUserWidget
+class EMBER_API UEmberWeaponSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	UUtilitySlotWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UEmberWeaponSlotWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
-	//~ UUSerWidget Overrides
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
-	//~ End of UUSerWidget Overrides
 
 private:
 	void OnEquipmentEntryChanged(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance, int32 ItemCount);
 	void OnEquipStateChanged(EEquipState PrevEquipState, EEquipState NewEquipState);
-
 	
 public:
 	UPROPERTY(EditAnywhere)
-	EUtilitySlotType WidgetUtilitySlotType = EUtilitySlotType::Count;
+	EWeaponSlotType WidgetWeaponSlotType = EWeaponSlotType::Count;
 	
 private:
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UTextBlock> Text_SlotNumber;
+	TObjectPtr<UCommonVisibilitySwitcher> Switcher_Slots;
 	
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UImage> Image_Highlight;
+	TObjectPtr<UTextBlock> Text_SlotNumber;
+
+private:
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UImage> Image_OneSlot;
+	
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UTextBlock> Text_OneSlot_Count;
 
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UImage> Image_Icon;
+	TObjectPtr<UImage> Image_TwoSlot_Left;
 
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UTextBlock> Text_Count;
+	TObjectPtr<UImage> Image_TwoSlot_Right;
 
+private:
 	UPROPERTY(meta=(BindWidgetAnim), Transient)
-	TObjectPtr<UWidgetAnimation> Animation_Highlight_In;
+	TObjectPtr<UWidgetAnimation> Animation_ExpandSlot;
+	
+	UPROPERTY(meta=(BindWidgetAnim), Transient)
+	TObjectPtr<UWidgetAnimation> Animation_ShowCrossLine;
 
 private:
 	UPROPERTY()
 	TObjectPtr<UInventoryEquipmentManagerComponent> InventoryEquipmentManager;
-	
+
 	UPROPERTY()
 	TObjectPtr<UEquipmentManagerComponent> EquipmentManager;
-
+	
 private:
 	FDelegateHandle EntryChangedDelegateHandle;
 	FDelegateHandle EquipStateChangedDelegateHandle;
+	
+private:
+	UPROPERTY()
+	TWeakObjectPtr<UItemInstance> WeaponItemInstance;
 };

@@ -124,11 +124,15 @@ public:
 	bool IsMatchingSlotType(EEquipmentType FromEquipmentType, EEquipmentSlotType ToEquipmentSlotType) const;
 	bool IsMatchingSlotType(const UItemFragment_Equipable* FromEquippableFragment, EEquipmentSlotType ToEquipmentSlotType) const;
 	bool IsSlotEquipped(EEquipmentSlotType EquipmentSlotType) const;
+
+	bool IsSameEquipState(EEquipmentSlotType EquipmentSlotType, EEquipState WeaponEquipState) const;
+	bool IsSameWeaponHandType(EEquipmentSlotType EquipmentSlotType, EWeaponHandType WeaponHandType) const;
 	bool IsSameComponent(const UInventoryEquipmentManagerComponent* OtherComponent) const;
+	
+	bool IsEquipmentSlotEmptyByEquipState(EEquipState EquipState);
 
 public:
 	static EUtilitySlotType ConvertToUtilitySlotType(EEquipmentSlotType EquipmentSlotType);
-	
 public:
 	UEquipmentManagerComponent* GetEquipmentManager() const;
 	
@@ -145,4 +149,6 @@ public:
 private:
 	UPROPERTY(Replicated)
 	FEquipmentList EquipmentList;
+
+	EEquipState CurrentEquipState; 
 };

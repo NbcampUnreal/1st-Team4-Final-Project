@@ -8,7 +8,6 @@
 #include "ItemTemplate.h"
 #include "ItemInstance.h"
 #include "Engine/ActorChannel.h"
-#include "Iris/ReplicationState/ReplicationStateUtil.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/Data/EmberItemData.h"
 

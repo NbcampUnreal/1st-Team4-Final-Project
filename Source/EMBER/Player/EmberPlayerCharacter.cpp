@@ -189,11 +189,11 @@ void AEmberPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
     UEmberEnhancedInputComponent* WarriorInputComponent = CastChecked<UEmberEnhancedInputComponent>(PlayerInputComponent);
 
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Move,ETriggerEvent::Triggered,this,&ThisClass::Move);
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Look,ETriggerEvent::Triggered,this,&ThisClass::Look);
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Jump, ETriggerEvent::Triggered, this, &ThisClass::Jump);
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Triggered, this, &ThisClass::StartSprint);
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
+    WarriorInputComponent->BindNativeAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Move,ETriggerEvent::Triggered,this,&ThisClass::Move);
+    WarriorInputComponent->BindNativeAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Look,ETriggerEvent::Triggered,this,&ThisClass::Look);
+    WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Jump, ETriggerEvent::Triggered, this, &ThisClass::Jump);
+    WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Triggered, this, &ThisClass::StartSprint);
+    WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
 }
 
 UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() const

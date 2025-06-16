@@ -19,7 +19,7 @@ void UUtilitySlotWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	FText SlotNumber = FText::AsNumber((int32)WidgetUtilitySlotType + 1);
+	FText SlotNumber = FText::AsNumber((int32)EWeaponSlotType::Count + (int32)WidgetUtilitySlotType + 1);
 	Text_SlotNumber->SetText(SlotNumber);
 }
 
@@ -47,7 +47,10 @@ void UUtilitySlotWidget::NativeConstruct()
 	}
 
 	EntryChangedDelegateHandle = InventoryEquipmentManager->OnEquipmentEntryChanged.AddUObject(this, &ThisClass::OnEquipmentEntryChanged);
+
 	EEquipState CurrentEquipState = EquipmentManager->GetCurrentEquipState();
+	OnEquipStateChanged(CurrentEquipState, CurrentEquipState);
+	EquipStateChangedDelegateHandle = EquipmentManager->OnEquipStateChanged.AddUObject(this, &ThisClass::OnEquipStateChanged);
 }
 
 void UUtilitySlotWidget::NativeDestruct()
@@ -93,5 +96,19 @@ void UUtilitySlotWidget::OnEquipmentEntryChanged(EEquipmentSlotType EquipmentSlo
 	{
 		Image_Icon->SetVisibility(ESlateVisibility::Hidden);
 		Text_Count->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UUtilitySlotWidget::OnEquipStateChanged(EEquipState PrevEquipState, EEquipState NewEquipState)
+{
+	EEquipState SlotEquipState = UEquipmentManagerComponent::ConvertToEquipState(WidgetUtilitySlotType);
+
+	if (NewEquipState == SlotEquipState)
+	{
+		PlayAnimationForward(Animation_Highlight_In);
+	}
+	else if (PrevEquipState == SlotEquipState)
+	{
+		PlayAnimationReverse(Animation_Highlight_In);
 	}
 }

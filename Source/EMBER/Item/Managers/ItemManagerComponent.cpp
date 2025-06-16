@@ -85,7 +85,31 @@ void UItemManagerComponent::Server_EquipmentToInventory_Implementation(UInventor
 
 void UItemManagerComponent::Server_EquipmentToEquipment_Implementation(UInventoryEquipmentManagerComponent* FromEquipmentManager, EEquipmentSlotType FromEquipmentSlotType, UInventoryEquipmentManagerComponent* ToEquipmentManager, EEquipmentSlotType ToEquipmentSlotType)
 {
+	if (HasAuthority() == false)
+		return;
 	
+	if (FromEquipmentManager == nullptr || ToEquipmentManager == nullptr)
+		return;
+
+	if (FromEquipmentManager == ToEquipmentManager && FromEquipmentSlotType == ToEquipmentSlotType)
+		return;
+
+	int32 MovableCount = ToEquipmentManager->CanMoveOrMergeEquipment(FromEquipmentManager, FromEquipmentSlotType, ToEquipmentSlotType);
+	if (MovableCount > 0)
+	{
+		UItemInstance* RemovedItemInstance = FromEquipmentManager->RemoveEquipment_Unsafe(FromEquipmentSlotType, MovableCount);
+		ToEquipmentManager->AddEquipment_Unsafe(ToEquipmentSlotType, RemovedItemInstance, MovableCount);
+	}
+	else if (ToEquipmentManager->CanSwapEquipment(FromEquipmentManager, FromEquipmentSlotType, ToEquipmentSlotType))
+	{
+		const int32 FromItemCount = FromEquipmentManager->GetItemCount(FromEquipmentSlotType);
+		const int32 ToItemCount = ToEquipmentManager->GetItemCount(ToEquipmentSlotType);
+		
+		UItemInstance* RemovedItemInstanceFrom = FromEquipmentManager->RemoveEquipment_Unsafe(FromEquipmentSlotType, FromItemCount);
+		UItemInstance* RemovedItemInstanceTo = ToEquipmentManager->RemoveEquipment_Unsafe(ToEquipmentSlotType, ToItemCount);
+		FromEquipmentManager->AddEquipment_Unsafe(FromEquipmentSlotType, RemovedItemInstanceTo, ToItemCount);
+		ToEquipmentManager->AddEquipment_Unsafe(ToEquipmentSlotType, RemovedItemInstanceFrom, FromItemCount);
+	}
 }
 
 bool UItemManagerComponent::TryPickupItem(AEmberPickupableItemBase* PickupableItemActor)
