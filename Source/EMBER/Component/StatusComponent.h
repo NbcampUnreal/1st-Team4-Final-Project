@@ -39,28 +39,48 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetMaxHp(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetMaxStamina(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetMaxTemperature(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetMaxFatigueLevel(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetMaxWeight(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetMaxEnergy(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetMaxPhysicalStrength(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetMaxDexterity(int32 InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetMaxXp(int32 InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetMaxLevel(int32 InAmount);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void OnRep_Damage();
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void Damage(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void UseStamina(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void UseTemperature(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void AddFatigueLevel(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void AddWeight(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void UseEnergy(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void AddPhysicalStrength(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void AddDexterity(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void AddXp(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
 	void LevelUp();
 
 private:
