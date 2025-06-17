@@ -48,15 +48,15 @@ public:
     bool bCraftableByCharacter;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    EStationType CraftingStation;
+    FGameplayTagContainer RequiredStationTags;
 
-    FCraftingRecipeRow():
-        ItemTemplateClass(nullptr),
-          RequiredMainMaterialCount(0)
+    FCraftingRecipeRow()
+        : ItemTemplateClass(nullptr)
+        , RequiredMainMaterialCount(0)
         , CraftingTime(0.f)
         , bCraftableByCharacter(false)
-        , CraftingStation(EStationType::None)
-    {}
+    {
+    }
 };
 
 UCLASS(BlueprintType)
@@ -69,7 +69,7 @@ public:
     UDataTable* RecipeDataTable;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Data")
-    TMap<int32, FGameplayTag> ItemIDToMaterialTagMap;
+    TMap<int32, FGameplayTagContainer> ItemIDToMaterialTagMap;
 
     const FCraftingRecipeRow* GetRecipeRowByOutputItemID(int32 TemplateID) const;
     

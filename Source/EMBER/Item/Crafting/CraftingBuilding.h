@@ -37,6 +37,9 @@ protected:
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Crafting")
     TObjectPtr<UAnimMontage> CraftingAnimation;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crafting")
+    FGameplayTag StationTag;
 
 public:    
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
@@ -50,6 +53,9 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "Crafting")
     UAnimMontage* GetCraftingAnimation() const { return CraftingAnimation; }
+    
+    UFUNCTION(BlueprintPure, Category = "Crafting")
+    FGameplayTag GetStationTag() const { return StationTag; }
 
 private:
     UFUNCTION()

@@ -44,7 +44,6 @@ public:
 
 protected:
     virtual void InitializeComponent() override;
-    virtual void BeginPlay() override;
 
 public:
     UFUNCTION(BlueprintCallable, Category = "Crafting")
@@ -54,7 +53,7 @@ public:
     bool RequestServerCraft(AEmberPlayerCharacter* Player, ACraftingBuilding* CraftingStationActor, FName RecipeRowName, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
 
     UFUNCTION(BlueprintCallable, Category = "Crafting")
-    bool CanCraftRecipeAtStation(const FCraftingRecipeRow& Recipe, EStationType Station) const;
+    bool CanCraftRecipeAtStation(const FCraftingRecipeRow& Recipe, const FGameplayTag& StationTag) const;
 
     UFUNCTION(BlueprintCallable, Category = "Crafting")
     bool HasRequiredMaterials(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
@@ -72,14 +71,12 @@ public:
     int32 GetMaterialScore(const FGameplayTag& MaterialTag) const;
     
     bool ConsumeMaterials_Server(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
-    
+
 private:
     void InitializeTagMap();
     int32 CalculateScore(const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients) const;
     
 public:
-    EStationType CurrentStationForSystem = EStationType::None; 
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting System")
     TObjectPtr<UCraftingRecipeManager> RecipeManager;
 
