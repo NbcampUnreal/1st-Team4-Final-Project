@@ -10,9 +10,7 @@
 
 AEmberFoliageBase::AEmberFoliageBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	bReplicates = true;
 
-	InteractionInfo.bVisible = true;
 }
 
 void AEmberFoliageBase::BeginPlay()
@@ -22,7 +20,7 @@ void AEmberFoliageBase::BeginPlay()
 	if (HasAuthority() == false)
 		return;
 
-	if (ItemTemplateClass == nullptr)
+	if (IsValid(ItemTemplateClass) == false)
 		Destroy();
 
 	int32 ItemID = UEmberItemData::Get().FindItemTemplateIDByClass(ItemTemplateClass);

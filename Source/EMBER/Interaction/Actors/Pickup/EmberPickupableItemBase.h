@@ -6,6 +6,7 @@
 #include "EmberWorldPickupable.h"
 #include "EmberPickupableItemBase.generated.h"
 
+class UItemTemplate;
 class USphereComponent;
 
 UCLASS()
@@ -15,8 +16,11 @@ class EMBER_API AEmberPickupableItemBase : public AEmberWorldPickupable
 
 public:
 	AEmberPickupableItemBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-	
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> PickupCollision;
+
+	UPROPERTY(EditDefaultsOnly, Category = "PickupableItemBase|Info")
+	TSubclassOf<UItemTemplate> ItemTemplateClass;
 };
