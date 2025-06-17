@@ -20,6 +20,13 @@ EAnimalState UCBehaviorTreeComponent::GetType()
 	return (EAnimalState)Blackboard->GetValueAsEnum(AIStateTypeKey);
 }
 
+EDragonAttackState UCBehaviorTreeComponent::GetAttackState() const
+{
+	if (Blackboard == nullptr) return EDragonAttackState::None;
+
+	return static_cast<EDragonAttackState>(Blackboard->GetValueAsEnum(AttackStateKey));
+}
+
 #pragma region GetState
 
 bool UCBehaviorTreeComponent::IsWaitMode()
@@ -80,6 +87,53 @@ bool UCBehaviorTreeComponent::IsHittedMode()
 bool UCBehaviorTreeComponent::IsDeadMode()
 {
 	return GetType() == EAnimalState::Death;
+}
+
+bool UCBehaviorTreeComponent::IsNormalAttack() const
+{
+	return GetAttackState() == EDragonAttackState::Normal;
+}
+
+bool UCBehaviorTreeComponent::IsComboAttack() const
+{
+	return GetAttackState() == EDragonAttackState::Combo;
+
+}
+
+bool UCBehaviorTreeComponent::IsSpitAttack() const
+{
+	return GetAttackState() == EDragonAttackState::Spit;
+
+}
+
+bool UCBehaviorTreeComponent::IsBreathAttack() const
+{
+	return GetAttackState() == EDragonAttackState::Breath;
+
+}
+
+void UCBehaviorTreeComponent::SetNormalAttackMode()
+{
+	SetActionMode();
+	SetAttackState(EDragonAttackState::Normal);
+}
+
+void UCBehaviorTreeComponent::SetComboAttackMode()
+{
+	SetActionMode();
+	SetAttackState(EDragonAttackState::Combo);
+}
+
+void UCBehaviorTreeComponent::SetSpitAttackMode()
+{
+	SetActionMode();
+	SetAttackState(EDragonAttackState::Spit);
+}
+
+void UCBehaviorTreeComponent::SetBreathAttackMode()
+{
+	SetActionMode();
+	SetAttackState(EDragonAttackState::Breath);
 }
 
 void UCBehaviorTreeComponent::SetTarget(TObjectPtr<ACharacter> Target)
@@ -212,6 +266,13 @@ void UCBehaviorTreeComponent::SetBlackboard_Vector(FName Keyname, FVector Value)
 	Blackboard->SetValueAsVector(Keyname, Value);
 }
 
+void UCBehaviorTreeComponent::SetBlackboard_Enum(FName Keyname, EDragonAttackState Value)
+{
+	if (Blackboard == nullptr) return;
+
+	Blackboard->SetValueAsEnum(Keyname, static_cast<uint8>(Value));
+}
+
 #pragma endregion
 
 void UCBehaviorTreeComponent::ChangeType(EAnimalState InType)
@@ -222,4 +283,11 @@ void UCBehaviorTreeComponent::ChangeType(EAnimalState InType)
 
 	if (OnAIStateTypeChanged.IsBound())
 		OnAIStateTypeChanged.Broadcast(prevType, InType);
+}
+
+void UCBehaviorTreeComponent::SetAttackState(EDragonAttackState InState)
+{
+	if (Blackboard == nullptr) return;
+
+	Blackboard->SetValueAsEnum(AttackStateKey, static_cast<uint8>(InState));
 }

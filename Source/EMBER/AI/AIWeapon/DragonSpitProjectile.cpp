@@ -1,6 +1,9 @@
 #include "AI/AIWeapon/DragonSpitProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
 
 ADragonSpitProjectile::ADragonSpitProjectile()
 {

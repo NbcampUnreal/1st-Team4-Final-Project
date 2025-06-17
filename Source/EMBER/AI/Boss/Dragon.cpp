@@ -5,89 +5,69 @@
 
 #include "AIWeapon/DragonSpitProjectile.h"
 #include "AnimInstance/DragonAnimInstance.h"
-#include "BehaviorTree/CBehaviorTreeComponent.h"
 
 ADragon::ADragon()
 {
+	// DragonBTComp = CreateDefaultSubobject<UDragonBehaviorTreeComponent>(TEXT("DragonBT"));
+	// AddOwnedComponent(DragonBTComp);
 }
 
 void ADragon::BeginPlay()
 {
 	Super::BeginPlay();
-
-	BTComp = Cast<UCBehaviorTreeComponent>(GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
-	DragonAnim = Cast<UDragonAnimInstance>(GetMesh()->GetAnimInstance());
-}
-
-void ADragon::PerformAttack()
-{
-	if (bCanSpecialAttack)
-	{
-		if (IsTargetNear())
-		{
-			ComboAttack();
-		}
-		else
-		{
-			SpitAttack();
-		}
-
-		AttackStack = 0;
-		bCanSpecialAttack = false;
-	}
-
-	else
-	{
-		NormalAttack();
-	}
-}
-
-void ADragon::NormalAttack()
-{
-	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
-	DragonAnim->DragonAttackType = EDragonAttackType::BiteAttack;
-	DragonAnim->PlayMontage();
-}
-
-void ADragon::ComboAttack()
-{
-	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
-	DragonAnim->DragonAttackType = EDragonAttackType::ComboAttack;
-	DragonAnim->PlayMontage();
-}
-
-void ADragon::SpitAttack()
-{
-	if (!SpitClass) return;
-
 	
-	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
-	DragonAnim->DragonAttackType = EDragonAttackType::SpitAttack;
-	DragonAnim->PlayMontage();
+	DragonAnim = Cast<UDragonAnimInstance>(GetMesh()->GetAnimInstance());
+	//DragonBTComp = Cast<UDragonBehaviorTreeComponent>(GetComponentByClass(UDragonBehaviorTreeComponent::StaticClass()));
 }
 
-void ADragon::BreathAttack()
-{
-	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
-	DragonAnim->DragonAttackType = EDragonAttackType::BreathAttack;
-	DragonAnim->PlayMontage();
-}
-
-void ADragon::OnNormalAttack()
-{
-	AttackStack++;
-
-	if (AttackStack >= 3)
-	{
-		bCanSpecialAttack = true;
-	}
-}
-
-bool ADragon::IsTargetNear() const
-{
-	float Distance = FVector::Dist(GetActorLocation(), BTComp->GetTarget()->GetActorLocation());
-	return Distance < 1000.f;
-}
+// void ADragon::PerformAttack()
+// {
+// 	switch (DragonBTComp->GetAttackState())
+// 	{
+// 	case EDragonAttackState::Normal:
+// 		NormalAttack();
+// 		break;
+// 	case EDragonAttackState::Combo:
+// 		ComboAttack();
+// 		break;
+// 	case EDragonAttackState::Spit:
+// 		SpitAttack();
+// 		break;
+// 	case EDragonAttackState::Breath:
+// 		BreathAttack();
+// 		break;
+// 	default:
+// 		break;
+// 	}
+// }
+//
+// void ADragon::NormalAttack()
+// {
+// 	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
+// 	DragonAnim->DragonAttackType = EDragonAttackType::BiteAttack;
+// 	DragonAnim->PlayMontage();
+// }
+//
+// void ADragon::ComboAttack()
+// {
+// 	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
+// 	DragonAnim->DragonAttackType = EDragonAttackType::ComboAttack;
+// 	DragonAnim->PlayMontage();
+// }
+//
+// void ADragon::SpitAttack()
+// {
+// 	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
+// 	DragonAnim->DragonAttackType = EDragonAttackType::SpitAttack;
+// 	DragonAnim->PlayMontage();
+// }
+//
+// void ADragon::BreathAttack()
+// {
+// 	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
+// 	DragonAnim->DragonAttackType = EDragonAttackType::BreathAttack;
+// 	DragonAnim->PlayMontage();
+// }
 
 void ADragon::SpawnSpit()
 {

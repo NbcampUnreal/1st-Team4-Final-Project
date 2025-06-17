@@ -26,7 +26,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Dragon|Anim")
 	EDragonAttackType DragonAttackType;
 	
-	virtual void PlayMontage() override;
+	//virtual void PlayMontage() override;
 
 	UFUNCTION()
 	void AnimNotify_SpawnSpit();
@@ -35,5 +35,5 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Dragon|Anim")
 	TMap<EAnimActionType, FName> DragonAttackSectionMap;
 	
-	virtual UAnimMontage* GetMontageToPlay(EAnimActionType ActionType) const override;
+	//virtual UAnimMontage* GetMontageToPlay(EAnimActionType ActionType) const override;
 };

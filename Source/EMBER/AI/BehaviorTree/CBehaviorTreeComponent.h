@@ -23,6 +23,16 @@ enum class EAnimalState : uint8
 	Flying UMETA(DisplayName = "Flying"),//
 };
 
+UENUM(BlueprintType)
+enum class EDragonAttackState : uint8
+{
+	None	UMETA(DisplayName = "None"),
+	Normal	UMETA(DisplayName = "Normal"),
+	Combo	UMETA(DisplayName = "Combo"),
+	Spit	UMETA(DisplayName = "Spit"),
+	Breath	UMETA(DisplayName = "Breath"),
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAnimalStateChaged, EAnimalState, InPrevType, EAnimalState, InNewType);
 
 UCLASS()
@@ -41,6 +51,7 @@ protected:
 
 private:
 	EAnimalState GetType();
+	EDragonAttackState GetAttackState() const;
 
 public:
 	bool IsWaitMode();
@@ -55,6 +66,11 @@ public:
 	bool IsActionMode();
 	bool IsHittedMode();
 	bool IsDeadMode();
+
+	bool IsNormalAttack() const;
+	bool IsComboAttack() const;
+	bool IsSpitAttack() const;
+	bool IsBreathAttack() const;
 
 public:
 	void SetTarget(TObjectPtr<ACharacter> Target);
@@ -77,6 +93,11 @@ public:
 	void SetHittedMode();
 	void SetDeadMode();
 
+	void SetNormalAttackMode();
+	void SetComboAttackMode();
+	void SetSpitAttackMode();
+	void SetBreathAttackMode();
+
 	void SetBlackboard_Bool(FName Keyname, bool Value);
 	void SetBlackboard_String(FName Keyname, FString Value);
 	void SetBlackboard_Int(FName Keyname, int Value);
@@ -84,8 +105,12 @@ public:
 	void SetBlackboard_Enum(FName Keyname, EAnimalState Value);
 	void SetBlackboard_Object(FName Keyname, UObject* Value);
 	void SetBlackboard_Vector(FName Keyname, FVector Value);
+
+	void SetBlackboard_Enum(FName Keyname, EDragonAttackState Value);
+	
 private:
 	void ChangeType(EAnimalState InType);
+	void SetAttackState(EDragonAttackState InState);
 
 public:
 	FAnimalStateChaged OnAIStateTypeChanged;
@@ -99,6 +124,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Key")
 	FName AvoidLocationKey = "Avoid_Location";
 
-private:
+	UPROPERTY(EditAnywhere, Category = "Key")
+	FName AttackStateKey = "AttackState";
+
+protected:
 	TObjectPtr<UBlackboardComponent> Blackboard;
 };
