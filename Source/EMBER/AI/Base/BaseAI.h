@@ -34,6 +34,7 @@ public:
 	// AI State
 	UFUNCTION(BlueprintCallable, Category = "AI|State")
 	virtual void OnDeath();
+	virtual void EndDeath();
 
 
 	// AI Perception
@@ -95,7 +96,12 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<AActor> LastDamageCauser;
-
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	int32 WalkSpeed;
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	int32 RunSpeed;
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	int32 SprintSpeed;
 private:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	UFUNCTION(NetMulticast, Reliable)

@@ -57,7 +57,7 @@ void UBTT_Guard::ActorRotateUpdate()
 
 	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(
 		AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
-	if (!AIState->IsDetect())
+	if (!AIState->IsDetectMode())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 	}

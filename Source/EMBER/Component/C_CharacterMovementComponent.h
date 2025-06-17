@@ -54,6 +54,9 @@ public:
 public:
 	void SetSpeed(ESpeedType SpeedType);
 
+	void SetWalkSpeed(int32 InSpeed); 
+	void SetRunSpeed(int32 InSpeed); 
+	void SetSprintSpeed(int32 InSpeed);
 public: 
 	UPROPERTY(BlueprintAssignable, Category = "Movement")
 	FOnMoveDelegate OnMoveDelegate;

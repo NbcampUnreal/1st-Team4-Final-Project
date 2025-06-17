@@ -9,9 +9,8 @@
 
 class UItemFragment;
 
-/**
- * 
- */
+class UItemTemplate;
+
 UCLASS(BlueprintType)
 class EMBER_API UItemInstance : public UObject
 {
@@ -29,6 +28,7 @@ public:
 public:
 	void Init(int32 InItemTemplateID, EItemRarity InItemRarity);
 	void Init(int32 InItemTemplateID, EItemRarity InItemRarity, int32 InItemCount);
+	void Init(TSubclassOf<UItemTemplate> InItemTemplate, EItemRarity InItemRarity, int32 InItemCount);
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)

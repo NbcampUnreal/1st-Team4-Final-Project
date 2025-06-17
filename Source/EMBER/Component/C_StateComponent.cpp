@@ -14,6 +14,7 @@ void UC_StateComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                       FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	//UE_LOG(LogTemp, Warning, L"%s", *UEnum::GetValueAsString(CurrentStateType));
 }
 
 bool UC_StateComponent::IsIdleMode() const
@@ -29,6 +30,16 @@ bool UC_StateComponent::IsEquipMode() const
 bool UC_StateComponent::IsActionMode() const
 {
 	return CurrentStateType == EStateType::Action;
+}
+
+bool UC_StateComponent::IsCombatMode() const
+{
+	return CurrentStateType == EStateType::Combat;
+}
+
+void UC_StateComponent::SetCombatMode()
+{
+	ChangeType(EStateType::Combat);
 }
 
 bool UC_StateComponent::IsHittdMode() const

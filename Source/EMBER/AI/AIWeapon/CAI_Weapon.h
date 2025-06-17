@@ -26,7 +26,7 @@ public:
 	virtual void SpawnPlay_Implementation(ACharacter* InOwner);
 	virtual  void Tick(float InDeltaTime){}
 public:
-	virtual void DoAction();
+	virtual void DoAction(int32 AttackIndex);
 	virtual void Begin_DoAction();
 	virtual void End_DoAction();
 
@@ -64,7 +64,7 @@ protected:
 	TObjectPtr<UC_StateComponent> State;
 	TObjectPtr<UC_CharacterMovementComponent> Movement;
 	int32 Index;
-
+	int32 CurrAttackIndex;
 	TArray<ACharacter*> Hitted;
 };
 
