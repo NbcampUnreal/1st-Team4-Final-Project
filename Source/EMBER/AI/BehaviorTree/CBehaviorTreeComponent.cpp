@@ -42,7 +42,7 @@ bool UCBehaviorTreeComponent::IsAvoidMode()
 	return GetType() == EAnimalState::Avoid;
 }
 
-bool UCBehaviorTreeComponent::IsDetect()
+bool UCBehaviorTreeComponent::IsDetectMode()
 {
 	return GetType() == EAnimalState::Detect;
 }

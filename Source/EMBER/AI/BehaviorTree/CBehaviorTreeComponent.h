@@ -47,7 +47,7 @@ public:
 	bool IsGuardMode();
 	bool IsRunMode();
 	bool IsAvoidMode();
-	bool IsDetect();
+	bool IsDetectMode();
 	bool IsFlyingMode();
 	bool IsPatrolMode();
 	bool IsChaseMode();
