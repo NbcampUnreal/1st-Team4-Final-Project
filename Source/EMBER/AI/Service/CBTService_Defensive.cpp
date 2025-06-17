@@ -60,15 +60,20 @@ void UCBTService_Defensive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 		return;
 	}
 
-	if (state->IsHittdMode() == true)
+	if (state->IsHittdMode() == true && bisHit == false)
 	{
 		aiState->SetHittedMode();
+		aiState->SetTarget(ai->GetDamagesData().Character);
+		bisHit = true;
 		return;
 	}
 
-	TObjectPtr<ACharacter> target = aiState->GetTarget();
+	TObjectPtr<ACharacter> target;
+	if(bisHit == true)
+		target = aiState->GetTarget();
 	if (target == nullptr)
 	{
+		bisHit = false;
 		aiState->SetPatrolMode();
 		return;
 	}

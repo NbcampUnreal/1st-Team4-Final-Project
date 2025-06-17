@@ -19,6 +19,12 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Movement_Look,							"InputTag.Movement.Look");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Movement_Sprint,						"InputTag.Movement.Sprint");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Movement_Jump,							"InputTag.Movement.Jump");
+	
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_Weapon_Primary,				"InputTag.QuickSlot.Weapon.Primary");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_Utility_Primary,				"InputTag.QuickSlot.Utility.Primary");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_Utility_Secondary,			"InputTag.QuickSlot.Utility.Secondary");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_Utility_Tertiary,				"InputTag.QuickSlot.Utility.Tertiary");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_Utility_Quaternary,			"InputTag.QuickSlot.Utility.Quaternary");
 
 	// Ability
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Interact,								"Ability.Interact");
@@ -32,6 +38,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Interact_Active,							"Ability.Interact.Active");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Logging,									"Ability.Logging");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Mining,									"Ability.Mining");
+
+	UE_DEFINE_GAMEPLAY_TAG(Ability_ChangeEquip,								"Ability.ChangeEquip");
 	
 	// ItemAttribute
 	UE_DEFINE_GAMEPLAY_TAG(ItemAttribute_BaseDamage,						"ItemAttribute.BaseDamage");
@@ -42,6 +50,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_ActionHint,								"Status.ActionHint");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Logging,									"Status.Logging");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Mining,									"Status.Mining");
+	
+	UE_DEFINE_GAMEPLAY_TAG(Status_ChangeEquip,								"Status.ChangeEquip");
 
 	// Gameplay Event
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_Begin,						"GameplayEvent.Montage.Begin");
@@ -49,4 +59,5 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_End,						"GameplayEvent.Montage.End");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Trace,								"GameplayEvent.Trace");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Reward_Item,						"GameplayEvent.Reward.Item");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_ChangeEquip,						"GameplayEvent.ChangeEquip");
 }

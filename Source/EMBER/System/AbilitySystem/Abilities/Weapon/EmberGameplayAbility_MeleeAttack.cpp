@@ -60,9 +60,8 @@ void UEmberGameplayAbility_MeleeAttack::OnHitTarget(FGameplayEventData Payload)
 	
 	if (SourceASC->FindAbilitySpecFromHandle(CurrentSpecHandle) == nullptr)
 		return;
-
-	// TODO : 무기 데미지 가져오기
-	float BaseDamage = 10.0f;
+	
+	float BaseDamage = GetEquipmentStatValue(EmberGameplayTags::ItemAttribute_BaseDamage, WeaponActor);
 	
 	FGameplayAbilityTargetDataHandle TargetDataHandle(MoveTemp(const_cast<FGameplayAbilityTargetDataHandle&>(Payload.TargetData)));
 	
@@ -73,14 +72,14 @@ void UEmberGameplayAbility_MeleeAttack::OnHitTarget(FGameplayEventData Payload)
 		FHitResult* HitResult = const_cast<FHitResult*>(TargetData->GetHitResult());
 		if (HitResult == nullptr)
 			continue;
-
+		
 		UGameplayStatics::ApplyPointDamage(
 			HitResult->GetActor(),
 			BaseDamage,
 			HitResult->Location,
 			*HitResult,
-			Payload.Instigator ? Payload.Instigator->GetInstigatorController() : nullptr,
-			GetEmberCharacterFromActorInfo(),
+			GetEmberCharacterFromActorInfo()->GetInstigatorController(),
+			WeaponActor,
 			UDamageType::StaticClass()
 		);
 	}

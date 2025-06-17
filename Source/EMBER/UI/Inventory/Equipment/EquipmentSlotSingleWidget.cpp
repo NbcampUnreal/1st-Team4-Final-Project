@@ -44,7 +44,7 @@ bool UEquipmentSlotSingleWidget::NativeOnDragOver(const FGeometry& InGeometry, c
 	UItemInstance* FromItemInstance = ItemDragDrop->FromItemInstance;
 	if (FromItemInstance == nullptr)
 		return false;
-	
+
 	bool bIsValid = false;
 	if (UInventoryManagerComponent* FromInventoryManager = ItemDragDrop->FromInventoryManager)
 	{
@@ -56,6 +56,17 @@ bool UEquipmentSlotSingleWidget::NativeOnDragOver(const FGeometry& InGeometry, c
 		else
 		{
 			bIsValid = InventoryEquipmentManager->CanMoveOrMergeEquipment(FromInventoryManager, ItemDragDrop->FromItemSlotPos, EquipmentSlotType) > 0;
+		}
+	}
+	else if (UInventoryEquipmentManagerComponent* FromInventoryEquipmentManager = ItemDragDrop->FromInventoryEquipmentManager)
+	{
+		if (InventoryEquipmentManager->GetItemInstance(EquipmentSlotType))
+		{
+			bIsValid = InventoryEquipmentManager->CanSwapEquipment(FromInventoryEquipmentManager, ItemDragDrop->FromEquipmentSlotType, EquipmentSlotType);
+		}
+		else
+		{
+			bIsValid = InventoryEquipmentManager->CanMoveOrMergeEquipment(FromInventoryEquipmentManager, ItemDragDrop->FromEquipmentSlotType, EquipmentSlotType) > 0;
 		}
 	}
 	
@@ -138,7 +149,6 @@ void UEquipmentSlotSingleWidget::OnEquipmentEntryChanged(UItemInstance* InItemIn
 		Image_BaseIcon->SetRenderOpacity(1.f);
 	}
 }
-
 
 void UEquipmentSlotSingleWidget::ChangeSlotState(bool bIsValid)
 {

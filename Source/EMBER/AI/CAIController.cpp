@@ -13,7 +13,7 @@ ACAIController::ACAIController()
 {
 	Blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
 	Perception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception"));
-
+	AIState = CreateDefaultSubobject<UC_StateComponent>(TEXT("AIState"));
 	//생성자 동적할당 
 	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight"));
 	//런타임 동적할당
@@ -89,7 +89,8 @@ void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimul
 		if (Behavior)
 		{
 			Blackboard->SetValueAsObject("TargetActor", Actor);
-			Behavior->SetDetectMode();
+			AIState->SetDetectMode();
+			UE_LOG(LogTemp, Display, TEXT("Detected target"));
 		}
 	}
 	else
@@ -99,7 +100,7 @@ void ACAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimul
 		if (Actors.Num() == 0 && !Behavior->IsRunMode()&& !Behavior->IsHittedMode())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Perception: Target Lost"), Actors.Num());
-			Behavior->SetIdleMode();
+			AIState->SetIdleMode();
 			Blackboard->SetValueAsObject("TargetActor", nullptr);
 			return;
 		}

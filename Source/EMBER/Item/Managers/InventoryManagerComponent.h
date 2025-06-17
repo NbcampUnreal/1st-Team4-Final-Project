@@ -59,6 +59,9 @@ public:
 	void PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize);
 	//~End of FFastArraySerializer
 
+public:
+	void CustomMarkItemDirty(AActor* Owner, FInventoryEntry& ToEntry, const FIntPoint& ItemSlotPos);
+	
 private:
 	void BroadcastChangedMessage(const FIntPoint& ItemSlotPos, UItemInstance* ItemInstance, int32 ItemCount);
 	
@@ -106,7 +109,7 @@ protected:
 	
 public:
 	int32 CanMoveOrMergeItem(UInventoryManagerComponent* OtherComponent, const FIntPoint& FromItemSlotPos, const FIntPoint& ToItemSlotPos) const;
-	int32 CanMoveOrMergeItem(UInventoryEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, const FIntPoint& ToItemSlotPos) const;
+	int32 CanMoveOrMergeItem(UInventoryEquipmentManagerComponent* FromInventoryEquipmentManager, EEquipmentSlotType FromEquipmentSlotType, const FIntPoint& ToItemSlotPos) const;
 
 	int32 CanAddItem(UItemInstance* ItemInstance, TArray<FIntPoint>& OutToItemSlotPoses, TArray<int32>& OutToItemCounts);
 	int32 CanAddItem(int32 ItemTemplateID, EItemRarity ItemRarity, int32 ItemCount, TArray<FIntPoint>& OutToItemSlotPoses, TArray<int32>& OutToItemCounts) const;

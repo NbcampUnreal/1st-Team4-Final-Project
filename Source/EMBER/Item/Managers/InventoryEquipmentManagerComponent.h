@@ -64,6 +64,9 @@ public:
 	void PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize);
 	//~End of FFastArraySerializer Overrides
 
+public:
+	void CustomMarkItemDirty(AActor* Owner, FEquipmentEntry& Entry);
+	
 private:
 	void BroadcastChangedMessage(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance, int32 ItemCount);
 	
@@ -104,7 +107,7 @@ protected:
 	virtual bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 	virtual void ReadyForReplication() override;
 	//~End of UPawnComponent Overrides
-
+	
 public:
 	void AddEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, UItemInstance* FromItemInstance, int32 FromItemCount);
 	UItemInstance* RemoveEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, int32 ItemCount);
@@ -121,8 +124,15 @@ public:
 	bool IsMatchingSlotType(EEquipmentType FromEquipmentType, EEquipmentSlotType ToEquipmentSlotType) const;
 	bool IsMatchingSlotType(const UItemFragment_Equipable* FromEquippableFragment, EEquipmentSlotType ToEquipmentSlotType) const;
 	bool IsSlotEquipped(EEquipmentSlotType EquipmentSlotType) const;
-	bool IsSameComponent(const UInventoryEquipmentManagerComponent* OtherComponent) const;
 
+	bool IsSameEquipState(EEquipmentSlotType EquipmentSlotType, EEquipState WeaponEquipState) const;
+	bool IsSameWeaponHandType(EEquipmentSlotType EquipmentSlotType, EWeaponHandType WeaponHandType) const;
+	bool IsSameComponent(const UInventoryEquipmentManagerComponent* OtherComponent) const;
+	
+	bool IsEquipmentSlotEmptyByEquipState(EEquipState EquipState);
+
+public:
+	static EUtilitySlotType ConvertToUtilitySlotType(EEquipmentSlotType EquipmentSlotType);
 public:
 	UEquipmentManagerComponent* GetEquipmentManager() const;
 	
@@ -139,4 +149,6 @@ public:
 private:
 	UPROPERTY(Replicated)
 	FEquipmentList EquipmentList;
+
+	EEquipState CurrentEquipState; 
 };

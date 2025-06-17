@@ -71,3 +71,11 @@ ACAI_Weapon* UCAIWeaponComponent::GetDoAction()
 	return Weapons[0];
 }
 
+void UCAIWeaponComponent::DestroyWeapon()
+{
+	for (ACAI_Weapon* weapon : Weapons)
+	{
+		weapon->Destroy();
+	}
+}
+
