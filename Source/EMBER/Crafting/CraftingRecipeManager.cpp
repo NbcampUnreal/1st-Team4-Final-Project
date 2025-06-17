@@ -39,10 +39,12 @@ void UCraftingRecipeManager::GetAllRecipeRows(TArray<FCraftingRecipeRow*>& OutRo
 
 FGameplayTag UCraftingRecipeManager::GetMaterialTagForItem(int32 ItemTemplateID) const
 {
-    const FGameplayTag* FoundTag = ItemIDToMaterialTagMap.Find(ItemTemplateID);
-    if (FoundTag)
+    const FGameplayTagContainer* FoundTagContainer = ItemIDToMaterialTagMap.Find(ItemTemplateID);
+
+    if (FoundTagContainer && FoundTagContainer->Num() > 0)
     {
-        return *FoundTag;
+        return FoundTagContainer->First();
     }
+    
     return FGameplayTag::EmptyTag;
 }

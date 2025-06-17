@@ -2,7 +2,7 @@
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Interaction/EmberTemperature.h"
-#include "Player/EmberPlayerCharacter.h" // 캐스팅에 필요
+#include "Player/EmberPlayerCharacter.h" 
 
 AEternalFlame::AEternalFlame()
 {
@@ -34,8 +34,7 @@ void AEternalFlame::OnWarmingZoneOverlapBegin(UPrimitiveComponent* OverlappedCom
 {
 	if (!HasAuthority() || !OtherActor) return;
 
-	IEmberTemperature* TemperatureHandler = Cast<IEmberTemperature>(OtherActor);
-	if (TemperatureHandler)
+	if (IEmberTemperature* TemperatureHandler = Cast<IEmberTemperature>(OtherActor))
 	{
 		TemperatureHandler->Execute_ApplyWarmingEffect(OtherActor);
 		UE_LOG(LogTemp, Log, TEXT("EternalFlame: Applied warming effect to %s"), *OtherActor->GetName());
@@ -45,9 +44,8 @@ void AEternalFlame::OnWarmingZoneOverlapBegin(UPrimitiveComponent* OverlappedCom
 void AEternalFlame::OnWarmingZoneOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (!HasAuthority() || !OtherActor) return;
-	
-	IEmberTemperature* TemperatureHandler = Cast<IEmberTemperature>(OtherActor);
-	if (TemperatureHandler)
+    
+	if (IEmberTemperature* TemperatureHandler = Cast<IEmberTemperature>(OtherActor))
 	{
 		TemperatureHandler->Execute_RemoveWarmingEffect(OtherActor);
 		UE_LOG(LogTemp, Log, TEXT("EternalFlame: Removed warming effect from %s"), *OtherActor->GetName());

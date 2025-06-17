@@ -104,22 +104,15 @@ void ACraftingBuilding::OnInteractionRangeOverlapEnd(UPrimitiveComponent* Overla
 
 void ACraftingBuilding::Server_ExecuteCrafting_Implementation(FName RecipeRowName, const TArray<FGameplayTag>& SelectedMainIngredientTags, const TArray<int32>& SelectedMainIngredientQuantities, AEmberPlayerCharacter* RequestingPlayer)
 {
-    if (!HasAuthority()) return;
-    if (!RequestingPlayer) return;
+    if (!HasAuthority() || !RequestingPlayer) return;
 
     UCraftingSystem* CraftingSystem = RequestingPlayer->FindComponentByClass<UCraftingSystem>();
-    if (!CraftingSystem || !CraftingSystem->RecipeManager || !CraftingSystem->RecipeManager->RecipeDataTable)
-    {
-        return;
-    }
+    if (!CraftingSystem || !CraftingSystem->RecipeManager || !CraftingSystem->RecipeManager->RecipeDataTable) return;
 
     const FCraftingRecipeRow* RecipeDataPtr = CraftingSystem->RecipeManager->RecipeDataTable->FindRow<FCraftingRecipeRow>(RecipeRowName, TEXT("Server_ExecuteCrafting"));
-    if (!RecipeDataPtr)
-    {
-        return;
-    }
-    const FCraftingRecipeRow& RecipeData = *RecipeDataPtr;
+    if (!RecipeDataPtr) return;
 
+    const FCraftingRecipeRow& RecipeData = *RecipeDataPtr;
     TMap<FGameplayTag, int32> SelectedMainIngredientsMap;
     for (int32 i = 0; i < SelectedMainIngredientTags.Num(); ++i)
     {
@@ -129,10 +122,29 @@ void ACraftingBuilding::Server_ExecuteCrafting_Implementation(FName RecipeRowNam
         }
     }
 
-    if (CraftingSystem->CanCraftRecipeAtStation(RecipeData, StationType) && CraftingSystem->HasRequiredMaterials(RequestingPlayer, RecipeData, SelectedMainIngredientsMap))
+    if (CraftingSystem->CanCraftRecipeAtStation(RecipeData, this->GetStationTag()) && CraftingSystem->HasRequiredMaterials(RequestingPlayer, RecipeData, SelectedMainIngredientsMap))
     {
         CraftingSystem->ConsumeMaterials_Server(RequestingPlayer, RecipeData, SelectedMainIngredientsMap);
-        UE_LOG(LogTemp, Log, TEXT("[SERVER] ACraftingBuilding: Materials consumed for recipe %s."), *RecipeRowName.ToString());
+        
+        EItemRarity FinalRarity = CraftingSystem->EvaluateItemRarity(RecipeData, SelectedMainIngredientsMap);
+        TSubclassOf<UItemTemplate> ResultItemTemplateClass = RecipeData.ItemTemplateClass;
+
+        if (ResultItemTemplateClass)
+        {
+            UInventoryManagerComponent* PlayerInventory = RequestingPlayer->FindComponentByClass<UInventoryManagerComponent>();
+            if (PlayerInventory)
+            {
+                const int32 AddedAmount = PlayerInventory->TryAddItemByRarity(ResultItemTemplateClass, FinalRarity, 1);
+                if (AddedAmount > 0)
+                {
+                    UE_LOG(LogTemp, Log, TEXT("[SERVER] Crafting Success! Added %s to player inventory."), *ResultItemTemplateClass->GetName());
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("[SERVER] Crafting Failed! Player inventory might be full."));
+                }
+            }
+        }
     }
     else
     {
