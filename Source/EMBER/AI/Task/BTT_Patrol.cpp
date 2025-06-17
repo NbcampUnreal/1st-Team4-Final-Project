@@ -33,12 +33,13 @@ EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 
 	ATargetPoint* NextPoint = ControlledAnimal->PatrolPoint[CurrentIndex]; //이동할액터위치 설정
 	BlackboardComp->SetValueAsInt("PatrolIndex", CurrentIndex); //블랙보드에 인덱스 업데이트
-
-
+	
 	BaseAIController->ReceiveMoveCompleted.RemoveAll(this);
 	BaseAIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_Patrol::OnMoveCompleted);
-	BaseAIController->MoveToActor(NextPoint, 50.0f); // AcceptanceRadius 조정
+	PatrolRequestID = BaseAIController->MoveToActor(NextPoint, 100.0f);
+
 	
+	// BaseAIController->MoveToActor(NextPoint, 50.0f); // AcceptanceRadius 조정
 	// BaseAIController->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_Patrol::OnMoveCompleted);
 	// BaseAIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_Patrol::OnMoveCompleted);
 
@@ -47,17 +48,20 @@ EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 
 void UBTT_Patrol::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
 {
-	if (Result == EPathFollowingResult::Success)
+	if (PatrolRequestID == RequestID)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PatrolCompleted"));
-		BlackboardComp->SetValueAsBool("IsRest", true);
-		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PatrolFailed"));
-		BlackboardComp->SetValueAsBool("IsRest", true);
-		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Failed);
+		if (Result == EPathFollowingResult::Success)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PatrolCompleted"));
+			BlackboardComp->SetValueAsBool("IsRest", true);
+			FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PatrolFailed"));
+			BlackboardComp->SetValueAsBool("IsRest", true);
+			FinishLatentTask(*OwnerCompRef, EBTNodeResult::Failed);
+		}
 	}
 }
 

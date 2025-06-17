@@ -19,7 +19,7 @@ public:
 	void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
 
 private:
-
+	FAIRequestID PatrolRequestID;
 	UBlackboardComponent* BlackboardComp;
 	UBehaviorTreeComponent* OwnerCompRef;
 	
