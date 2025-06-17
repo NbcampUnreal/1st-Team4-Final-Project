@@ -33,7 +33,7 @@ void ACAI_Weapon_Combo::DoAction(int32 AttackIndex)
 	}
 
 	Super::DoAction(AttackIndex);
-
+	CurrAttackIndex = AttackIndex;
 	AttackDatas[AttackIndex].DoAction(OwnerCharacter);
 }
 
