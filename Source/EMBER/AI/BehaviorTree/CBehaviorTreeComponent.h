@@ -16,6 +16,7 @@ enum class EAnimalState : uint8
 	Avoid UMETA(DisplayName = "Avoid"),
 	Patrol UMETA(DisplayName = "Patrol"),
 	Chase UMETA(DisplayName = "Chase"),
+	Combat UMETA(DisplayName = "Combat"),
 	Attack UMETA(DisplayName = "Attack"),
 	Hit UMETA(DisplayName = "Hit"),
 	Death UMETA(DisplayName = "Death"),
@@ -50,6 +51,7 @@ public:
 	bool IsFlyingMode();
 	bool IsPatrolMode();
 	bool IsChaseMode();
+	bool IsCombatMode();
 	bool IsActionMode();
 	bool IsHittedMode();
 	bool IsDeadMode();
@@ -70,6 +72,7 @@ public:
 	void SetFlyingMode();
 	void SetPatrolMode();
 	void SetChaseMode();
+	void SetCombatMode();
 	void SetActionMode();
 	void SetHittedMode();
 	void SetDeadMode();

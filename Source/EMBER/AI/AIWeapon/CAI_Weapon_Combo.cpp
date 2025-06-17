@@ -25,9 +25,9 @@ void ACAI_Weapon_Combo::DoAction()
 		return;
 	}
 
-	if (State.Get()->IsIdleMode() == false)
+	if (State.Get()->IsIdleMode() == false && State.Get()->IsCombatMode() == false)
 	{
-		UE_LOG(LogTemp, Warning, L"Is not Idle State");
+		UE_LOG(LogTemp, Error, L"Is not Idle State");
 		return;
 	}
 
