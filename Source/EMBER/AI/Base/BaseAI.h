@@ -95,7 +95,12 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<AActor> LastDamageCauser;
-
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	int32 WalkSpeed;
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	int32 RunSpeed;
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	int32 SprintSpeed;
 private:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	UFUNCTION(NetMulticast, Reliable)
