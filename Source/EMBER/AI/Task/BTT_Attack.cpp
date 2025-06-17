@@ -43,7 +43,7 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 
 	controller->StopMovement();
 	
-		weapon->DoAction(AttackIndex);
+	weapon->DoAction(AttackIndex);
 
 	return EBTNodeResult::InProgress;
 }

@@ -64,7 +64,7 @@ protected:
 	TObjectPtr<UC_StateComponent> State;
 	TObjectPtr<UC_CharacterMovementComponent> Movement;
 	int32 Index;
-
+	int32 CurrAttackIndex;
 	TArray<ACharacter*> Hitted;
 };
 

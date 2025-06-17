@@ -124,7 +124,7 @@ void ACAI_Weapon::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 		if (hitted == other)
 			return;
 	Hitted.AddUnique(other);
-	HitDatas[Index].SendDamage(OwnerCharacter, this, other);
+	HitDatas[CurrAttackIndex].SendDamage(OwnerCharacter, this, other);
 }
 
 void ACAI_Weapon::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
