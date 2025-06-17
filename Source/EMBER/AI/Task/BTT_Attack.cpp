@@ -42,7 +42,8 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	}
 
 	controller->StopMovement();
-	weapon->DoAction();
+	
+		weapon->DoAction(AttackIndex);
 
 	return EBTNodeResult::Succeeded;
 }
