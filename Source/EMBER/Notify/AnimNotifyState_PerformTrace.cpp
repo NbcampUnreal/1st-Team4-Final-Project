@@ -31,7 +31,7 @@ void UAnimNotifyState_PerformTrace::NotifyBegin(USkeletalMeshComponent* MeshComp
 	{
 		if (UEquipmentManagerComponent* EquipmentManager = Character->FindComponentByClass<UEquipmentManagerComponent>())
 		{
-			WeaponActor = EquipmentManager->GetHandEquipment();
+			WeaponActor = EquipmentManager->GetEquippedActor(WeaponHandType);
 			if (WeaponActor.IsValid() == false)
 				return;
 			

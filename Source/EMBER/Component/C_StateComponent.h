@@ -25,11 +25,13 @@ public:
 	bool IsActionMode() const;
 	bool IsHittdMode() const;
 	bool IsDeadMode() const;
+	bool IsDetectMode() const;
 	void SetIdleMode();
 	void SetEquipMode();
 	void SetActionMode();
 	void SetHittdMode();
 	void SetDeadMode();
+	void SetDetectMode();
 
 
 private:

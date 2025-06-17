@@ -77,6 +77,11 @@ bool UCBehaviorTreeComponent::IsDeadMode()
 	return GetType() == EAnimalState::Death;
 }
 
+void UCBehaviorTreeComponent::SetTarget(TObjectPtr<ACharacter> Target)
+{
+	Blackboard->SetValueAsObject(TargetKey, Target);
+}
+
 FVector UCBehaviorTreeComponent::GetPatrolLocation()
 {
 	return Blackboard->GetValueAsVector(PatrolLocationKey);

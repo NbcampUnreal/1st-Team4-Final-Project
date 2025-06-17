@@ -63,6 +63,7 @@ void UCBTService_Defensive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 	if (state->IsHittdMode() == true && bisHit == false)
 	{
 		aiState->SetHittedMode();
+		aiState->SetTarget(ai->GetDamagesData().Character);
 		bisHit = true;
 		return;
 	}

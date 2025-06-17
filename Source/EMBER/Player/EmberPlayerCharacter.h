@@ -47,8 +47,10 @@ protected:
 	UC_CharacterMovementComponent* MovementComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UC_CameraComponent* CameraLogicComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStatusComponent* StatusComponent;
+		UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UMontageSystemComponent> MontageComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	FVector2D PitchRange = FVector2D(-50, 50);
 	UFUNCTION()
@@ -96,7 +98,7 @@ public:
 
 	//TODOS
 	virtual void PostNetInit() override;
-public:
+
 private:
 	UPROPERTY()
 	TObjectPtr<UCharacterInputComponent> CharacterInputComponent;
@@ -106,9 +108,6 @@ private:
 	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
-
-	UPROPERTY()
-	TObjectPtr<UMontageSystemComponent> MontageComponent;
 
 	UPROPERTY()
 	TObjectPtr<class UArmorComponent> ArmorComponent;
@@ -151,6 +150,8 @@ private:
 	void MulticastHitted(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 	UFUNCTION()
 	void OnRep_Hitted();
+	UFUNCTION(BlueprintCallable)
+	void OnDeath();
 
 private:
 	UPROPERTY(ReplicatedUsing = "OnRep_Hitted")

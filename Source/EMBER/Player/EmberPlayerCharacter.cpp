@@ -115,6 +115,7 @@ void AEmberPlayerCharacter::PostNetInit()
         ArmorComponent->InitializeArmorForLateJoiners();
 }
 
+
 void AEmberPlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {	
     const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
@@ -189,11 +190,11 @@ void AEmberPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
     UEmberEnhancedInputComponent* WarriorInputComponent = CastChecked<UEmberEnhancedInputComponent>(PlayerInputComponent);
 
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Move,ETriggerEvent::Triggered,this,&ThisClass::Move);
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Look,ETriggerEvent::Triggered,this,&ThisClass::Look);
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Jump, ETriggerEvent::Triggered, this, &ThisClass::Jump);
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Triggered, this, &ThisClass::StartSprint);
-    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
+    WarriorInputComponent->BindNativeAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Move,ETriggerEvent::Triggered,this,&ThisClass::Move);
+    WarriorInputComponent->BindNativeAction(InputConfigDataAsset,EmberGameplayTags::InputTag_Movement_Look,ETriggerEvent::Triggered,this,&ThisClass::Look);
+    WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Jump, ETriggerEvent::Triggered, this, &ThisClass::Jump);
+    WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Triggered, this, &ThisClass::StartSprint);
+    WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
 }
 
 UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() const
@@ -333,8 +334,12 @@ void AEmberPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
                                                            AActor* DamageCauser)
 {
-    MontageComponent->PlayMontage(DamageData.Montage, DamageData.PlayRate);
     StatusComponent->Damage(DamageData.Power);
+    if(StatusComponent->GetHp() <= 0.0f)
+    {
+        return;
+    }
+    MontageComponent->PlayMontage(DamageData.Montage, DamageData.PlayRate);
 	if(HasAuthority() == true)
     {
 	    UE_LOG(LogTemp, Error, L"server hp %f", StatusComponent->GetHp());
@@ -353,4 +358,9 @@ void AEmberPlayerCharacter::OnRep_Hitted()
 {
     if (DamageData.Character != nullptr)
         SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
+}
+
+void AEmberPlayerCharacter::OnDeath()
+{
+    MontageComponent->PlayMontage(EStateType::Dead);
 }

@@ -25,4 +25,10 @@ protected:
 	void Input_AbilityInputTagStarted(FGameplayTag InputTag);
 	void Input_AbilityInputTagPressed(FGameplayTag InputTag);
 	void Input_AbilityInputTagReleased(FGameplayTag InputTag);
+
+	void InputTag_QuickSlot_Weapon_Primary();
+	void InputTag_QuickSlot_Utility_Primary();
+	void InputTag_QuickSlot_Utility_Secondary();
+	void InputTag_QuickSlot_Utility_Tertiary();
+	void InputTag_QuickSlot_Utility_Quaternary();
 };

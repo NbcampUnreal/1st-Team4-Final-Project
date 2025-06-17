@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "C_StateComponent.h"
 #include "CAIController.generated.h"
 
 class ABaseAI;
@@ -55,6 +56,7 @@ private:
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAIPerceptionComponent> Perception;
+	TObjectPtr<UC_StateComponent> AIState;
 	TObjectPtr<ABaseAI> AI;
 	TObjectPtr<UCBehaviorTreeComponent> Behavior;
 	TObjectPtr<UAISenseConfig_Sight> Sight;
