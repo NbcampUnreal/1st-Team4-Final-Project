@@ -339,6 +339,7 @@ void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamage
 	{
 		return;
 	}
+
 	MontageComponent->PlayMontage(EStateType::Hitted);
 	if (HasAuthority() == true)
 	{
