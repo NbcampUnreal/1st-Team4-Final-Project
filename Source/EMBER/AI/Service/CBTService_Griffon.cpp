@@ -76,10 +76,10 @@ void UCBTService_Griffon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 	FVector OriginLocation = Controller->GetBlackboardComponent()->GetValueAsVector("OriginLocation");
 	FVector TargetLocation = Target->GetActorLocation();
 	float Distance = FVector::Dist(OriginLocation, TargetLocation);
-	if (Distance >= 3000.0f)
-	{
-		UE_LOG(LogTemp, Error, L"Distance is too Far in Service");
-		BTState->SetIdleMode();
-		return;
-	}
+	// if (Distance >= 3000.0f)
+	// {
+	// 	UE_LOG(LogTemp, Error, L"Distance is too Far in Service");
+	// 	BTState->SetIdleMode();
+	// 	return;
+	// }
 }

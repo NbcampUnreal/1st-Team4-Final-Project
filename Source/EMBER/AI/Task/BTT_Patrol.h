@@ -17,8 +17,11 @@ public:
 	
 	UFUNCTION()
 	void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
+
 private:
 
 	UBlackboardComponent* BlackboardComp;
 	UBehaviorTreeComponent* OwnerCompRef;
+	
+	FDelegateHandle MoveCompleteHandle;
 };
