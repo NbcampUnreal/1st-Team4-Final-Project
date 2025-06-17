@@ -34,6 +34,7 @@ public:
 	// AI State
 	UFUNCTION(BlueprintCallable, Category = "AI|State")
 	virtual void OnDeath();
+	virtual void EndDeath();
 
 
 	// AI Perception

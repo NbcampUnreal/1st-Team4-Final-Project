@@ -50,6 +50,6 @@ void UCAnimNotify_EndState::Notify(USkeletalMeshComponent* MeshComp, UAnimSequen
 		return;
 	}
 
-	if (state->IsIdleMode() == false)
+	//if (state->IsIdleMode() == false)
 		state->SetIdleMode();
 }

@@ -364,3 +364,8 @@ void AEmberPlayerCharacter::OnDeath()
 {
 	MontageComponent->PlayMontage(EStateType::Dead);
 }
+
+void AEmberPlayerCharacter::EndDeath()
+{
+	Destroy();
+}

@@ -152,6 +152,8 @@ private:
 	void OnRep_Hitted();
 	UFUNCTION(BlueprintCallable)
 	void OnDeath();
+public:
+	void EndDeath();
 
 private:
 	UPROPERTY(ReplicatedUsing = "OnRep_Hitted")

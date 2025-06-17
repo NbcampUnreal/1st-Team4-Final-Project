@@ -41,7 +41,7 @@ void ABaseAI::BeginPlay()
 		MoveComponent->SetRunSpeed(RunSpeed);
 	if (SprintSpeed != 0)
 		MoveComponent->SetSprintSpeed(SprintSpeed);
-
+	AIState.Get()->SetIdleMode();
 	//if (ACAIController* AIController = Cast<ACAIController>(GetController()))
 	//{
 	//	BlackboardComp = AIController->GetBlackboardComponent();
@@ -171,6 +171,12 @@ void ABaseAI::OnDeath()
 	//	AnimInstance->StopAllMontages(0.0f);
 	//}
 	DetachFromControllerPendingDestroy();
+}
+
+void ABaseAI::EndDeath()
+{
+	WeaponComponent->DestroyWeapon();
+	Destroy();
 }
 
 //void ABaseAI::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
