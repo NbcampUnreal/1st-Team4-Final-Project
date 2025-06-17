@@ -2,10 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "GameplayTagContainer.h"
 #include "CraftingIngredientLineEntry.generated.h"
 
 class UTextBlock;
 class UHorizontalBox;
+class UImage;
+class UCraftingRecipeManager;
 
 UCLASS()
 class EMBER_API UCraftingIngredientLineEntry : public UUserWidget
@@ -14,9 +17,12 @@ class EMBER_API UCraftingIngredientLineEntry : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "IngredientLine")
-	void SetData(const FText& InName, int32 InOwned, int32 InRequired, bool bHasEnough);
+	void SetData(UCraftingRecipeManager* RecipeManager, FGameplayTag IngredientTag, int32 InOwned, int32 InRequired);
 
 protected:
+	UPROPERTY(BlueprintReadOnly, Category = "IngredientLine", meta = (BindWidgetOptional))
+	TObjectPtr<UImage> IngredientIcon;
+
 	UPROPERTY(BlueprintReadOnly, Category = "IngredientLine", meta = (BindWidget))
 	TObjectPtr<UTextBlock> IngredientName_Text;
 

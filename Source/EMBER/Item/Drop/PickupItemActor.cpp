@@ -23,7 +23,6 @@ APickupItemActor::APickupItemActor()
 
     PrimaryActorTick.bCanEverTick = false;
 
-    // 부모 클래스가 MeshComponent를 Root로 설정하므로, 여기서는 InteractionSphere를 붙입니다.
     InteractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionSphere"));
     InteractionSphere->SetupAttachment(GetRootComponent());
     InteractionSphere->SetSphereRadius(200.0f);
@@ -133,7 +132,6 @@ void APickupItemActor::OnItemAcquired(AActor* InteractingActor)
 
     for (const FLootResultData& LootData : LootContents)
     {
-        // [수정] 오타 수정: ItemTemplate -> ItemTemplateClass, ItemRarity -> Rarity
        if (LootData.ItemTemplateClass)
        {
           int32 AddedCount = InventoryManager->TryAddItemByRarity(LootData.ItemTemplateClass, LootData.Rarity, LootData.Quantity);
@@ -148,7 +146,6 @@ void APickupItemActor::OnItemAcquired(AActor* InteractingActor)
 
     if (FailedItems.IsEmpty())
     {
-       // 모든 아이템을 획득했을 때만 이펙트 적용 및 액터 파괴
        ApplyItemAcquisitionEffect(InteractingActor);
        Destroy();
     }

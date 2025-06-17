@@ -7,7 +7,7 @@
 #include "Item/Drop/LootTable.h"
 #include "Components/SphereComponent.h"
 #include "AbilitySystemInterface.h"
-#include "GameplayAbilitySpec.h" // [추가] FGameplayAbilitySpecHandle을 사용하기 위해 포함
+#include "GameplayAbilitySpec.h"
 #include "PickupItemActor.generated.h"
 
 class UItemTemplate;
