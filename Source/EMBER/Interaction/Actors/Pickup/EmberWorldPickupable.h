@@ -46,7 +46,7 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, Category="Pickupable|Info")
 	FEmberInteractionInfo InteractionInfo;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 	

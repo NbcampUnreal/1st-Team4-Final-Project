@@ -16,12 +16,6 @@ class EMBER_API AEmberFoliageBase : public AEmberPickupableItemBase
 public:
 	AEmberFoliageBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-public:
-	//~AActor Overrides
-	virtual void BeginPlay() override;
-	//~End of AActor Overrides
-	
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "FoliageBase|Info")
-	TSubclassOf<UItemTemplate> ItemTemplateClass;
+	virtual void BeginPlay() override;
 };

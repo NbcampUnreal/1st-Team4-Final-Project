@@ -44,6 +44,12 @@ void UItemInstance::Init(int32 InItemTemplateID, EItemRarity InItemRarity, int32
 	}
 }
 
+void UItemInstance::Init(TSubclassOf<UItemTemplate> InItemTemplate, EItemRarity InItemRarity, int32 InItemCount)
+{
+	int32 NewItemTempalteID = UEmberItemData::Get().FindItemTemplateIDByClass(InItemTemplate);
+	Init(NewItemTempalteID, InItemRarity, InItemCount);
+}
+
 void UItemInstance::AddOrRemoveStatTagStack(FGameplayTag StatTag, int32 StackCount)
 {
 	AttributeContainer.AddOrRemoveStack(StatTag, StackCount);
