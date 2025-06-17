@@ -3,6 +3,7 @@
 
 #include "AI/Service/CBTService_Passive.h"
 #include "AI/BehaviorTree/CBehaviorTreeComponent.h"
+#include "Component/C_StateComponent.h"
 #include "CAIController.h"
 #include "AI/Base/HumanAIBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -30,16 +31,41 @@ void UCBTService_Passive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		UE_LOG(LogTemp, Error, L"ai is null");
 		return;
 	}
-	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(
+	TObjectPtr<UCBehaviorTreeComponent> BTState = Cast<UCBehaviorTreeComponent>(
 		AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
-	if (AIState.Get() == nullptr)
+	if (BTState.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"aistate is null");
 		return;
 	}
-
+	TObjectPtr<UC_StateComponent> State = Cast<UC_StateComponent>(AI->GetComponentByClass(UC_StateComponent::StaticClass()));
+	if (State.Get() == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"state is null");
+		return;
+	}
+	
 	AActor* TagetActor = Cast<AActor>(Controller->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
 
+	if (State->IsDetectMode())
+	{
+		BTState->SetDetectMode();
+	}
+	if (State->IsHittdMode())
+	{
+		BTState->SetHittedMode();
+	}
+
+	if (State->IsDeadMode())
+	{
+		BTState->SetDeadMode();
+	}
+
+	if (State->IsIdleMode())
+	{
+		BTState->SetIdleMode();
+	}
+	
 	if (TagetActor)
 	{
 		FVector TargetLocation = TagetActor->GetActorLocation();
@@ -49,14 +75,14 @@ void UCBTService_Passive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 		if (Distance < RunRange)
 		{
-			AIState->SetRunMode();
+			BTState->SetRunMode();
 		}
 		return;
 	}
 
-	if (AIState->IsHittedMode())
+	if (BTState->IsHittedMode())
 	{
-		AIState->SetRunMode();
+		BTState->SetRunMode();
 		return;
 	}
 }

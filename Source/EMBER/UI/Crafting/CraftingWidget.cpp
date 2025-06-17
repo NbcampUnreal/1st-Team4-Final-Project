@@ -9,28 +9,19 @@
 #include "Player/EmberPlayerCharacter.h"
 #include "Item/Crafting/CraftingBuilding.h"
 #include "Item/ItemInstance.h"
-#include "Item/ItemTemplate.h"
-#include "UI/Data/EmberItemData.h"
-#include "Kismet/GameplayStatics.h"
+#include "Component/MontageSystemComponent.h"
 #include "Components/WidgetSwitcher.h"
-#include "Components/PanelWidget.h"
+#include "Components/TextBlock.h"
 #include "Components/Border.h"
 
 UCraftingWidget::UCraftingWidget(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
-    , CurrentStationTypeForUI(EStationType::None)
-    , SelectedRecipeIndex(-1)
-    , CraftAmount(1)
-    , SelectedRecipeName(NAME_None)
 {
+    SelectedRecipeIndex = -1;
+    CraftAmount = 1;
+    SelectedRecipeName = NAME_None;
     CurrentStationActorRef = nullptr;
-    RecipeListWidget = nullptr;
-    CenterContentSwitcher = nullptr;
-    GeneralRecipeIngredientsWidget = nullptr;
-    MainMaterialSelectorWidget = nullptr;
-    SelectedRecipeDisplayWidget = nullptr;
-    CraftingOutputBoxWidget = nullptr;
-    PlayerInventoryDisplayWidget = nullptr;
+    CurrentStationTypeForUI = EStationType::None;
 }
 
 void UCraftingWidget::NativeConstruct()
@@ -39,13 +30,11 @@ void UCraftingWidget::NativeConstruct()
 
     if (MainMaterialSelectorWidget)
     {
-        MainMaterialSelectorWidget->OnSelectionChanged.RemoveAll(this);
         MainMaterialSelectorWidget->OnSelectionChanged.AddDynamic(this, &UCraftingWidget::HandleMainMaterialSelectionChanged);
     }
 
     if (RecipeListWidget)
     {
-        RecipeListWidget->OnRecipeListItemSelected.RemoveAll(this);
         RecipeListWidget->OnRecipeListItemSelected.AddDynamic(this, &UCraftingWidget::HandleRecipeSelectedFromList);
     }
 }
@@ -70,18 +59,11 @@ FReply UCraftingWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyE
 void UCraftingWidget::InitializeForStation(ACraftingBuilding* InStationActor, FName OptionalInitialRecipeRowName)
 {
     CurrentStationActorRef = InStationActor;
-    
-    if (AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn()))
-    {
-        if(UCraftingSystem* CraftingSystem = Player->FindComponentByClass<UCraftingSystem>())
-        {
-            CurrentStationTypeForUI = InStationActor ? InStationActor->StationType : EStationType::None;
-            CraftingSystem->CurrentStationForSystem = CurrentStationTypeForUI;
-        }
-    }
+    CurrentStationTypeForUI = InStationActor ? InStationActor->StationType : EStationType::None;
 
     SelectedRecipeIndex = -1;
     SelectedRecipeName = NAME_None;
+    
     PopulateActiveRecipeList();
 
     if (!OptionalInitialRecipeRowName.IsNone())
@@ -113,16 +95,25 @@ void UCraftingWidget::PopulateActiveRecipeList()
 
     AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn());
     if (!Player) return;
+    
     UCraftingSystem* Sys = Player->FindComponentByClass<UCraftingSystem>();
     if (!Sys || !Sys->RecipeManager || !Sys->RecipeManager->RecipeDataTable) return;
     
-    UDataTable* DT = Sys->RecipeManager->RecipeDataTable;
-    for (const FName& RowName : DT->GetRowNames())
+    FGameplayTag CurrentStationTag;
+    if (CurrentStationActorRef)
     {
-        if (FCraftingRecipeRow* RowPtr = DT->FindRow<FCraftingRecipeRow>(RowName, TEXT("CraftingWidget")))
+        CurrentStationTag = CurrentStationActorRef->GetStationTag();
+    }
+    
+    const TMap<FName, uint8*>& RowMap = Sys->RecipeManager->RecipeDataTable->GetRowMap();
+    for (const auto& RowPair : RowMap)
+    {
+        const FName& RowName = RowPair.Key;
+        const FCraftingRecipeRow* RowPtr = reinterpret_cast<const FCraftingRecipeRow*>(RowPair.Value);
+
+        if (RowPtr)
         {
-            bool bMatch = (RowPtr->CraftingStation == CurrentStationTypeForUI) || (RowPtr->bCraftableByCharacter && CurrentStationTypeForUI == EStationType::None);
-            if (bMatch)
+            if (Sys->CanCraftRecipeAtStation(*RowPtr, CurrentStationTag))
             {
                 ActiveRecipeList.Add(FNamedCraftingRecipe{ RowName, *RowPtr });
             }
@@ -189,13 +180,10 @@ void UCraftingWidget::RefreshAll()
         {
             SelectedRecipeDisplayWidget->SetRecipeDetails(*SelectedRecipeDataPtr, PlayerIngredients, CraftAmount);
 
-            if (SelectedRecipeDataPtr->RequiredMainMaterialCount > 0)
+            if (CraftingSystem && SelectedRecipeDataPtr->RequiredMainMaterialCount > 0)
             {
-                if(CraftingSystem)
-                {
-                    auto Chances = CraftingSystem->GetRarityProbabilities(*SelectedRecipeDataPtr, CurrentSelectedMainIngredients);
-                    SelectedRecipeDisplayWidget->UpdateRarityDisplay(*SelectedRecipeDataPtr, Chances);
-                }
+                auto Chances = CraftingSystem->GetRarityProbabilities(*SelectedRecipeDataPtr, CurrentSelectedMainIngredients);
+                SelectedRecipeDisplayWidget->UpdateRarityDisplay(*SelectedRecipeDataPtr, Chances);
             }
             else
             {
@@ -208,7 +196,7 @@ void UCraftingWidget::RefreshAll()
         }
     }
 
-    bool bIsQualityRecipe = (SelectedRecipeDataPtr && SelectedRecipeDataPtr->RequiredMainMaterialCount > 0);
+    const bool bIsQualityRecipe = (SelectedRecipeDataPtr && SelectedRecipeDataPtr->RequiredMainMaterialCount > 0);
     if (CenterContentSwitcher)
     {
         if (bIsQualityRecipe)
@@ -220,18 +208,6 @@ void UCraftingWidget::RefreshAll()
             if (GeneralRecipeIngredientsWidget) CenterContentSwitcher->SetActiveWidget(GeneralRecipeIngredientsWidget);
         }
     }
-    if (MainMaterialSelectorWidget) MainMaterialSelectorWidget->SetVisibility(bIsQualityRecipe ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
-    if (GeneralRecipeIngredientsWidget) GeneralRecipeIngredientsWidget->SetVisibility(!bIsQualityRecipe ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
-
-    if (CraftingOutputBoxWidget)
-    {
-        CraftingOutputBoxWidget->SetVisibility(ESlateVisibility::Visible);
-    }
-    
-    if (PlayerInventoryDisplayWidget)
-    {
-        PlayerInventoryDisplayWidget->SetVisibility(ESlateVisibility::Visible);
-    }
 }
 
 void UCraftingWidget::AttemptCraftCurrentRecipe()
@@ -241,6 +217,17 @@ void UCraftingWidget::AttemptCraftCurrentRecipe()
     AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn());
     UCraftingSystem* Sys = Player ? Player->FindComponentByClass<UCraftingSystem>() : nullptr;
     if (!Sys || !Player) return;
+    
+    if (CurrentStationActorRef)
+    {
+        if (UAnimMontage* StationAnimation = CurrentStationActorRef->GetCraftingAnimation())
+        {
+            if (UMontageSystemComponent* MontageComp = Player->FindComponentByClass<UMontageSystemComponent>())
+            {
+                MontageComp->PlayMontage(StationAnimation);
+            }
+        }
+    }
 
     const FNamedCraftingRecipe& NamedRecipe = ActiveRecipeList[SelectedRecipeIndex];
     TMap<FGameplayTag,int32> MainToUse;
@@ -261,14 +248,7 @@ void UCraftingWidget::AttemptCraftCurrentRecipe()
                     break;
                 }
             }
-            if(CurrentStationActorRef)
-            {
-                 Sys->RequestServerCraft(Player, CurrentStationActorRef, NamedRecipe.RecipeRowName, MainToUse);
-            }
-            else 
-            {
-                 UE_LOG(LogTemp, Warning, TEXT("UCraftingWidget::AttemptCraftCurrentRecipe - No station actor. Bare-hands craft server request needs to be implemented."));
-            }
+            Sys->RequestServerCraft(Player, CurrentStationActorRef, NamedRecipe.RecipeRowName, MainToUse);
         }
         else
         {

@@ -112,6 +112,7 @@ void UItemManagerComponent::Server_EquipmentToEquipment_Implementation(UInventor
 	}
 }
 
+PRAGMA_DISABLE_OPTIMIZATION
 bool UItemManagerComponent::TryPickupItem(AEmberPickupableItemBase* PickupableItemActor)
 {
 	if (HasAuthority() == false)
@@ -146,6 +147,7 @@ bool UItemManagerComponent::TryPickupItem(AEmberPickupableItemBase* PickupableIt
 
 	return false;
 }
+PRAGMA_ENABLE_OPTIMIZATION
 
 bool UItemManagerComponent::TryAutoPickupItem(UItemInstance* ItemInstance)
 {

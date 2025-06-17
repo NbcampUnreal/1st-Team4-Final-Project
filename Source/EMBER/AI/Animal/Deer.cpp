@@ -13,17 +13,21 @@ ADeer::ADeer()
 }
 
 float ADeer::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
-	AActor* DamageCauser)
+                        AActor* DamageCauser)
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
+
 	UDeer_AnimInstance* AnimInstance = Cast<UDeer_AnimInstance>(GetMesh()->GetAnimInstance());
 	ACAIController* AIController = Cast<ACAIController>(GetController());
 	AActor* TargetActor = Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
-	
+
 	GetController()->StopMovement();
-	AnimInstance->StopAllMontages(0.5f);
-	AnimInstance->PlayStateMontage(EAnimActionType::HitFront);
-	
+	if (AnimInstance)
+	{
+		AnimInstance->StopAllMontages(0.5f);
+		AnimInstance->PlayStateMontage(EAnimActionType::HitFront);
+	}
+
+
 	return ActualDamage;
 }

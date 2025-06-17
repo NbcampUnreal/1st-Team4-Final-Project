@@ -23,7 +23,8 @@ UCLASS()
 class EMBER_API ABaseAI : public ACharacter
 {
 	GENERATED_BODY()
-
+public:
+	FDamagesData GetDamagesData()const { return DamageData; }
 public:
 	ABaseAI();
 	virtual void BeginPlay() override;
@@ -33,9 +34,8 @@ public:
 	// AI State
 	UFUNCTION(BlueprintCallable, Category = "AI|State")
 	virtual void OnDeath();
-	
-	UFUNCTION(BlueprintCallable, Category = "AI|State")
-	virtual void OnAttack();
+	virtual void EndDeath();
+
 
 	// AI Perception
 	//UFUNCTION()
@@ -48,18 +48,6 @@ public:
 	// Getter
 	virtual float GetAttackPower() const { return AttackPower; }
 	UBehaviorTree* GetBehaviorTree() const;
-
-	// Setter
-	// UFUNCTION(BlueprintCallable, Category = "AI|Movement")
-	// virtual void SetWalkSpeed();
-	//
-	// UFUNCTION(BlueprintCallable, Category = "AI|Movement")
-	// virtual void SetRunSpeed();
-	//
-	// UFUNCTION(BlueprintCallable, Category = "AI|Movement")
-	// virtual void SetFlySpeed();
-public:
-	void Hitted();
 
 	
 protected:
@@ -108,7 +96,12 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<AActor> LastDamageCauser;
-
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	int32 WalkSpeed;
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	int32 RunSpeed;
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	int32 SprintSpeed;
 private:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	UFUNCTION(NetMulticast, Reliable)

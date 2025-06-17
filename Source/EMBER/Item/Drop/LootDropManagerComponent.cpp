@@ -107,15 +107,24 @@ void ULootDropManagerComponent::OnMonsterDiedMessageReceived(FGameplayTag Channe
 		const FVector SpawnLocation = Message.DeathLocation + FVector(0, 0, 50.0f);
 		const FRotator SpawnRotation = FRotator::ZeroRotator;
 		
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = GetOwner();
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		FTransform SpawnTransform = FTransform::Identity;
+		SpawnTransform.SetLocation(SpawnLocation);
 
-		APickupItemActor* NewPouch = World->SpawnActor<APickupItemActor>(PickupItemActorClass, SpawnLocation, SpawnRotation, SpawnParams);
+		APickupItemActor* NewPouch = GetWorld()->SpawnActorDeferred<APickupItemActor>(
+			PickupItemActorClass,
+			SpawnTransform,
+			nullptr,
+			nullptr,
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn,
+			ESpawnActorScaleMethod::MultiplyWithRoot
+		);
+	
 		if (NewPouch)
 		{
-			NewPouch->InitializeLootPouch(FinalLootResults);
+			NewPouch->InitializeLootPouch(FinalLootResults[0]);
 			UE_LOG(LogTemp, Log, TEXT("[SERVER] LootDropManager: Spawned loot pouch for %s with %d item types."), *Message.MonsterID.ToString(), FinalLootResults.Num());
 		}
+
+		NewPouch->FinishSpawning(FTransform::Identity, true);
 	}
 }

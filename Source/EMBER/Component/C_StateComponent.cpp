@@ -10,9 +10,11 @@ void UC_StateComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UC_StateComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UC_StateComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                      FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	//UE_LOG(LogTemp, Warning, L"%s", *UEnum::GetValueAsString(CurrentStateType));
 }
 
 bool UC_StateComponent::IsIdleMode() const
@@ -30,6 +32,16 @@ bool UC_StateComponent::IsActionMode() const
 	return CurrentStateType == EStateType::Action;
 }
 
+bool UC_StateComponent::IsCombatMode() const
+{
+	return CurrentStateType == EStateType::Combat;
+}
+
+void UC_StateComponent::SetCombatMode()
+{
+	ChangeType(EStateType::Combat);
+}
+
 bool UC_StateComponent::IsHittdMode() const
 {
 	return CurrentStateType == EStateType::Hitted;
@@ -38,6 +50,11 @@ bool UC_StateComponent::IsHittdMode() const
 bool UC_StateComponent::IsDeadMode() const
 {
 	return CurrentStateType == EStateType::Dead;
+}
+
+bool UC_StateComponent::IsDetectMode() const
+{
+	return CurrentStateType == EStateType::Detect;
 }
 
 void UC_StateComponent::SetIdleMode()
@@ -65,6 +82,11 @@ void UC_StateComponent::SetDeadMode()
 	CurrentStateType = EStateType::Dead;
 }
 
+void UC_StateComponent::SetDetectMode()
+{
+	CurrentStateType = EStateType::Detect;
+}
+
 void UC_StateComponent::ChangeType(EStateType InType)
 {
 	EStateType prevType = CurrentStateType;
@@ -74,4 +96,3 @@ void UC_StateComponent::ChangeType(EStateType InType)
 	if (OnStateTypeChanged.IsBound())
 		OnStateTypeChanged.Broadcast(prevType, CurrentStateType);
 }
-

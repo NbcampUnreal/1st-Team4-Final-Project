@@ -23,13 +23,17 @@ public:
 	bool IsIdleMode() const;
 	bool IsEquipMode() const;
 	bool IsActionMode() const;
+	bool IsCombatMode() const;
 	bool IsHittdMode() const;
 	bool IsDeadMode() const;
+	bool IsDetectMode() const;
 	void SetIdleMode();
 	void SetEquipMode();
 	void SetActionMode();
+	void SetCombatMode();
 	void SetHittdMode();
 	void SetDeadMode();
+	void SetDetectMode();
 
 
 private:

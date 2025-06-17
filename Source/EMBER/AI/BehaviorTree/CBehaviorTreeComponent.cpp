@@ -42,7 +42,7 @@ bool UCBehaviorTreeComponent::IsAvoidMode()
 	return GetType() == EAnimalState::Avoid;
 }
 
-bool UCBehaviorTreeComponent::IsDetect()
+bool UCBehaviorTreeComponent::IsDetectMode()
 {
 	return GetType() == EAnimalState::Detect;
 }
@@ -62,6 +62,11 @@ bool UCBehaviorTreeComponent::IsChaseMode()
 	return GetType() == EAnimalState::Chase;
 }
 
+bool UCBehaviorTreeComponent::IsCombatMode()
+{
+	return GetType() == EAnimalState::Combat;
+}
+
 bool UCBehaviorTreeComponent::IsActionMode()
 {
 	return GetType() == EAnimalState::Attack;
@@ -75,6 +80,11 @@ bool UCBehaviorTreeComponent::IsHittedMode()
 bool UCBehaviorTreeComponent::IsDeadMode()
 {
 	return GetType() == EAnimalState::Death;
+}
+
+void UCBehaviorTreeComponent::SetTarget(TObjectPtr<ACharacter> Target)
+{
+	Blackboard->SetValueAsObject(TargetKey, Target);
 }
 
 FVector UCBehaviorTreeComponent::GetPatrolLocation()
@@ -138,6 +148,11 @@ void UCBehaviorTreeComponent::SetPatrolMode()
 void UCBehaviorTreeComponent::SetChaseMode()
 {
 	ChangeType(EAnimalState::Chase);
+}
+
+void UCBehaviorTreeComponent::SetCombatMode()
+{
+	ChangeType(EAnimalState::Combat);
 }
 
 void UCBehaviorTreeComponent::SetActionMode()

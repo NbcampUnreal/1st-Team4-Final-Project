@@ -16,6 +16,11 @@ public:
 protected:
 	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+
+private:
+	UPROPERTY(EditAnywhere)
+	int32 AttackIndex;
+
 	//protected:
 //	UFUNCTION()
 //	virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);

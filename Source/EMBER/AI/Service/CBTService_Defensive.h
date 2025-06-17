@@ -24,4 +24,5 @@ private:
 
 private:
 	bool bisHit;
+	ACharacter* Target;
 };

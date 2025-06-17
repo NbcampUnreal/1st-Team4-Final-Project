@@ -14,8 +14,10 @@ UENUM()
 enum class EStateType : uint8
 {
 	Idle UMETA(DisplayName = "Idle"),
+	Detect UMETA(DisplayName = "Detect"),
 	Equip UMETA(DisplayName = "Equip"),
 	Action UMETA(DisplayName = "Action"),
+	Combat UMETA(DisplayName = "Combat"),
 	Hitted UMETA(DisplayName = "Hitted"),
 	Dead UMETA(DisplayName = "Dead"),
 	Max UMETA(DisplayName = "Max")

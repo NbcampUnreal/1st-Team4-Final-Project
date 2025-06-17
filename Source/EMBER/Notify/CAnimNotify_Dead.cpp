@@ -3,7 +3,9 @@
 
 #include "Notify/CAnimNotify_Dead.h"
 
+#include "EmberPlayerCharacter.h"
 #include "AIComponent/CAIWeaponComponent.h"
+#include "Base/BaseAI.h"
 #include "GameFramework/Character.h"
 
 void UCAnimNotify_Dead::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
@@ -21,18 +23,15 @@ void UCAnimNotify_Dead::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBa
 		return;
 	}
 
-	ACharacter* Character = Cast<ACharacter>(MeshComp->GetOwner());
-	if (Character == nullptr)
+	ABaseAI* ai = Cast<ABaseAI>(MeshComp->GetOwner());
+	if(ai != nullptr)
 	{
-		UE_LOG(LogTemp, Error, L"Character is null");
+		ai->EndDeath();
 		return;
 	}
-	UCAIWeaponComponent* weapon = Cast<UCAIWeaponComponent>(Character->GetComponentByClass(UCAIWeaponComponent::StaticClass()));
-	if (weapon != nullptr)
-	{
-		weapon->DestroyWeapon();
-	}
-	Character->Destroy();
+	AEmberPlayerCharacter* player = Cast<AEmberPlayerCharacter>(MeshComp->GetOwner());
+	if(player != nullptr)
+		player->EndDeath();
 }
 
 FString UCAnimNotify_Dead::GetNotifyName_Implementation() const

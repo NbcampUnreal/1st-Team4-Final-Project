@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "C_StateComponent.h"
 #include "CAIController.generated.h"
 
 class ABaseAI;
@@ -42,7 +43,6 @@ protected:
 	void OnUnPossess() override;
 	virtual void BeginPlay() override;
 
-private:
 	// 	UFUNCTION()
 	// 	void OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors);
 	UFUNCTION()
@@ -55,6 +55,7 @@ private:
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAIPerceptionComponent> Perception;
+	TObjectPtr<UC_StateComponent> AIState;
 	TObjectPtr<ABaseAI> AI;
 	TObjectPtr<UCBehaviorTreeComponent> Behavior;
 	TObjectPtr<UAISenseConfig_Sight> Sight;
