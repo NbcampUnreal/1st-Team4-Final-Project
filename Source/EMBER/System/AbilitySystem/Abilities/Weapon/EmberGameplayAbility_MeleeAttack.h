@@ -21,6 +21,7 @@ public:
 protected:
 	//~UGameplayAbility Overrides
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	virtual void HandleMontageEvent(FGameplayEventData Payload);
 	//~End of UGameplayAbility Overrides
 
 private:
@@ -30,7 +31,7 @@ private:
 	UFUNCTION()
 	void OnMontageEventTriggered(FGameplayEventData Payload);
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnMontageFinished();
 	
 protected:

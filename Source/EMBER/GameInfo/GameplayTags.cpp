@@ -52,6 +52,7 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_Mining,									"Status.Mining");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Status_ChangeEquip,								"Status.ChangeEquip");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack,									"Status.Attack");
 
 	// Gameplay Event
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_Begin,						"GameplayEvent.Montage.Begin");

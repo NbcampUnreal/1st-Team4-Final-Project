@@ -3,6 +3,7 @@
 
 #include "System/AbilitySystem/EmberAbilitySystemComponent.h"
 
+#include "EmberAbilityTagRelationshipMapping.h"
 #include "Data/EmberAbilitySet.h"
 #include "Abilities/EmberGameplayAbility.h"
 #include "UI/Data/EmberPawnData.h"
@@ -158,10 +159,17 @@ void UEmberAbilitySystemComponent::ClearAbilityInput()
 	InputHeldSpecHandles.Reset();
 }
 
+void UEmberAbilitySystemComponent::SetTagRelationshipMapping(UEmberAbilityTagRelationshipMapping* NewMapping)
+{
+	TagRelationshipMapping = NewMapping;
+}
+
 void UEmberAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor)
 {
 	Super::InitAbilityActorInfo(InOwnerActor, InAvatarActor);
 
+	SetTagRelationshipMapping(UEmberPawnData::Get().TagRelationshipMapping);
+	
 	APawn* Pawn = Cast<APawn>(InAvatarActor);
 	if (Pawn == nullptr)
 		return;
@@ -206,6 +214,32 @@ void UEmberAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec
 		FPredictionKey OriginalPredictionKey = Instance ? Instance->GetCurrentActivationInfo().GetActivationPredictionKey() : Spec.ActivationInfo.GetActivationPredictionKey();
 
 		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, Spec.Handle, OriginalPredictionKey);
+	}
+}
+
+void UEmberAbilitySystemComponent::ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags,
+	UGameplayAbility* RequestingAbility, bool bEnableBlockTags, const FGameplayTagContainer& BlockTags,
+	bool bExecuteCancelTags, const FGameplayTagContainer& CancelTags)
+{
+	FGameplayTagContainer ModifiedBlockTags = BlockTags;
+	FGameplayTagContainer ModifiedCancelTags = CancelTags;
+
+	if (TagRelationshipMapping)
+	{
+		// Use the mapping to expand the ability tags into block and cancel tag
+		TagRelationshipMapping->GetAbilityTagsToBlockAndCancel(AbilityTags, &ModifiedBlockTags, &ModifiedCancelTags);
+	}
+	
+	Super::ApplyAbilityBlockAndCancelTags(AbilityTags, RequestingAbility, bEnableBlockTags, BlockTags,
+	                                      bExecuteCancelTags, CancelTags);
+}
+
+void UEmberAbilitySystemComponent::GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags,
+	FGameplayTagContainer& OutActivationRequired, FGameplayTagContainer& OutActivationBlocked) const
+{
+	if (TagRelationshipMapping)
+	{
+		TagRelationshipMapping->GetRequiredAndBlockedActivationTags(AbilityTags, &OutActivationRequired, &OutActivationBlocked);
 	}
 }
 
