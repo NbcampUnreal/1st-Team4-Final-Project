@@ -13,9 +13,8 @@ class EMBER_API UBTT_FlyMoveTo : public UBTTask_BlackboardBase
 
 public:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-
-	UFUNCTION()
-	void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
+	// UFUNCTION()
+	// void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
 
 	UBehaviorTreeComponent* OwnerCompRef;
 

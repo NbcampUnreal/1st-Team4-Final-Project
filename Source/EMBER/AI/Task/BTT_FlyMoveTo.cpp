@@ -25,19 +25,20 @@ EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		float Speed = BaseAI->GetCharacterMovement()->MaxFlySpeed;
 		BaseAI->GetCharacterMovement()->Velocity = Direction * Speed;
 	}
-	
-	AIController->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_FlyMoveTo::OnMoveCompleted);
-	AIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_FlyMoveTo::OnMoveCompleted);
-	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-	return EBTNodeResult::InProgress;
+
+	// AIController->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_FlyMoveTo::OnMoveCompleted);
+	// AIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_FlyMoveTo::OnMoveCompleted);
+	// FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	return EBTNodeResult::Succeeded;
 }
+
+
 
 //NavMesh 적용될 떄만 호출가능 (MoveToLocation(), MoveToActor())
-void UBTT_FlyMoveTo::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
-{
-	UE_LOG(LogTemp, Warning, TEXT("FlyMoveCompleted"));
-	ABaseAI* BaseAI = Cast<ABaseAI>(OwnerCompRef->GetAIOwner()->GetPawn());
-	BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
-}
-
+// void UBTT_FlyMoveTo::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
+// {
+// 	UE_LOG(LogTemp, Warning, TEXT("FlyMoveCompleted"));
+// 	ABaseAI* BaseAI = Cast<ABaseAI>(OwnerCompRef->GetAIOwner()->GetPawn());
+// 	BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+// 	FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
+// }

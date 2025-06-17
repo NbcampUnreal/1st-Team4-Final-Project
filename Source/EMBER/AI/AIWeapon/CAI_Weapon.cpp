@@ -54,7 +54,7 @@ void ACAI_Weapon::SpawnPlay_Implementation(ACharacter* InOwner)
 	OffCollision();
 }
 
-void ACAI_Weapon::DoAction()
+void ACAI_Weapon::DoAction(int32 AttackIndex)
 {
 	bInAction = true;
 	State->SetActionMode();
@@ -124,7 +124,7 @@ void ACAI_Weapon::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 		if (hitted == other)
 			return;
 	Hitted.AddUnique(other);
-	HitDatas[Index].SendDamage(OwnerCharacter, this, other);
+	HitDatas[CurrAttackIndex].SendDamage(OwnerCharacter, this, other);
 }
 
 void ACAI_Weapon::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

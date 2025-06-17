@@ -12,12 +12,13 @@ ACAI_Weapon_Combo::ACAI_Weapon_Combo()
 {
 }
 
-void ACAI_Weapon_Combo::DoAction()
+void ACAI_Weapon_Combo::DoAction(int32 AttackIndex)
 {
 	UE_LOG(LogTemp, Error, L"Action %d", AttackDatas.Num());
 	if(AttackDatas.Num() < 1)
 		return;
-
+	if(AttackDatas.Num() < AttackIndex)
+		return;
 	if(bEnable == true)
 	{
 		bEnable = false;
@@ -25,21 +26,21 @@ void ACAI_Weapon_Combo::DoAction()
 		return;
 	}
 
-	if (State.Get()->IsIdleMode() == false)
+	if (State.Get()->IsIdleMode() == false && State.Get()->IsCombatMode() == false)
 	{
-		UE_LOG(LogTemp, Warning, L"Is not Idle State");
+		UE_LOG(LogTemp, Error, L"Is not Idle State");
 		return;
 	}
 
-	Super::DoAction();
-
-	AttackDatas[Index].DoAction(OwnerCharacter);
+	Super::DoAction(AttackIndex);
+	CurrAttackIndex = AttackIndex;
+	AttackDatas[AttackIndex].DoAction(OwnerCharacter);
 }
 
 void ACAI_Weapon_Combo::Begin_DoAction()
 {
 	Super::Begin_DoAction();
-	ACAIController* AIcontroller = OwnerCharacter->GetController<ACAIController>();
+	/*ACAIController* AIcontroller = OwnerCharacter->GetController<ACAIController>();
 	if(AIcontroller != nullptr)
 	{
 		float random = (float)UKismetMathLibrary::RandomFloatInRange(0, 2);
@@ -55,7 +56,7 @@ void ACAI_Weapon_Combo::Begin_DoAction()
 	Index++;
 	if (Index >= AttackDatas.Num())
 		return;
-	AttackDatas[Index].DoAction(OwnerCharacter);
+	AttackDatas[Index].DoAction(OwnerCharacter);*/
 }
 
 void ACAI_Weapon_Combo::End_DoAction()
