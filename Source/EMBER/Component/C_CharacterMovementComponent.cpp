@@ -2,6 +2,7 @@
 #include "C_StateComponent.h"
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UC_CharacterMovementComponent::BeginPlay()
 {
@@ -98,4 +99,22 @@ void UC_CharacterMovementComponent::OnWalk()
 void UC_CharacterMovementComponent::SetSpeed(ESpeedType SpeedType)
 {
 	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(int32)SpeedType];
+}
+
+void UC_CharacterMovementComponent::SetWalkSpeed(int32 InSpeed)
+{
+	InSpeed = UKismetMathLibrary::Clamp(InSpeed, 0, 600);
+	Speed[(int32)ESpeedType::Walk] = InSpeed;
+}
+
+void UC_CharacterMovementComponent::SetRunSpeed(int32 InSpeed)
+{
+	InSpeed = UKismetMathLibrary::Clamp(InSpeed, 0, 600);
+	Speed[(int32)ESpeedType::Run] = InSpeed;
+}
+
+void UC_CharacterMovementComponent::SetSprintSpeed(int32 InSpeed)
+{
+	InSpeed = UKismetMathLibrary::Clamp(InSpeed, 0, 600);
+	Speed[(int32)ESpeedType::Sprint] = InSpeed;
 }

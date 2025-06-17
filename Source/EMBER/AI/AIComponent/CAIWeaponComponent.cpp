@@ -50,14 +50,14 @@ void UCAIWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	// ...
 }
 
-void UCAIWeaponComponent::DoAction()
+void UCAIWeaponComponent::DoAction(int32 AttackIndex)
 {
 	if(GetDoAction() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"Weapon is null");
 		return;
 	}
-	GetDoAction()->DoAction();
+	GetDoAction()->DoAction(AttackIndex);
 }
 
 ACAI_Weapon* UCAIWeaponComponent::GetDoAction()

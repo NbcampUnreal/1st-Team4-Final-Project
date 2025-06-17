@@ -20,7 +20,7 @@ public:
 	ACAI_Weapon_Combo();
 
 public:
-	virtual void DoAction() override;
+	virtual void DoAction(int32 AttackIndex) override;
 	virtual void Begin_DoAction() override;
 	virtual void End_DoAction() override;
 

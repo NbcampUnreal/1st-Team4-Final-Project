@@ -43,7 +43,6 @@ protected:
 	void OnUnPossess() override;
 	virtual void BeginPlay() override;
 
-private:
 	// 	UFUNCTION()
 	// 	void OnPerceptionUpdate(const TArray<AActor*>& UpdatedActors);
 	UFUNCTION()

@@ -1,0 +1,55 @@
+#include "AI/Griffon_Controller.h"
+#include "Component/C_StateComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/CBehaviorTreeComponent.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
+
+
+AGriffon_Controller::AGriffon_Controller()
+{
+	Sight->SightRadius = 1500.0f;
+	Sight->LoseSightRadius = 1800.f;
+	Sight->PeripheralVisionAngleDegrees = 90;
+}
+
+void AGriffon_Controller::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AGriffon_Controller::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+}
+
+void AGriffon_Controller::OnUnPossess()
+{
+	Super::OnUnPossess();
+}
+
+void AGriffon_Controller::OnTargetPerceptionUpdated(AActor* Target, FAIStimulus Stimulus)
+{
+	Perception->GetCurrentlyPerceivedActors(nullptr, Actors);
+	if (Stimulus.WasSuccessfullySensed() && Target->Tags.Contains(FName("Player")))
+	{
+		if (Behavior)
+		{
+			Blackboard->SetValueAsObject("TargetActor", Target);
+			AIState->SetDetectMode();
+			UE_LOG(LogTemp, Warning, TEXT("Detected target"));
+		}
+	}
+	else
+	{
+		Actors.RemoveSingle(Target);
+		UE_LOG(LogTemp, Warning, TEXT("Actors.Num(): %d"), Actors.Num());
+		if (Actors.Num() == 0 && !Behavior->IsDetectMode() && !Behavior->IsCombatMode())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Perception: Target Lost"), Actors.Num());
+			AIState->SetIdleMode();
+			Blackboard->SetValueAsObject("TargetActor", nullptr);
+			return;
+		}
+	}
+}

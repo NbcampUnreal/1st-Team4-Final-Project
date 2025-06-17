@@ -17,6 +17,7 @@ enum class EStateType : uint8
 	Detect UMETA(DisplayName = "Detect"),
 	Equip UMETA(DisplayName = "Equip"),
 	Action UMETA(DisplayName = "Action"),
+	Combat UMETA(DisplayName = "Combat"),
 	Hitted UMETA(DisplayName = "Hitted"),
 	Dead UMETA(DisplayName = "Dead"),
 	Max UMETA(DisplayName = "Max")
