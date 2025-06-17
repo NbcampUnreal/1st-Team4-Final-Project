@@ -54,7 +54,7 @@ void ACAI_Weapon::SpawnPlay_Implementation(ACharacter* InOwner)
 	OffCollision();
 }
 
-void ACAI_Weapon::DoAction()
+void ACAI_Weapon::DoAction(int32 AttackIndex)
 {
 	bInAction = true;
 	State->SetActionMode();
