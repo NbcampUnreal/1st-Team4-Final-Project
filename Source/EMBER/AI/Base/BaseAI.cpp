@@ -35,6 +35,12 @@ ABaseAI::ABaseAI()
 void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
+	if (WalkSpeed != 0)
+		MoveComponent->SetWalkSpeed(WalkSpeed);
+	if (RunSpeed != 0)
+		MoveComponent->SetRunSpeed(RunSpeed);
+	if (SprintSpeed != 0)
+		MoveComponent->SetSprintSpeed(SprintSpeed);
 
 	//if (ACAIController* AIController = Cast<ACAIController>(GetController()))
 	//{
