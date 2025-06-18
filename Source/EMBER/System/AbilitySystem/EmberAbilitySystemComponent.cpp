@@ -230,8 +230,7 @@ void UEmberAbilitySystemComponent::ApplyAbilityBlockAndCancelTags(const FGamepla
 		TagRelationshipMapping->GetAbilityTagsToBlockAndCancel(AbilityTags, &ModifiedBlockTags, &ModifiedCancelTags);
 	}
 	
-	Super::ApplyAbilityBlockAndCancelTags(AbilityTags, RequestingAbility, bEnableBlockTags, BlockTags,
-	                                      bExecuteCancelTags, CancelTags);
+	Super::ApplyAbilityBlockAndCancelTags(AbilityTags, RequestingAbility, bEnableBlockTags, BlockTags,true, ModifiedCancelTags);
 }
 
 void UEmberAbilitySystemComponent::GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags,
