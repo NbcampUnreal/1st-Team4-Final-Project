@@ -76,21 +76,31 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	//Target과 가까우면 AttackMode
 	float distance = AI.Get()->GetDistanceTo(Target);
 	int32 AttackCount = Weapon->GetAttackStack();
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,FString::Printf(TEXT("Distance: %.1f | AttackCount: %d"), distance, AttackCount));
 	
-	if(distance < ActionRange || (AttackCount == 3 && distance > MeleeRange))
+	if(distance < ActionRange || (AttackCount >= 3 && distance > MeleeRange))
 	{
-		if (AttackCount == 3)
+		if (AttackCount >= 3)
 		{
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Special Attack Block"));
+
 			if (distance <= MeleeRange)
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Combo Attack Triggered"));
+
 				AIState->SetComboAttackMode();
 			}
 			else
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("Spit Attack Triggered"));
+
 				AIState->SetSpitAttackMode();
 			}
 
-			Weapon->ResetAttackStack();
+			if (AIState->IsComboAttack() || AIState->IsSpitAttack())
+			{
+				Weapon->ResetAttackStack();
+			}
 		}
 		else
 		{
