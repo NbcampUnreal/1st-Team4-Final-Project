@@ -8,6 +8,7 @@
 
 class UEmberAbilitySet;
 class UEmberInputConfig;
+class UEmberAbilityTagRelationshipMapping;
 /**
  * 
  */
@@ -28,4 +29,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ember|Input")
 	TObjectPtr<UEmberInputConfig> InputConfig;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ember|Abilities")
+	TObjectPtr<UEmberAbilityTagRelationshipMapping> TagRelationshipMapping;
 };

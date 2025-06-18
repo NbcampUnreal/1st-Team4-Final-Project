@@ -35,7 +35,6 @@ void UEmberGameplayAbility_MeleeAttack::ActivateAbility(const FGameplayAbilitySp
 	if (UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("MeleeAttack"), AttackMontage, DefaultAttackRate, NAME_None, false, 1.f, 0.f, false))
 	{
 		PlayMontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnMontageFinished);
-		PlayMontageTask->OnCancelled.AddDynamic(this, &ThisClass::OnMontageFinished);
 		PlayMontageTask->ReadyForActivation();
 	}
 
@@ -87,6 +86,11 @@ void UEmberGameplayAbility_MeleeAttack::OnHitTarget(FGameplayEventData Payload)
 }
 
 void UEmberGameplayAbility_MeleeAttack::OnMontageEventTriggered(FGameplayEventData Payload)
+{
+	HandleMontageEvent(Payload);
+}
+
+void UEmberGameplayAbility_MeleeAttack::HandleMontageEvent(FGameplayEventData Payload)
 {
 	OnMontageFinished();
 }
