@@ -1,20 +1,14 @@
 #include "AI/Boss/Griffon.h"
-
+#include "CAIController.h"
 #include "C_StateComponent.h"
+#include "StatusComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "AI/AnimInstance/BaseAIAnimInstance.h"
-#include "AnimInstance/Griffon_AnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "kismet/GameplayStatics.h"
 
 AGriffon::AGriffon()
 {
-	MaxHP = 20.0f;
-	AttackPower = 10.0f;
-	// WalkSpeed = 250.f;
-	// RunSpeed = 750.f;
-	// FlySpeed = 1200.0f;
-	PrimaryActorTick.bCanEverTick = true;
+	// PrimaryActorTick.bCanEverTick = true;
 }
 
 void AGriffon::BeginPlay()
@@ -22,39 +16,34 @@ void AGriffon::BeginPlay()
 	ABaseAI::BeginPlay();
 }
 
-void AGriffon::Tick(float DeltaTime)
+// void AGriffon::Tick(float DeltaTime)
+// {
+// 	Super::Tick(DeltaTime);
+//
+// 	if (GetActorLocation().Z > 700.0f)
+// 	{
+// 		GetCharacterMovement()->Velocity.Z = 0.0f;
+// 	}
+//
+// 	if (GetCharacterMovement()->IsMovingOnGround())
+// 	{
+// 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+// 	}
+// }
+
+float AGriffon::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+                           class AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::Tick(DeltaTime);
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	ACAIController* AIController = Cast<ACAIController>(GetController());
+	UBlackboardComponent* BlackboardComponent = Cast<UBlackboardComponent>(AIController->GetBlackboardComponent());
 
-	if (GetActorLocation().Z > 700.0f)
+	if (StatusComponent->GetHp() > (StatusComponent->GetMaxHp() / 2))
 	{
-		GetCharacterMovement()->Velocity.Z = 0.0f;
+		BlackboardComponent->SetValueAsBool("IsHalfHP", true);
 	}
-
-	if (GetCharacterMovement()->IsMovingOnGround())
-	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	}
-}
-
-void AGriffon::Attack()
-{
-	//AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(("TargetActor")));
-	AActor* TargetActor = Cast<AActor>(BehaviorTreeComponent.Get()->GetTarget());
-	if(TargetActor == nullptr)
-	{
-		UE_LOG(LogTemp, Error, L"Target is Null");
-		return;
-	}
-	UBaseAIAnimInstance* AnimInstance = Cast<UBaseAIAnimInstance>(GetMesh()->GetAnimInstance());
-
-	UGameplayStatics::ApplyDamage(TargetActor, AttackPower, GetController(), this, nullptr);
-	GetController()->StopMovement();
-
-	AIState->SetActionMode();
-	// AnimalState = EAnimalState::Attack;
-	// AnimInstance->AnimalState = EAnimalState::Attack;
-	// AnimInstance->PlayStateMontage();
+	
+	return ActualDamage;
 }
 
 //void AGriffon::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
@@ -63,8 +52,3 @@ void AGriffon::Attack()
 //	
 //	// SetBlackboardVector("OriginLocation", GetActorLocation());
 //}
-
-void AGriffon::SetCombatState()
-{
-	// SetRunSpeed();
-}

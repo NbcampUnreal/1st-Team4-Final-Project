@@ -14,7 +14,7 @@ void UC_StateComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                       FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	UE_LOG(LogTemp, Warning, L"%s", *UEnum::GetValueAsString(CurrentStateType));
+	// UE_LOG(LogTemp, Warning, L"%s", *UEnum::GetValueAsString(CurrentStateType));
 }
 
 bool UC_StateComponent::IsIdleMode() const
@@ -91,7 +91,7 @@ void UC_StateComponent::ChangeType(EStateType InType)
 {
 	EStateType prevType = CurrentStateType;
 	CurrentStateType = InType;
-	UE_LOG(LogTemp, Warning, L"%d", CurrentStateType);
+	// UE_LOG(LogTemp, Warning, L"%d", CurrentStateType);
 
 	if (OnStateTypeChanged.IsBound())
 		OnStateTypeChanged.Broadcast(prevType, CurrentStateType);

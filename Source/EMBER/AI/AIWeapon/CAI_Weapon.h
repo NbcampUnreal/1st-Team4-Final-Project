@@ -21,6 +21,7 @@ public:
 	ACAI_Weapon();
 
 public:
+	TArray<FAttackData> GetAttackDatas(){return AttackDatas;}
 	UFUNCTION(BlueprintNativeEvent, Category = "InitPlay")
 	void SpawnPlay(ACharacter* InOwner); //, const TArray<FAttackData>& InAttackDatas, const TArray<FDamageData>& InDamageDatas);
 	virtual void SpawnPlay_Implementation(ACharacter* InOwner);

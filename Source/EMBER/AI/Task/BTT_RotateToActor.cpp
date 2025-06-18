@@ -27,6 +27,11 @@ EBTNodeResult::Type UBTT_RotateToActor::ExecuteTask(UBehaviorTreeComponent& Owne
 	FVector Forward = AI->GetActorForwardVector();
 	FVector ToTarget = (Target->GetActorLocation() - AI->GetActorLocation()).GetSafeNormal2D();
 	float RightDot = FVector::CrossProduct(Forward, ToTarget).Z;
+	float Angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(Forward, ToTarget)));
+	if (Angle < 15.0f)
+	{
+		return EBTNodeResult::InProgress;
+	}
 	if (RightDot > 0.0f && TurnRightMontage) // 오른쪽에 있음
 	{
 		AI->PlayAnimMontage(TurnRightMontage);

@@ -1,5 +1,6 @@
 #include "BTT_Attack.h"
 #include "AI/Base/BaseAI.h"
+#include "AI/Boss/Griffon.h"
 #include "CAIController.h"
 #include "C_StateComponent.h"
 #include "AnimInstance/BaseAIAnimInstance.h"
@@ -27,14 +28,27 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 		UE_LOG(LogTemp, Error, L"task Controller is null");
 		return EBTNodeResult::Failed;
 	}
+	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
+	if (BlackboardComponent == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"BlackboardComponent is null");
+		return EBTNodeResult::Failed;
+	}
 	ABaseAI* ai = Cast<ABaseAI>(controller->GetPawn());
 	if (ai == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"task ai is null");
 		return EBTNodeResult::Failed;
 	}
+	AGriffon* Griffon = Cast<AGriffon>(ai);
+	if (Griffon)
+	{
+		UE_LOG(LogTemp, Error, L"Griffon Casting In Attack Task");
+		AttackIndex = BlackboardComponent->GetValueAsInt("RandomPattern");
+	}
 
-	UCAIWeaponComponent* weapon = Cast<UCAIWeaponComponent>(ai->GetComponentByClass(UCAIWeaponComponent::StaticClass()));
+	UCAIWeaponComponent* weapon = Cast<
+		UCAIWeaponComponent>(ai->GetComponentByClass(UCAIWeaponComponent::StaticClass()));
 	if (weapon == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"task weapon is null");
@@ -42,7 +56,7 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	}
 
 	controller->StopMovement();
-	
+
 	weapon->DoAction(AttackIndex);
 
 	return EBTNodeResult::Succeeded;
@@ -64,7 +78,8 @@ EBTNodeResult::Type UBTT_Attack::AbortTask(UBehaviorTreeComponent& OwnerComp, ui
 		UE_LOG(LogTemp, Error, L"task ai is null");
 		return EBTNodeResult::Failed;
 	}
-	UCAIWeaponComponent* weapon = Cast<UCAIWeaponComponent>(ai->GetComponentByClass(UCAIWeaponComponent::StaticClass()));
+	UCAIWeaponComponent* weapon = Cast<
+		UCAIWeaponComponent>(ai->GetComponentByClass(UCAIWeaponComponent::StaticClass()));
 	if (weapon == nullptr && weapon->GetDoAction() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"task weapon is null");
@@ -95,14 +110,15 @@ void UBTT_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 		UE_LOG(LogTemp, Error, L"task ai is null");
 		return;
 	}
-	UCAIWeaponComponent* weapon = Cast<UCAIWeaponComponent>(ai->GetComponentByClass(UCAIWeaponComponent::StaticClass()));
+	UCAIWeaponComponent* weapon = Cast<
+		UCAIWeaponComponent>(ai->GetComponentByClass(UCAIWeaponComponent::StaticClass()));
 	if (weapon == nullptr && weapon->GetDoAction() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"task weapon is null");
 		return;
 	}
 	UC_StateComponent* state = Cast<UC_StateComponent>(ai->GetComponentByClass(UC_StateComponent::StaticClass()));
-	if (state == nullptr )
+	if (state == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"task state is null");
 		return;
@@ -114,15 +130,12 @@ void UBTT_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	UE_LOG(LogTemp, Warning, L"inaction %d", weapon->GetDoAction()->GetInAction());
 	bCheck &= weapon->GetDoAction()->GetInAction() == false;
 
-	if(bCheck == true)
+	if (bCheck == true)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		return;
 	}
 }
-
-
-
 
 
 //EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory)
@@ -170,5 +183,3 @@ void UBTT_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 //
 //	bIsMontagePlaying = false;
 //}
-
-

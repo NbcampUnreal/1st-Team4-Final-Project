@@ -21,7 +21,7 @@ EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	BlackboardComp = OwnerComp.GetBlackboardComponent(); //블랙보드 참조
 	ABaseAI* ControlledAnimal = Cast<ABaseAI>(BaseAIController->GetPawn()); //사용되는 액터 참조
 
-	if (ControlledAnimal->PatrolPoint.IsEmpty() || ControlledAnimal->PatrolPoint.Num() == 0)
+	if (ControlledAnimal->PatrolPoint.IsEmpty() || ControlledAnimal->PatrolPoint.Num() <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("empty PatrolPoint"));
 		BlackboardComp->SetValueAsBool("IsRest", true);

@@ -37,15 +37,16 @@ void AGriffon_Controller::OnTargetPerceptionUpdated(AActor* Target, FAIStimulus 
 		{
 			Blackboard->SetValueAsObject("TargetActor", Target);
 			AIState->SetDetectMode();
+			Blackboard->SetValueAsBool("IsDetect", true);
+
 			UE_LOG(LogTemp, Warning, TEXT("Detected target"));
 		}
 	}
 	else
 	{
-		Actors.RemoveSingle(Target);
-		UE_LOG(LogTemp, Warning, TEXT("Actors.Num(): %d"), Actors.Num());
 		if (Actors.Num() == 0 && !Behavior->IsDetectMode() && !Behavior->IsCombatMode())
 		{
+			Actors.RemoveSingle(Target);
 			UE_LOG(LogTemp, Warning, TEXT("Perception: Target Lost"), Actors.Num());
 			AIState->SetIdleMode();
 			Blackboard->SetValueAsObject("TargetActor", nullptr);

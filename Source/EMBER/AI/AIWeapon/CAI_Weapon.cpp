@@ -77,7 +77,7 @@ void ACAI_Weapon::End_DoAction()
 
 void ACAI_Weapon::OnCollision()
 {
-	UE_LOG(LogTemp, Warning, L"collision");
+	// UE_LOG(LogTemp, Warning, L"collision");
 	for (USceneComponent* collision : Collisions)
 	{
 		UPrimitiveComponent* coll = Cast<UPrimitiveComponent >(collision);
