@@ -26,11 +26,14 @@ void ACAI_Weapon_Combo::DoAction(int32 AttackIndex)
 		return;
 	}
 
-	if (State.Get()->IsIdleMode() == false && State.Get()->IsCombatMode() == false)
-	{
-		UE_LOG(LogTemp, Error, L"Is not Idle State");
-		return;
-	}
+	//TODOS combatMode ¼öÁ¤
+	if (State.Get()->IsIdleMode() == false )
+		if(State.Get()->IsCombatMode() == false)
+			if(State.Get()->IsDetectMode() == false)
+			{
+				UE_LOG(LogTemp, Error, L"Is not Idle State");
+				return;
+			}
 
 	Super::DoAction(AttackIndex);
 	CurrAttackIndex = AttackIndex;

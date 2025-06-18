@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "EmberAbilitySystemComponent.generated.h"
 
+class UEmberAbilityTagRelationshipMapping;
 /**
  * 
  */
@@ -25,21 +26,32 @@ public:
 public:
 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
 	void ClearAbilityInput();
+
+	void SetTagRelationshipMapping(UEmberAbilityTagRelationshipMapping* NewMapping);
+
 	
 //~UAbilitySystemComponent Overrides
 public:
 	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
-	
+
 protected:
 	virtual void AbilitySecInputStarted(FGameplayAbilitySpec& Spec);
 	virtual void AbilitySpecInputPressed(FGameplayAbilitySpec& Spec) override;
 	virtual void AbilitySpecInputReleased(FGameplayAbilitySpec& Spec) override;
+
+	virtual void ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags, UGameplayAbility* RequestingAbility, bool bEnableBlockTags, const FGameplayTagContainer& BlockTags, bool bExecuteCancelTags, const FGameplayTagContainer& CancelTags) override;
 //~End of UAbilitySystemComponent Overrides
 
+public:
+	void GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer& OutActivationRequired, FGameplayTagContainer& OutActivationBlocked) const;
+	
 protected:
 	void TryActivateAbilitiesOnSpawn();
 	
 protected:
+	UPROPERTY()
+	TObjectPtr<UEmberAbilityTagRelationshipMapping> TagRelationshipMapping;
+	
 	TArray<FGameplayAbilitySpecHandle> InputStartedSpecHandles;
 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;

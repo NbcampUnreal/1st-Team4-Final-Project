@@ -4,8 +4,6 @@
 #include "AbilitySystemComponent.h"
 #include "ArmorComponent.h"
 #include "C_CameraComponent.h"
-#include "EmberPlayerController.h"
-#include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "C_CharacterMovementComponent.h"
 #include "EmberPlayerState.h"
@@ -16,7 +14,6 @@
 #include "Managers/EquipmentManagerComponent.h"
 #include "..\GameInfo/GameplayTags.h"
 #include "EnhancedInputSubsystems.h"
-#include "Engine/DamageEvents.h"
 #include "Input/EmberEnhancedInputComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -321,8 +318,17 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
 	//DamageData.PlayRate = event->DamageData->PlayRate;
 	MulticastHitted(damage, DamageEvent, EventInstigator, DamageCauser);
 
-	return damage;
+	if (UAbilitySystemComponent* EmberASC = GetAbilitySystemComponent())
+	{
+		FGameplayEventData Payload;
+		Payload.EventTag = EmberGameplayTags::GameplayEvent_HitReact;
+		Payload.Target = this;
 
+		FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
+		AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
+	}
+	
+	return damage;
 }
 
 void AEmberPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -339,6 +345,9 @@ void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamage
 	{
 		return;
 	}
+
+	// 애니메이션 종료시 캐릭터 상태 관리를 위해 GaemplayAbility에서 애니메이션 재생 구현
+	/*
 	MontageComponent->PlayMontage(EStateType::Hitted);
 	if (HasAuthority() == true)
 	{
@@ -348,10 +357,10 @@ void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamage
 	{
 		UE_LOG(LogTemp, Error, L"hp %f", StatusComponent->GetHp());
 	}
+	*/
 
 	if (DamageData.Character != nullptr)
 		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
-
 }
 
 void AEmberPlayerCharacter::OnRep_Hitted()
@@ -363,4 +372,9 @@ void AEmberPlayerCharacter::OnRep_Hitted()
 void AEmberPlayerCharacter::OnDeath()
 {
 	MontageComponent->PlayMontage(EStateType::Dead);
+}
+
+void AEmberPlayerCharacter::EndDeath()
+{
+	Destroy();
 }
