@@ -124,6 +124,8 @@ void ACAI_Weapon::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 		if (hitted == other)
 			return;
 	Hitted.AddUnique(other);
+	AttackStack++;
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("AttackStack: %d"), AttackStack));
 	HitDatas[CurrAttackIndex].SendDamage(OwnerCharacter, this, other);
 }
 

@@ -7,8 +7,8 @@
 class USphereComponent;
 class UStaticMeshComponent;
 class UProjectileMovementComponent;
-class NiagaraComponent;
-class NiagaraSystem;
+class UNiagaraComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class EMBER_API ADragonSpitProjectile : public AActor
@@ -28,11 +28,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* SpitMesh;
 
-	// UPROPERTY(VisibleAnywhere)
-	// UNiagaraComponent* SpitEffect;
-	//
-	// UPROPERTY(EditDefaultsOnly)
-	// UNiagaraSystem* SpitNiagara;
+	UPROPERTY(VisibleAnywhere)
+	UNiagaraComponent* SpitEffect;
+	
+	UPROPERTY(EditDefaultsOnly)
+	UNiagaraSystem* SpitNiagara;
 
 	UPROPERTY(VisibleAnywhere)
 	UProjectileMovementComponent* SpitMovement;

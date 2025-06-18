@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "AI/Base/BaseAI.h"
+#include "AIComponent/CAIWeaponComponent.h"
 #include "Dragon.generated.h"
 
 class UDragonAnimInstance;

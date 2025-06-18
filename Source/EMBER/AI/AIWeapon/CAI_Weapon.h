@@ -25,7 +25,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "InitPlay")
 	void SpawnPlay(ACharacter* InOwner); //, const TArray<FAttackData>& InAttackDatas, const TArray<FDamageData>& InDamageDatas);
 	virtual void SpawnPlay_Implementation(ACharacter* InOwner);
-	virtual  void Tick(float InDeltaTime){}
+	virtual void Tick(float InDeltaTime) { }
 public:
 	virtual void DoAction(int32 AttackIndex);
 	virtual void Begin_DoAction();

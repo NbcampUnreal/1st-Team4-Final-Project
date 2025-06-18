@@ -16,9 +16,13 @@ ADragonSpitProjectile::ADragonSpitProjectile()
 	SpitCollision->OnComponentHit.AddDynamic(this, &ADragonSpitProjectile::OnHit);
 	SetRootComponent(SpitCollision);
 
-	SpitMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SpitMesh"));
-	SpitMesh->SetupAttachment(SpitCollision);
-	SpitMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// SpitMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SpitMesh"));
+	// SpitMesh->SetupAttachment(SpitCollision);
+	// SpitMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	SpitEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SpitEffect"));
+	SpitEffect->SetupAttachment(SpitCollision);
+	SpitEffect->SetAutoActivate(false);
 
 	SpitMovement = CreateDefaultSubobject<UProjectileMovementComponent>(FName("SpitMovement"));
 	SpitMovement->InitialSpeed = 1000.f;
@@ -32,7 +36,12 @@ ADragonSpitProjectile::ADragonSpitProjectile()
 void ADragonSpitProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (SpitNiagara)
+	{
+		SpitEffect->SetAsset(SpitNiagara);
+		SpitEffect->Activate();
+	}
 }
 
 void ADragonSpitProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
