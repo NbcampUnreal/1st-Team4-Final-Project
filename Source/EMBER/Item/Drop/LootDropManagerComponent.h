@@ -4,7 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
-#include "Item/Drop/LootTable.h" // FMonsterDiedMessage의 전체 정의를 위해 추가
+#include "Item/Drop/LootTable.h"
 #include "LootDropManagerComponent.generated.h"
 
 class UDataTable;

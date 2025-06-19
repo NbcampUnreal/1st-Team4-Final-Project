@@ -1,42 +1,65 @@
 #include "Item/Drop/PickupItemActor.h"
-#include "Components/StaticMeshComponent.h"
 #include "Net/UnrealNetwork.h"
-#include "GameFramework/PlayerController.h"
-#include "ItemInstance.h"
-#include "ItemTemplate.h"
-#include "Fragments/ItemFragment_Equipable.h"
+#include "Item/ItemTemplate.h"
+#include "Item/ItemInstance.h"
 #include "UI/Data/EmberItemData.h"
+#include "NiagaraComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 APickupItemActor::APickupItemActor()
 {
- 
+	RarityEffectComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("RarityEffectComponent"));
+	RarityEffectComponent->SetupAttachment(GetRootComponent());
 }
 
 void APickupItemActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-    DOREPLIFETIME_CONDITION(APickupItemActor, LootContent, COND_None);
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(APickupItemActor, LootContent, COND_None);
 }
 
-void APickupItemActor::InitializeLootPouch(const FLootResultData& InLootData)
+void APickupItemActor::InitializeLootDrop(const FLootResultData& InLootData)
 {
-    if (HasAuthority())
-    {
-       LootContent = InLootData;
+	if (HasAuthority())
+	{
+		LootContent = InLootData;
 
-    	if (IsNetMode(NM_ListenServer))
-    		OnRep_LootContents();
-    }
+		if (IsNetMode(NM_ListenServer) || GetNetMode() == NM_Standalone)
+		{
+			OnRep_LootContent();
+		}
+	}
 }
 
-void APickupItemActor::OnRep_LootContents()
+void APickupItemActor::OnRep_LootContent()
 {
-	UItemInstance* ItemInstance = NewObject<UItemInstance>();
-	ItemInstance->Init(LootContent.ItemTemplateClass, LootContent.Rarity, LootContent.Quantity);
-	PickupInfo.ItemInstance = ItemInstance;
+	if (LootContent.ItemTemplateClass == nullptr)
+	{
+		Destroy();
+		return;
+	}
 
-	int32 ItemID = UEmberItemData::Get().FindItemTemplateIDByClass(LootContent.ItemTemplateClass);
-	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemID);
-	
-	InteractionInfo.Title = ItemTemplate.DisplayName;
+	UItemInstance* ItemInstance = NewObject<UItemInstance>(this);
+	if (ItemInstance)
+	{
+		int32 ItemID = UEmberItemData::Get().FindItemTemplateIDByClass(LootContent.ItemTemplateClass);
+		ItemInstance->Init(ItemID, LootContent.Rarity, LootContent.Quantity);
+		PickupInfo.ItemInstance = ItemInstance;
+
+		Super::OnRep_PickupInfo();
+	}
+
+	if (RarityEffectComponent)
+	{
+		if (const FLinearColor* Color = RarityColorMap.Find(LootContent.Rarity))
+		{
+			RarityEffectComponent->SetColorParameter(FName("RarityColor"), *Color);
+			UE_LOG(LogTemp, Log, TEXT("APickupItemActor: Set Niagara color for rarity %s"), *UEnum::GetValueAsString(LootContent.Rarity));
+		}
+		else
+		{
+			RarityEffectComponent->SetColorParameter(FName("RarityColor"), FLinearColor::White);
+		}
+	}
 }
