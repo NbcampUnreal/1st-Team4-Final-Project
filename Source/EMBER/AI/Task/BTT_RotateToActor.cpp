@@ -46,7 +46,7 @@ EBTNodeResult::Type UBTT_RotateToActor::ExecuteTask(UBehaviorTreeComponent& Owne
 void UBTT_RotateToActor::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	CurrentRotation = AI->GetActorRotation();
-	float RotationSpeed = 5.0f;
+	float RotationSpeed = 3.2f;
 
 	// 목표 방향으로 부드럽게 회전
 	FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaSeconds, RotationSpeed);

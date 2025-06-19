@@ -9,13 +9,14 @@ UBTT_Fly::UBTT_Fly()
 {
 	NodeName = "Fly";
 	bNotifyTick = true;
+	FlyHeight = 700.0f;
 }
 
 EBTNodeResult::Type UBTT_Fly::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	 AIController = Cast<ACAIController>(OwnerComp.GetAIOwner());
-	 BlackboardComp = OwnerComp.GetBlackboardComponent();
-	 AI = Cast<ABaseAI>(AIController->GetPawn());
+	AIController = Cast<ACAIController>(OwnerComp.GetAIOwner());
+	BlackboardComp = OwnerComp.GetBlackboardComponent();
+	AI = Cast<ABaseAI>(AIController->GetPawn());
 
 	AIController->StopMovement(); // 이동 정지
 
@@ -40,7 +41,7 @@ void UBTT_Fly::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, fl
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	if (AI->GetActorLocation().Z>700.0f)
+	if (AI->GetActorLocation().Z > FlyHeight)
 	{
 		AI->GetCharacterMovement()->Velocity.Z = 0.0f;
 	}

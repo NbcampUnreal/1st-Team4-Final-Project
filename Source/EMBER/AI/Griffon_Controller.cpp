@@ -8,8 +8,8 @@
 
 AGriffon_Controller::AGriffon_Controller()
 {
-	Sight->SightRadius = 1500.0f;
-	Sight->LoseSightRadius = 1800.f;
+	Sight->SightRadius = Sight_Range;
+	Sight->LoseSightRadius = Sight_Range+300.0f;
 	Sight->PeripheralVisionAngleDegrees = 90;
 }
 
@@ -31,7 +31,7 @@ void AGriffon_Controller::OnUnPossess()
 void AGriffon_Controller::OnTargetPerceptionUpdated(AActor* Target, FAIStimulus Stimulus)
 {
 	Perception->GetCurrentlyPerceivedActors(nullptr, Actors);
-	if (Stimulus.WasSuccessfullySensed() && Target->Tags.Contains(FName("Player")))
+	if (Stimulus.WasSuccessfullySensed() && Target->Tags.Contains(FName("Player")) && !Behavior->IsDetectMode() && !Behavior->IsCombatMode())
 	{
 		if (Behavior)
 		{

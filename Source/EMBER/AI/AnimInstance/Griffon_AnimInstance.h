@@ -12,5 +12,8 @@ class EMBER_API UGriffon_AnimInstance : public UBaseAIAnimInstance
 	GENERATED_BODY()
 
 public:
+	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	float CurrentFlySpeed;
 };

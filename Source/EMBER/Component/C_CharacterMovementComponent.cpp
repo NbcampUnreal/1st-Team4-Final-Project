@@ -101,6 +101,11 @@ void UC_CharacterMovementComponent::SetSpeed(ESpeedType SpeedType)
 	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(int32)SpeedType];
 }
 
+void UC_CharacterMovementComponent::SetFlySpeed(EFlySpeedType FlySpeedType)
+{
+	OwnerCharacter->GetCharacterMovement()->MaxFlySpeed = Speed[(int32)FlySpeedType];
+}
+
 void UC_CharacterMovementComponent::SetWalkSpeed(int32 InSpeed)
 {
 	InSpeed = UKismetMathLibrary::Clamp(InSpeed, 0, 600);

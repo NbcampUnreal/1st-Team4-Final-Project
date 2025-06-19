@@ -3,18 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFlag.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTT_SetRandomPattern.generated.h"
+#include "BTT_FlySpeed.generated.h"
 
-/**
- * 
- */
+
+
+
 UCLASS()
-class EMBER_API UBTT_SetRandomPattern : public UBTTask_BlackboardBase
+class EMBER_API UBTT_FlySpeed : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
-	UBTT_SetRandomPattern();
-	
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+	UPROPERTY(EditAnywhere)
+	EFlySpeedType FlySpeedType;
 };

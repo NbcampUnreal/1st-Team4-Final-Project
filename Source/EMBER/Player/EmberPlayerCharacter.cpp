@@ -302,17 +302,17 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
 {
 	if (HasAuthority() == false)
 		return 0.0f;
-
+	
 	float damage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-
+	
 	if (damage <= 0.0f)
 	{
 		UE_LOG(LogTemp, Error, L"Damage is 0");
 		return damage;
 	}
-
+	
 	//StatusComponent->OnRep_Damage(damage);
-
+	
 	DamageData.Causer = DamageCauser;
 	DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
 	DamageData.Power = damage;
@@ -320,9 +320,9 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
 	//DamageData.Montage = event->DamageData->Montages;
 	//DamageData.PlayRate = event->DamageData->PlayRate;
 	MulticastHitted(damage, DamageEvent, EventInstigator, DamageCauser);
-
+	
 	return damage;
-
+	
 }
 
 void AEmberPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
