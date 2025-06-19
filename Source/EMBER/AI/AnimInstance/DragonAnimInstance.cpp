@@ -1,28 +1,11 @@
 #include "AI/AnimInstance/DragonAnimInstance.h"
 #include "Boss/Dragon.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UDragonAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 }
-
-// void UDragonAnimInstance::PlayMontage()
-// {
-// 	if (DesiredActionType == EAnimActionType::AttackNormal)
-// 	{
-// 		if (!AttackMontage) return;
-// 		
-// 		FName SectionName = *UEnum::GetValueAsString(DragonAttackType).RightChop(FString("EDragonAttackType::").Len());
-//
-// 		Montage_Play(AttackMontage);
-// 		Montage_JumpToSection(SectionName, AttackMontage);
-// 	}
-//
-// 	else
-// 	{
-// 		Super::PlayMontage();
-// 	}
-// }
 
 void UDragonAnimInstance::AnimNotify_SpawnSpit()
 {
@@ -32,20 +15,21 @@ void UDragonAnimInstance::AnimNotify_SpawnSpit()
 	}
 }
 
-// UAnimMontage* UDragonAnimInstance::GetMontageToPlay(EAnimActionType ActionType) const
-// {
-// 	if (ActionType == EAnimActionType::AttackNormal)
-// 	{
-// 		switch (DragonAttackType)
-// 		{
-// 		case EDragonAttackType::RightAttack:
-// 		case EDragonAttackType::LeftAttack:
-// 		case EDragonAttackType::BiteAttack:
-// 		case EDragonAttackType::ComboAttack:
-// 		case EDragonAttackType::SpitAttack:
-// 		case EDragonAttackType::BreathAttack:
-// 			return AttackMontage;
-// 		}
-// 	}
-// 	return Super::GetMontageToPlay(ActionType);
-// }
+void UDragonAnimInstance::AnimNotify_Fly()
+{
+	if (ADragon* Dragon = Cast<ADragon>(TryGetPawnOwner()))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Fly Notify"));
+
+		Dragon->LaunchCharacter(FVector(0.f, 0.f, Dragon->GetLaunchZPower()), false, true);
+	}
+}
+
+void UDragonAnimInstance::AnimNotify_Land()
+{
+	if (ADragon* Dragon = Cast<ADragon>(TryGetPawnOwner()))
+	{
+		Dragon->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
+}
+
