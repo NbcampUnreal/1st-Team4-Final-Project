@@ -64,4 +64,7 @@ protected:
 private:
 	UPROPERTY()
 	bool bInitialized = false;
+
+	UPROPERTY(EditDefaultsOnly, Category=Info)
+	bool bEnableControlRotation = false;
 };
