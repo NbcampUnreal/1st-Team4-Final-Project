@@ -11,8 +11,6 @@
 #include "Item/ItemInstance.h"
 #include "Component/MontageSystemComponent.h"
 #include "Components/WidgetSwitcher.h"
-#include "Components/TextBlock.h"
-#include "Components/Border.h"
 
 UCraftingWidget::UCraftingWidget(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -37,6 +35,11 @@ void UCraftingWidget::NativeConstruct()
     {
         RecipeListWidget->OnRecipeListItemSelected.AddDynamic(this, &UCraftingWidget::HandleRecipeSelectedFromList);
     }
+    
+    if (SelectedRecipeDisplayWidget)
+    {
+        SelectedRecipeDisplayWidget->OnCraftRequested.AddDynamic(this, &UCraftingWidget::HandleCraftRequest);
+    }
 }
 
 void UCraftingWidget::NativeDestruct()
@@ -47,12 +50,8 @@ void UCraftingWidget::NativeDestruct()
 FReply UCraftingWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
     const FKey Key = InKeyEvent.GetKey();
-    if (Key == EKeys::W)        { UpdateSelectedRecipe(-1); return FReply::Handled(); }
-    else if (Key == EKeys::S)   { UpdateSelectedRecipe(1);  return FReply::Handled(); }
-    else if (Key == EKeys::E)   { AttemptCraftCurrentRecipe(); return FReply::Handled(); }
-    else if (Key == EKeys::A)   { AdjustCraftAmount(-1); return FReply::Handled(); }
-    else if (Key == EKeys::D)   { AdjustCraftAmount(1);  return FReply::Handled(); }
-
+    if (Key == EKeys::E) { AttemptCraftCurrentRecipe(); return FReply::Handled(); }
+    
     return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }
 
@@ -97,7 +96,7 @@ void UCraftingWidget::PopulateActiveRecipeList()
     if (!Player) return;
     
     UCraftingSystem* Sys = Player->FindComponentByClass<UCraftingSystem>();
-    if (!Sys || !Sys->RecipeManager || !Sys->RecipeManager->RecipeDataTable) return;
+    if (!Sys || !Sys->RecipeManager) return;
     
     FGameplayTag CurrentStationTag;
     if (CurrentStationActorRef)
@@ -105,17 +104,23 @@ void UCraftingWidget::PopulateActiveRecipeList()
         CurrentStationTag = CurrentStationActorRef->GetStationTag();
     }
     
-    const TMap<FName, uint8*>& RowMap = Sys->RecipeManager->RecipeDataTable->GetRowMap();
-    for (const auto& RowPair : RowMap)
-    {
-        const FName& RowName = RowPair.Key;
-        const FCraftingRecipeRow* RowPtr = reinterpret_cast<const FCraftingRecipeRow*>(RowPair.Value);
+    TArray<FCraftingRecipeRow*> AllRecipeRows;
+    Sys->RecipeManager->GetAllRecipeRows(AllRecipeRows);
 
-        if (RowPtr)
+    if(Sys->RecipeManager->RecipeDataTable)
+    {
+        TArray<FName> AllRowNames = Sys->RecipeManager->RecipeDataTable->GetRowNames();
+        for (int32 i = 0; i < AllRecipeRows.Num(); ++i)
         {
-            if (Sys->CanCraftRecipeAtStation(*RowPtr, CurrentStationTag))
+            if (FCraftingRecipeRow* RowPtr = AllRecipeRows[i])
             {
-                ActiveRecipeList.Add(FNamedCraftingRecipe{ RowName, *RowPtr });
+                if (Sys->CanCraftRecipeAtStation(*RowPtr, CurrentStationTag))
+                {
+                    if (AllRowNames.IsValidIndex(i))
+                    {
+                        ActiveRecipeList.Add(FNamedCraftingRecipe{ AllRowNames[i], *RowPtr });
+                    }
+                }
             }
         }
     }
@@ -132,16 +137,11 @@ void UCraftingWidget::ClearSelectedMainIngredients()
 
 void UCraftingWidget::UpdateSelectedRecipe(int32 Direction)
 {
-    if (ActiveRecipeList.Num() == 0)
-    {
-        SelectedRecipeIndex = -1;
-        SelectedRecipeName = NAME_None;
-    }
-    else
-    {
-        SelectedRecipeIndex = (SelectedRecipeIndex + Direction + ActiveRecipeList.Num()) % ActiveRecipeList.Num();
-        SelectedRecipeName = ActiveRecipeList.IsValidIndex(SelectedRecipeIndex) ? ActiveRecipeList[SelectedRecipeIndex].RecipeRowName : NAME_None;
-    }
+    if (ActiveRecipeList.Num() == 0) return;
+
+    SelectedRecipeIndex = (SelectedRecipeIndex + Direction + ActiveRecipeList.Num()) % ActiveRecipeList.Num();
+    SelectedRecipeName = ActiveRecipeList.IsValidIndex(SelectedRecipeIndex) ? ActiveRecipeList[SelectedRecipeIndex].RecipeRowName : NAME_None;
+    
     ClearSelectedMainIngredients();
     RefreshAll();
 }
@@ -176,37 +176,16 @@ void UCraftingWidget::RefreshAll()
 
     if (SelectedRecipeDisplayWidget)
     {
-        if (SelectedRecipeDataPtr)
+        if (SelectedRecipeDataPtr && CraftingSystem && CraftingSystem->RecipeManager)
         {
-            if (CraftingSystem && CraftingSystem->RecipeManager)
-            {
-                SelectedRecipeDisplayWidget->SetRecipeDetails(CraftingSystem->RecipeManager, *SelectedRecipeDataPtr, PlayerIngredients, CraftAmount);
-            }
-
-            if (CraftingSystem && SelectedRecipeDataPtr->RequiredMainMaterialCount > 0)
-            {
-                auto Chances = CraftingSystem->GetRarityProbabilities(*SelectedRecipeDataPtr, CurrentSelectedMainIngredients);
-                SelectedRecipeDisplayWidget->UpdateRarityDisplay(*SelectedRecipeDataPtr, Chances);
-            }
-            else
-            {
-                SelectedRecipeDisplayWidget->UpdateRarityDisplay(*SelectedRecipeDataPtr, {});
-            }
+            SelectedRecipeDisplayWidget->SetRecipeDetails(CraftingSystem->RecipeManager, *SelectedRecipeDataPtr, PlayerIngredients, CraftAmount);
         }
         else
         {
             SelectedRecipeDisplayWidget->ClearDetails();
         }
     }
-
-    const bool bIsQualityRecipe = (SelectedRecipeDataPtr && SelectedRecipeDataPtr->RequiredMainMaterialCount > 0);
-    if (GeneralRecipeIngredientsWidget && !bIsQualityRecipe)
-    {
-        if (CraftingSystem && CraftingSystem->RecipeManager && SelectedRecipeDataPtr)
-        {
-            GeneralRecipeIngredientsWidget->UpdateDisplay(CraftingSystem->RecipeManager, *SelectedRecipeDataPtr, PlayerIngredients, CraftAmount);
-        }
-    }
+    
 }
 
 void UCraftingWidget::AttemptCraftCurrentRecipe()
@@ -235,26 +214,16 @@ void UCraftingWidget::AttemptCraftCurrentRecipe()
         MainToUse = CurrentSelectedMainIngredients;
     }
     
-    for (int32 i = 0; i < CraftAmount; ++i)
+    FCraftingResult CraftResult = Sys->Client_PreCraftCheck(Player, NamedRecipe.RecipeData, MainToUse);
+    if (CraftResult.bWasSuccessful)
     {
-        FCraftingResult CraftResult = Sys->Client_PreCraftCheck(Player, NamedRecipe.RecipeData, MainToUse);
-        if (CraftResult.bWasSuccessful)
+        if (CraftingOutputBoxWidget)
         {
-            if (CraftingOutputBoxWidget)
-            {
-                if (!CraftingOutputBoxWidget->TryAddItem(CraftResult.ItemTemplateClass, CraftResult.Rarity, 1))
-                {
-                    break;
-                }
-            }
-            Sys->RequestServerCraft(Player, CurrentStationActorRef, NamedRecipe.RecipeRowName, MainToUse);
+            CraftingOutputBoxWidget->TryAddItem(CraftResult.ItemTemplateClass, CraftResult.Rarity, CraftAmount);
         }
-        else
-        {
-            break;
-        }
+        Sys->RequestServerCraft(Player, CurrentStationActorRef, NamedRecipe.RecipeRowName, MainToUse);
     }
-
+    
     ClearSelectedMainIngredients();
     RefreshAll();
 }
@@ -280,4 +249,10 @@ void UCraftingWidget::HandleMainMaterialSelectionChanged(const FSelectedIngredie
 {
     CurrentSelectedMainIngredients = Wrapper.IngredientsMap;
     RefreshAll();
+}
+
+void UCraftingWidget::HandleCraftRequest()
+{
+    UE_LOG(LogTemp, Warning, TEXT("[DEBUG 3] Main Widget received OnCraftRequested! Calling AttemptCraftCurrentRecipe..."));
+    AttemptCraftCurrentRecipe();
 }

@@ -2,22 +2,32 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/VerticalBox.h"
+#include "Components/Button.h"
 #include "Crafting/CraftingRecipeManager.h"
 #include "Item/ItemTemplate.h"
-#include "UI/Data/EmberItemData.h"
 #include "UI/Crafting/CraftingResultIngredientLineEntry.h"
-#include "Crafting/CraftingSystem.h"
-#include "Player/EmberPlayerCharacter.h"
 
 UCraftingResultWidget::UCraftingResultWidget(const FObjectInitializer& ObjectInitializer) 
     : Super(ObjectInitializer)
 {
+    ResultIngredientLineEntryClass = nullptr;
+    CraftButton = nullptr;
     CurrentTargetRecipeRowPtr_EditorOnly = nullptr;
 }
 
 void UCraftingResultWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+
+    if (CraftButton)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("[DEBUG 1] CraftButton is VALID, binding OnClicked."));
+        CraftButton->OnClicked.AddDynamic(this, &UCraftingResultWidget::HandleCraftButtonClicked);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("[DEBUG 1] FATAL: CraftButton pointer is NULL in CraftingResultWidget!"));
+    }
 }
 
 const UItemTemplate* UCraftingResultWidget::GetTemplateFromRecipeRow(const FCraftingRecipeRow& RecipeRow) const
@@ -43,14 +53,18 @@ void UCraftingResultWidget::SetRecipeDetails(UCraftingRecipeManager* RecipeManag
 
     K2_OnUpdateIconAndDescription(OutputTemplate); 
 
-    PopulateIngredientsDisplay(RecipeManager, InRecipeRow, PlayerOwnedIngredients, CraftingAmount);
+    const bool bCanCraft = PopulateIngredientsDisplay(RecipeManager, InRecipeRow, PlayerOwnedIngredients, CraftingAmount);
 
-    bool bIsQualityRecipe = (InRecipeRow.RequiredMainMaterialCount > 0);
+    if (CraftButton)
+    {
+        CraftButton->SetIsEnabled(bCanCraft);
+    }
+
     if (InfoTextDisplay)
     {
-        InfoTextDisplay->SetText(bIsQualityRecipe ? FText::FromString(TEXT("주재료 필요 (등급 변동 가능)")) : FText::FromString(TEXT("일반 제작 아이템")));
-        InfoTextDisplay->SetVisibility(ESlateVisibility::HitTestInvisible);
+        InfoTextDisplay->SetVisibility(ESlateVisibility::Collapsed);
     }
+    
     SetVisibility(ESlateVisibility::Visible);
 }
 
@@ -61,7 +75,7 @@ void UCraftingResultWidget::UpdateRarityDisplay(const FCraftingRecipeRow& Target
     bool bIsQualityRecipe = (TargetRecipeData.RequiredMainMaterialCount > 0);
     if (!bIsQualityRecipe) 
     {
-        if(InfoTextDisplay) InfoTextDisplay->SetText(FText::FromString(TEXT("일반 제작 아이템")));
+        if(InfoTextDisplay) InfoTextDisplay->SetVisibility(ESlateVisibility::Collapsed);
         return; 
     }
 
@@ -81,9 +95,10 @@ void UCraftingResultWidget::UpdateRarityDisplay(const FCraftingRecipeRow& Target
         }
         else
         {
-            DisplayStr += TEXT("- 주재료를 선택하세요.");
+             DisplayStr += TEXT("- 주재료를 선택하세요.");
         }
         InfoTextDisplay->SetText(FText::FromString(DisplayStr));
+        InfoTextDisplay->SetVisibility(ESlateVisibility::Visible);
     }
 }
 
@@ -96,22 +111,34 @@ void UCraftingResultWidget::ClearDetails()
     if (InfoTextDisplay) InfoTextDisplay->SetText(FText::GetEmpty());
     if (IngredientsDisplayBox) IngredientsDisplayBox->ClearChildren();
     
+    if (CraftButton)
+    {
+        CraftButton->SetIsEnabled(false);
+    }
+    
     K2_OnUpdateIconAndDescription(nullptr);
     SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UCraftingResultWidget::PopulateIngredientsDisplay(UCraftingRecipeManager* RecipeManager, const FCraftingRecipeRow& RecipeData, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount)
+bool UCraftingResultWidget::PopulateIngredientsDisplay(UCraftingRecipeManager* RecipeManager, const FCraftingRecipeRow& RecipeData, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount)
 {
-    if (!IngredientsDisplayBox || !ResultIngredientLineEntryClass || !RecipeManager) return;
+    if (!IngredientsDisplayBox || !ResultIngredientLineEntryClass || !RecipeManager) return false;
     
     IngredientsDisplayBox->ClearChildren();
     IngredientsDisplayBox->SetVisibility(ESlateVisibility::Visible);
+
+    bool bAllIngredientsAvailable = true;
 
     for (const TPair<FGameplayTag, int32>& RequiredIngredientPair : RecipeData.Ingredients)
     {
        const FGameplayTag& IngredientTag = RequiredIngredientPair.Key;
        const int32 TotalRequiredForBatch = RequiredIngredientPair.Value * CraftingAmount;
        const int32 OwnedAmount = PlayerOwnedIngredients.FindRef(IngredientTag); 
+       
+       if (OwnedAmount < TotalRequiredForBatch)
+       {
+           bAllIngredientsAvailable = false;
+       }
        
        UCraftingResultIngredientLineEntry* LineEntryWidget = CreateWidget<UCraftingResultIngredientLineEntry>(this, ResultIngredientLineEntryClass);
        if (LineEntryWidget)
@@ -120,4 +147,12 @@ void UCraftingResultWidget::PopulateIngredientsDisplay(UCraftingRecipeManager* R
            IngredientsDisplayBox->AddChildToVerticalBox(LineEntryWidget);
        }
     }
+    
+    return bAllIngredientsAvailable;
+}
+
+void UCraftingResultWidget::HandleCraftButtonClicked()
+{
+    UE_LOG(LogTemp, Warning, TEXT("[DEBUG 2] CraftButton CLICKED! Broadcasting OnCraftRequested..."));
+    OnCraftRequested.Broadcast();
 }
