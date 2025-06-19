@@ -37,6 +37,8 @@ AEquipmentBase::AEquipmentBase(const FObjectInitializer& ObjectInitializer) : Su
 	TraceDebugCollision->SetGenerateOverlapEvents(false);
 	TraceDebugCollision->SetupAttachment(GetRootComponent());
 	TraceDebugCollision->PrimaryComponentTick.bStartWithTickEnabled = false;
+
+	bEnableControlRotation = true;
 }
 
 void AEquipmentBase::Destroyed()
@@ -98,10 +100,15 @@ void AEquipmentBase::ProcessEquip()
 		return;
 
 	// TODO : 무기별 애니메이션 블루프린트 변경
-	/*if (AttachmentFragment->AnimInstanceClass)
+	if (AttachmentFragment->AnimInstanceClass)
 	{
 		CharacterMeshComponent->LinkAnimClassLayers(AttachmentFragment->AnimInstanceClass);
-	}*/
+		
+		if (AEmberPlayerCharacter* EmberCharacter = Cast<AEmberPlayerCharacter>(OwnerCharacter))
+		{
+			EmberCharacter->SetControlRotation(bEnableControlRotation);
+		}
+	}
 
 	// 무기 장착 애니메이션 재생
 	FEquipment EquipmentInfo = AttachmentFragment->GetEquipmentInfo();

@@ -112,6 +112,18 @@ void AEmberPlayerCharacter::PostNetInit()
 		ArmorComponent->InitializeArmorForLateJoiners();
 }
 
+void AEmberPlayerCharacter::SetControlRotation(bool bEnable)
+{
+	if (bEnable)
+	{
+		CameraLogicComp->EnableControlRotation();
+	}
+	else
+	{
+		CameraLogicComp->DisableControlRotation();
+	}
+}
+
 
 void AEmberPlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
