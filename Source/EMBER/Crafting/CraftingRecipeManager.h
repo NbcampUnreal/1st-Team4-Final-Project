@@ -82,4 +82,6 @@ public:
     
     UFUNCTION(BlueprintPure, Category = "Crafting")
     TSubclassOf<UItemTemplate> GetRepresentativeItemForTag(const FGameplayTag& MaterialTag) const;
+    
+    virtual void PostLoad() override;
 };

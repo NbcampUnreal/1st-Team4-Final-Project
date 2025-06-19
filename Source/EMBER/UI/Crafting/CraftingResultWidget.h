@@ -23,7 +23,7 @@ public:
     UCraftingResultWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
     UFUNCTION(BlueprintCallable, Category = "CraftingResult")
-    void SetRecipeDetails(const FCraftingRecipeRow& InRecipeRow, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount);
+    void SetRecipeDetails(UCraftingRecipeManager* RecipeManager, const FCraftingRecipeRow& InRecipeRow, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount);
 
     UFUNCTION(BlueprintCallable, Category = "CraftingResult")
     void UpdateRarityDisplay(const FCraftingRecipeRow& TargetRecipeData, const TMap<EItemRarity, float>& InRarityChances);
@@ -56,9 +56,9 @@ protected:
     void K2_OnUpdateIconAndDescription(const UItemTemplate* ItemTemplateData);
 
 private:
+    void PopulateIngredientsDisplay(UCraftingRecipeManager* RecipeManager, const FCraftingRecipeRow& RecipeData, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount);
+    
     const FCraftingRecipeRow* CurrentTargetRecipeRowPtr_EditorOnly;
     TMap<EItemRarity, float> CurrentRarityChances_Cache; 
-
     const UItemTemplate* GetTemplateFromRecipeRow(const FCraftingRecipeRow& RecipeRow) const;
-    void PopulateIngredientsDisplay(const FCraftingRecipeRow& RecipeData, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount);
 };

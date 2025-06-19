@@ -8,12 +8,12 @@
 
 void UCraftingIngredientLineEntry::SetData(UCraftingRecipeManager* RecipeManager, FGameplayTag IngredientTag, int32 InOwned, int32 InRequired)
 {
-    if (!RecipeManager || !IngredientTag.IsValid() || InRequired <= 0)
+    if (!RecipeManager || !IngredientTag.IsValid())
     {
         SetVisibility(ESlateVisibility::Collapsed);
         return;
     }
-    
+
     SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
     TSubclassOf<UItemTemplate> RepItemTemplateClass = RecipeManager->GetRepresentativeItemForTag(IngredientTag);
@@ -24,22 +24,28 @@ void UCraftingIngredientLineEntry::SetData(UCraftingRecipeManager* RecipeManager
         {
             if (IngredientIcon)
             {
+                UE_LOG(LogTemp, Log, TEXT("SetData for %s: IngredientIcon pointer is VALID."), *ItemTemplateCDO->DisplayName.ToString());
                 IngredientIcon->SetBrushFromTexture(ItemTemplateCDO->IconTexture, true);
                 IngredientIcon->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("SetData FAILED: IngredientIcon pointer is NULL!"));
             }
 
             if (IngredientName_Text)
             {
+                UE_LOG(LogTemp, Log, TEXT("SetData for %s: IngredientName_Text pointer is VALID."), *ItemTemplateCDO->DisplayName.ToString());
                 IngredientName_Text->SetText(ItemTemplateCDO->DisplayName);
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("SetData FAILED: IngredientName_Text pointer is NULL!"));
             }
         }
     }
     else
     {
-        if (IngredientIcon)
-        {
-            IngredientIcon->SetVisibility(ESlateVisibility::Collapsed);
-        }
         if (IngredientName_Text)
         {
             IngredientName_Text->SetText(FText::FromName(IngredientTag.GetTagName()));
@@ -50,7 +56,6 @@ void UCraftingIngredientLineEntry::SetData(UCraftingRecipeManager* RecipeManager
     {
         FString QuantityString = FString::Printf(TEXT("%d / %d"), InOwned, InRequired);
         Quantity_Text->SetText(FText::FromString(QuantityString));
-
         const FLinearColor ColorToSet = (InOwned >= InRequired) ? FLinearColor::White : FLinearColor::Red;
         Quantity_Text->SetColorAndOpacity(FSlateColor(ColorToSet));
     }

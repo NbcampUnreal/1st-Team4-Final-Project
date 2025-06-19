@@ -178,7 +178,10 @@ void UCraftingWidget::RefreshAll()
     {
         if (SelectedRecipeDataPtr)
         {
-            SelectedRecipeDisplayWidget->SetRecipeDetails(*SelectedRecipeDataPtr, PlayerIngredients, CraftAmount);
+            if (CraftingSystem && CraftingSystem->RecipeManager)
+            {
+                SelectedRecipeDisplayWidget->SetRecipeDetails(CraftingSystem->RecipeManager, *SelectedRecipeDataPtr, PlayerIngredients, CraftAmount);
+            }
 
             if (CraftingSystem && SelectedRecipeDataPtr->RequiredMainMaterialCount > 0)
             {

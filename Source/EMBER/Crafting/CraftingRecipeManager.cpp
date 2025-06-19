@@ -51,10 +51,29 @@ TSubclassOf<UItemTemplate> UCraftingRecipeManager::GetRepresentativeItemForTag(c
 {
     if (MaterialTag.IsValid())
     {
-        if(const TSubclassOf<UItemTemplate>* FoundClassPtr = RepresentativeItemForTag.Find(MaterialTag))
+        if (const TSubclassOf<UItemTemplate>* FoundClassPtr = RepresentativeItemForTag.Find(MaterialTag))
         {
             return *FoundClassPtr;
         }
     }
+
+    UE_LOG(LogTemp, Warning, TEXT("GetRepresentativeItemForTag: No representative item found for tag %s in the Recipe Manager Data Asset."), *MaterialTag.ToString());
     return nullptr;
+}
+
+void UCraftingRecipeManager::PostLoad()
+{
+    Super::PostLoad();
+
+    UE_LOG(LogTemp, Warning, TEXT("===== DA_CraftingManager: RepresentativeItemForTag Map Contents ====="));
+    for (const auto& Pair : RepresentativeItemForTag)
+    {
+        const FGameplayTag& Tag = Pair.Key;
+        const TSubclassOf<UItemTemplate> TemplateClass = Pair.Value;
+        
+        FString TemplateName = TemplateClass ? TemplateClass->GetName() : TEXT("!!! NULL VALUE !!!");
+
+        UE_LOG(LogTemp, Warning, TEXT("  Key: [%s]  --->  Value: [%s]"), *Tag.ToString(), *TemplateName);
+    }
+    UE_LOG(LogTemp, Warning, TEXT("=================================================================="));
 }
