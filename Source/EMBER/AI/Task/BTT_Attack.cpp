@@ -43,7 +43,7 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	AGriffon* Griffon = Cast<AGriffon>(ai);
 	if (Griffon)
 	{
-		UE_LOG(LogTemp, Error, L"Griffon Casting In Attack Task");
+		// UE_LOG(LogTemp, Error, L"Griffon Casting In Attack Task");
 		AttackIndex = BlackboardComponent->GetValueAsInt("RandomPattern");
 	}
 

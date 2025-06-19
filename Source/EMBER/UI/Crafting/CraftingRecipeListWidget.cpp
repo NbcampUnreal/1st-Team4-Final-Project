@@ -58,9 +58,6 @@ void UCraftingRecipeListWidget::SetStationTitle(EStationType InStationType)
             case EStationType::Furnace:
                 TitleToShow = FText::FromString(TEXT("화로"));
                 break;
-            case EStationType::CookingPot:
-                TitleToShow = FText::FromString(TEXT("요리용 솥"));
-                break;
             case EStationType::WeaponTable:
                 TitleToShow = FText::FromString(TEXT("무기 제작대"));
                 break;

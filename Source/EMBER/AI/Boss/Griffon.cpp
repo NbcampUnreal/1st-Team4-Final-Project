@@ -35,12 +35,13 @@ float AGriffon::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
                            class AController* EventInstigator, AActor* DamageCauser)
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	ACAIController* AIController = Cast<ACAIController>(GetController());
-	UBlackboardComponent* BlackboardComponent = Cast<UBlackboardComponent>(AIController->GetBlackboardComponent());
-
-	if (StatusComponent->GetHp() > (StatusComponent->GetMaxHp() / 2))
+	if (ACAIController* AIController = Cast<ACAIController>(GetController()))
 	{
-		BlackboardComponent->SetValueAsBool("IsHalfHP", true);
+		UBlackboardComponent* BlackboardComponent = Cast<UBlackboardComponent>(AIController->GetBlackboardComponent());
+		if (StatusComponent->GetHp() < (StatusComponent->GetMaxHp() / 2))
+		{
+			BlackboardComponent->SetValueAsBool("IsHalfHP", true);
+		}
 	}
 	
 	return ActualDamage;

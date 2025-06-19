@@ -29,7 +29,7 @@ protected:	//	재정의
 	virtual void BeginPlay() override;
 	virtual float GetMaxSpeed() const override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	
 public:	//	추가
 	UFUNCTION(BlueprintCallable)
 	bool GetCanMove() const;
@@ -53,7 +53,7 @@ public:
 
 public:
 	void SetSpeed(ESpeedType SpeedType);
-
+	void SetFlySpeed(EFlySpeedType FlySpeedType);
 	void SetWalkSpeed(int32 InSpeed); 
 	void SetRunSpeed(int32 InSpeed); 
 	void SetSprintSpeed(int32 InSpeed);
@@ -61,6 +61,13 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Movement")
 	FOnMoveDelegate OnMoveDelegate;
 
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	float LeftRightMovePercent = 0.7f;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float BackwardMovePercent = 0.7f;
+	
 private:
 	ESpeedType CurrentSpeedType;
 };

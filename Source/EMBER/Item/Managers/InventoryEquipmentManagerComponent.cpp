@@ -236,6 +236,60 @@ UItemInstance* UInventoryEquipmentManagerComponent::RemoveEquipment_Unsafe(EEqui
 	return ItemInstance;
 }
 
+void UInventoryEquipmentManagerComponent::AddUnarmedEquipments(TSubclassOf<UItemTemplate> RightHandClass)
+{
+	check(HasAuthority());
+
+	SetEquipment(EEquipmentSlotType::Unarmed_RightHand, RightHandClass, EItemRarity::Common, 1, false);
+}
+
+void UInventoryEquipmentManagerComponent::SetEquipment(EEquipmentSlotType EquipmentSlotType, TSubclassOf<UItemTemplate> ItemTemplateClass, EItemRarity ItemRarity, int32 ItemCount, bool bCheckCharacterClass)
+{
+	check(HasAuthority());
+	
+	if (EquipmentSlotType == EEquipmentSlotType::Count || ItemTemplateClass == nullptr || ItemRarity == EItemRarity::Count || ItemCount <= 0)
+		return;
+	
+	const int32 ItemTemplateID = UEmberItemData::Get().FindItemTemplateIDByClass(ItemTemplateClass);
+	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemTemplateID);
+
+	ItemCount = FMath::Clamp(ItemCount, 1, ItemTemplate.MaxStackCount);
+	
+	const UItemFragment_Equipable* EquippableFragment = ItemTemplate.FindFragmentByClass<UItemFragment_Equipable>();
+	if (EquippableFragment == nullptr)
+		return;
+
+	if (bCheckCharacterClass)
+	{
+		AEmberPlayerState* LyraPlayerState = GetPlayerState<AEmberPlayerState>();
+		if (LyraPlayerState == nullptr)
+			return;
+	}
+	
+	FEquipmentEntry& Entry = EquipmentList.Entries[(int32)EquipmentSlotType];
+	Entry.Reset();
+
+	UItemInstance* AddedItemInstance = NewObject<UItemInstance>();
+	AddedItemInstance->Init(ItemTemplateID, ItemRarity);
+	Entry.Init(AddedItemInstance, ItemCount);
+
+	if (IsUsingRegisteredSubObjectList() && IsReadyForReplication() && AddedItemInstance)
+	{
+		AddReplicatedSubObject(AddedItemInstance);
+	}
+	
+	EquipmentList.MarkItemDirty(Entry);
+	
+	if (UEquipmentManagerComponent* EquipManager = GetEquipmentManager())
+	{
+		EEquipState EquipState = EEquipState::Weapon_Primary;
+		if (EquipManager->GetCurrentEquipState() != EquipState)
+		{
+			EquipManager->ChangeEquipState(EquipState);
+		}
+	}
+}
+
 int32 UInventoryEquipmentManagerComponent::CanMoveOrMergeEquipment(UInventoryEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, EEquipmentSlotType ToEquipmentSlotType) const
 {
 	if (OtherComponent == nullptr || FromEquipmentSlotType == EEquipmentSlotType::Count)

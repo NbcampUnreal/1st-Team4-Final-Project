@@ -14,5 +14,7 @@ class EMBER_API UBTT_SetRandomPattern : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
+	UBTT_SetRandomPattern();
+	
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

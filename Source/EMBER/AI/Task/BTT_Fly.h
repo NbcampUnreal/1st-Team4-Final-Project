@@ -17,6 +17,9 @@ public:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
+	UPROPERTY(EditAnywhere)
+	float FlyHeight;
+	
 	TObjectPtr<ACAIController> AIController;
 	TObjectPtr<UBlackboardComponent> BlackboardComp;
 	TObjectPtr<ABaseAI> AI;

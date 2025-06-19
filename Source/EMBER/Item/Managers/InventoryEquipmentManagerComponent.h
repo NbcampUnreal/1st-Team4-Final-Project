@@ -92,7 +92,7 @@ struct TStructOpsTypeTraits<FEquipmentList> : public TStructOpsTypeTraitsBase2<F
 	};
 };
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(BlueprintType)
 class EMBER_API UInventoryEquipmentManagerComponent : public UPawnComponent
 {
 	GENERATED_BODY()
@@ -112,6 +112,13 @@ public:
 	void AddEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, UItemInstance* FromItemInstance, int32 FromItemCount);
 	UItemInstance* RemoveEquipment_Unsafe(EEquipmentSlotType EquipmentSlotType, int32 ItemCount);
 
+public:
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	void AddUnarmedEquipments(TSubclassOf<UItemTemplate> RightHandClass);
+
+	void SetEquipment(EEquipmentSlotType EquipmentSlotType, TSubclassOf<UItemTemplate> ItemTemplateClass, EItemRarity ItemRarity, int32 ItemCount, bool bCheckCharacterClass = true);
+
+	
 public:
 	int32 CanMoveOrMergeEquipment(UInventoryEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, EEquipmentSlotType ToEquipmentSlotType) const;
 	int32 CanMoveOrMergeEquipment(UInventoryManagerComponent* OtherComponent, const FIntPoint& FromItemSlotPos, EEquipmentSlotType ToEquipmentSlotType) const;

@@ -8,6 +8,11 @@
 #include "Base/BaseAI.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+UBTT_SetRandomPattern::UBTT_SetRandomPattern()
+{
+	NodeName = TEXT("Set Attack Pattern");
+}
+
 EBTNodeResult::Type UBTT_SetRandomPattern::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	ACAIController* AIController = Cast<ACAIController>(OwnerComp.GetOwner());
@@ -19,6 +24,6 @@ EBTNodeResult::Type UBTT_SetRandomPattern::ExecuteTask(UBehaviorTreeComponent& O
 	int32 RandomInt = FMath::RandRange(0, RandomRange - 1);
 
 	BlackboardComponent->SetValueAsInt("RandomPattern", RandomInt);
-	UE_LOG(LogTemp, Error, TEXT("BB_Random Int: %d"), BlackboardComponent->GetValueAsInt("RandomPattern"));
+	// UE_LOG(LogTemp, Error, TEXT("BB_Random Int: %d"), BlackboardComponent->GetValueAsInt("RandomPattern"));
 	return EBTNodeResult::Succeeded;
 }
