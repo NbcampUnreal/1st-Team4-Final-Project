@@ -99,6 +99,8 @@ public:
 	//TODOS
 	virtual void PostNetInit() override;
 
+	void SetControlRotation(bool bEnable);
+	
 private:
 	UPROPERTY()
 	TObjectPtr<UCharacterInputComponent> CharacterInputComponent;

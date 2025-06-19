@@ -45,7 +45,46 @@ void UC_CharacterMovementComponent::DisableMove()
 
 float UC_CharacterMovementComponent::GetMaxSpeed() const
 {	
-	return Super::GetMaxSpeed();
+	float MaxMoveSpeed = Super::GetMaxSpeed();
+	
+	switch(MovementMode)
+	{
+		case MOVE_Walking:
+		case MOVE_NavWalking:
+		{
+			float DirectionCheck;
+			float DirectionDot = GetOwner()->GetActorForwardVector().Dot(Velocity.GetSafeNormal());
+			if (DirectionDot < 0.25f)
+			{
+				if (DirectionDot > -0.25f)
+				{
+					DirectionCheck = MaxMoveSpeed * LeftRightMovePercent;
+				}
+				else
+				{
+					DirectionCheck = MaxMoveSpeed * BackwardMovePercent;
+				}
+			}
+			else
+			{
+				DirectionCheck = MaxMoveSpeed;
+			}
+			MaxMoveSpeed = DirectionCheck;
+		}
+		case MOVE_Falling:
+			return MaxMoveSpeed;
+		case MOVE_Swimming:
+			return MaxSwimSpeed;
+		case MOVE_Flying:
+			return MaxFlySpeed;
+		case MOVE_Custom:
+			return MaxCustomMovementSpeed;
+		case MOVE_None:
+		default:
+			return 0.f;
+	}
+
+	return MaxMoveSpeed;
 }
 
 void UC_CharacterMovementComponent::OnMove(const FInputActionValue& Value)

@@ -121,7 +121,7 @@ void ULootDropManagerComponent::OnMonsterDiedMessageReceived(FGameplayTag Channe
 	
 		if (NewPouch)
 		{
-			NewPouch->InitializeLootPouch(FinalLootResults[0]);
+			NewPouch->InitializeLootDrop(FinalLootResults[0]);
 			UE_LOG(LogTemp, Log, TEXT("[SERVER] LootDropManager: Spawned loot pouch for %s with %d item types."), *Message.MonsterID.ToString(), FinalLootResults.Num());
 		}
 

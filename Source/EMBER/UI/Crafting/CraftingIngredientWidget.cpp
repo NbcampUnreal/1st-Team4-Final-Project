@@ -1,54 +1,34 @@
 #include "UI/Crafting/CraftingIngredientWidget.h"
 #include "Components/VerticalBox.h"
-#include "GameplayTagContainer.h"
 #include "Crafting/CraftingRecipeManager.h"
-#include "Item/ItemTemplate.h"
-#include "UI/Data/EmberItemData.h" 
-#include "UI/Crafting/CraftingIngredientLineEntry.h"
 
-UCraftingIngredientWidget::UCraftingIngredientWidget(const FObjectInitializer& ObjectInitializer) 
-    : Super(ObjectInitializer)
+UCraftingIngredientWidget::UCraftingIngredientWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+    IngredientDisplayBox = nullptr;
     IngredientLineEntryWidgetClass = nullptr;
 }
 
-void UCraftingIngredientWidget::UpdateDisplay(const FCraftingRecipeRow& ForRecipe, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount)
+void UCraftingIngredientWidget::UpdateDisplay(UCraftingRecipeManager* RecipeManager, const FCraftingRecipeRow& ForRecipe, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount)
 {
-    if (!IngredientDisplayBox)
+    if (!IngredientDisplayBox || !IngredientLineEntryWidgetClass || !RecipeManager)
     {
-       return;
+        return;
     }
+
     IngredientDisplayBox->ClearChildren();
 
-    if (!IngredientLineEntryWidgetClass)
+    for (const auto& IngredientPair : ForRecipe.Ingredients)
     {
-        UE_LOG(LogTemp, Warning, TEXT("UCraftingIngredientWidget::UpdateDisplay - IngredientLineEntryWidgetClass is not set in Class Defaults."));
-        return;
-    }
+        const FGameplayTag& IngredientTag = IngredientPair.Key;
+        const int32 RequiredQuantity = IngredientPair.Value * CraftingAmount;
 
-    if (ForRecipe.RecipeDisplayName.IsEmpty() || CraftingAmount <= 0) 
-    {
-        return;
-    }
+        const int32 OwnedQuantity = PlayerOwnedIngredients.Contains(IngredientTag) ? PlayerOwnedIngredients[IngredientTag] : 0;
 
-    for (const TPair<FGameplayTag, int32>& RequiredIngredientPair : ForRecipe.Ingredients)
-    {
-       const FGameplayTag& IngredientTag = RequiredIngredientPair.Key;
-       const int32 RequiredPerItem = RequiredIngredientPair.Value;
-       const int32 TotalRequiredForBatch = RequiredPerItem * CraftingAmount;
-       const int32 OwnedAmount = PlayerOwnedIngredients.FindRef(IngredientTag);
-
-       FString MaterialDisplayNameStr = IngredientTag.GetTagName().ToString();
-
-       UCraftingIngredientLineEntry* EntryWidget = CreateWidget<UCraftingIngredientLineEntry>(this, IngredientLineEntryWidgetClass);
-       if (EntryWidget)
-       {
-           EntryWidget->SetData(FText::FromString(MaterialDisplayNameStr), OwnedAmount, TotalRequiredForBatch, (OwnedAmount >= TotalRequiredForBatch));
-           IngredientDisplayBox->AddChildToVerticalBox(EntryWidget);
-       }
-       else
-       {
-            UE_LOG(LogTemp, Error, TEXT("UCraftingIngredientWidget::UpdateDisplay - Failed to create IngredientLineEntryWidget."));
-       }
+        UCraftingIngredientLineEntry* EntryWidget = CreateWidget<UCraftingIngredientLineEntry>(this, IngredientLineEntryWidgetClass);
+        if (EntryWidget)
+        {
+            EntryWidget->SetData(RecipeManager, IngredientTag, OwnedQuantity, RequiredQuantity);
+            IngredientDisplayBox->AddChildToVerticalBox(EntryWidget);
+        }
     }
 }

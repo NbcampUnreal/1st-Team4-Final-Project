@@ -4,8 +4,6 @@
 #include "AbilitySystemComponent.h"
 #include "ArmorComponent.h"
 #include "C_CameraComponent.h"
-#include "EmberPlayerController.h"
-#include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "C_CharacterMovementComponent.h"
 #include "EmberPlayerState.h"
@@ -16,7 +14,6 @@
 #include "Managers/EquipmentManagerComponent.h"
 #include "..\GameInfo/GameplayTags.h"
 #include "EnhancedInputSubsystems.h"
-#include "Engine/DamageEvents.h"
 #include "Input/EmberEnhancedInputComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -113,6 +110,18 @@ void AEmberPlayerCharacter::PostNetInit()
 	UE_LOG(LogTemp, Warning, L"PostNetInit Call");
 	if (ArmorComponent != nullptr)
 		ArmorComponent->InitializeArmorForLateJoiners();
+}
+
+void AEmberPlayerCharacter::SetControlRotation(bool bEnable)
+{
+	if (bEnable)
+	{
+		CameraLogicComp->EnableControlRotation();
+	}
+	else
+	{
+		CameraLogicComp->DisableControlRotation();
+	}
 }
 
 
@@ -302,17 +311,17 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
 {
 	if (HasAuthority() == false)
 		return 0.0f;
-	
+
 	float damage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	
+
 	if (damage <= 0.0f)
 	{
 		UE_LOG(LogTemp, Error, L"Damage is 0");
 		return damage;
 	}
-	
+
 	//StatusComponent->OnRep_Damage(damage);
-	
+
 	DamageData.Causer = DamageCauser;
 	DamageData.Character = Cast<ACharacter>(EventInstigator->GetPawn());
 	DamageData.Power = damage;
@@ -320,9 +329,18 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
 	//DamageData.Montage = event->DamageData->Montages;
 	//DamageData.PlayRate = event->DamageData->PlayRate;
 	MulticastHitted(damage, DamageEvent, EventInstigator, DamageCauser);
+
+	if (UAbilitySystemComponent* EmberASC = GetAbilitySystemComponent())
+	{
+		FGameplayEventData Payload;
+		Payload.EventTag = EmberGameplayTags::GameplayEvent_HitReact;
+		Payload.Target = this;
+
+		FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
+		AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
+	}
 	
 	return damage;
-	
 }
 
 void AEmberPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -339,6 +357,9 @@ void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamage
 	{
 		return;
 	}
+
+	// 애니메이션 종료시 캐릭터 상태 관리를 위해 GaemplayAbility에서 애니메이션 재생 구현
+	/*
 	MontageComponent->PlayMontage(EStateType::Hitted);
 	if (HasAuthority() == true)
 	{
@@ -348,10 +369,10 @@ void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamage
 	{
 		UE_LOG(LogTemp, Error, L"hp %f", StatusComponent->GetHp());
 	}
+	*/
 
 	if (DamageData.Character != nullptr)
 		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
-
 }
 
 void AEmberPlayerCharacter::OnRep_Hitted()

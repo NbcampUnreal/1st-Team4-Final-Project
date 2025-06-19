@@ -40,6 +40,7 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Mining,									"Ability.Mining");
 
 	UE_DEFINE_GAMEPLAY_TAG(Ability_ChangeEquip,								"Ability.ChangeEquip");
+	UE_DEFINE_GAMEPLAY_TAG(Ability_HitReact,								"Ability.HitReact");
 	
 	// ItemAttribute
 	UE_DEFINE_GAMEPLAY_TAG(ItemAttribute_BaseDamage,						"ItemAttribute.BaseDamage");
@@ -52,6 +53,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_Mining,									"Status.Mining");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Status_ChangeEquip,								"Status.ChangeEquip");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack,									"Status.Attack");
+	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact,									"Status.HitReact");
 
 	// Gameplay Event
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_Begin,						"GameplayEvent.Montage.Begin");
@@ -60,4 +63,5 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Trace,								"GameplayEvent.Trace");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Reward_Item,						"GameplayEvent.Reward.Item");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_ChangeEquip,						"GameplayEvent.ChangeEquip");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_HitReact,							"GameplayEvent.HitReact");
 }

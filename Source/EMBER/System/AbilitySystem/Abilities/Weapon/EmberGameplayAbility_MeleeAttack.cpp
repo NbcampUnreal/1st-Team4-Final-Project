@@ -87,6 +87,11 @@ void UEmberGameplayAbility_MeleeAttack::OnHitTarget(FGameplayEventData Payload)
 
 void UEmberGameplayAbility_MeleeAttack::OnMontageEventTriggered(FGameplayEventData Payload)
 {
+	HandleMontageEvent(Payload);
+}
+
+void UEmberGameplayAbility_MeleeAttack::HandleMontageEvent(FGameplayEventData Payload)
+{
 	OnMontageFinished();
 }
 

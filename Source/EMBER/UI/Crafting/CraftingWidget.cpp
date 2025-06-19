@@ -178,7 +178,10 @@ void UCraftingWidget::RefreshAll()
     {
         if (SelectedRecipeDataPtr)
         {
-            SelectedRecipeDisplayWidget->SetRecipeDetails(*SelectedRecipeDataPtr, PlayerIngredients, CraftAmount);
+            if (CraftingSystem && CraftingSystem->RecipeManager)
+            {
+                SelectedRecipeDisplayWidget->SetRecipeDetails(CraftingSystem->RecipeManager, *SelectedRecipeDataPtr, PlayerIngredients, CraftAmount);
+            }
 
             if (CraftingSystem && SelectedRecipeDataPtr->RequiredMainMaterialCount > 0)
             {
@@ -197,15 +200,11 @@ void UCraftingWidget::RefreshAll()
     }
 
     const bool bIsQualityRecipe = (SelectedRecipeDataPtr && SelectedRecipeDataPtr->RequiredMainMaterialCount > 0);
-    if (CenterContentSwitcher)
+    if (GeneralRecipeIngredientsWidget && !bIsQualityRecipe)
     {
-        if (bIsQualityRecipe)
+        if (CraftingSystem && CraftingSystem->RecipeManager && SelectedRecipeDataPtr)
         {
-            if (MainMaterialSelectorWidget) CenterContentSwitcher->SetActiveWidget(MainMaterialSelectorWidget);
-        }
-        else
-        {
-            if (GeneralRecipeIngredientsWidget) CenterContentSwitcher->SetActiveWidget(GeneralRecipeIngredientsWidget);
+            GeneralRecipeIngredientsWidget->UpdateDisplay(CraftingSystem->RecipeManager, *SelectedRecipeDataPtr, PlayerIngredients, CraftAmount);
         }
     }
 }
