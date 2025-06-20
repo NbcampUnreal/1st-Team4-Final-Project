@@ -1,5 +1,5 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
+﻿#include "Manager/C_FGenAIProviderRegistry.h"
+#include "UObject/Class.h"
 #include "GenerativeAISupport.h"
 
 #define LOCTEXT_NAMESPACE "FGenerativeAISupportModule"
@@ -11,7 +11,10 @@ FGenerativeAISupportModule::FGenerativeAISupportModule()
 
 void FGenerativeAISupportModule::StartupModule()
 {
-	// Log to debug module loading
+    FGenAIProviderRegistry::Get().RegisterProvider(
+        TEXT("DeepSeek"),
+        UGenAI_DeepseekProvider::StaticClass()
+    );
 	UE_LOG(LogTemp, Log, TEXT("FGenerativeAISupportModule::StartupModule called"));
 }
 
