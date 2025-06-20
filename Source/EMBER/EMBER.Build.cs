@@ -39,7 +39,7 @@ public class EMBER : ModuleRules
                         "UnrealEd",
                         "WorldPartitionEditor",
                         "EditorFramework",
-                        "EditorSubsystem"
+                        "EditorSubsystem",
                     });
         PublicIncludePaths.AddRange(
                     new string[]

@@ -86,14 +86,6 @@
 		{
 			"Name": "ActorPalette",
 			"Enabled": true
-		},
-		{
-			"Name": "OllamaGenProvider",
-			"Enabled": true
-		},
-		{
-			"Name": "GenAI_DeepseekProvider",
-			"Enabled": false
 		}
 	]
 }
