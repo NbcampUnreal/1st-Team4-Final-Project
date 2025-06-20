@@ -63,8 +63,6 @@ protected:
 	void StopSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void Attack(const FInputActionValue& value);
-	UFUNCTION()
-	void StartJump(const FInputActionValue& value);
 
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetMaxHP() const;
