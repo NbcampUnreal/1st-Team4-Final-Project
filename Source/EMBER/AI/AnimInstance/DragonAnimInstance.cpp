@@ -35,14 +35,3 @@ void UDragonAnimInstance::AnimNotify_Land()
 	}
 }
 
-void UDragonAnimInstance::AnimNotify_LandEnd()
-{
-	if (Dragon && Dragon->GetController())
-	{
-		if (UBTT_DragonAttack* Task = Cast<UBTT_DragonAttack>(Dragon->GetCurrentAttackTask()))
-		{
-			Task->ForceFinishTask();
-		}
-	}
-}
-

@@ -36,6 +36,7 @@ private:
 	UProjectileMovementComponent* SpitMovement;
 
 	AActor* TargetActor = nullptr;
-	
+
+	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 };

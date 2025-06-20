@@ -18,12 +18,12 @@ public:
 	UBTT_DragonAttack();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory) override;
 
-	UFUNCTION()
-	void ForceFinishTask();
-
 protected:
 	UFUNCTION()
 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	UFUNCTION()
+	void OnMontageTimeout();
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Animation")
@@ -43,4 +43,6 @@ private:
 
 	UPROPERTY()
 	UBehaviorTreeComponent* BTComp;
+
+	FTimerHandle MontageTimeoutHandle;
 };

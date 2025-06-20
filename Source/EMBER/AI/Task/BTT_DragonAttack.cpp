@@ -4,6 +4,7 @@
 #include "CAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AI/BehaviorTree/CBehaviorTreeComponent.h"
+#include "TimerManager.h"
 
 
 UBTT_DragonAttack::UBTT_DragonAttack()
@@ -29,8 +30,9 @@ EBTNodeResult::Type UBTT_DragonAttack::ExecuteTask(UBehaviorTreeComponent& Comp,
 	EndDelegate.BindUObject(this, &UBTT_DragonAttack::OnMontageEnded);
 	DragonAnim->Montage_SetEndDelegate(EndDelegate, RangedAttackMontage);
 
-	DragonAnim->Montage_Play(RangedAttackMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
-
+	const float PlayTime = DragonAnim->Montage_Play(RangedAttackMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+	if (PlayTime == 0.f) return EBTNodeResult::Failed;
+	
 	DragonAnim->Montage_SetNextSection(FName("Fly"), FName("Attack"), RangedAttackMontage);
 	DragonAnim->Montage_SetNextSection(FName("Attack"), FName("Land"), RangedAttackMontage);
 	DragonAnim->Montage_JumpToSection(FName("Fly"), RangedAttackMontage);
@@ -39,6 +41,21 @@ EBTNodeResult::Type UBTT_DragonAttack::ExecuteTask(UBehaviorTreeComponent& Comp,
 	Dragon->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 	Dragon->GetCharacterMovement()->GravityScale = 0.f;
 	AIController->StopMovement();
+
+	float TotalLength = 0.f;
+	const int32 SectionCount = RangedAttackMontage->CompositeSections.Num();
+	for (int32 i = 0; i < SectionCount; ++i)
+	{
+		TotalLength += RangedAttackMontage->GetSectionLength(i);
+	}
+
+	Dragon->GetWorldTimerManager().SetTimer(
+		MontageTimeoutHandle,
+		this,
+		&UBTT_DragonAttack::OnMontageTimeout,
+		TotalLength,
+		false
+		);
 	
 	return EBTNodeResult::InProgress;
 }
@@ -55,11 +72,11 @@ void UBTT_DragonAttack::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 	FinishLatentTask(*BTComp, EBTNodeResult::Succeeded);
 }
 
-void UBTT_DragonAttack::ForceFinishTask()
+void UBTT_DragonAttack::OnMontageTimeout()
 {
 	if (BTComp)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("FinishDragonAttackTask")));
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("DragonAttackTaskTimeOut")));
 		FinishLatentTask(*BTComp, EBTNodeResult::Succeeded);
 	}
 }
