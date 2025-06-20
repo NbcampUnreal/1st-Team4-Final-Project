@@ -17,6 +17,12 @@ ADragonSpitProjectile::ADragonSpitProjectile()
 
 	SpitEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SpitEffect"));
 	SpitEffect->SetupAttachment(SpitCollision);
+	if (SpitNiagara == nullptr)
+	{
+		UE_LOG(LogTemp,Error,L"Dragon.cpp, niagara is null");
+	}
+	else
+	SpitEffect->SetAsset(SpitNiagara);
 	SpitEffect->SetAutoActivate(false);
 
 	SpitMovement = CreateDefaultSubobject<UProjectileMovementComponent>(FName("SpitMovement"));
