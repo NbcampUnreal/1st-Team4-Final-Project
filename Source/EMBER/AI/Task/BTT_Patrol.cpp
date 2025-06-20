@@ -21,7 +21,7 @@ EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	BlackboardComp = OwnerComp.GetBlackboardComponent(); //블랙보드 참조
 	ABaseAI* ControlledAnimal = Cast<ABaseAI>(BaseAIController->GetPawn()); //사용되는 액터 참조
 
-	if (ControlledAnimal->PatrolPoint.Num() == 0)
+	if (ControlledAnimal->PatrolPoint.IsEmpty() || ControlledAnimal->PatrolPoint.Num() <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("empty PatrolPoint"));
 		BlackboardComp->SetValueAsBool("IsRest", true);
@@ -33,12 +33,12 @@ EBTNodeResult::Type UBTT_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 
 	ATargetPoint* NextPoint = ControlledAnimal->PatrolPoint[CurrentIndex]; //이동할액터위치 설정
 	BlackboardComp->SetValueAsInt("PatrolIndex", CurrentIndex); //블랙보드에 인덱스 업데이트
-	
+
 	BaseAIController->ReceiveMoveCompleted.RemoveAll(this);
 	BaseAIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_Patrol::OnMoveCompleted);
 	PatrolRequestID = BaseAIController->MoveToActor(NextPoint, 100.0f);
 
-	
+
 	// BaseAIController->MoveToActor(NextPoint, 50.0f); // AcceptanceRadius 조정
 	// BaseAIController->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_Patrol::OnMoveCompleted);
 	// BaseAIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_Patrol::OnMoveCompleted);

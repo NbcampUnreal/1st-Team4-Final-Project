@@ -4,16 +4,7 @@
 #include "AI/AnimInstance/BaseAIAnimInstance.h"
 #include "DragonAnimInstance.generated.h"
 
-UENUM(BlueprintType)
-enum class EDragonAttackType : uint8
-{
-	RightAttack,
-	LeftAttack,
-	BiteAttack,
-	ComboAttack,
-	SpitAttack,
-	BreathAttack,
-};
+class ADragon;
 
 UCLASS()
 class EMBER_API UDragonAnimInstance : public UBaseAIAnimInstance
@@ -22,18 +13,23 @@ class EMBER_API UDragonAnimInstance : public UBaseAIAnimInstance
 
 public:
 	virtual void NativeInitializeAnimation() override;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Dragon|Anim")
-	EDragonAttackType DragonAttackType;
-	
-	virtual void PlayMontage() override;
 
+	UPROPERTY()
+	class UBTT_DragonAttack* DragonAttackTask;
+
+protected:
 	UFUNCTION()
 	void AnimNotify_SpawnSpit();
 
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Dragon|Anim")
-	TMap<EAnimActionType, FName> DragonAttackSectionMap;
-	
-	virtual UAnimMontage* GetMontageToPlay(EAnimActionType ActionType) const override;
+	UFUNCTION()
+	void AnimNotify_Fly();	
+
+	UFUNCTION()
+	void AnimNotify_Land();
+
+	UFUNCTION()
+	void AnimNotify_LandEnd();
+
+private:
+	TObjectPtr<ADragon> Dragon;
 };

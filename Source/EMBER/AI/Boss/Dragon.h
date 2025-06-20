@@ -4,9 +4,9 @@
 #include "AI/Base/BaseAI.h"
 #include "Dragon.generated.h"
 
-class UCBehaviorTreeComponent;
-class UDragonAnimInstance;
+class ACAIController;
 class ADragonSpitProjectile;
+class UBTT_DragonAttack;
 
 UCLASS()
 class EMBER_API ADragon : public ABaseAI
@@ -17,28 +17,35 @@ public:
 	ADragon();
 	virtual void BeginPlay() override;
 
-	void PerformAttack();
-	void NormalAttack();
-	void ComboAttack();
-	void SpitAttack();
-	void BreathAttack();
-
-	void OnNormalAttack();
-	bool IsTargetNear() const;
-
 	UFUNCTION()
 	void SpawnSpit();
 
+	void Landed(const FHitResult& Hit) override;
+
+	void SetLaunchZPower(float InZPower) { LaunchZPower = InZPower; }
+	float GetLaunchZPower() const { return LaunchZPower; }
+
+	UBTT_DragonAttack* GetCurrentAttackTask() const { return CurrentAttackTask; }
+	void SetCurrentAttackTask(UBTT_DragonAttack* Task) { CurrentAttackTask = Task; }
+
+	AActor* GetTargetActor() { return TargetActor; }
+
 private:
-	UPROPERTY()
-	TObjectPtr<UDragonAnimInstance> DragonAnim;
-
-	UPROPERTY()
-	TObjectPtr<UCBehaviorTreeComponent> BTComp;
-
 	UPROPERTY(EditdefaultsOnly)
 	TSubclassOf<ADragonSpitProjectile> SpitClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<ACAIController> AIController;
+
+	UPROPERTY(EditDefaultsOnly)
+	UCBehaviorTreeComponent* BTComp;
+
+	UPROPERTY()
+	AActor* TargetActor;
+
+	float LaunchZPower = 300.f;
+
+	UBTT_DragonAttack* CurrentAttackTask;
+
 	
-	int32 AttackStack = 0;
-	bool bCanSpecialAttack = false;
 };

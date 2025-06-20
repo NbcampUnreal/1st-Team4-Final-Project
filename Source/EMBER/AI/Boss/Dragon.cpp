@@ -1,11 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "AI/Boss/Dragon.h"
-
+#include "CAIController.h"
 #include "AIWeapon/DragonSpitProjectile.h"
-#include "AnimInstance/DragonAnimInstance.h"
 #include "BehaviorTree/CBehaviorTreeComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ADragon::ADragon()
 {
@@ -15,90 +12,44 @@ void ADragon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	BTComp = Cast<UCBehaviorTreeComponent>(GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
-	DragonAnim = Cast<UDragonAnimInstance>(GetMesh()->GetAnimInstance());
-}
-
-void ADragon::PerformAttack()
-{
-	if (bCanSpecialAttack)
-	{
-		if (IsTargetNear())
-		{
-			ComboAttack();
-		}
-		else
-		{
-			SpitAttack();
-		}
-
-		AttackStack = 0;
-		bCanSpecialAttack = false;
-	}
-
-	else
-	{
-		NormalAttack();
-	}
-}
-
-void ADragon::NormalAttack()
-{
-	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
-	DragonAnim->DragonAttackType = EDragonAttackType::BiteAttack;
-	DragonAnim->PlayMontage();
-}
-
-void ADragon::ComboAttack()
-{
-	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
-	DragonAnim->DragonAttackType = EDragonAttackType::ComboAttack;
-	DragonAnim->PlayMontage();
-}
-
-void ADragon::SpitAttack()
-{
-	if (!SpitClass) return;
-
-	
-	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
-	DragonAnim->DragonAttackType = EDragonAttackType::SpitAttack;
-	DragonAnim->PlayMontage();
-}
-
-void ADragon::BreathAttack()
-{
-	DragonAnim->DesiredActionType = EAnimActionType::AttackNormal;
-	DragonAnim->DragonAttackType = EDragonAttackType::BreathAttack;
-	DragonAnim->PlayMontage();
-}
-
-void ADragon::OnNormalAttack()
-{
-	AttackStack++;
-
-	if (AttackStack >= 3)
-	{
-		bCanSpecialAttack = true;
-	}
-}
-
-bool ADragon::IsTargetNear() const
-{
-	float Distance = FVector::Dist(GetActorLocation(), BTComp->GetTarget()->GetActorLocation());
-	return Distance < 1000.f;
+	AIController = Cast<ACAIController>(GetController());
+	BTComp = FindComponentByClass<UCBehaviorTreeComponent>();
 }
 
 void ADragon::SpawnSpit()
 {
-	if (SpitClass == nullptr) return;
+	if (!SpitClass || !BTComp)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SpawnSpit() aborted: SpitClass or BTComp is null"));
+		return;
+	}
+
+	TargetActor = BTComp->GetTarget();
+
+	if (!TargetActor)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SpawnSpit() aborted: TargetActor is null"));
+		return;
+	}
 	
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("MouthSocket"));
-	FRotator SpawnRotation = GetActorRotation();
+	FVector Direction = (TargetActor->GetActorLocation() - SpawnLocation).GetSafeNormal();
+	FRotator SpawnRotation = Direction.Rotation();
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
 
-	GetWorld()->SpawnActor<ADragonSpitProjectile>(SpitClass, SpawnLocation, SpawnRotation, SpawnParams);
+	ADragonSpitProjectile* SpitProjectile = GetWorld()->SpawnActor<ADragonSpitProjectile>(SpitClass, SpawnLocation, SpawnRotation, SpawnParams);
+	if (SpitProjectile)
+	{
+		SpitProjectile->SetTargetActor(TargetActor);
+	}
+}
+
+void ADragon::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 }

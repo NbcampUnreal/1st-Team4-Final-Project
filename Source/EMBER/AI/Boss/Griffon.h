@@ -12,11 +12,8 @@ class EMBER_API AGriffon : public APassiveAI
 public:
 	AGriffon();
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
+	// virtual void Tick(float DeltaTime) override;
 
-	void Attack();
 	
-	//virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus) override;
-
-	void SetCombatState();
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 };
