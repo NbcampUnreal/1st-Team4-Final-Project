@@ -26,12 +26,12 @@ EBTNodeResult::Type UBTT_Fly::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 		//UE_LOG(LogTemp, Error, TEXT("GuardTarget is null"));
 		return EBTNodeResult::Failed;
 	}
-
-	AI->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+	
+	AI->GetCharacterMovement()->StopMovementImmediately();
 	AI->GetCharacterMovement()->MaxFlySpeed = 700;
 	AI->GetCharacterMovement()->GravityScale = 0.0f;
-	AI->GetCharacterMovement()->StopMovementImmediately();
 	AI->LaunchCharacter(FVector(0, 0, 400), false, true);
+	AI->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 
 	return EBTNodeResult::InProgress;
 }

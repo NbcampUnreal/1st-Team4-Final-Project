@@ -7,6 +7,11 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+UBTT_FlyMoveTo::UBTT_FlyMoveTo()
+{
+	bNotifyTick = true;
+}
+
 EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	BaseAI = Cast<ABaseAI>(OwnerComp.GetAIOwner()->GetPawn());
@@ -25,6 +30,7 @@ EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		float Speed = BaseAI->GetCharacterMovement()->MaxFlySpeed;
 		BaseAI->GetCharacterMovement()->Velocity = Direction * Speed;
 	}
+
 	
 	return EBTNodeResult::InProgress;
 }
@@ -65,20 +71,21 @@ bool UBTT_FlyMoveTo::IsNearGround()
 void UBTT_FlyMoveTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-	
-	if (IsNearGround())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Get Ground"));
-		BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-	}
+
+	// if (IsNearGround())
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Get Ground"));
+	// 	BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	// 	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	// }
 
 	CurrentLocation = BaseAI->GetActorLocation();
 	float Distance = FVector::Dist(CurrentLocation, TargetLocation);
 
-	if (Distance <= 100.0f)
+	if (BaseAI->GetCharacterMovement()->IsMovingOnGround())
 	{
 		UE_LOG(LogTemp, Display, TEXT("Movement already in progress"));
+		BaseAI->GetCharacterMovement()->GravityScale = 1.0f;
 		BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
