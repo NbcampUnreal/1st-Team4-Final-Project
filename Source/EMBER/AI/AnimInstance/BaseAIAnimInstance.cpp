@@ -2,7 +2,6 @@
 #include "AI/Base/BaseAI.h"
 #include "CAIController.h"
 #include "KismetAnimationLibrary.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 void UBaseAIAnimInstance::NativeInitializeAnimation()
 {
@@ -31,7 +30,6 @@ void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (ABaseAI* AICharacter = Cast<ABaseAI>(TryGetPawnOwner()))
 	{
 		FVector Velocity = AICharacter->GetVelocity();
-		bIsAirborne = AICharacter->GetCharacterMovement()->IsFalling();
 
 		CurrentSpeed = FVector(Velocity.X, Velocity.Y, 0.0f).Size();
 		CurrentHeight = AICharacter->GetActorLocation().Z;

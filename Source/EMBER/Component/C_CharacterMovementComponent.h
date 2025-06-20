@@ -53,7 +53,7 @@ public:
 
 public:
 	void SetSpeed(ESpeedType SpeedType);
-
+	void SetFlySpeed(EFlySpeedType FlySpeedType);
 	void SetWalkSpeed(int32 InSpeed); 
 	void SetRunSpeed(int32 InSpeed); 
 	void SetSprintSpeed(int32 InSpeed);

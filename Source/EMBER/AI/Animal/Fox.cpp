@@ -5,9 +5,9 @@
 
 AFox::AFox()
 {
-	MaxHP = 200.f;
-	CurrentHP = MaxHP;
-	AttackPower = 1.f;
+	// MaxHP = 200.f;
+	// CurrentHP = MaxHP;
+	// AttackPower = 1.f;
 	// WalkSpeed = 150.f;
 	// RunSpeed = 600.f;
 	bIsDie = false;

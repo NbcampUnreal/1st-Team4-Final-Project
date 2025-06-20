@@ -7,8 +7,8 @@
 
 ADeer::ADeer()
 {
-	MaxHP = 100;
-	CurrentHP = MaxHP;
+	// MaxHP = 100;
+	// CurrentHP = MaxHP;
 	bIsDie = false;
 }
 

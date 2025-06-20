@@ -30,13 +30,11 @@ void UBTT_FindingEnemyTimer::CheckDetection(bool IsDetect)
 			GetWorld()->GetTimerManager().SetTimer(UpdateDistanceTimer, this,
 			                                       &UBTT_FindingEnemyTimer::UpdateClosestActorTimer,
 			                                       1.0f, true);
-			// UE_LOG(LogTemp, Warning, TEXT("Timer Started"));
 		}
 	}
 	else
 	{
 		GetWorld()->GetTimerManager().ClearTimer(UpdateDistanceTimer);
-		// UE_LOG(LogTemp, Warning, TEXT("Timer Stopped"));
 	}
 }
 
@@ -57,10 +55,10 @@ void UBTT_FindingEnemyTimer::UpdateClosestActorTimer()
 			return;
 		}
 
+		FVector MyLocation = AI->GetActorLocation();
 		for (AActor* Enemy : EnemyActors)
 		{
 			if (!Enemy->Tags.Contains(FName("Player"))) continue;
-			FVector MyLocation = AI->GetActorLocation();
 			FVector EnemyLocation = Enemy->GetActorLocation();
 
 			//2d 평면에서만 계산
@@ -73,8 +71,8 @@ void UBTT_FindingEnemyTimer::UpdateClosestActorTimer()
 				ClosestDistance = Distance;
 				ClosestActor = Enemy;
 				BlackboardComponent->SetValueAsObject("TargetActor", ClosestActor);
-				UE_LOG(LogTemp, Warning, TEXT("Closest Actor Updated: %s at distance %f"), *ClosestActor->GetName(),
-				       ClosestDistance);
+				// UE_LOG(LogTemp, Warning, TEXT("Closest Actor Updated: %s at distance %f"), *ClosestActor->GetName(),
+				//        ClosestDistance);
 			}
 		}
 	}

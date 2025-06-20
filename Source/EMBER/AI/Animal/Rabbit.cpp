@@ -9,7 +9,7 @@
 
 ARabbit::ARabbit()
 {
-	MaxHP = 100;
+	// MaxHP = 100;
 }
 
 void ARabbit::OnDeath()

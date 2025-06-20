@@ -9,28 +9,81 @@
 
 EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	ABaseAI* BaseAI = Cast<ABaseAI>(OwnerComp.GetAIOwner()->GetPawn());
+	BaseAI = Cast<ABaseAI>(OwnerComp.GetAIOwner()->GetPawn());
 	if (!BaseAI) return EBTNodeResult::Failed;
 	OwnerCompRef = &OwnerComp;
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
 
 	ACAIController* AIController = Cast<ACAIController>(BaseAI->GetController());
-	AActor* TargetActorRef = Cast<AActor>(BlackboardComp->GetValueAsObject(TargetActor.SelectedKeyName));
-	if (TargetActorRef)
+	AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
+	if (TargetActor)
 	{
-		FVector CurrentLocation = BaseAI->GetActorLocation();
-		FVector TargetLocation = TargetActorRef->GetActorLocation();
+		CurrentLocation = BaseAI->GetActorLocation();
+		TargetLocation = TargetActor->GetActorLocation();
 		FVector Direction = (TargetLocation - CurrentLocation).GetSafeNormal();
 		float Speed = BaseAI->GetCharacterMovement()->MaxFlySpeed;
 		BaseAI->GetCharacterMovement()->Velocity = Direction * Speed;
 	}
-
-	// AIController->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_FlyMoveTo::OnMoveCompleted);
-	// AIController->ReceiveMoveCompleted.AddDynamic(this, &UBTT_FlyMoveTo::OnMoveCompleted);
-	// FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-	return EBTNodeResult::Succeeded;
+	
+	return EBTNodeResult::InProgress;
 }
+
+bool UBTT_FlyMoveTo::IsNearGround()
+{
+	if (!BaseAI) return false;
+
+	FVector Start = BaseAI->GetActorLocation();
+	FVector End = Start - FVector(0, 0, 200.0f); // 아래로 100cm 트레이스
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(BaseAI);
+
+	FHitResult Hit;
+	bool bHit = BaseAI->GetWorld()->LineTraceSingleByChannel(
+		Hit,
+		Start,
+		End,
+		ECC_Visibility,
+		Params
+	);
+	DrawDebugLine(
+		BaseAI->GetWorld(),
+		Start,
+		End,
+		bHit ? FColor::Green : FColor::Red, // 맞으면 초록, 아니면 빨강
+		false,
+		0.1f,
+		0,
+		2.0f
+	);
+
+
+	return bHit;
+}
+
+void UBTT_FlyMoveTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
+	
+	if (IsNearGround())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Get Ground"));
+		BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	}
+
+	CurrentLocation = BaseAI->GetActorLocation();
+	float Distance = FVector::Dist(CurrentLocation, TargetLocation);
+
+	if (Distance <= 100.0f)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Movement already in progress"));
+		BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	}
+}
+
 
 
 

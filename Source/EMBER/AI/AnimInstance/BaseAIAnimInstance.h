@@ -40,10 +40,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Movement")
 	float CurrentDirection;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
-	bool bIsAirborne;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Anim")
 	EAnimActionType DesiredActionType;
 

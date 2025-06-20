@@ -43,5 +43,6 @@ private:
 
 private:
 	TObjectPtr<ACharacter> OwnerCharacter;
+public:
 	TArray<TObjectPtr<ACAI_Weapon>> Weapons;
 };

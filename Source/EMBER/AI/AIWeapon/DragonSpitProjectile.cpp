@@ -1,6 +1,8 @@
 #include "AI/AIWeapon/DragonSpitProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 
 ADragonSpitProjectile::ADragonSpitProjectile()
 {
@@ -8,14 +10,14 @@ ADragonSpitProjectile::ADragonSpitProjectile()
 
 	SpitCollision = CreateDefaultSubobject<USphereComponent>(FName("SpitCollision"));
 	SpitCollision->InitSphereRadius(15.f);
-	SpitCollision->SetCollisionProfileName("Projectile");
+	SpitCollision->SetCollisionProfileName("Custom");
 	SpitCollision->IgnoreActorWhenMoving(this, true);
 	SpitCollision->OnComponentHit.AddDynamic(this, &ADragonSpitProjectile::OnHit);
 	SetRootComponent(SpitCollision);
 
-	SpitMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SpitMesh"));
-	SpitMesh->SetupAttachment(SpitCollision);
-	SpitMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SpitEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SpitEffect"));
+	SpitEffect->SetupAttachment(SpitCollision);
+	SpitEffect->SetAutoActivate(false);
 
 	SpitMovement = CreateDefaultSubobject<UProjectileMovementComponent>(FName("SpitMovement"));
 	SpitMovement->InitialSpeed = 1000.f;
@@ -29,7 +31,23 @@ ADragonSpitProjectile::ADragonSpitProjectile()
 void ADragonSpitProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ADragonSpitProjectile::SetTargetActor(AActor* Target)
+{
+	TargetActor = Target;
 	
+	if (!TargetActor || !SpitMovement) return;
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("TargetActor: %s"), *GetNameSafe(TargetActor)));
+
+	FVector Direction = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+	SpitMovement->Velocity = Direction * SpitMovement->InitialSpeed;
+
+	if (SpitNiagara && SpitEffect)
+	{
+		SpitEffect->SetAsset(SpitNiagara);
+		SpitEffect->Activate();
+	}
 }
 
 void ADragonSpitProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,

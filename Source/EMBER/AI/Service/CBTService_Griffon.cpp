@@ -42,6 +42,8 @@ void UCBTService_Griffon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		UE_LOG(LogTemp, Error, L"BTState is null");
 		return;
 	}
+	UBlackboardComponent* Blackboard = Cast<UBlackboardComponent>(OwnerComp.GetBlackboardComponent());
+	
 	if (State->IsDetectMode())
 	{
 		BTState->SetDetectMode();

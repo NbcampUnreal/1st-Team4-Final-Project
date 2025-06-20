@@ -36,17 +36,12 @@ public:
 	virtual void OnDeath();
 	virtual void EndDeath();
 
-
-	// AI Perception
-	//UFUNCTION()
-	//virtual void OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus);
-
 	// AI Patrol
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Patrol")
 	TArray<ATargetPoint*> PatrolPoint;
 
 	// Getter
-	virtual float GetAttackPower() const { return AttackPower; }
+	// virtual float GetAttackPower() const { return AttackPower; }
 	UBehaviorTree* GetBehaviorTree() const;
 
 	
@@ -70,24 +65,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "AI/BehaviorTree")
 	UBehaviorTree* BehaviorTree;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
-	float MaxHP;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
-	float CurrentHP;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
-	float AttackPower;
-
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
-	// float WalkSpeed;
+	// float MaxHP;
 	//
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
-	// float RunSpeed;
+	// float CurrentHP;
 	//
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
-	// float FlySpeed;
-
+	// float AttackPower;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI|Info")
 	FName MonsterID;
 
