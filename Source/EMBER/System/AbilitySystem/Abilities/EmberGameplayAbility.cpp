@@ -9,6 +9,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
 #include "GameInfo/GameplayTags.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "System/AbilitySystem/EmberAbilitySystemComponent.h"
 
 UEmberGameplayAbility::UEmberGameplayAbility(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -188,4 +189,45 @@ bool UEmberGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyst
 	}
 
 	return true;
+}
+
+void UEmberGameplayAbility::GetMovementDirection(EEmberDirection& OutDirection, FVector& OutMovementVector) const
+{
+	FVector FacingVector;
+	
+	if (AEmberPlayerCharacter* EmberCharacter = GetEmberCharacterFromActorInfo())
+	{
+		FacingVector = EmberCharacter->GetActorForwardVector();
+		OutMovementVector = EmberCharacter->GetLastMovementInputVector();
+	}
+
+	const FRotator& FacingRotator = UKismetMathLibrary::Conv_VectorToRotator(FacingVector);
+	const FRotator& MovementRotator = UKismetMathLibrary::Conv_VectorToRotator(OutMovementVector);
+
+	const FRotator& DeltaRotator = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotator, FacingRotator);
+	float YawAbs = FMath::Abs(DeltaRotator.Yaw);
+
+	if (OutMovementVector.IsNearlyZero())
+	{
+		OutDirection = EEmberDirection::None;
+	}
+	else
+	{
+		if (YawAbs < 60.f)
+		{
+			OutDirection = EEmberDirection::Forward;
+		}
+		else if (YawAbs > 120.f)
+		{
+			OutDirection = EEmberDirection::Backward;
+		}
+		else if (DeltaRotator.Yaw < 0.f)
+		{
+			OutDirection = EEmberDirection::Left;
+		}
+		else
+		{
+			OutDirection = EEmberDirection::Right;
+		}
+	}
 }
