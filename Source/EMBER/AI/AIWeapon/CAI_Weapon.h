@@ -47,8 +47,8 @@ private:
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:
-	int32 GetAttackStack() const { return AttackStack; }
-	void ResetAttackStack() { AttackStack = 0; }
+	virtual int32 GetAttackStack() const { return AttackStack; }
+	virtual void ResetAttackStack() { AttackStack = 0; }
 
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Collision")
