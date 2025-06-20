@@ -10,6 +10,9 @@ UCBTService_Dragon::UCBTService_Dragon()
 {
 	Interval = 1.0f;
 	RandomDeviation = 0.0f;
+	TargetMemoryTime = 10.0f;
+	LastSeenTime = 0.0f;
+	CachedTarget = nullptr;
 }
 
 void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -36,13 +39,6 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		return;
 	}
 
-	// TObjectPtr<UDragonBehaviorTreeComponent> DragonAttackState = Cast<UDragonBehaviorTreeComponent>(AI->GetComponentByClass(UDragonBehaviorTreeComponent::StaticClass()));
-	// if (DragonAttackState.Get() == nullptr)
-	// {
-	// 	UE_LOG(LogTemp, Error, L"DragonAttackState is null");
-	// 	return;
-	// }
-
 	TObjectPtr<UCAIWeaponComponent> WeaponComponent = Cast<UCAIWeaponComponent>(AI->GetComponentByClass(UCAIWeaponComponent::StaticClass()));
 	if (WeaponComponent.Get() == nullptr)
 	{
@@ -65,11 +61,26 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	}
 	
 	//Target이 없으면 Patrol
-	TObjectPtr<ACharacter> Target = AIState->GetTarget(); 
-	if(Target == nullptr)
+	TObjectPtr<ACharacter> Target = AIState->GetTarget();
+	const float CurrentTime = GetWorld()->GetTimeSeconds();
+	if (Target)
 	{
-		AIState->SetPatrolMode();
-		return;
+		CachedTarget = Target;
+		LastSeenTime = CurrentTime;
+	}
+	else
+	{
+		if (CachedTarget && (CurrentTime - LastSeenTime <= TargetMemoryTime))
+		{
+			Target = CachedTarget;
+			AIState->SetTarget(CachedTarget);
+		}
+		else
+		{
+			CachedTarget = nullptr;
+			AIState->SetPatrolMode();
+			return;
+		}
 	}
 	
 	//Target과 가까우면 AttackMode

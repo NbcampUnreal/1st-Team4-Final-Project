@@ -2,11 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "AI/Base/BaseAI.h"
-#include "AIComponent/CAIWeaponComponent.h"
 #include "Dragon.generated.h"
 
-class UDragonAnimInstance;
+class ACAIController;
 class ADragonSpitProjectile;
+class UBTT_DragonAttack;
 
 UCLASS()
 class EMBER_API ADragon : public ABaseAI
@@ -20,15 +20,32 @@ public:
 	UFUNCTION()
 	void SpawnSpit();
 
+	void Landed(const FHitResult& Hit) override;
+
 	void SetLaunchZPower(float InZPower) { LaunchZPower = InZPower; }
 	float GetLaunchZPower() const { return LaunchZPower; }
 
-private:
-	UPROPERTY()
-	TObjectPtr<UDragonAnimInstance> DragonAnim;
+	UBTT_DragonAttack* GetCurrentAttackTask() const { return CurrentAttackTask; }
+	void SetCurrentAttackTask(UBTT_DragonAttack* Task) { CurrentAttackTask = Task; }
 
+	AActor* GetTargetActor() { return TargetActor; }
+
+private:
 	UPROPERTY(EditdefaultsOnly)
 	TSubclassOf<ADragonSpitProjectile> SpitClass;
 
-	float LaunchZPower = 600.f;
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<ACAIController> AIController;
+
+	UPROPERTY(EditDefaultsOnly)
+	UCBehaviorTreeComponent* BTComp;
+
+	UPROPERTY()
+	AActor* TargetActor;
+
+	float LaunchZPower = 300.f;
+
+	UBTT_DragonAttack* CurrentAttackTask;
+
+	
 };

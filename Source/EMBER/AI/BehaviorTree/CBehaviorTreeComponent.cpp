@@ -150,7 +150,7 @@ TObjectPtr<ACharacter> UCBehaviorTreeComponent::GetTarget()
 {
 	if (Blackboard == nullptr)
 	{
-		UE_LOG(LogTemp, Error, L"Blackboard");
+		UE_LOG(LogTemp, Error, TEXT("Blackboard is null"));
 		return nullptr;
 	}
 	return Cast<ACharacter>(Blackboard->GetValueAsObject(TargetKey));
