@@ -1,51 +1,48 @@
 #include "AI/AnimInstance/DragonAnimInstance.h"
 #include "Boss/Dragon.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Task/BTT_DragonAttack.h"
 
 void UDragonAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
-}
 
-// void UDragonAnimInstance::PlayMontage()
-// {
-// 	if (DesiredActionType == EAnimActionType::AttackNormal)
-// 	{
-// 		if (!AttackMontage) return;
-// 		
-// 		FName SectionName = *UEnum::GetValueAsString(DragonAttackType).RightChop(FString("EDragonAttackType::").Len());
-//
-// 		Montage_Play(AttackMontage);
-// 		Montage_JumpToSection(SectionName, AttackMontage);
-// 	}
-//
-// 	else
-// 	{
-// 		Super::PlayMontage();
-// 	}
-// }
+	Dragon = Cast<ADragon>(TryGetPawnOwner());
+}
 
 void UDragonAnimInstance::AnimNotify_SpawnSpit()
 {
-	if (ADragon* Dragon = Cast<ADragon>(TryGetPawnOwner()))
+	if (Dragon)
 	{
 		Dragon->SpawnSpit();
 	}
 }
 
-// UAnimMontage* UDragonAnimInstance::GetMontageToPlay(EAnimActionType ActionType) const
-// {
-// 	if (ActionType == EAnimActionType::AttackNormal)
-// 	{
-// 		switch (DragonAttackType)
-// 		{
-// 		case EDragonAttackType::RightAttack:
-// 		case EDragonAttackType::LeftAttack:
-// 		case EDragonAttackType::BiteAttack:
-// 		case EDragonAttackType::ComboAttack:
-// 		case EDragonAttackType::SpitAttack:
-// 		case EDragonAttackType::BreathAttack:
-// 			return AttackMontage;
-// 		}
-// 	}
-// 	return Super::GetMontageToPlay(ActionType);
-// }
+void UDragonAnimInstance::AnimNotify_Fly()
+{
+	if (Dragon)
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Fly Notify"));
+		Dragon->LaunchCharacter(FVector(0.f, 0.f, Dragon->GetLaunchZPower()), false, true);
+	}
+}
+
+void UDragonAnimInstance::AnimNotify_Land()
+{
+	if (Dragon)
+	{
+		Dragon->GetCharacterMovement()->GravityScale = 1.f;
+	}
+}
+
+void UDragonAnimInstance::AnimNotify_LandEnd()
+{
+	if (Dragon && Dragon->GetController())
+	{
+		if (UBTT_DragonAttack* Task = Cast<UBTT_DragonAttack>(Dragon->GetCurrentAttackTask()))
+		{
+			Task->ForceFinishTask();
+		}
+	}
+}
+

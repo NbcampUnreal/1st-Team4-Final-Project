@@ -26,4 +26,12 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Action")
 	float MeleeRange = 1000.f;
+
+	UPROPERTY()
+	ACharacter* CachedTarget = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	float TargetMemoryTime;
+
+	float LastSeenTime;
 };

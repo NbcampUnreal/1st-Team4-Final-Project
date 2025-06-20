@@ -125,7 +125,7 @@ private:
 	FName AvoidLocationKey = "Avoid_Location";
 
 	UPROPERTY(EditAnywhere, Category = "Key")
-	FName AttackStateKey = "AttackState";
+	FName AttackStateKey = "DragonAttackState";
 
 protected:
 	TObjectPtr<UBlackboardComponent> Blackboard;

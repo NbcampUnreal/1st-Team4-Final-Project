@@ -10,12 +10,14 @@ UCBTService_Dragon::UCBTService_Dragon()
 {
 	Interval = 1.0f;
 	RandomDeviation = 0.0f;
+	TargetMemoryTime = 10.0f;
+	LastSeenTime = 0.0f;
+	CachedTarget = nullptr;
 }
 
 void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
-
 
 	TObjectPtr<ACAIController> Controller = Cast<ACAIController>(OwnerComp.GetOwner());
 	if(Controller.Get() == nullptr)
@@ -37,13 +39,6 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		return;
 	}
 
-	// TObjectPtr<UDragonBehaviorTreeComponent> DragonAttackState = Cast<UDragonBehaviorTreeComponent>(AI->GetComponentByClass(UDragonBehaviorTreeComponent::StaticClass()));
-	// if (DragonAttackState.Get() == nullptr)
-	// {
-	// 	UE_LOG(LogTemp, Error, L"DragonAttackState is null");
-	// 	return;
-	// }
-
 	TObjectPtr<UCAIWeaponComponent> WeaponComponent = Cast<UCAIWeaponComponent>(AI->GetComponentByClass(UCAIWeaponComponent::StaticClass()));
 	if (WeaponComponent.Get() == nullptr)
 	{
@@ -64,13 +59,28 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		UE_LOG(LogTemp, Error, L"Blackboard is null");
 		return;
 	}
-
+	
 	//Target이 없으면 Patrol
-	TObjectPtr<ACharacter> Target = AIState->GetTarget(); 
-	if(Target == nullptr)
+	TObjectPtr<ACharacter> Target = AIState->GetTarget();
+	const float CurrentTime = GetWorld()->GetTimeSeconds();
+	if (Target)
 	{
-		AIState->SetPatrolMode();
-		return;
+		CachedTarget = Target;
+		LastSeenTime = CurrentTime;
+	}
+	else
+	{
+		if (CachedTarget && (CurrentTime - LastSeenTime <= TargetMemoryTime))
+		{
+			Target = CachedTarget;
+			AIState->SetTarget(CachedTarget);
+		}
+		else
+		{
+			CachedTarget = nullptr;
+			AIState->SetPatrolMode();
+			return;
+		}
 	}
 	
 	//Target과 가까우면 AttackMode
@@ -80,6 +90,8 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	
 	if(distance < ActionRange || (AttackCount >= 3 && distance > MeleeRange))
 	{
+		AIState->SetActionMode();
+		
 		if (AttackCount >= 3)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Special Attack Block"));
@@ -114,16 +126,6 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		AIState->SetChaseMode();
 	}
 
-	// FVector OriginLocation = Controller->GetBlackboardComponent()->GetValueAsVector("OriginLocation");
-	// FVector TargetLocation = Target->GetActorLocation();
-	// float Distance = FVector::Dist(OriginLocation, TargetLocation);
-	// if (Distance >= 3000.0f)
-	// {
-	// 	UE_LOG(LogTemp, Error, L"Distance is too Far in Service");
-	// 	AIState->SetIdleMode();
-	// 	return;
-	// }
-
 #if WITH_EDITOR
 	DrawDebugSphere(
 		GetWorld(),
@@ -150,4 +152,6 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	);
 #endif
 }
+
+
 

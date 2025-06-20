@@ -17,6 +17,7 @@ class EMBER_API ADragonSpitProjectile : public AActor
 	
 public:
 	ADragonSpitProjectile();
+	void SetTargetActor(AActor* Target);
 
 protected:
 	virtual void BeginPlay() override;
@@ -26,9 +27,6 @@ private:
 	USphereComponent* SpitCollision;
 
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* SpitMesh;
-
-	UPROPERTY(VisibleAnywhere)
 	UNiagaraComponent* SpitEffect;
 	
 	UPROPERTY(EditDefaultsOnly)
@@ -36,6 +34,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	UProjectileMovementComponent* SpitMovement;
+
+	AActor* TargetActor = nullptr;
 	
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 };
