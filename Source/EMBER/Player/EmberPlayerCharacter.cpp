@@ -205,7 +205,6 @@ void AEmberPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Move, ETriggerEvent::Triggered, this, &ThisClass::Move);
 	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Look, ETriggerEvent::Triggered, this, &ThisClass::Look);
-	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Jump, ETriggerEvent::Triggered, this, &ThisClass::Jump);
 	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Triggered, this, &ThisClass::StartSprint);
 	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
 }
@@ -264,10 +263,6 @@ void AEmberPlayerCharacter::Attack(const FInputActionValue& value)
 	}
 }
 
-void AEmberPlayerCharacter::StartJump(const FInputActionValue& value)
-{
-	Jump();
-}
 float AEmberPlayerCharacter::GetMaxHP() const
 {
 	if (StatusComponent)
