@@ -27,9 +27,6 @@ protected:
 	UFUNCTION()
 	void AnimNotify_Land();
 
-	UFUNCTION()
-	void AnimNotify_LandEnd();
-
 private:
 	TObjectPtr<ADragon> Dragon;
 };
