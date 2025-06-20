@@ -11,6 +11,14 @@ enum class ESpeedType : uint8
 };
 
 UENUM()
+enum class EFlySpeedType : uint8
+{
+	Fly_Stationary UMETA(DisplayName = "Fly_Stationary"),
+	Fly_Move UMETA(DisplayName = "Fly_Movement"),
+	Fly_Swoop UMETA(DisplayName = "Fly_Swoop")
+};
+
+UENUM()
 enum class EStateType : uint8
 {
 	Idle UMETA(DisplayName = "Idle"),

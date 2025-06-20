@@ -17,7 +17,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
-
-	
 	virtual void OnTargetPerceptionUpdated(AActor* Target, FAIStimulus Stimulus) override;
+
+
+	UPROPERTY(EditAnywhere)
+	float Sight_Range = 2000.0f;
 };

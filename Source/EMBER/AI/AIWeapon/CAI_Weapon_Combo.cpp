@@ -14,7 +14,7 @@ ACAI_Weapon_Combo::ACAI_Weapon_Combo()
 
 void ACAI_Weapon_Combo::DoAction(int32 AttackIndex)
 {
-	UE_LOG(LogTemp, Error, L"Action %d", AttackDatas.Num());
+	// UE_LOG(LogTemp, Error, L"Action %d", AttackDatas.Num());
 	if(AttackDatas.Num() < 1)
 		return;
 	if(AttackDatas.Num() < AttackIndex)
@@ -26,7 +26,7 @@ void ACAI_Weapon_Combo::DoAction(int32 AttackIndex)
 		return;
 	}
 
-	//TODOS combatMode ¼öÁ¤
+	//TODOS combatMode ï¿½ï¿½ï¿½ï¿½
 	if (State.Get()->IsIdleMode() == false )
 		if(State.Get()->IsCombatMode() == false)
 			if(State.Get()->IsDetectMode() == false)

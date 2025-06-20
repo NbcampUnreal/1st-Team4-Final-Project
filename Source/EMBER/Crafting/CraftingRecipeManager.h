@@ -14,7 +14,6 @@ enum class EStationType : uint8
     None,
     CraftingTable,
     Furnace,
-    CookingPot,
     WeaponTable,
     ClothingTable,
     Campfire
@@ -70,11 +69,19 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Data")
     TMap<int32, FGameplayTagContainer> ItemIDToMaterialTagMap;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Data")
+    TMap<FGameplayTag, TSubclassOf<UItemTemplate>> RepresentativeItemForTag;
 
     const FCraftingRecipeRow* GetRecipeRowByOutputItemID(int32 TemplateID) const;
     
     void GetAllRecipeRows(TArray<FCraftingRecipeRow*>& OutRows) const;
 
-    UFUNCTION(BlueprintCallable, Category = "Item Data")
-    FGameplayTag GetMaterialTagForItem(int32 ItemTemplateID) const;
+    UFUNCTION(BlueprintPure, Category = "Item Data")
+    FGameplayTagContainer GetMaterialTagsForItem(int32 ItemTemplateID) const;
+    
+    UFUNCTION(BlueprintPure, Category = "Crafting")
+    TSubclassOf<UItemTemplate> GetRepresentativeItemForTag(const FGameplayTag& MaterialTag) const;
+    
+    virtual void PostLoad() override;
 };

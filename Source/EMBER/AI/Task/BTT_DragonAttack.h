@@ -4,21 +4,43 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTT_DragonAttack.generated.h"
 
+class ADragon;
+class ACAIController;
+class UAnimMontage;
 class UDragonAnimInstance;
 
 UCLASS()
-class EMBER_API UBTT_DragonAttack : public UBTTask_BlackboardBase
+class EMBER_API UBTT_DragonAttack : public UBTTaskNode
 {
 	GENERATED_BODY()
 
 public:
 	UBTT_DragonAttack();
-	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory) override;
+
+	UFUNCTION()
+	void ForceFinishTask();
 
 protected:
 	UFUNCTION()
-	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 private:
-	UBehaviorTreeComponent* CachedOwnerComp;
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	UAnimMontage* RangedAttackMontage;
+
+	UPROPERTY(EditAnywhere)
+	float LaunchZPower = 300.f;
+	
+	UPROPERTY()
+	ADragon* Dragon;
+
+	UPROPERTY()
+	ACAIController* AIController;
+
+	UPROPERTY()
+	UDragonAnimInstance* DragonAnim;
+
+	UPROPERTY()
+	UBehaviorTreeComponent* BTComp;
 };

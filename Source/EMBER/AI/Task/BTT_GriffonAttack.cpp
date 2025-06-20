@@ -16,6 +16,6 @@ EBTNodeResult::Type UBTT_GriffonAttack::ExecuteTask(UBehaviorTreeComponent& Comp
 	ACAIController* AIController = Cast<ACAIController>(Comp.GetAIOwner());
 	AGriffon* Griffon = Cast<AGriffon>(AIController ? AIController->GetPawn() : nullptr);
 
-	Griffon->Attack();
+	// Griffon->Attack();
 	return EBTNodeResult::Succeeded;
 }

@@ -20,7 +20,7 @@ public:
 	UCraftingIngredientWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
-	void UpdateDisplay(const FCraftingRecipeRow& ForRecipe, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount);
+	void UpdateDisplay(UCraftingRecipeManager* RecipeManager, const FCraftingRecipeRow& ForRecipe, const TMap<FGameplayTag, int32>& PlayerOwnedIngredients, int32 CraftingAmount);
     
 protected:
 	UPROPERTY(meta = (BindWidget))

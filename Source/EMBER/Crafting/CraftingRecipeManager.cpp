@@ -37,14 +37,43 @@ void UCraftingRecipeManager::GetAllRecipeRows(TArray<FCraftingRecipeRow*>& OutRo
     RecipeDataTable->GetAllRows(ContextString, OutRows);
 }
 
-FGameplayTag UCraftingRecipeManager::GetMaterialTagForItem(int32 ItemTemplateID) const
+FGameplayTagContainer UCraftingRecipeManager::GetMaterialTagsForItem(int32 ItemTemplateID) const
 {
     const FGameplayTagContainer* FoundTagContainer = ItemIDToMaterialTagMap.Find(ItemTemplateID);
-
-    if (FoundTagContainer && FoundTagContainer->Num() > 0)
+    if (FoundTagContainer)
     {
-        return FoundTagContainer->First();
+        return *FoundTagContainer;
     }
-    
-    return FGameplayTag::EmptyTag;
+    return FGameplayTagContainer();
+}
+
+TSubclassOf<UItemTemplate> UCraftingRecipeManager::GetRepresentativeItemForTag(const FGameplayTag& MaterialTag) const
+{
+    if (MaterialTag.IsValid())
+    {
+        if (const TSubclassOf<UItemTemplate>* FoundClassPtr = RepresentativeItemForTag.Find(MaterialTag))
+        {
+            return *FoundClassPtr;
+        }
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("GetRepresentativeItemForTag: No representative item found for tag %s in the Recipe Manager Data Asset."), *MaterialTag.ToString());
+    return nullptr;
+}
+
+void UCraftingRecipeManager::PostLoad()
+{
+    Super::PostLoad();
+
+    UE_LOG(LogTemp, Warning, TEXT("===== DA_CraftingManager: RepresentativeItemForTag Map Contents ====="));
+    for (const auto& Pair : RepresentativeItemForTag)
+    {
+        const FGameplayTag& Tag = Pair.Key;
+        const TSubclassOf<UItemTemplate> TemplateClass = Pair.Value;
+        
+        FString TemplateName = TemplateClass ? TemplateClass->GetName() : TEXT("!!! NULL VALUE !!!");
+
+        UE_LOG(LogTemp, Warning, TEXT("  Key: [%s]  --->  Value: [%s]"), *Tag.ToString(), *TemplateName);
+    }
+    UE_LOG(LogTemp, Warning, TEXT("=================================================================="));
 }

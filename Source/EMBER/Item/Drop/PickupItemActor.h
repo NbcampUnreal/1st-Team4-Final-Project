@@ -2,20 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Interaction/Actors/Pickup/EmberPickupableItemBase.h"
-#include "Interaction/EmberInteractable.h"
 #include "Item/Drop/LootTable.h"
-#include "Components/SphereComponent.h"
-#include "AbilitySystemInterface.h"
-#include "GameplayAbilitySpec.h" // [추가] FGameplayAbilitySpecHandle을 사용하기 위해 포함
 #include "PickupItemActor.generated.h"
 
 class UItemTemplate;
 class UItemInstance;
 class UUserWidget;
-class UAbilitySystemComponent;
-class UGameplayEffect;
-class UEmberAbilitySystemComponent;
-class UEmberGameplayAbility_Interact_Object;
+class UNiagaraComponent;
 
 UCLASS()
 class EMBER_API APickupItemActor : public AEmberPickupableItemBase
@@ -25,12 +18,20 @@ class EMBER_API APickupItemActor : public AEmberPickupableItemBase
 public:
 	APickupItemActor();
 
-	void InitializeLootPouch(const FLootResultData& InLootData);
+	void InitializeLootDrop(const FLootResultData& InLootData);
 
 protected:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_LootContents, Category = "Loot Pouch")
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	UFUNCTION()
+	void OnRep_LootContent();
+
+	UPROPERTY(ReplicatedUsing = OnRep_LootContent)
 	FLootResultData LootContent;
 
-	UFUNCTION()
-	void OnRep_LootContents();
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UNiagaraComponent> RarityEffectComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "PickupItem|VFX")
+	TMap<EItemRarity, FLinearColor> RarityColorMap;
 };
