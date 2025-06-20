@@ -30,7 +30,6 @@ EBTNodeResult::Type UBTT_Fly::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 	AI->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 	AI->GetCharacterMovement()->MaxFlySpeed = 700;
 	AI->GetCharacterMovement()->GravityScale = 0.0f;
-	// ControlledAnimal->SetFlySpeed();
 	AI->GetCharacterMovement()->StopMovementImmediately();
 	AI->LaunchCharacter(FVector(0, 0, 400), false, true);
 
@@ -44,6 +43,7 @@ void UBTT_Fly::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, fl
 	if (AI->GetActorLocation().Z > FlyHeight)
 	{
 		AI->GetCharacterMovement()->Velocity.Z = 0.0f;
+		// FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 	if (AI->GetCharacterMovement()->IsMovingOnGround())
 	{
