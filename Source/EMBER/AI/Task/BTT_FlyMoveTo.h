@@ -19,11 +19,18 @@ UBTT_FlyMoveTo();
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 	bool IsNearGround();
-
-
-	UBehaviorTreeComponent* OwnerCompRef;
-
+	bool IsNearTargetLocation();
+	
 	ABaseAI* BaseAI;
-	FVector TargetLocation;
+	AActor* TargetActor;
+	FVector TargetLocation = FVector::ZeroVector;
 	FVector CurrentLocation;
+	
+	// UPROPERTY(EditAnywhere, Category = "Blackboard")
+	// FBlackboardKeySelector TargetActorKey;
+	
+	// UPROPERTY(EditAnywhere)
+	// AActor* TargetActor;
+	// UPROPERTY(EditAnywhere)
+	// FVector TargetLocation;
 };

@@ -32,7 +32,6 @@ void UBaseAIAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		FVector Velocity = AICharacter->GetVelocity();
 
 		CurrentSpeed = FVector(Velocity.X, Velocity.Y, 0.0f).Size();
-		CurrentHeight = AICharacter->GetActorLocation().Z;
 		CurrentDirection = UKismetAnimationLibrary::CalculateDirection(FVector(Velocity.X, Velocity.Y, 0.0f),
 		                                                               AICharacter->GetActorRotation());
 	}

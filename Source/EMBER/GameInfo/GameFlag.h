@@ -15,7 +15,8 @@ enum class EFlySpeedType : uint8
 {
 	Fly_Stationary UMETA(DisplayName = "Fly_Stationary"),
 	Fly_Move UMETA(DisplayName = "Fly_Movement"),
-	Fly_Swoop UMETA(DisplayName = "Fly_Swoop")
+	Fly_Swoop UMETA(DisplayName = "Fly_Swoop"),
+	Max UMETA(DisplayName = "Max")
 };
 
 UENUM()

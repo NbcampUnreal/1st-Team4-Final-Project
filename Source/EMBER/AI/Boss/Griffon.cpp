@@ -38,9 +38,13 @@ float AGriffon::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
 	if (ACAIController* AIController = Cast<ACAIController>(GetController()))
 	{
 		UBlackboardComponent* BlackboardComponent = Cast<UBlackboardComponent>(AIController->GetBlackboardComponent());
-		if (StatusComponent->GetHp() < (StatusComponent->GetMaxHp() / 2))
+		if (!BlackboardComponent->GetValueAsBool("IsHalfHP"))
 		{
-			BlackboardComponent->SetValueAsBool("IsHalfHP", true);
+			if (StatusComponent->GetHp() < (StatusComponent->GetMaxHp() / 2))
+			{
+				BlackboardComponent->SetValueAsBool("IsHalfHP", true);
+				GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+			}
 		}
 	}
 	
