@@ -8,7 +8,6 @@ void UC_CharacterMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	OwnerCharacter = GetCharacterOwner();
-
 	UC_StateComponent* StateCom = Cast<UC_StateComponent>(GetOwner()->FindComponentByClass<UC_StateComponent>());
 	State = StateCom;
 }

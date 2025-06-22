@@ -23,7 +23,7 @@ ABaseAI::ABaseAI()
 	EquipComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("Equip Component"));
 	AIState = CreateDefaultSubobject<UC_StateComponent>(TEXT("AI State"));
 	BehaviorTreeComponent = CreateDefaultSubobject<UCBehaviorTreeComponent>(TEXT("BehaviorTree Component"));
-	MoveComponent = CreateDefaultSubobject<UC_CharacterMovementComponent>(TEXT("Move Component"));
+	AIMoveComponent = CreateDefaultSubobject<UC_CharacterMovementComponent>(TEXT("Move Component"));
 	WeaponComponent = CreateDefaultSubobject<UCAIWeaponComponent>(TEXT("Weapon Component"));
 	AIControllerClass = ACAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -36,11 +36,11 @@ void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
 	if (WalkSpeed != 0)
-		MoveComponent->SetWalkSpeed(WalkSpeed);
+		AIMoveComponent->SetWalkSpeed(WalkSpeed);
 	if (RunSpeed != 0)
-		MoveComponent->SetRunSpeed(RunSpeed);
+		AIMoveComponent->SetRunSpeed(RunSpeed);
 	if (SprintSpeed != 0)
-		MoveComponent->SetSprintSpeed(SprintSpeed);
+		AIMoveComponent->SetSprintSpeed(SprintSpeed);
 	AIState.Get()->SetIdleMode();
 	//if (ACAIController* AIController = Cast<ACAIController>(GetController()))
 	//{
@@ -94,6 +94,11 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
    LastDamageCauser = DamageCauser;
 
 	return ActualDamage;
+}
+
+UC_CharacterMovementComponent* ABaseAI::GetAIMovement() const
+{
+	return AIMoveComponent;
 }
 
 void ABaseAI::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

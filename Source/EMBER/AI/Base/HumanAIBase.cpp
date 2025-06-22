@@ -16,7 +16,7 @@ AHumanAIBase::AHumanAIBase()
 void AHumanAIBase::BeginPlay()
 {
 	Super::BeginPlay();
-	MoveComponent->OnWalk();
+	AIMoveComponent->OnWalk();
 	//StateComponent->OnStateTypeChanged.AddDynamic(this, &AHumanAIBase::OnStateTypeChanged);
 
 }

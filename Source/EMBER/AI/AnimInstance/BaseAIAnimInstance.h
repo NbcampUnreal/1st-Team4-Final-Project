@@ -35,9 +35,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Movement")
 	float CurrentSpeed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
-	float CurrentHeight;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Movement")
 	float CurrentDirection;
 	

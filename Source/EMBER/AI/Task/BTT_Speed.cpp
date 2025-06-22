@@ -32,7 +32,6 @@ EBTNodeResult::Type UBTT_Speed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 		return EBTNodeResult::Failed;
 	}
 	// UE_LOG(LogTemp, Error, L"%s, %p", *ai->GetActorLabel(), this);
-
 	move.Get()->SetSpeed(SpeedType);
 	return EBTNodeResult::Succeeded;
 }

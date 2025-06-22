@@ -5,27 +5,64 @@
 #include "AI/Base/BaseAI.h"
 #include "AI/CAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
+UBTT_FlyMoveTo::UBTT_FlyMoveTo()
+{
+	NodeName = "FlyMoveTo";
+	bNotifyTick = true;
+	// TargetActorKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UBTT_FlyMoveTo, TargetActor), AActor::StaticClass());
+	//TargetLocationKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UBTT_FlyMoveTo, TargetLocationKey));
+	//TargetLocationKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UBTT_FlyMoveTo, TargetLocationKey), AActor::StaticClass());
+}
 
 EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	BaseAI = Cast<ABaseAI>(OwnerComp.GetAIOwner()->GetPawn());
 	if (!BaseAI) return EBTNodeResult::Failed;
-	OwnerCompRef = &OwnerComp;
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
 
-	ACAIController* AIController = Cast<ACAIController>(BaseAI->GetController());
-	AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
-	if (TargetActor)
+	FBlackboard::FKey KeyID = BlackboardKey.GetSelectedKeyID();
+	if (KeyID == FBlackboard::InvalidKey)
 	{
-		CurrentLocation = BaseAI->GetActorLocation();
+		UE_LOG(LogTemp, Error, TEXT("Invalid Blackboard Key"));
+		return EBTNodeResult::Failed;
+	}
+
+	TSubclassOf<UBlackboardKeyType> KeyTypeClass = BlackboardComp->GetKeyType(KeyID);
+	if (!KeyTypeClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("KeyType is null"));
+		return EBTNodeResult::Failed;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("KeyType: %s"), *KeyTypeClass->GetName());
+	
+	if (KeyTypeClass == UBlackboardKeyType_Vector::StaticClass())
+	{
+		 TargetLocation = BlackboardComp->GetValueAsVector(BlackboardKey.SelectedKeyName);
+	}
+	else if (KeyTypeClass == UBlackboardKeyType_Object::StaticClass())
+	{
+		TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(BlackboardKey.SelectedKeyName));
 		TargetLocation = TargetActor->GetActorLocation();
-		FVector Direction = (TargetLocation - CurrentLocation).GetSafeNormal();
-		float Speed = BaseAI->GetCharacterMovement()->MaxFlySpeed;
-		BaseAI->GetCharacterMovement()->Velocity = Direction * Speed;
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,L"Wrong Type in FlyMoveTO")
 	}
 	
+	CurrentLocation = BaseAI->GetActorLocation();
+	FVector Direction = (TargetLocation - CurrentLocation).GetSafeNormal();
+	float Speed = BaseAI->GetCharacterMovement()->MaxFlySpeed;
+	BaseAI->GetCharacterMovement()->Velocity = Direction * Speed;
+	FRotator NewRotation = Direction.Rotation();
+	BaseAI->SetActorRotation(NewRotation);
+
 	return EBTNodeResult::InProgress;
 }
 
@@ -34,7 +71,7 @@ bool UBTT_FlyMoveTo::IsNearGround()
 	if (!BaseAI) return false;
 
 	FVector Start = BaseAI->GetActorLocation();
-	FVector End = Start - FVector(0, 0, 200.0f); // 아래로 100cm 트레이스
+	FVector End = Start - FVector(0, 0, 300.0f); 
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(BaseAI);
@@ -62,36 +99,29 @@ bool UBTT_FlyMoveTo::IsNearGround()
 	return bHit;
 }
 
+bool UBTT_FlyMoveTo::IsNearTargetLocation()
+{
+	CurrentLocation = BaseAI->GetActorLocation();
+	float Distance = FVector::Dist(CurrentLocation, TargetLocation);
+	// UE_LOG(LogTemp, Warning, TEXT("%f"), Distance);
+
+	return Distance <= 100.0f;
+}
+
 void UBTT_FlyMoveTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-	
 	if (IsNearGround())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Get Ground"));
+		UE_LOG(LogTemp, Warning, TEXT("On Ground"));
 		BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		BaseAI->GetCharacterMovement()->GravityScale = 1.0f;
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
-
-	CurrentLocation = BaseAI->GetActorLocation();
-	float Distance = FVector::Dist(CurrentLocation, TargetLocation);
-
-	if (Distance <= 100.0f)
+	if (IsNearTargetLocation())
 	{
-		UE_LOG(LogTemp, Display, TEXT("Movement already in progress"));
-		BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		UE_LOG(LogTemp, Warning, TEXT("FlyMove Success"));
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
+
 }
-
-
-
-
-//NavMesh 적용될 떄만 호출가능 (MoveToLocation(), MoveToActor())
-// void UBTT_FlyMoveTo::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
-// {
-// 	UE_LOG(LogTemp, Warning, TEXT("FlyMoveCompleted"));
-// 	ABaseAI* BaseAI = Cast<ABaseAI>(OwnerCompRef->GetAIOwner()->GetPawn());
-// 	BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-// 	FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
-// }

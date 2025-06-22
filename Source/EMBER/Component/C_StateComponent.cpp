@@ -1,5 +1,7 @@
 ﻿#include "Component/C_StateComponent.h"
 
+#include "EmberPlayerCharacter.h"
+
 UC_StateComponent::UC_StateComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;

@@ -21,7 +21,7 @@ public:
 	TObjectPtr<UBlackboardComponent> Blackboard;
 	TObjectPtr<ACAIController> Controller;
 
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
 	bool bIsAirborne;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")

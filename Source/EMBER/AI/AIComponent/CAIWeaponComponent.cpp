@@ -9,7 +9,6 @@
 // Sets default values for this component's properties
 UCAIWeaponComponent::UCAIWeaponComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
@@ -39,15 +38,6 @@ void UCAIWeaponComponent::BeginPlay()
 		else
 			UE_LOG(LogTemp, Error, TEXT("weapon class is null"));
 	}
-}
-
-
-// Called every frame
-void UCAIWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
 void UCAIWeaponComponent::DoAction(int32 AttackIndex)

@@ -59,11 +59,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,Category = "AI/Weapon")
 	TObjectPtr<class UCAIWeaponComponent> WeaponComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Move")
-	TObjectPtr<class UC_CharacterMovementComponent> MoveComponent;
+	TObjectPtr<class UC_CharacterMovementComponent> AIMoveComponent;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "AI|Behavior")
 	TObjectPtr<UCBehaviorTreeComponent> BehaviorTreeComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "AI/BehaviorTree")
 	UBehaviorTree* BehaviorTree;
+public:
+	UC_CharacterMovementComponent* GetAIMovement()const;
+	
 	
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	// float MaxHP;
