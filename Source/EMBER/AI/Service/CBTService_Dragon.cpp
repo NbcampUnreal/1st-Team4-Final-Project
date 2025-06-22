@@ -31,8 +31,8 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		UE_LOG(LogTemp, Error, L"AI is null");
 		return;
 	}
-
-	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
+	
+ 	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
 	if (AIState.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"AIstate is null");
@@ -54,12 +54,24 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	}
 
 	TObjectPtr<UBlackboardComponent> Blackboard = Controller->GetBlackboardComponent();
+
 	if (Blackboard.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"Blackboard is null");
 		return;
 	}
-	
+
+	if (bDrawDebug)
+	{
+		FVector start = AI->GetActorLocation();
+		start.Z -= 25;
+
+		FVector end = start;
+
+		DrawDebugCylinder(AI->GetWorld(), start, end, ActionRange, 10, FColor::Red, false, Interval);
+		DrawDebugCylinder(AI->GetWorld(), start, end, MeleeRange, 10, FColor::Blue, false, Interval);
+	}
+
 	//Target이 없으면 Patrol
 	TObjectPtr<ACharacter> Target = AIState->GetTarget();
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
@@ -109,10 +121,12 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 				AIState->SetSpitAttackMode();
 			}
 
-			if (AIState->IsComboAttack() || AIState->IsSpitAttack())
-			{
-				Weapon->ResetAttackStack();
-			}
+			//if (AIState->IsComboAttack() || AIState->IsSpitAttack())
+			//{
+			//	//AIState->SetActionMode();
+			//	//AIState->SetNormalAttackMode();
+			//	Weapon->ResetAttackStack();
+			//}
 		}
 		else
 		{

@@ -34,4 +34,7 @@ private:
 	float TargetMemoryTime;
 
 	float LastSeenTime;
+
+	UPROPERTY(EditAnywhere, Category = "Debug")
+	bool bDrawDebug;
 };

@@ -1,14 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/Notify/CAnimNotify_AIEndAttack.h"
+#include "AI/Notify/CAnimNotify_EndSpecialsAttack.h"
 
 #include "C_CharacterMovementComponent.h"
 #include "AIComponent/CAIWeaponComponent.h"
 #include "AIWeapon/CAI_Weapon.h"
 
-void UCAnimNotify_AIEndAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
-                                      const FAnimNotifyEventReference& EventReference)
+FString UCAnimNotify_EndSpecialsAttack::GetNotifyName_Implementation() const
+{
+	return "End Specials Attack";
+}
+
+void UCAnimNotify_EndSpecialsAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
+	const FAnimNotifyEventReference& EventReference)
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
@@ -35,10 +40,5 @@ void UCAnimNotify_AIEndAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 		UE_LOG(LogTemp, Error, L"AIBeginAttack weapon Component is null");
 		return;
 	}
-	weapon->GetDoAction()->End_DoAction();
-}
-
-FString UCAnimNotify_AIEndAttack::GetNotifyName_Implementation() const
-{
-	return "End AI Attack";
+	weapon->GetDoAction()->ResetAttackStack();
 }

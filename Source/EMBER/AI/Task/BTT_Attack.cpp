@@ -59,7 +59,7 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 
 	weapon->DoAction(AttackIndex);
 
-	return EBTNodeResult::Succeeded;
+	return EBTNodeResult::InProgress;
 }
 
 EBTNodeResult::Type UBTT_Attack::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

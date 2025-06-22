@@ -289,5 +289,5 @@ void UCBehaviorTreeComponent::SetAttackState(EDragonAttackState InState)
 {
 	if (Blackboard == nullptr) return;
 
-	Blackboard->SetValueAsEnum(AttackStateKey, static_cast<uint8>(InState));
+	Blackboard->SetValueAsEnum(AttackStateKey, (uint8)(InState));
 }
