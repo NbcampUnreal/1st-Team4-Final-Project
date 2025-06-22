@@ -103,7 +103,7 @@ bool UBTT_FlyMoveTo::IsNearTargetLocation()
 {
 	CurrentLocation = BaseAI->GetActorLocation();
 	float Distance = FVector::Dist(CurrentLocation, TargetLocation);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), Distance);
+	// UE_LOG(LogTemp, Warning, TEXT("%f"), Distance);
 
 	return Distance <= 100.0f;
 }

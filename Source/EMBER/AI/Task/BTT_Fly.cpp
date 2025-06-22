@@ -44,7 +44,6 @@ void UBTT_Fly::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, fl
 
 	if (AI->GetActorLocation().Z > OriginHeight + FlyHeight)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Fly Finish"));
 		AI->GetCharacterMovement()->Velocity.Z = 0.0f;
 
 		uint8 StateValue = BlackboardComp->GetValueAsEnum("AIState");
