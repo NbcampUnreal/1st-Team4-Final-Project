@@ -1,4 +1,4 @@
-﻿#include "Manager/C_FGenAIProviderRegistry.h"
+﻿#include "Manager/FGenAIProviderRegistry.h"
 #include "UObject/Class.h"
 #include "GenerativeAISupport.h"
 
@@ -11,10 +11,6 @@ FGenerativeAISupportModule::FGenerativeAISupportModule()
 
 void FGenerativeAISupportModule::StartupModule()
 {
-    FGenAIProviderRegistry::Get().RegisterProvider(
-        TEXT("DeepSeek"),
-        UGenAI_DeepseekProvider::StaticClass()
-    );
 	UE_LOG(LogTemp, Log, TEXT("FGenerativeAISupportModule::StartupModule called"));
 }
 

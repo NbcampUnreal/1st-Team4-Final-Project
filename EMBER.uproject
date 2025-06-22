@@ -89,7 +89,7 @@
 		},
 		{
 			"Name": "OllamaGenProvider",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "GenAI_DeepseekProvider",

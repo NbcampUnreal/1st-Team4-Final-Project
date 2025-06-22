@@ -1,0 +1,13 @@
+{
+    "ProjectRootPath":  "..",
+    "UnrealEngineVersion":  "5.5",
+    "UnrealEngineRootPath":  "C:\\Program Files\\Epic Games\\UE_5.5",
+    "WatchPaths":  [
+                       "Source",
+                       "Plugins"
+                   ],
+    "GenerateScript":  "GenerateProjectFile.ps1",
+    "DebounceTimeMs":  300000,
+    "DebounceTimeForModifiedMs":  100,
+    "DebounceTimeForOtherEventsMs":  100
+}
