@@ -65,7 +65,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Status")
 	void Damage(float InAmount);
 	UFUNCTION(BlueprintCallable, Category="Status")
-	void UseStamina(float InAmount);
+	void UseStamina(float InAmount);	
+	UFUNCTION(BlueprintCallable, Category="Status")
+	void AddTemperature(float InAmount);
 	UFUNCTION(BlueprintCallable, Category="Status")
 	void UseTemperature(float InAmount);
 	UFUNCTION(BlueprintCallable, Category="Status")
@@ -109,6 +111,7 @@ private:
 	UPROPERTY(ReplicatedUsing = "OnRep_Damage")
 	float HP;
 	float Stamina;
+    UPROPERTY(Replicated)
 	float Temperature;
 	float FatigueLevel = 0.0f;
 	float Weight = 0.0f;

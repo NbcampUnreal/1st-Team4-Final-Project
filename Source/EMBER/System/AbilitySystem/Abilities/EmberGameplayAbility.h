@@ -37,7 +37,7 @@ public:
 public:
 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Lyra|Ability")
+	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
 	UEmberAbilitySystemComponent* GetEmberAbilitySystemComponentFromActorInfo() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
@@ -46,7 +46,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
 	AEmberPlayerController* GetEmberPlayerControllerFromActorInfo() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Lyra|Ability")
+	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
 	AController* GetControllerFromActorInfo() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Ember|Ability")
@@ -58,6 +58,9 @@ protected:
 	//~UGameplayAbility interface
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
 	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+
+	UFUNCTION(BlueprintCallable, Category="Ember|Ability")
+	void GetMovementDirection(EEmberDirection& OutDirection, FVector& OutMovementVector) const;
 
 	
 protected:
