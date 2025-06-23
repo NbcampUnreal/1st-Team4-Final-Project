@@ -16,7 +16,7 @@ void UC_StateComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                       FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	UE_LOG(LogTemp, Warning, L"%s", *UEnum::GetValueAsString(CurrentStateType));
+	//UE_LOG(LogTemp, Warning, L"%s", *UEnum::GetValueAsString(CurrentStateType));
 }
 
 bool UC_StateComponent::IsIdleMode() const
