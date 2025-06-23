@@ -193,7 +193,7 @@ bool UEmberGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyst
 
 void UEmberGameplayAbility::GetMovementDirection(EEmberDirection& OutDirection, FVector& OutMovementVector) const
 {
-	FVector FacingVector;
+	FVector FacingVector = FVector::ZeroVector;
 	
 	if (AEmberPlayerCharacter* EmberCharacter = GetEmberCharacterFromActorInfo())
 	{

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "UI/Common/EmberActivatableWidget.h"
 #include "UI/Crafting/CraftingRecipeListWidget.h"
 #include "CraftingWidget.generated.h"
@@ -13,6 +14,17 @@ class UCraftingIngredientWidget;
 class UWidgetSwitcher;
 class ACraftingBuilding;
 
+USTRUCT(BlueprintType)
+struct FCraftingWidgetInitializeMessage
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<ACraftingBuilding> CraftingBuilding;
+};
+
+
 UCLASS()
 class EMBER_API UCraftingWidget : public UEmberActivatableWidget
 {
@@ -20,9 +32,9 @@ class EMBER_API UCraftingWidget : public UEmberActivatableWidget
 
 public:
 	UCraftingWidget(const FObjectInitializer& ObjectInitializer);
-
+	
 	void InitializeForStation(ACraftingBuilding* InStationActor, FName OptionalInitialRecipeRowName = NAME_None);
-
+	
 protected:
 	virtual void NativeConstruct() override;
 	
@@ -45,8 +57,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "RecipeList", meta = (BindWidget))
 	TObjectPtr<UCraftingResultWidget> SelectedRecipeDisplayWidget;
 
-	UPROPERTY(BlueprintReadOnly, Category = "RecipeList", meta = (BindWidget))
-	TObjectPtr<UCraftingOutputBoxWidget> CraftingOutputBoxWidget;
+public:
+	void ConstructUI(FGameplayTag Channel, const FCraftingWidgetInitializeMessage& Message);
+	void DestructUI();
+	
+	UPROPERTY(EditAnywhere, meta=(Categories="Message"))
+	FGameplayTag MessageChannelTag;
 
 private:
 	void PopulateActiveRecipeList();
@@ -77,4 +93,6 @@ private:
 	TObjectPtr<ACraftingBuilding> CurrentStationActorRef;
 	
 	EStationType CurrentStationTypeForUI;
+
+	FGameplayMessageListenerHandle MessageListenerHandle;
 };

@@ -7,7 +7,7 @@
 #include "InventoryEquipmentManagerComponent.h"
 #include "InventoryManagerComponent.h"
 #include "ItemInstance.h"
-#include "Interaction/Actors/Pickup/EmbeInteractionActorBase.h"
+#include "Interaction/Actors/Pickup/EmberInteractionActorBase.h"
 
 UItemManagerComponent::UItemManagerComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -112,8 +112,7 @@ void UItemManagerComponent::Server_EquipmentToEquipment_Implementation(UInventor
 	}
 }
 
-PRAGMA_DISABLE_OPTIMIZATION
-bool UItemManagerComponent::TryPickupItem(AEmbeInteractionActorBase* PickupableItemActor)
+bool UItemManagerComponent::TryPickupItem(AEmberInteractionActorBase* PickupableItemActor)
 {
 	if (HasAuthority() == false)
 		return false;
@@ -147,7 +146,7 @@ bool UItemManagerComponent::TryPickupItem(AEmbeInteractionActorBase* PickupableI
 
 	return false;
 }
-PRAGMA_ENABLE_OPTIMIZATION
+
 
 bool UItemManagerComponent::TryAutoPickupItem(UItemInstance* ItemInstance)
 {

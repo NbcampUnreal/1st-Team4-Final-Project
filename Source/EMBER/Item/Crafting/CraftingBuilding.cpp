@@ -2,33 +2,18 @@
 #include "Item/Managers/InventoryManagerComponent.h"
 #include "Player/EmberPlayerCharacter.h"
 #include "Crafting/CraftingSystem.h"
-#include "Item/ItemInstance.h"
 #include "Item/ItemTemplate.h" 
 #include "Net/UnrealNetwork.h"
 #include "Components/StaticMeshComponent.h"
-#include "Components/SphereComponent.h"
-#include "UI/Crafting/CraftingWidget.h"      
-#include "Kismet/GameplayStatics.h"   
 #include "GameFramework/PlayerController.h"
 #include "Engine/DataTable.h"
 #include "Crafting/CraftingRecipeManager.h"
-#include "UI/Data/EmberItemData.h"
 
 
 ACraftingBuilding::ACraftingBuilding()
 {
     PrimaryActorTick.bCanEverTick = false;
     bReplicates = true;
-    SetReplicateMovement(true);
-
-    MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-    RootComponent = MeshComponent;
-
-    InteractionRange = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionRange"));
-    InteractionRange->SetupAttachment(RootComponent);
-    InteractionRange->SetSphereRadius(200.0f); 
-    InteractionRange->SetCollisionProfileName(TEXT("Trigger")); 
-    InteractionRange->SetGenerateOverlapEvents(true);
 
     OutputInventoryComponent = CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("OutputInventory"));
     if (OutputInventoryComponent)
@@ -37,69 +22,17 @@ ACraftingBuilding::ACraftingBuilding()
     }
 
     StationType = EStationType::CraftingTable;
-    ActiveCraftingUI = nullptr;
-    CraftingWidgetClass = nullptr;
 }
 
 void ACraftingBuilding::BeginPlay()
 {
     Super::BeginPlay();
-    
-    if (InteractionRange)
-    {
-        InteractionRange->OnComponentBeginOverlap.AddDynamic(this, &ACraftingBuilding::OnInteractionRangeOverlapBegin);
-        InteractionRange->OnComponentEndOverlap.AddDynamic(this, &ACraftingBuilding::OnInteractionRangeOverlapEnd);
-    }
 }
 
 void ACraftingBuilding::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
     DOREPLIFETIME(ACraftingBuilding, OutputInventoryComponent); 
-}
-
-void ACraftingBuilding::OnInteractionRangeOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-    AEmberPlayerCharacter* PlayerCharacter = Cast<AEmberPlayerCharacter>(OtherActor);
-    if (PlayerCharacter && PlayerCharacter->IsLocallyControlled())
-    {
-        APlayerController* PC = Cast<APlayerController>(PlayerCharacter->GetController());
-        if (PC && CraftingWidgetClass && !ActiveCraftingUI)
-        {
-            ActiveCraftingUI = CreateWidget<UCraftingWidget>(PC, CraftingWidgetClass);
-            if (ActiveCraftingUI)
-            {
-                ActiveCraftingUI->InitializeForStation(this, NAME_None); 
-                ActiveCraftingUI->AddToViewport();
-                
-                FInputModeGameAndUI InputModeData;
-                InputModeData.SetWidgetToFocus(ActiveCraftingUI->TakeWidget());
-                InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-                PC->SetInputMode(InputModeData);
-                PC->SetShowMouseCursor(true);
-            }
-        }
-    }
-}
-
-void ACraftingBuilding::OnInteractionRangeOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-    AEmberPlayerCharacter* PlayerCharacter = Cast<AEmberPlayerCharacter>(OtherActor);
-    if (PlayerCharacter && PlayerCharacter->IsLocallyControlled()) 
-    {
-        if (ActiveCraftingUI)
-        {
-            ActiveCraftingUI->RemoveFromParent();
-            ActiveCraftingUI = nullptr;
-
-            APlayerController* PC = Cast<APlayerController>(PlayerCharacter->GetController());
-            if (PC)
-            {
-                PC->SetInputMode(FInputModeGameOnly());
-                PC->SetShowMouseCursor(false);
-            }
-        }
-    }
 }
 
 void ACraftingBuilding::Server_ExecuteCrafting_Implementation(FName RecipeRowName, const TArray<FGameplayTag>& SelectedMainIngredientTags, const TArray<int32>& SelectedMainIngredientQuantities, AEmberPlayerCharacter* RequestingPlayer)

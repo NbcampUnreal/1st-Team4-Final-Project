@@ -11,6 +11,7 @@
 #include "Item/ItemInstance.h"
 #include "Component/MontageSystemComponent.h"
 #include "Components/WidgetSwitcher.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 
 UCraftingWidget::UCraftingWidget(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -23,8 +24,7 @@ UCraftingWidget::UCraftingWidget(const FObjectInitializer& ObjectInitializer)
 }
 
 void UCraftingWidget::NativeConstruct()
-{
-    Super::NativeConstruct();
+{    Super::NativeConstruct();
 
     if (MainMaterialSelectorWidget)
     {
@@ -40,10 +40,18 @@ void UCraftingWidget::NativeConstruct()
     {
         SelectedRecipeDisplayWidget->OnCraftRequested.AddDynamic(this, &UCraftingWidget::HandleCraftRequest);
     }
+
+    UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(this);
+    MessageListenerHandle = MessageSubsystem.RegisterListener(MessageChannelTag, this, &ThisClass::ConstructUI);
 }
 
 void UCraftingWidget::NativeDestruct()
 {
+    DestructUI();
+	
+    UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(this);
+    MessageSubsystem.UnregisterListener(MessageListenerHandle);
+    
     Super::NativeDestruct();
 }
 
@@ -86,6 +94,29 @@ void UCraftingWidget::InitializeForStation(ACraftingBuilding* InStationActor, FN
 
     ClearSelectedMainIngredients();
     RefreshAll();
+}
+
+void UCraftingWidget::ConstructUI(FGameplayTag Channel, const FCraftingWidgetInitializeMessage& Message)
+{
+    InitializeForStation(Message.CraftingBuilding, NAME_None);
+}
+
+void UCraftingWidget::DestructUI()
+{
+    if (MainMaterialSelectorWidget)
+    {
+        MainMaterialSelectorWidget->OnSelectionChanged.RemoveDynamic(this, &UCraftingWidget::HandleMainMaterialSelectionChanged);
+    }
+
+    if (RecipeListWidget)
+    {
+        RecipeListWidget->OnRecipeListItemSelected.RemoveDynamic(this, &UCraftingWidget::HandleRecipeSelectedFromList);
+    }
+    
+    if (SelectedRecipeDisplayWidget)
+    {
+        SelectedRecipeDisplayWidget->OnCraftRequested.RemoveDynamic(this, &UCraftingWidget::HandleCraftRequest);
+    }
 }
 
 void UCraftingWidget::PopulateActiveRecipeList()
@@ -217,10 +248,10 @@ void UCraftingWidget::AttemptCraftCurrentRecipe()
     FCraftingResult CraftResult = Sys->Client_PreCraftCheck(Player, NamedRecipe.RecipeData, MainToUse);
     if (CraftResult.bWasSuccessful)
     {
-        if (CraftingOutputBoxWidget)
+        /*if (CraftingOutputBoxWidget)
         {
             CraftingOutputBoxWidget->TryAddItem(CraftResult.ItemTemplateClass, CraftResult.Rarity, CraftAmount);
-        }
+        }*/
         Sys->RequestServerCraft(Player, CurrentStationActorRef, NamedRecipe.RecipeRowName, MainToUse);
     }
     

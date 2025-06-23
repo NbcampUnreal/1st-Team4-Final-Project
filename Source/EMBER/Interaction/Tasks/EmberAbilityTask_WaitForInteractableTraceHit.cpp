@@ -7,7 +7,7 @@
 
 UEmberAbilityTask_WaitForInteractableTraceHit::UEmberAbilityTask_WaitForInteractableTraceHit(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	TraceChannel = ECC_Visibility;
+	TraceChannel = ECC_GameTraceChannel1;
 	InteractionTraceRange = 100.f;
 	InteractionTraceRate = 0.1f;
 }

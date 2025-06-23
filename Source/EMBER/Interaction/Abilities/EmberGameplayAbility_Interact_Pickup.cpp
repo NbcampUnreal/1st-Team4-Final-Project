@@ -4,7 +4,7 @@
 #include "EmberGameplayAbility_Interact_Pickup.h"
 
 #include "EmberPlayerController.h"
-#include "Interaction/Actors/Pickup/EmbeInteractionActorBase.h"
+#include "Interaction/Actors/Pickup/EmberInteractionActorBase.h"
 #include "Managers/ItemManagerComponent.h"
 
 UEmberGameplayAbility_Interact_Pickup::UEmberGameplayAbility_Interact_Pickup(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -36,7 +36,7 @@ void UEmberGameplayAbility_Interact_Pickup::ActivateAbility(const FGameplayAbili
 		return;
 	}
 
-	AEmbeInteractionActorBase* PickupableActor = Cast<AEmbeInteractionActorBase>(InteractableActor);
+	AEmberInteractionActorBase* PickupableActor = Cast<AEmberInteractionActorBase>(InteractableActor);
 	if (PickupableActor == nullptr)
 	{
 		CancelAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true);

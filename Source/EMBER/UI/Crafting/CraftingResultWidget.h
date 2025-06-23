@@ -39,7 +39,8 @@ public:
 
 protected:
     virtual void NativeConstruct() override;
-
+    virtual void NativeDestruct() override;
+    
     UPROPERTY(BlueprintReadOnly, Category = "CraftingResult", meta = (BindWidget))
     TObjectPtr<UButton> CraftButton;
     

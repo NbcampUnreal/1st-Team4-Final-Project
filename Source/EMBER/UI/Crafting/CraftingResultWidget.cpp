@@ -30,6 +30,16 @@ void UCraftingResultWidget::NativeConstruct()
     }
 }
 
+void UCraftingResultWidget::NativeDestruct()
+{
+    Super::NativeDestruct();
+
+    if (CraftButton)
+    {
+        CraftButton->OnClicked.RemoveDynamic(this, &UCraftingResultWidget::HandleCraftButtonClicked);
+    }
+}
+
 const UItemTemplate* UCraftingResultWidget::GetTemplateFromRecipeRow(const FCraftingRecipeRow& RecipeRow) const
 {
     if (RecipeRow.ItemTemplateClass)
@@ -57,7 +67,7 @@ void UCraftingResultWidget::SetRecipeDetails(UCraftingRecipeManager* RecipeManag
 
     if (CraftButton)
     {
-        CraftButton->SetIsEnabled(bCanCraft);
+        CraftButton->SetIsEnabled(true);
     }
 
     if (InfoTextDisplay)

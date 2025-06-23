@@ -5,8 +5,10 @@
 namespace EmberGameplayTags
 {
 	// Message
-	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_Inventory);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_MyInventory);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_OtherInventory);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_InventoryEquipment);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_CraftinWidget);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Interaction_Notice);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Interaction_Progress);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_ActionHint_Notice);
@@ -45,7 +47,6 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Jump);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Dash_Check);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Dash_Active);
-	
 	
 	// ItemAttribute
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemAttribute_BaseDamage);

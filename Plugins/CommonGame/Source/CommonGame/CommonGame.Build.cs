@@ -33,6 +33,7 @@ public class CommonGame : ModuleRules
 				"UMG",
 				"CommonUI",
 				"CommonUser",
+				"CommonInput",
 				"GameplayTags",
 				"ModularGameplayActors"
 			}

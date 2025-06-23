@@ -4,23 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Interaction/Actors/EmberWorldPickupable.h"
-#include "EmbeInteractionActorBase.generated.h"
+#include "EmberInteractionActorBase.generated.h"
 
 class UItemTemplate;
 class USphereComponent;
 
 UCLASS()
-class EMBER_API AEmbeInteractionActorBase : public AEmberWorldPickupable
+class EMBER_API AEmberInteractionActorBase : public AEmberWorldPickupable
 {
 	GENERATED_BODY()
 
 public:
-	AEmbeInteractionActorBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	AEmberInteractionActorBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<USphereComponent> PickupCollision;
-
 	UPROPERTY(EditDefaultsOnly, Category = "PickupableItemBase|Info")
 	TSubclassOf<UItemTemplate> ItemTemplateClass;
 };

@@ -1,8 +1,8 @@
-#include "Item/Crafting/EternalFlame.h"
+#include "Interaction/Actors/Crafting/EternalFlame.h"
+
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Interaction/EmberTemperature.h"
-#include "Player/EmberPlayerCharacter.h" 
 
 AEternalFlame::AEternalFlame()
 {
