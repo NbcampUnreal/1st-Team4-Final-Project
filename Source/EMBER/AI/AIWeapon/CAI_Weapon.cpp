@@ -71,7 +71,6 @@ void ACAI_Weapon::End_DoAction()
 	bBeginAction = false;
 		
 	State->SetIdleMode();
-
 	Movement->EnableMove();
 }
 
@@ -123,9 +122,10 @@ void ACAI_Weapon::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 	for (ACharacter* hitted : Hitted)
 		if (hitted == other)
 			return;
+	
 	Hitted.AddUnique(other);
 	AttackStack++;
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("AttackStack: %d"), AttackStack));
+	bDidAttack = true;
 	HitDatas[CurrAttackIndex].SendDamage(OwnerCharacter, this, other);
 }
 
