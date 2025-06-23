@@ -5,6 +5,7 @@
 #include "BehaviorTree/CBehaviorTreeComponent.h"
 #include "AIWeapon/CAI_Weapon.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "StatusComponent.h"
 
 UCBTService_Dragon::UCBTService_Dragon()
 {
@@ -72,6 +73,25 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		DrawDebugCylinder(AI->GetWorld(), start, end, MeleeRange, 10, FColor::Blue, false, Interval);
 	}
 
+	UStatusComponent* Status = AI->GetStatusComponent();
+	if (Status && !Blackboard->GetValueAsBool("IsHalfHP"))
+	{
+		if (Status->GetHp() < Status->GetMaxHp() * 0.5f)
+		{
+			Blackboard->SetValueAsBool("IsHalfHP", true);
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Half HP"));
+		}
+	}
+	if (Status && !Blackboard->GetValueAsBool("IsMeteorPhase"))
+	{
+		if (Status->GetHp() <= Status->GetMaxHp() * 0.3f)
+		{
+			Blackboard->SetValueAsBool("IsMeteorPhase", true);
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Meteor Phase triggered"));
+
+		}
+	}
+
 	//Target이 없으면 Patrol
 	TObjectPtr<ACharacter> Target = AIState->GetTarget();
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
@@ -98,7 +118,8 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	//Target과 가까우면 AttackMode
 	float distance = AI.Get()->GetDistanceTo(Target);
 	int32 AttackCount = Weapon->GetAttackStack();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,FString::Printf(TEXT("Distance: %.1f | AttackCount: %d"), distance, AttackCount));
+	int32 MissCount = Weapon->GetMissStack();
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,FString::Printf(TEXT("Distance: %.1f | AttackCount: %d | MissCount: %d"), distance, AttackCount, MissCount));
 	
 	if(distance < ActionRange || (AttackCount >= 3 && distance > MeleeRange))
 	{
@@ -120,13 +141,6 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
 				AIState->SetSpitAttackMode();
 			}
-
-			//if (AIState->IsComboAttack() || AIState->IsSpitAttack())
-			//{
-			//	//AIState->SetActionMode();
-			//	//AIState->SetNormalAttackMode();
-			//	Weapon->ResetAttackStack();
-			//}
 		}
 		else
 		{
@@ -134,6 +148,16 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 			int32 RandomValue = FMath::RandRange(0,2);
 			Blackboard->SetValueAsInt("NormalAttackIdx", RandomValue);
 		}
+
+		if (!Weapon->GetDidAttack())
+		{
+			Weapon->IncreaseMissStack();
+		}
+	}
+	else if (MissCount >= 5)
+	{
+		AIState->SetBreathAttackMode();
+		Weapon->ResetMissStack();
 	}
 	else
 	{

@@ -10,6 +10,7 @@ UENUM(BlueprintType)
 enum class EAnimalState : uint8
 {
 	Idle UMETA(DisplayName = "Idle"),
+	Anim UMETA(DisplayName = "Anim"),
 	Guard UMETA(DisplayName = "Guard"),//���
 	Detect UMETA(DisplayName = "Detect"),
 	Run UMETA(DisplayName = "Running"),//����
@@ -55,6 +56,7 @@ private:
 
 public:
 	bool IsWaitMode();
+	bool IsAnimMode();
 	bool IsGuardMode();
 	bool IsRunMode();
 	bool IsAvoidMode();
@@ -81,6 +83,7 @@ public:
 	void SetPatrolLocation(const FVector& InLocation);
 
 	void SetIdleMode();
+	void SetAnimMode();
 	void SetGuardMode();
 	void SetRunMode();
 	void SetAvoidMode();
