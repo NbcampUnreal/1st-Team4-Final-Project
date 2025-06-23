@@ -126,8 +126,8 @@ void ABaseAI::MulticastHitted_Implementation(float Damage, FDamageEvent const& D
 		UE_LOG(LogTemp, Error, L"hp %f", StatusComponent->GetHp());
 	}
 
-	if (DamageData.Character != nullptr)
-		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
+	// if (DamageData.Character != nullptr)
+	// 	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
 
 }
 

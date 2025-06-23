@@ -5,6 +5,7 @@
 #include "DragonAnimInstance.generated.h"
 
 class ADragon;
+class UNiagaraSystem;
 
 UCLASS()
 class EMBER_API UDragonAnimInstance : public UBaseAIAnimInstance
@@ -14,12 +15,18 @@ class EMBER_API UDragonAnimInstance : public UBaseAIAnimInstance
 public:
 	virtual void NativeInitializeAnimation() override;
 
-	UPROPERTY()
-	class UBTT_DragonAttack* DragonAttackTask;
-
 protected:
 	UFUNCTION()
 	void AnimNotify_SpawnSpit();
+
+	UFUNCTION()
+	void AnimNotify_SpawnEffect();
+
+	UFUNCTION()
+	void AnimNotify_SpawnBreath();
+
+	UFUNCTION()
+	void AnimNotify_BreathEnd();
 
 	UFUNCTION()
 	void AnimNotify_Fly();	
@@ -29,4 +36,7 @@ protected:
 
 private:
 	TObjectPtr<ADragon> Dragon;
+
+	UPROPERTY(EditDefaultsOnly)
+	UNiagaraSystem* SpawnNiagara;
 };

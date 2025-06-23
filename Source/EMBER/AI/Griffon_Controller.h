@@ -21,5 +21,5 @@ protected:
 
 
 	UPROPERTY(EditAnywhere)
-	float Sight_Range = 2000.0f;
+	float Sight_Range = 4000.0f;
 };

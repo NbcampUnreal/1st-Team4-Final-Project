@@ -17,6 +17,11 @@ void UGriffon_AnimInstance::NativeBeginPlay()
 	Super::NativeBeginPlay();
 }
 
+void UGriffon_AnimInstance::PlayLandingAnimation()
+{
+	Montage_Play(LandingMontage);
+}
+
 void UGriffon_AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);

@@ -6,6 +6,7 @@
 
 class ACAIController;
 class ADragonSpitProjectile;
+class ADragonBreathActor;
 class UBTT_DragonAttack;
 
 UCLASS()
@@ -19,6 +20,12 @@ public:
 
 	UFUNCTION()
 	void SpawnSpit();
+
+	UFUNCTION()
+	void SpawnBreath();
+
+	UFUNCTION()
+	void StopBreath();
 
 	void Landed(const FHitResult& Hit) override;
 
@@ -35,6 +42,12 @@ private:
 	TSubclassOf<ADragonSpitProjectile> SpitClass;
 
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ADragonBreathActor> BreathClass;
+
+	UPROPERTY()
+	ADragonBreathActor* CurrentBreath;
+
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<ACAIController> AIController;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -44,8 +57,5 @@ private:
 	AActor* TargetActor;
 
 	float LaunchZPower = 300.f;
-
 	UBTT_DragonAttack* CurrentAttackTask;
-
-	
 };

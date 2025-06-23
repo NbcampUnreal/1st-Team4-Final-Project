@@ -34,6 +34,11 @@ bool UCBehaviorTreeComponent::IsWaitMode()
 	return GetType() == EAnimalState::Idle;
 }
 
+bool UCBehaviorTreeComponent::IsAnimMode()
+{
+	return GetType() == EAnimalState::Anim;
+}
+
 bool UCBehaviorTreeComponent::IsGuardMode()
 {
 	return GetType() == EAnimalState::Guard;
@@ -166,6 +171,11 @@ FVector UCBehaviorTreeComponent::GetAvoidLocation()
 void UCBehaviorTreeComponent::SetIdleMode()
 {
 	ChangeType(EAnimalState::Idle);
+}
+
+void UCBehaviorTreeComponent::SetAnimMode()
+{
+	ChangeType(EAnimalState::Anim);
 }
 
 void UCBehaviorTreeComponent::SetGuardMode()
