@@ -19,7 +19,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Movement_Look,							"InputTag.Movement.Look");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Movement_Sprint,						"InputTag.Movement.Sprint");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Movement_Jump,							"InputTag.Movement.Jump");
-	
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Movement_Dash,							"InputTag.Movement.Dash");
+
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_Weapon_Primary,				"InputTag.QuickSlot.Weapon.Primary");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_Utility_Primary,				"InputTag.QuickSlot.Utility.Primary");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_Utility_Secondary,			"InputTag.QuickSlot.Utility.Secondary");
@@ -38,9 +39,13 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Interact_Active,							"Ability.Interact.Active");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Logging,									"Ability.Logging");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Mining,									"Ability.Mining");
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Jump,									"Ability.Jump");
 
 	UE_DEFINE_GAMEPLAY_TAG(Ability_ChangeEquip,								"Ability.ChangeEquip");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_HitReact,								"Ability.HitReact");
+
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Dash_Check,								"Ability.Dash.Check");
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Dash_Active,								"Ability.Dash.Active");
 	
 	// ItemAttribute
 	UE_DEFINE_GAMEPLAY_TAG(ItemAttribute_BaseDamage,						"ItemAttribute.BaseDamage");
@@ -55,6 +60,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_ChangeEquip,								"Status.ChangeEquip");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack,									"Status.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact,									"Status.HitReact");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Dash,										"Status.Dash");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Jump,										"Status.Jump");
 
 	// Gameplay Event
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_Begin,						"GameplayEvent.Montage.Begin");
@@ -64,4 +71,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Reward_Item,						"GameplayEvent.Reward.Item");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_ChangeEquip,						"GameplayEvent.ChangeEquip");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_HitReact,							"GameplayEvent.HitReact");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Jump,								"GameplayEvent.Jump");
+
+	// Cooldown
+	UE_DEFINE_GAMEPLAY_TAG(Cooldown_Dash,									"Cooldown.Dash");
 }

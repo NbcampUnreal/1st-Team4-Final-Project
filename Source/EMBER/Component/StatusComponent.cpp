@@ -97,9 +97,14 @@ void UStatusComponent::UseStamina(float InAmount)
 
 void UStatusComponent::UseTemperature(float InAmount)
 {
-	Stamina += (InAmount * -1.0f);
-	Stamina = FMath::Clamp(Stamina, 0.0f, MaxStamina);
-	//TODOS ¿Âµµ 0ÀÏ¶§ ´É·ÂÄ¡ °¨¼Ò
+	Temperature -= InAmount;
+	Temperature = FMath::Clamp(Temperature, 0.0f, MaxTemperature);
+}
+
+void UStatusComponent::AddTemperature(float InAmount)
+{
+	Temperature += InAmount;
+	Temperature = FMath::Clamp(Temperature, 0.0f, MaxTemperature);
 }
 
 void UStatusComponent::AddFatigueLevel(float InAmount)
@@ -107,7 +112,7 @@ void UStatusComponent::AddFatigueLevel(float InAmount)
 	FatigueLevel += InAmount;
 	FatigueLevel = FMath::Clamp(FatigueLevel, 0.0f, MaxFatigueLevel);
 
-	//TODOS ¿Âµµ ÃÖ´ëÄ¡ÀÏ¶§ ´É·ÂÄ¡ °¨¼Ò
+	//TODOS ï¿½Âµï¿½ ï¿½Ö´ï¿½Ä¡ï¿½Ï¶ï¿½ ï¿½É·ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
 }
 
 void UStatusComponent::AddWeight(float InAmount)
@@ -115,7 +120,7 @@ void UStatusComponent::AddWeight(float InAmount)
 	Weight += InAmount;
 	Weight = FMath::Clamp(Weight, 0.0f, MaxWeight);
 
-	//TODOS ¹«°Ô ÃÖ´ëÄ¡ÀÏ¶§ ´É·ÂÄ¡ °¨¼Ò
+	//TODOS ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½Ä¡ï¿½Ï¶ï¿½ ï¿½É·ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
 }
 
 void UStatusComponent::UseEnergy(float InAmount)
@@ -123,7 +128,7 @@ void UStatusComponent::UseEnergy(float InAmount)
 	Energy += (InAmount * -1.0f);
 	Energy = FMath::Clamp(Energy, 0.0f, MaxEnergy);
 
-	//TODOS ¿¡³ÊÁö 0ÀÏ¶§ ´É·ÂÄ¡ °¨¼Ò
+	//TODOS ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0ï¿½Ï¶ï¿½ ï¿½É·ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
 }
 
 void UStatusComponent::AddPhysicalStrength(float InAmount)
@@ -149,11 +154,12 @@ void UStatusComponent::LevelUp()
 	XP = 0.0f;
 	Level++;
 
-	//TODOS ·¹º§¾÷½Ã Àû¿ëÇÒ°Å ÀÛ¼º
+	//TODOS ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò°ï¿½ ï¿½Û¼ï¿½
 }
 
 void UStatusComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UStatusComponent, HP);
+    DOREPLIFETIME(UStatusComponent, Temperature);
 }

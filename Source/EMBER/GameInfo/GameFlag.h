@@ -210,3 +210,15 @@ enum class EEquipState : uint8
 
 	Count	UMETA(Hidden)
 };
+
+UENUM(BlueprintType)
+enum class EEmberDirection : uint8
+{
+	None,
+	Forward,
+	Right,	
+	Backward,
+	Left,
+
+	MAX UMETA(Hidden)
+};

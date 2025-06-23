@@ -11,6 +11,7 @@
 #include "Input/CharacterInputComponent.h"
 #include "Component/MontageSystemComponent.h"
 #include "Input/Data/EmberInputConfig.h"
+#include "Interaction/EmberTemperature.h"
 #include "EmberPlayerCharacter.generated.h"
 
 class UEmberAbilitySystemComponent;
@@ -26,13 +27,16 @@ struct FInputActionValue;
 
 
 UCLASS()
-class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface
+class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface, public IEmberTemperature
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AEmberPlayerCharacter(const FObjectInitializer& Init);	
+	AEmberPlayerCharacter(const FObjectInitializer& Init);
+	
+	virtual void ApplyWarmingEffect_Implementation() override;
+	virtual void RemoveWarmingEffect_Implementation() override;
 	
 protected:
 	// Called when the game starts or when spawned
@@ -63,8 +67,6 @@ protected:
 	void StopSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void Attack(const FInputActionValue& value);
-	UFUNCTION()
-	void StartJump(const FInputActionValue& value);
 
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetMaxHP() const;
@@ -102,6 +104,26 @@ public:
 	void SetControlRotation(bool bEnable);
 	
 private:
+
+	FTimerHandle TemperatureDropTimerHandle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Temperature")
+	float TemperatureDropAmount;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Temperature")
+	float TemperatureDropInterval;
+    
+	void OnTemperatureDropTick();
+	void StartPassiveTemperatureDrop();
+	void StopPassiveTemperatureDrop();
+	
+	FTimerHandle WarmingTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Temperature")
+	float WarmingAmountPerSecond;
+
+	void OnWarmingTick();
+	
 	UPROPERTY()
 	TObjectPtr<UCharacterInputComponent> CharacterInputComponent;
 

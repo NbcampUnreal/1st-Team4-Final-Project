@@ -17,7 +17,7 @@
 #include "Input/EmberEnhancedInputComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
-
+#include "TimerManager.h"
 
 AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 	: Super(Init.SetDefaultSubobjectClass<UC_CharacterMovementComponent>
@@ -41,7 +41,6 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 	MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("MontageComponent"));
 	StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
 	ArmorComponent = CreateDefaultSubobject<UArmorComponent>(TEXT("ArmorComponent"));
-	StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("SatatusComponent"));
 
 	Tags.Add("Player");
 	SetReplicates(true);
@@ -72,6 +71,11 @@ void AEmberPlayerCharacter::BeginPlay()
 		{
 			ArmorComponent->InitializeArmorForLateJoiners();
 		}
+	}
+	
+	if (HasAuthority())
+	{
+		StartPassiveTemperatureDrop();
 	}
 }
 
@@ -201,7 +205,6 @@ void AEmberPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Move, ETriggerEvent::Triggered, this, &ThisClass::Move);
 	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Look, ETriggerEvent::Triggered, this, &ThisClass::Look);
-	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Jump, ETriggerEvent::Triggered, this, &ThisClass::Jump);
 	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Triggered, this, &ThisClass::StartSprint);
 	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Sprint, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
 }
@@ -260,10 +263,6 @@ void AEmberPlayerCharacter::Attack(const FInputActionValue& value)
 	}
 }
 
-void AEmberPlayerCharacter::StartJump(const FInputActionValue& value)
-{
-	Jump();
-}
 float AEmberPlayerCharacter::GetMaxHP() const
 {
 	if (StatusComponent)
@@ -389,4 +388,60 @@ void AEmberPlayerCharacter::OnDeath()
 void AEmberPlayerCharacter::EndDeath()
 {
 	Destroy();
+}
+
+void AEmberPlayerCharacter::ApplyWarmingEffect_Implementation()
+{
+	if (!HasAuthority()) return;
+	
+	StopPassiveTemperatureDrop();
+
+	GetWorldTimerManager().SetTimer(WarmingTimerHandle, this, &AEmberPlayerCharacter::OnWarmingTick, 1.0f, true, 0.0f);
+    
+	UE_LOG(LogTemp, Warning, TEXT("Player entered warming zone. Starting warming timer."));
+}
+
+void AEmberPlayerCharacter::RemoveWarmingEffect_Implementation()
+{
+	if (!HasAuthority()) return;
+
+	GetWorldTimerManager().ClearTimer(WarmingTimerHandle);
+	
+    StartPassiveTemperatureDrop();
+
+	UE_LOG(LogTemp, Warning, TEXT("Player left warming zone. Clearing warming timer."));
+}
+
+void AEmberPlayerCharacter::OnWarmingTick()
+{
+	if (StatusComponent)
+	{
+		StatusComponent->AddTemperature(WarmingAmountPerSecond);
+		UE_LOG(LogTemp, Log, TEXT("Warming tick: Current Temperature is %f"), StatusComponent->GetTemperature());
+	}
+}
+
+void AEmberPlayerCharacter::StartPassiveTemperatureDrop()
+{
+	if (!HasAuthority() || GetWorldTimerManager().IsTimerActive(TemperatureDropTimerHandle)) return;
+
+	GetWorldTimerManager().SetTimer(TemperatureDropTimerHandle, this, &AEmberPlayerCharacter::OnTemperatureDropTick, TemperatureDropInterval, true);
+	UE_LOG(LogTemp, Warning, TEXT("Starting passive temperature drop."));
+}
+
+void AEmberPlayerCharacter::StopPassiveTemperatureDrop()
+{
+	if (!HasAuthority()) return;
+
+	GetWorldTimerManager().ClearTimer(TemperatureDropTimerHandle);
+	UE_LOG(LogTemp, Warning, TEXT("Stopping passive temperature drop."));
+}
+
+void AEmberPlayerCharacter::OnTemperatureDropTick()
+{
+	if (StatusComponent)
+	{
+		StatusComponent->UseTemperature(TemperatureDropAmount);
+		UE_LOG(LogTemp, Log, TEXT("Passive drop tick: Current Temperature is %f"), StatusComponent->GetTemperature());
+	}
 }
