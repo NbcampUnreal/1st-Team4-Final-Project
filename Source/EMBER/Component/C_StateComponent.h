@@ -21,6 +21,7 @@ protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 public:	
 	bool IsIdleMode() const;
+	bool IsAnimMode() const;
 	bool IsEquipMode() const;
 	bool IsActionMode() const;
 	bool IsCombatMode() const;
@@ -28,6 +29,7 @@ public:
 	bool IsDeadMode() const;
 	bool IsDetectMode() const;
 	void SetIdleMode();
+	void SetAnimMode();
 	void SetEquipMode();
 	void SetActionMode();
 	void SetCombatMode();
