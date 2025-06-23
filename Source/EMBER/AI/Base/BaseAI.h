@@ -25,6 +25,7 @@ class EMBER_API ABaseAI : public ACharacter
 	GENERATED_BODY()
 public:
 	FDamagesData GetDamagesData()const { return DamageData; }
+	
 public:
 	ABaseAI();
 	virtual void BeginPlay() override;
@@ -43,7 +44,6 @@ public:
 	// Getter
 	// virtual float GetAttackPower() const { return AttackPower; }
 	UBehaviorTree* GetBehaviorTree() const;
-
 	
 protected:
 	// AI 기본 정보	
@@ -66,6 +66,7 @@ protected:
 	UBehaviorTree* BehaviorTree;
 public:
 	UC_CharacterMovementComponent* GetAIMovement()const;
+	UStatusComponent* GetStatusComponent()const { return StatusComponent; }
 	
 	
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
