@@ -42,8 +42,9 @@ float AGriffon::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
 		{
 			if (StatusComponent->GetHp() < (StatusComponent->GetMaxHp() / 2))
 			{
+				if (!BlackboardComponent->GetValueAsBool("IsHalfHP"))
 				BlackboardComponent->SetValueAsBool("IsHalfHP", true);
-				GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+				BlackboardComponent->SetValueAsInt("RandomPattern", 3);
 			}
 		}
 	}

@@ -26,7 +26,8 @@ UBTT_FlyMoveTo();
 	FVector TargetLocation = FVector::ZeroVector;
 	FVector CurrentLocation;
 	FVector Direction;
-
+	UBlackboardComponent* BlackboardComp;
+	
 	UPROPERTY(EditAnywhere)
 	float AcceptableRadius = 200.f;
 	

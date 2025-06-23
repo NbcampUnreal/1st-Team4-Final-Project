@@ -21,7 +21,7 @@ EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 {
 	BaseAI = Cast<ABaseAI>(OwnerComp.GetAIOwner()->GetPawn());
 	if (!BaseAI) return EBTNodeResult::Failed;
-	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+	BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
 
 	FBlackboard::FKey KeyID = BlackboardKey.GetSelectedKeyID();
@@ -38,7 +38,7 @@ EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		return EBTNodeResult::Failed;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("KeyType: %s"), *KeyTypeClass->GetName());
+	// UE_LOG(LogTemp, Warning, TEXT("KeyType: %s"), *KeyTypeClass->GetName());
 	
 	if (KeyTypeClass == UBlackboardKeyType_Vector::StaticClass())
 	{
@@ -71,8 +71,13 @@ bool UBTT_FlyMoveTo::IsNearGround()
 {
 	if (!BaseAI) return false;
 
+	if (BlackboardComp->GetValueAsBool("IsHalfHP"))
+	{
+		return false;
+	}
+	
 	FVector Start = BaseAI->GetActorLocation();
-	FVector End = Start - FVector(0, 0, AcceptableRadius+50.f); 
+	FVector End = Start - FVector(0, 0, AcceptableRadius+150.f); 
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(BaseAI);
@@ -85,16 +90,16 @@ bool UBTT_FlyMoveTo::IsNearGround()
 		ECC_Visibility,
 		Params
 	);
-	DrawDebugLine(
-		BaseAI->GetWorld(),
-		Start,
-		End,
-		bHit ? FColor::Green : FColor::Red, // 맞으면 초록, 아니면 빨강
-		false,
-		0.1f,
-		0,
-		2.0f
-	);
+	// DrawDebugLine(
+	// 	BaseAI->GetWorld(),
+	// 	Start,
+	// 	End,
+	// 	bHit ? FColor::Green : FColor::Red, // 맞으면 초록, 아니면 빨강
+	// 	false,
+	// 	0.1f,
+	// 	0,
+	// 	2.0f
+	// );
 
 
 	return bHit;
@@ -125,7 +130,8 @@ void UBTT_FlyMoveTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	if (IsNearTargetLocation())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("FlyMove Success"));
-		BaseAI->GetCharacterMovement()->Velocity = FVector(0, 0, 0);
+		BaseAI->GetCharacterMovement()->MaxAcceleration = 0.0f;
+		BaseAI->GetCharacterMovement()->MaxFlySpeed = 100.0f;
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 
