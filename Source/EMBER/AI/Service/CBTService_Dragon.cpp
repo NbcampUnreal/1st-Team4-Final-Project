@@ -72,6 +72,23 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		DrawDebugCylinder(AI->GetWorld(), start, end, ActionRange, 10, FColor::Red, false, Interval);
 		DrawDebugCylinder(AI->GetWorld(), start, end, MeleeRange, 10, FColor::Blue, false, Interval);
 	}
+	UC_StateComponent* state = Cast<UC_StateComponent>(AI->GetComponentByClass(UC_StateComponent::StaticClass()));
+	if (state == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Dragon Service, state is null");
+		return;
+	}
+
+	if (state->IsDeadMode() == true)
+	{
+		AIState->SetDeadMode();
+		return;
+	}
+	if (state->IsHittdMode() == true)
+	{
+		AIState->SetHittedMode();
+		return;
+	}
 
 	UStatusComponent* Status = AI->GetStatusComponent();
 	if (Status && !Blackboard->GetValueAsBool("IsHalfHP"))
