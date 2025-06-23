@@ -3,7 +3,8 @@
 
 #include "EmberFoliageBase.h"
 
-#include "EmberPickupableItemBase.h"
+#include "EmbeInteractionActorBase.h"
+#include "EmberPickupable.h"
 #include "ItemInstance.h"
 #include "ItemTemplate.h"
 #include "UI/Data/EmberItemData.h"

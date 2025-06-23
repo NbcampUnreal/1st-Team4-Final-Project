@@ -3,19 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EmberWorldPickupable.h"
-#include "EmberPickupableItemBase.generated.h"
+#include "Interaction/Actors/EmberWorldPickupable.h"
+#include "EmbeInteractionActorBase.generated.h"
 
 class UItemTemplate;
 class USphereComponent;
 
 UCLASS()
-class EMBER_API AEmberPickupableItemBase : public AEmberWorldPickupable
+class EMBER_API AEmbeInteractionActorBase : public AEmberWorldPickupable
 {
 	GENERATED_BODY()
 
 public:
-	AEmberPickupableItemBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	AEmbeInteractionActorBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

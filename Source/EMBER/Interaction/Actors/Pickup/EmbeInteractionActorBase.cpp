@@ -1,16 +1,11 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EmberPickupableItemBase.h"
+#include "EmbeInteractionActorBase.h"
 
-#include "GameFlag.h"
-#include "ItemInstance.h"
-#include "ItemTemplate.h"
 #include "Components/SphereComponent.h"
-#include "UI/Data/EmberItemData.h"
 
-
-AEmberPickupableItemBase::AEmberPickupableItemBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+AEmbeInteractionActorBase::AEmbeInteractionActorBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	bReplicates = true;
 	

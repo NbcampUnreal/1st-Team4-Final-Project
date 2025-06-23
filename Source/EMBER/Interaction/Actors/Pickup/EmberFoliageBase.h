@@ -2,15 +2,15 @@
 
 #pragma once
 
-#include "EmberPickupableItemBase.h"
+#include "EmbeInteractionActorBase.h"
 #include "GameFramework/Actor.h"
 #include "EmberFoliageBase.generated.h"
 
-class AEmberPickupableItemBase;
+class AEmbeInteractionActorBase;
 class UItemTemplate;
 
 UCLASS()
-class EMBER_API AEmberFoliageBase : public AEmberPickupableItemBase
+class EMBER_API AEmberFoliageBase : public AEmbeInteractionActorBase
 {
 	GENERATED_BODY()
 public:
