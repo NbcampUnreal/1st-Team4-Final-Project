@@ -19,11 +19,20 @@ EBTNodeResult::Type UBTT_SetRandomPattern::ExecuteTask(UBehaviorTreeComponent& O
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	ABaseAI* AI = Cast<ABaseAI>(AIController->GetPawn());
 	TObjectPtr<UCAIWeaponComponent> WeaponComponent = AI->FindComponentByClass<UCAIWeaponComponent>();
-
-	int32 RandomRange = WeaponComponent->Weapons[0]->GetAttackDatas().Num();
-	int32 RandomInt = FMath::RandRange(0, RandomRange - 1);
-
+	int32 RandomInt;
+	if (!BlackboardComponent->GetValueAsBool("IsHalfHP"))
+	{
+		// int32 RandomRange = WeaponComponent->Weapons[0]->GetAttackDatas().Num();
+		RandomInt = FMath::RandRange(0, 2);
+		UE_LOG(LogTemp,Warning,TEXT("Phase1 int PatternTask"));
+	}
+	else
+	{
+		RandomInt = FMath::RandRange(3, 4);
+		UE_LOG(LogTemp,Warning,TEXT("Phase2 int PatternTask"));
+	}
+	
 	BlackboardComponent->SetValueAsInt("RandomPattern", RandomInt);
-	// UE_LOG(LogTemp, Error, TEXT("BB_Random Int: %d"), BlackboardComponent->GetValueAsInt("RandomPattern"));
+	UE_LOG(LogTemp, Error, TEXT("BB_Random Int: %d"), BlackboardComponent->GetValueAsInt("RandomPattern"));
 	return EBTNodeResult::Succeeded;
 }

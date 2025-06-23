@@ -13,7 +13,6 @@ class EMBER_API UC_StateComponent : public UActorComponent
 	GENERATED_BODY()
 public:	
 	UC_StateComponent();
-private:
 	EStateType CurrentStateType;
 	EStateType PrevStateType;
 protected:

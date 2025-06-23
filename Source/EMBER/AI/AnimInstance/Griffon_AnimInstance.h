@@ -21,9 +21,13 @@ public:
 	TObjectPtr<UBlackboardComponent> Blackboard;
 	TObjectPtr<ACAIController> Controller;
 
+	void PlayLandingAnimation();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
 	bool bIsAirborne;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement")
 	float CurrentFlySpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement")
+	UAnimMontage* LandingMontage;
 };
