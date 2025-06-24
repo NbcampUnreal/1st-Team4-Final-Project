@@ -6,6 +6,7 @@
 UStatusComponent::UStatusComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	SetIsReplicatedByDefault(true);
 }
 
 
@@ -95,6 +96,12 @@ void UStatusComponent::UseStamina(float InAmount)
 	Stamina = FMath::Clamp(Stamina, 0.0f, MaxStamina);
 }
 
+void UStatusComponent::AddHP(float InAmount)
+{
+	InAmount = FMath::Clamp(InAmount, 0.0f, INT_MAX);
+	HP = FMath::Clamp(HP + InAmount, 0.0f, MaxHP);
+}
+
 void UStatusComponent::UseTemperature(float InAmount)
 {
 	Temperature -= InAmount;
@@ -160,6 +167,6 @@ void UStatusComponent::LevelUp()
 void UStatusComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UStatusComponent, HP);
-    DOREPLIFETIME(UStatusComponent, Temperature);
+	DOREPLIFETIME(ThisClass, HP);
+    DOREPLIFETIME(ThisClass, Temperature);
 }

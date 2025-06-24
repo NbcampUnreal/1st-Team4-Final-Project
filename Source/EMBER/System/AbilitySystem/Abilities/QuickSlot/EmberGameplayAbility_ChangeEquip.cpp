@@ -1,12 +1,12 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "GameplayAbility_ChangeEquip.h"
+#include "EmberGameplayAbility_ChangeEquip.h"
 
 #include "EmberPlayerCharacter.h"
 #include "GameInfo/GameplayTags.h"
 #include "Managers/EquipmentManagerComponent.h"
 
-UGameplayAbility_ChangeEquip::UGameplayAbility_ChangeEquip(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UEmberGameplayAbility_ChangeEquip::UEmberGameplayAbility_ChangeEquip(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	ActivationPolicy = EEmberAbilityActivationPolicy::Manual;
 	bServerRespectsRemoteAbilityCancellation = false;
@@ -23,7 +23,7 @@ UGameplayAbility_ChangeEquip::UGameplayAbility_ChangeEquip(const FObjectInitiali
 	}
 }
 
-void UGameplayAbility_ChangeEquip::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void UEmberGameplayAbility_ChangeEquip::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 

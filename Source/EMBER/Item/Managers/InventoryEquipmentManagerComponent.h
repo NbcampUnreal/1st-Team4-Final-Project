@@ -117,7 +117,6 @@ public:
 	void AddUnarmedEquipments(TSubclassOf<UItemTemplate> RightHandClass);
 
 	void SetEquipment(EEquipmentSlotType EquipmentSlotType, TSubclassOf<UItemTemplate> ItemTemplateClass, EItemRarity ItemRarity, int32 ItemCount, bool bCheckCharacterClass = true);
-
 	
 public:
 	int32 CanMoveOrMergeEquipment(UInventoryEquipmentManagerComponent* OtherComponent, EEquipmentSlotType FromEquipmentSlotType, EEquipmentSlotType ToEquipmentSlotType) const;
@@ -140,6 +139,7 @@ public:
 
 public:
 	static EUtilitySlotType ConvertToUtilitySlotType(EEquipmentSlotType EquipmentSlotType);
+	
 public:
 	UEquipmentManagerComponent* GetEquipmentManager() const;
 	

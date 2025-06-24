@@ -37,6 +37,9 @@ public:
 	
 	virtual void ApplyWarmingEffect_Implementation() override;
 	virtual void RemoveWarmingEffect_Implementation() override;
+
+public:
+	UStatusComponent* GetStatusComponent() const { return StatusComponent; }
 	
 protected:
 	// Called when the game starts or when spawned

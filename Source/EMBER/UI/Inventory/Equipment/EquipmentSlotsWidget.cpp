@@ -91,6 +91,14 @@ void UEquipmentSlotsWidget::DestructUI()
 		InventoryEquipmentManager->OnEquipmentEntryChanged.Remove(EquipmentChangedDelegateHandle);
 		EquipmentChangedDelegateHandle.Reset();
 	}
+
+	for (const auto& Elem  : EquipmentSlotWidgets)
+	{
+		if (UEquipmentSlotSingleWidget* EquipmentSlotSingleWidget = Elem.Value)
+		{
+			EquipmentSlotSingleWidget->OnEquipmentEntryChanged(nullptr, 0);
+		}
+	}
 }
 
 void UEquipmentSlotsWidget::OnEquipmentEntryChanged(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance, int32 ItemCount)

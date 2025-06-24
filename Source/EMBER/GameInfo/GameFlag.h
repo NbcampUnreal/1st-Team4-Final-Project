@@ -223,3 +223,13 @@ enum class EEmberDirection : uint8
 
 	MAX UMETA(Hidden)
 };
+
+UENUM(BlueprintType)
+enum class AISoundCategory : uint8
+{
+	MoveSound UMETA(DisplayName = "Move"),
+	AttackSound UMETA(DisplayName = "Attack"),
+	HitSound UMETA(DisplayName = "Hit"),
+	DeathSound UMETA(DisplayName = "Death"),
+	Max
+};
