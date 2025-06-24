@@ -6,7 +6,6 @@
     "MainVcxprojFiltersPath":  "Intermediate\\ProjectFiles\\EMBER.vcxproj.filters",
     "LogPath":  "Logs\\Watcher.log",
     "WatchPaths":  [
-                       ".",
                        "Source",
                        "Plugins"
                    ],

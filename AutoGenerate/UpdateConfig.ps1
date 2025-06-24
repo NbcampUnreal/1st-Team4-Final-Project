@@ -66,7 +66,7 @@ if (-not ($Config | Get-Member -Name "LogPath" -MemberType NoteProperty -ErrorAc
     $Config | Add-Member -MemberType NoteProperty -Name "LogPath" -Value "Logs\Watcher.log"
 }
 if (-not ($Config | Get-Member -Name "WatchPaths" -MemberType NoteProperty -ErrorAction SilentlyContinue)) {
-    $Config | Add-Member -MemberType NoteProperty -Name "WatchPaths" -Value @(".", "Source", "Plugins")
+    $Config | Add-Member -MemberType NoteProperty -Name "WatchPaths" -Value @("Source", "Plugins")
 }
 if (-not ($Config | Get-Member -Name "WatchFileExtensions" -MemberType NoteProperty -ErrorAction SilentlyContinue)) {
     $Config | Add-Member -MemberType NoteProperty -Name "WatchFileExtensions" -Value @(".cpp", ".h", ".hpp", ".c", ".inl")

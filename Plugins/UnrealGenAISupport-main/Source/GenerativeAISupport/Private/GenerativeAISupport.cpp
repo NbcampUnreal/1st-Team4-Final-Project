@@ -1,5 +1,4 @@
-﻿#include "Manager/FGenAIProviderRegistry.h"
-#include "UObject/Class.h"
+﻿#include "UObject/Class.h"
 #include "GenerativeAISupport.h"
 
 #define LOCTEXT_NAMESPACE "FGenerativeAISupportModule"
