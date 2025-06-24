@@ -1,20 +1,63 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// RAGAssistant.cpp (최종 수정본)
 
 #include "RAGAssistant.h"
+#include "Widget/RAGChatWidget.h"
+#include "LevelEditor.h"
+#include "Widgets/Docking/SDockTab.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
 
-#define LOCTEXT_NAMESPACE "FRAGAssistantModule"
+static const FName RAGAssistantTabName("RAGAssistant");
+
+IMPLEMENT_MODULE(FRAGAssistantModule, RAGAssistant)
 
 void FRAGAssistantModule::StartupModule()
 {
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+	MenuExtender = MakeShareable(new FExtender);
+	MenuExtender->AddMenuBarExtension(
+		"Window",
+		EExtensionHook::After,
+		nullptr, // ⭐️ CommandList가 필요 없으므로 nullptr!
+		FMenuBarExtensionDelegate::CreateLambda([this](FMenuBarBuilder& BarBuilder)
+			{
+				BarBuilder.AddMenuEntry(
+					FText::FromString("RAG Assistant"),
+					FText::FromString("Open the RAG Assistant chat window"),
+					FSlateIcon(),
+					// ⭐️ 여기에 FUIAction을 바로 생성해서 넣어주면 돼!
+					FUIAction(FExecuteAction::CreateRaw(this, &FRAGAssistantModule::OnMenuButtonClicked))
+				);
+			})
+	);
+
+	FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
+	LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(MenuExtender);
+
+	FGlobalTabmanager::Get()->RegisterTabSpawner(RAGAssistantTabName, FOnSpawnTab::CreateRaw(this, &FRAGAssistantModule::OnSpawnPluginTab))
+		.SetDisplayName(FText::FromString("RAG Assistant"))
+		.SetMenuType(ETabSpawnerMenuType::Hidden);
 }
 
 void FRAGAssistantModule::ShutdownModule()
 {
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
+	FGlobalTabmanager::Get()->UnregisterTabSpawner(RAGAssistantTabName);
+
+	if (MenuExtender.IsValid() && FModuleManager::Get().IsModuleLoaded("LevelEditor"))
+	{
+		FLevelEditorModule& LevelEditorModule = FModuleManager::GetModuleChecked<FLevelEditorModule>("LevelEditor");
+		LevelEditorModule.GetMenuExtensibilityManager()->RemoveExtender(MenuExtender);
+	}
 }
 
-#undef LOCTEXT_NAMESPACE
-	
-IMPLEMENT_MODULE(FRAGAssistantModule, RAGAssistant)
+TSharedRef<SDockTab> FRAGAssistantModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
+{
+	return SNew(SDockTab)
+		.TabRole(ETabRole::NomadTab)
+		[
+			SNew(SRagChatWidget)
+		];
+}
+
+void FRAGAssistantModule::OnMenuButtonClicked()
+{
+	FGlobalTabmanager::Get()->TryInvokeTab(RAGAssistantTabName);
+}

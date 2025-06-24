@@ -19,7 +19,7 @@ public class RAGAssistant : ModuleRules
 			new string[] {
 				// ... add other private include paths required here ...
 			}
-			);
+            );
 			
 		
 		PublicDependencyModuleNames.AddRange(
@@ -40,6 +40,7 @@ public class RAGAssistant : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"LevelEditor"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
