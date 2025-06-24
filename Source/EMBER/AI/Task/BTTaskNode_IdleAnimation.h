@@ -23,6 +23,7 @@ protected:
 private:
 	ABaseAI* GetAIFromOwnerComp(UBehaviorTreeComponent& OwnerComp);
 	bool IsMontageFinished(ABaseAI* AI);
+	void EndPlay(ABaseAI* AI);
 private:
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* Montage;

@@ -1,7 +1,9 @@
 #include "AI/AnimInstance/DragonAnimInstance.h"
+
+#include "NiagaraFunctionLibrary.h"
 #include "Boss/Dragon.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Task/BTT_DragonAttack.h"
+#include "NiagaraSystem.h"
 
 void UDragonAnimInstance::NativeInitializeAnimation()
 {
@@ -15,6 +17,39 @@ void UDragonAnimInstance::AnimNotify_SpawnSpit()
 	if (Dragon)
 	{
 		Dragon->SpawnSpit();
+	}
+}
+
+void UDragonAnimInstance::AnimNotify_SpawnEffect()
+{
+	if (Dragon && SpawnNiagara)
+	{
+		FVector SocketLocation = Dragon->GetMesh()->GetSocketLocation(FName("SpawnSocket"));
+		FRotator SocketRotation = Dragon->GetMesh()->GetSocketRotation(FName("SpawnSocket"));
+
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			Dragon->GetWorld(),
+			SpawnNiagara,
+			SocketLocation,
+			SocketRotation,
+			FVector(2.f)
+			);
+	}
+}
+
+void UDragonAnimInstance::AnimNotify_SpawnBreath()
+{
+	if (Dragon)
+	{
+		Dragon->SpawnBreath();
+	}
+}
+
+void UDragonAnimInstance::AnimNotify_BreathEnd()
+{
+	if (Dragon)
+	{
+		Dragon->StopBreath();
 	}
 }
 

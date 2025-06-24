@@ -5,6 +5,7 @@
 #include "BehaviorTree/CBehaviorTreeComponent.h"
 #include "AIWeapon/CAI_Weapon.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "StatusComponent.h"
 
 UCBTService_Dragon::UCBTService_Dragon()
 {
@@ -31,8 +32,8 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		UE_LOG(LogTemp, Error, L"AI is null");
 		return;
 	}
-
-	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
+	
+ 	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
 	if (AIState.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"AIstate is null");
@@ -54,12 +55,60 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	}
 
 	TObjectPtr<UBlackboardComponent> Blackboard = Controller->GetBlackboardComponent();
+
 	if (Blackboard.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"Blackboard is null");
 		return;
 	}
-	
+
+	if (bDrawDebug)
+	{
+		FVector start = AI->GetActorLocation();
+		start.Z -= 25;
+
+		FVector end = start;
+
+		DrawDebugCylinder(AI->GetWorld(), start, end, ActionRange, 10, FColor::Red, false, Interval);
+		DrawDebugCylinder(AI->GetWorld(), start, end, MeleeRange, 10, FColor::Blue, false, Interval);
+	}
+	UC_StateComponent* state = Cast<UC_StateComponent>(AI->GetComponentByClass(UC_StateComponent::StaticClass()));
+	if (state == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Dragon Service, state is null");
+		return;
+	}
+
+	if (state->IsDeadMode() == true)
+	{
+		AIState->SetDeadMode();
+		return;
+	}
+	if (state->IsHittdMode() == true)
+	{
+		AIState->SetHittedMode();
+		return;
+	}
+
+	UStatusComponent* Status = AI->GetStatusComponent();
+	if (Status && !Blackboard->GetValueAsBool("IsHalfHP"))
+	{
+		if (Status->GetHp() < Status->GetMaxHp() * 0.5f)
+		{
+			Blackboard->SetValueAsBool("IsHalfHP", true);
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Half HP"));
+		}
+	}
+	if (Status && !Blackboard->GetValueAsBool("IsMeteorPhase"))
+	{
+		if (Status->GetHp() <= Status->GetMaxHp() * 0.3f)
+		{
+			Blackboard->SetValueAsBool("IsMeteorPhase", true);
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Meteor Phase triggered"));
+
+		}
+	}
+
 	//Target이 없으면 Patrol
 	TObjectPtr<ACharacter> Target = AIState->GetTarget();
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
@@ -86,7 +135,8 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	//Target과 가까우면 AttackMode
 	float distance = AI.Get()->GetDistanceTo(Target);
 	int32 AttackCount = Weapon->GetAttackStack();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,FString::Printf(TEXT("Distance: %.1f | AttackCount: %d"), distance, AttackCount));
+	int32 MissCount = Weapon->GetMissStack();
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,FString::Printf(TEXT("Distance: %.1f | AttackCount: %d | MissCount: %d"), distance, AttackCount, MissCount));
 	
 	if(distance < ActionRange || (AttackCount >= 3 && distance > MeleeRange))
 	{
@@ -108,11 +158,6 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
 				AIState->SetSpitAttackMode();
 			}
-
-			if (AIState->IsComboAttack() || AIState->IsSpitAttack())
-			{
-				Weapon->ResetAttackStack();
-			}
 		}
 		else
 		{
@@ -120,6 +165,16 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 			int32 RandomValue = FMath::RandRange(0,2);
 			Blackboard->SetValueAsInt("NormalAttackIdx", RandomValue);
 		}
+
+		if (!Weapon->GetDidAttack())
+		{
+			Weapon->IncreaseMissStack();
+		}
+	}
+	else if (MissCount >= 5)
+	{
+		AIState->SetBreathAttackMode();
+		Weapon->ResetMissStack();
 	}
 	else
 	{

@@ -24,7 +24,9 @@ private:
 	class ACharacter* OwnerCharacter;
 	UPROPERTY(EditAnywhere, category = "Move")
 	float Speed[(int32)ESpeedType::Max]{200,400,600};
-
+	UPROPERTY(EditAnywhere, category = "Move")
+	float FlySpeed[(int32)EFlySpeedType::Max]{400,600,900};
+	
 protected:	//	재정의
 	virtual void BeginPlay() override;
 	virtual float GetMaxSpeed() const override;

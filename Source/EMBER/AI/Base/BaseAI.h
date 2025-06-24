@@ -25,6 +25,7 @@ class EMBER_API ABaseAI : public ACharacter
 	GENERATED_BODY()
 public:
 	FDamagesData GetDamagesData()const { return DamageData; }
+	
 public:
 	ABaseAI();
 	virtual void BeginPlay() override;
@@ -43,7 +44,6 @@ public:
 	// Getter
 	// virtual float GetAttackPower() const { return AttackPower; }
 	UBehaviorTree* GetBehaviorTree() const;
-
 	
 protected:
 	// AI 기본 정보	
@@ -59,11 +59,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,Category = "AI/Weapon")
 	TObjectPtr<class UCAIWeaponComponent> WeaponComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI|Move")
-	TObjectPtr<class UC_CharacterMovementComponent> MoveComponent;
+	TObjectPtr<class UC_CharacterMovementComponent> AIMoveComponent;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "AI|Behavior")
 	TObjectPtr<UCBehaviorTreeComponent> BehaviorTreeComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "AI/BehaviorTree")
 	UBehaviorTree* BehaviorTree;
+public:
+	UC_CharacterMovementComponent* GetAIMovement()const;
+	UStatusComponent* GetStatusComponent()const { return StatusComponent; }
+	
 	
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
 	// float MaxHP;

@@ -1,5 +1,7 @@
 ﻿#include "Component/C_StateComponent.h"
 
+#include "EmberPlayerCharacter.h"
+
 UC_StateComponent::UC_StateComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -20,6 +22,11 @@ void UC_StateComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 bool UC_StateComponent::IsIdleMode() const
 {
 	return CurrentStateType == EStateType::Idle;
+}
+
+bool UC_StateComponent::IsAnimMode() const
+{
+	return CurrentStateType == EStateType::Anim;
 }
 
 bool UC_StateComponent::IsEquipMode() const
@@ -60,6 +67,11 @@ bool UC_StateComponent::IsDetectMode() const
 void UC_StateComponent::SetIdleMode()
 {
 	CurrentStateType = EStateType::Idle;
+}
+
+void UC_StateComponent::SetAnimMode()
+{
+	CurrentStateType = EStateType::Anim;
 }
 
 void UC_StateComponent::SetEquipMode()

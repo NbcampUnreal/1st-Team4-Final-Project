@@ -22,19 +22,25 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-private:
-	UPROPERTY(VisibleAnywhere)
-	USphereComponent* SpitCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonSpit|Damage")
+	float Damage = 5.f;
 
-	UPROPERTY(VisibleAnywhere)
-	UNiagaraComponent* SpitEffect;
-	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonSpit|VFX")
 	UNiagaraSystem* SpitNiagara;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonSpit|VFX")
+	UNiagaraSystem* ImpactNiagara;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonSpit|VFX")
+	UNiagaraComponent* SpitEffect;
+
+	UPROPERTY()
+	USphereComponent* SpitCollision;
+
+	UPROPERTY()
 	UProjectileMovementComponent* SpitMovement;
 
+private:
 	AActor* TargetActor = nullptr;
 
 	UFUNCTION()

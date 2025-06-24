@@ -15,13 +15,15 @@ enum class EFlySpeedType : uint8
 {
 	Fly_Stationary UMETA(DisplayName = "Fly_Stationary"),
 	Fly_Move UMETA(DisplayName = "Fly_Movement"),
-	Fly_Swoop UMETA(DisplayName = "Fly_Swoop")
+	Fly_Swoop UMETA(DisplayName = "Fly_Swoop"),
+	Max UMETA(DisplayName = "Max")
 };
 
 UENUM()
 enum class EStateType : uint8
 {
 	Idle UMETA(DisplayName = "Idle"),
+	Anim UMETA(DisplayName = "Anim"),
 	Detect UMETA(DisplayName = "Detect"),
 	Equip UMETA(DisplayName = "Equip"),
 	Action UMETA(DisplayName = "Action"),

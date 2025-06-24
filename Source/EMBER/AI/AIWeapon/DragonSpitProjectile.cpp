@@ -3,6 +3,9 @@
 #include "Components/SphereComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
+#include "GameFrameWork/Character.h"
+#include "Kismet/GameplayStatics.h"
 
 ADragonSpitProjectile::ADragonSpitProjectile()
 {
@@ -12,16 +15,21 @@ ADragonSpitProjectile::ADragonSpitProjectile()
 	SpitCollision->InitSphereRadius(15.f);
 	SpitCollision->SetCollisionProfileName("Custom");
 	SpitCollision->IgnoreActorWhenMoving(this, true);
-	SpitCollision->OnComponentHit.AddDynamic(this, &ADragonSpitProjectile::OnHit);
 	SetRootComponent(SpitCollision);
 
 	SpitEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SpitEffect"));
 	SpitEffect->SetupAttachment(SpitCollision);
+	if (SpitNiagara == nullptr)
+	{
+		UE_LOG(LogTemp,Error,L"Dragon.cpp, niagara is null");
+	}
+	else
+	SpitEffect->SetAsset(SpitNiagara);
 	SpitEffect->SetAutoActivate(false);
 
 	SpitMovement = CreateDefaultSubobject<UProjectileMovementComponent>(FName("SpitMovement"));
-	SpitMovement->InitialSpeed = 1000.f;
-	SpitMovement->MaxSpeed = 1000.f;
+	SpitMovement->InitialSpeed = 3000.f;
+	SpitMovement->MaxSpeed = 3000.f;
 	SpitMovement->bRotationFollowsVelocity = true;
 	SpitMovement->bShouldBounce = false;
 
@@ -31,6 +39,8 @@ ADragonSpitProjectile::ADragonSpitProjectile()
 void ADragonSpitProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SpitCollision->OnComponentHit.AddDynamic(this, &ADragonSpitProjectile::OnHit);
 }
 
 void ADragonSpitProjectile::SetTargetActor(AActor* Target)
@@ -53,6 +63,30 @@ void ADragonSpitProjectile::SetTargetActor(AActor* Target)
 void ADragonSpitProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (ImpactNiagara)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			GetWorld(),
+			ImpactNiagara,
+			Hit.ImpactPoint,
+			Hit.ImpactNormal.Rotation()
+			);
+	}
+
+	if (OtherActor && OtherActor != GetOwner())
+	{
+		if (ACharacter* Target = Cast<ACharacter>(OtherActor))
+		{
+			UGameplayStatics::ApplyDamage(
+				Target,
+				Damage,
+				GetInstigatorController(),
+				this,
+				UDamageType::StaticClass()
+				);
+		}
+	}
+	
 	Destroy();
 }
 

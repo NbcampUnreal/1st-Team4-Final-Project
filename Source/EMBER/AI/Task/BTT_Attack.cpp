@@ -59,7 +59,7 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 
 	weapon->DoAction(AttackIndex);
 
-	return EBTNodeResult::Succeeded;
+	return EBTNodeResult::InProgress;
 }
 
 EBTNodeResult::Type UBTT_Attack::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -123,11 +123,15 @@ void UBTT_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 		UE_LOG(LogTemp, Error, L"task state is null");
 		return;
 	}
-
+	if (state->IsHittdMode() == true)
+	{
+		FinishLatentTask(OwnerComp,EBTNodeResult::Failed);
+		return;
+	}
 	bool bCheck = true;
-	UE_LOG(LogTemp, Warning, L"state %d", state->IsIdleMode());
+	// UE_LOG(LogTemp, Warning, L"state %d", state->IsIdleMode());
 	bCheck &= state->IsIdleMode();
-	UE_LOG(LogTemp, Warning, L"inaction %d", weapon->GetDoAction()->GetInAction());
+	// UE_LOG(LogTemp, Warning, L"inaction %d", weapon->GetDoAction()->GetInAction());
 	bCheck &= weapon->GetDoAction()->GetInAction() == false;
 
 	if (bCheck == true)

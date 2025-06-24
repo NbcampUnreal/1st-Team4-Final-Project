@@ -34,6 +34,11 @@ bool UCBehaviorTreeComponent::IsWaitMode()
 	return GetType() == EAnimalState::Idle;
 }
 
+bool UCBehaviorTreeComponent::IsAnimMode()
+{
+	return GetType() == EAnimalState::Anim;
+}
+
 bool UCBehaviorTreeComponent::IsGuardMode()
 {
 	return GetType() == EAnimalState::Guard;
@@ -168,6 +173,11 @@ void UCBehaviorTreeComponent::SetIdleMode()
 	ChangeType(EAnimalState::Idle);
 }
 
+void UCBehaviorTreeComponent::SetAnimMode()
+{
+	ChangeType(EAnimalState::Anim);
+}
+
 void UCBehaviorTreeComponent::SetGuardMode()
 {
 	ChangeType(EAnimalState::Guard);
@@ -289,5 +299,5 @@ void UCBehaviorTreeComponent::SetAttackState(EDragonAttackState InState)
 {
 	if (Blackboard == nullptr) return;
 
-	Blackboard->SetValueAsEnum(AttackStateKey, static_cast<uint8>(InState));
+	Blackboard->SetValueAsEnum(AttackStateKey, (uint8)(InState));
 }

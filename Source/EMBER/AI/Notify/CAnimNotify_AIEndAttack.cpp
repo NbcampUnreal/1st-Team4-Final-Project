@@ -35,7 +35,6 @@ void UCAnimNotify_AIEndAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 		UE_LOG(LogTemp, Error, L"AIBeginAttack weapon Component is null");
 		return;
 	}
-
 	weapon->GetDoAction()->End_DoAction();
 }
 

@@ -29,13 +29,21 @@ EBTNodeResult::Type UBTTaskNode_IdleAnimation::ExecuteTask(UBehaviorTreeComponen
 		UE_LOG(LogTemp, Error, L"ai is null");
 		return EBTNodeResult::Failed;
 	}
+	UC_StateComponent* state = Cast<UC_StateComponent>(ai->GetComponentByClass(UC_StateComponent::StaticClass()));
+	if (state == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"state component is null");
+		return EBTNodeResult::Failed;
+	}
+
 	UMontageSystemComponent* montage = Cast<UMontageSystemComponent>(ai->GetComponentByClass(UMontageSystemComponent::StaticClass()));
 	if(montage == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"montage is null");
 		return EBTNodeResult::Failed;
 	}
-
+	state->SetAnimMode();
+	controller->StopMovement();
 	montage->PlayMontage(Montage);
 	return EBTNodeResult::InProgress;
 }
@@ -43,17 +51,27 @@ EBTNodeResult::Type UBTTaskNode_IdleAnimation::ExecuteTask(UBehaviorTreeComponen
 EBTNodeResult::Type UBTTaskNode_IdleAnimation::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::AbortTask(OwnerComp, NodeMemory);
-	ABaseAI* ai = Cast<ABaseAI>(OwnerComp.GetOwner());
+	ACAIController* controller = Cast<ACAIController>(OwnerComp.GetOwner());
+	if (controller == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"controller is null");
+		return EBTNodeResult::Failed;
+	}
+	ABaseAI* ai = Cast<ABaseAI>(controller->GetPawn());
 	if (ai == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"ai is null");
 		return EBTNodeResult::Failed;
 	}
+	UC_StateComponent* state = Cast<UC_StateComponent>(ai->GetComponentByClass(UC_StateComponent::StaticClass()));
+	if (state == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"state is null");
+		return EBTNodeResult::Failed;
+	}
+	state->SetIdleMode();
 
-	UAnimInstance* animinstance = ai->GetMesh()->GetAnimInstance();
-	if(animinstance != nullptr && animinstance->Montage_IsPlaying(Montage) == true)
-		animinstance->Montage_Stop(0.2f, Montage);
-	
+	EndPlay(ai);
 
 	return EBTNodeResult::Aborted;
 }
@@ -67,6 +85,7 @@ void UBTTaskNode_IdleAnimation::TickTask(UBehaviorTreeComponent& OwnerComp, uint
 		UE_LOG(LogTemp, Error, L"controller is null");
 		return;
 	}
+	controller->StopMovement();
 	ABaseAI* ai = Cast<ABaseAI>(controller->GetPawn());
 	if (ai == nullptr)
 	{
@@ -79,15 +98,17 @@ void UBTTaskNode_IdleAnimation::TickTask(UBehaviorTreeComponent& OwnerComp, uint
 		UE_LOG(LogTemp, Error, L"ai is null");
 		return;
 	}
-
-	if (state->IsIdleMode() == false)
+	
+	if (state->IsAnimMode() == false)
 	{
+		EndPlay(ai);
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		return;
 	}
-	
+
 	if(IsMontageFinished(ai) == true)
 	{
+		EndPlay(ai);
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		return;
 	}
@@ -111,4 +132,10 @@ bool UBTTaskNode_IdleAnimation::IsMontageFinished(ABaseAI* AI)
 		return true;
 
 	return animinstance->Montage_IsPlaying(Montage) == false;
+}
+
+void UBTTaskNode_IdleAnimation::EndPlay(ABaseAI* AI)
+{
+	UAnimInstance* animinstance = AI->GetMesh()->GetAnimInstance();
+	animinstance->Montage_Stop(0.0f);
 }
