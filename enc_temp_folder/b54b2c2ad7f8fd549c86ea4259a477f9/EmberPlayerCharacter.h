@@ -120,8 +120,6 @@ private:
 	void OnTemperatureDropTick();
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	void SpawnRandomEnemy();
-	UFUNCTION(BlueprintCallable, Category = "AI")
-	void DestroyFarAIs(); // AI 삭제 함수
 	void SpawnAI(const TArray<TSubclassOf<APawn>>& AIClasses, const FString& AIType, const FVector& PlayerLocation);
 	void StartPassiveTemperatureDrop();
 	void StopPassiveTemperatureDrop();
@@ -129,7 +127,7 @@ private:
 	bool IsInBeginnerZone(const FVector& Location);
     FVector FindGroundLocation(UWorld* World, const FVector& Start, float TraceDistance = 3000.f);
 	FTimerHandle DestroyAITimerHandle;
-	
+	void DestroyFarAIs(); // AI 삭제 함수
 	FTimerHandle WarmingTimerHandle;
 
 	UPROPERTY(EditAnywhere, Category = "Temperature")

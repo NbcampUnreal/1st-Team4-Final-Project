@@ -598,6 +598,7 @@ void AEmberPlayerCharacter::SpawnRandomEnemy()
 	// 타입별 목표 수 설정
 	const int32 TargetAggressiveCount = 7;
 	const int32 TargetDefensiveCount = 3;
+	const float CountRadius = 1500.0f;
 
 	FVector MyLocation = GetActorLocation();
 
@@ -612,7 +613,7 @@ void AEmberPlayerCharacter::SpawnRandomEnemy()
 
 		for (auto& AIClass : AggressiveAIClasses)
 		{
-			if (Pawn->IsA(AIClass) && FVector::Dist(MyLocation, Pawn->GetActorLocation()) <= SpawnRadius)
+			if (Pawn->IsA(AIClass) && FVector::Dist(MyLocation, Pawn->GetActorLocation()) <= CountRadius)
 			{
 				AggressiveCount++;
 				break;
@@ -620,7 +621,7 @@ void AEmberPlayerCharacter::SpawnRandomEnemy()
 		}
 		for (auto& AIClass : DefensiveAIClasses)
 		{
-			if (Pawn->IsA(AIClass) && FVector::Dist(MyLocation, Pawn->GetActorLocation()) <= SpawnRadius)
+			if (Pawn->IsA(AIClass) && FVector::Dist(MyLocation, Pawn->GetActorLocation()) <= CountRadius)
 			{
 				DefensiveCount++;
 				break;
@@ -662,6 +663,7 @@ void AEmberPlayerCharacter::DestroyFarAIs()
 {
 	FVector PlayerLocation = GetActorLocation();
 	TArray<APawn*> AIsToDestroy;
+	const float CountRadius = 1500.0f;
 	// 1. 삭제 대상 AI 수집
 	for (TActorIterator<APawn> It(GetWorld()); It; ++It)
 	{
@@ -693,7 +695,7 @@ void AEmberPlayerCharacter::DestroyFarAIs()
 
 		// 거리 체크
 		float Distance = FVector::Dist(PlayerLocation, Pawn->GetActorLocation());
-		if (Distance > SpawnRadius)
+		if (Distance > CountRadius)
 		{
 			AIsToDestroy.Add(Pawn);
 		}
