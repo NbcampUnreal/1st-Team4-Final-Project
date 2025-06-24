@@ -10,6 +10,7 @@ class UEmberAbilitySystemComponent;
 class UEmberLocalPlayer;
 class AEmberPlayerCharacter;
 class AEmberPlayerController;
+class UEmberAbilityCost;
 
 UENUM(BlueprintType)
 enum class EEmberAbilityActivationPolicy : uint8
@@ -58,13 +59,16 @@ protected:
 	//~UGameplayAbility interface
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
 	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
-
+	virtual bool CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+	virtual void ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
 	UFUNCTION(BlueprintCallable, Category="Ember|Ability")
 	void GetMovementDirection(EEmberDirection& OutDirection, FVector& OutMovementVector) const;
-
 	
 protected:
 	// Defines how this ability is meant to activate.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ember|Ability Activation")
 	EEmberAbilityActivationPolicy ActivationPolicy;
+
+	UPROPERTY(EditDefaultsOnly, Instanced, Category = Costs)
+	TArray<TObjectPtr<UEmberAbilityCost>> AdditionalCosts;
 };

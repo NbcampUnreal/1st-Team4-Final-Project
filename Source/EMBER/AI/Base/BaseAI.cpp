@@ -13,11 +13,14 @@
 #include "Managers/EquipmentManagerComponent.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "Item/Drop/LootTable.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 ABaseAI::ABaseAI()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("Status Component"));
 	MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("Montage Component"));
 	EquipComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("Equip Component"));
@@ -126,8 +129,8 @@ void ABaseAI::MulticastHitted_Implementation(float Damage, FDamageEvent const& D
 		UE_LOG(LogTemp, Error, L"hp %f", StatusComponent->GetHp());
 	}
 
-	if (DamageData.Character != nullptr)
-		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
+	// if (DamageData.Character != nullptr)
+	// 	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
 
 }
 
@@ -135,6 +138,21 @@ void ABaseAI::OnRep_Hitted()
 {
 	if (DamageData.Character != nullptr)
 		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageData.Character->GetActorLocation()));
+}
+
+void ABaseAI::PlaySound(AISoundCategory InSoundType)
+{
+	if (SoundAttenuation == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"[%s :: %s] SoundAttenuation is null", *GetClass()->GetName(), TEXT(__FUNCTION__));
+		return;
+	}
+	if (AISounds[(int32)InSoundType] == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"[%s :: %s] %s is null", *GetClass()->GetName(), TEXT(__FUNCTION__), *UEnum::GetValueAsString(InSoundType));
+		return;
+	}
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AISounds[(int32)InSoundType], GetActorLocation(), FRotator::ZeroRotator, 1.0f, 1.0f, 0.0f, SoundAttenuation);
 }
 
 void ABaseAI::OnDeath()
@@ -202,4 +220,15 @@ UBehaviorTree* ABaseAI::GetBehaviorTree() const
 		return nullptr;
 	}
 	return BehaviorTree;
+}
+
+void ABaseAI::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (bDebug == true)
+	{
+		const FSoundAttenuationSettings& sound = SoundAttenuation->Attenuation;
+		DrawDebugSphere(GetWorld(),GetActorLocation(), sound.FalloffDistance,30,FColor::Blue);
+		DrawDebugSphere(GetWorld(),GetActorLocation(), sound.AttenuationShapeExtents.X,30,FColor::Green);
+	}
 }

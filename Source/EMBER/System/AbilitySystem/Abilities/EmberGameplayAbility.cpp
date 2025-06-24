@@ -11,6 +11,7 @@
 #include "GameInfo/GameplayTags.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "System/AbilitySystem/EmberAbilitySystemComponent.h"
+#include "System/AbilitySystem/Costs/EmberAbilityCost.h"
 
 UEmberGameplayAbility::UEmberGameplayAbility(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -189,6 +190,42 @@ bool UEmberGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyst
 	}
 
 	return true;
+}
+
+bool UEmberGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	if (Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags) == false || ActorInfo == nullptr)
+	{
+		return false;
+	}
+
+	for (const TObjectPtr<UEmberAbilityCost>& AdditionalCost : AdditionalCosts)
+	{
+		if (AdditionalCost != nullptr)
+		{
+			if (false == AdditionalCost->CheckCost(this, Handle, ActorInfo, OptionalRelevantTags))
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+void UEmberGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
+{
+	Super::ApplyCost(Handle, ActorInfo, ActivationInfo);
+
+	for (const TObjectPtr<UEmberAbilityCost>& AdditionalCost : AdditionalCosts)
+	{
+		if (AdditionalCost != nullptr)
+		{
+			AdditionalCost->ApplyCost(this, Handle, ActorInfo, ActivationInfo);
+		}
+	}
 }
 
 void UEmberGameplayAbility::GetMovementDirection(EEmberDirection& OutDirection, FVector& OutMovementVector) const
