@@ -37,6 +37,9 @@ public:
 private:
 	void OnLook(const FInputActionValue& Value);
 
+public:
+	virtual void PostInitProperties() override;
+
 private:
 	ACharacter* OwnerCharacter;
 	bool bFixedCamera;

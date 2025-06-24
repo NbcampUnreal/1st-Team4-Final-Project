@@ -11,12 +11,7 @@ UC_CameraComponent::UC_CameraComponent()
 void UC_CameraComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	OwnerCharacter = Cast<ACharacter>(GetOwner());
-	if(OwnerCharacter == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Owner Character is null"));
-		return;
-	}
+	
 	bFixedCamera = false;
 	bControlRotation = false;
 }
@@ -44,4 +39,15 @@ void UC_CameraComponent::OnLook(const FInputActionValue& Value)
 
 	OwnerCharacter->AddControllerYawInput(controlVector.X * GetWorld()->GetDeltaSeconds() * HorizontalLook);
 	OwnerCharacter->AddControllerPitchInput(controlVector.Y * GetWorld()->GetDeltaSeconds() * VerticalLook);
+}
+
+void UC_CameraComponent::PostInitProperties()
+{
+	Super::PostInitProperties();
+	OwnerCharacter = Cast<ACharacter>(GetOwner());
+	if (OwnerCharacter == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Owner Character is null"));
+		return;
+	}
 }
