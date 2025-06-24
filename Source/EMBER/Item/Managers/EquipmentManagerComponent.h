@@ -159,7 +159,7 @@ public:
 	AEquipmentBase* GetEquippedActor(EWeaponHandType WeaponHandType) const;
 	UInventoryEquipmentManagerComponent* GetInventoryEquipmentManager() const;
 	UItemInstance* GetEquippedItemInstance(EEquipmentSlotType EquipmentSlotType) const;
-
+	
 public:
 	void Attack();
 	UFUNCTION()

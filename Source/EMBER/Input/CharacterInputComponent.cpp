@@ -85,21 +85,21 @@ void UCharacterInputComponent::InputTag_QuickSlot_Weapon_Primary()
 {
 	FGameplayEventData Payload;
 	Payload.EventMagnitude = (int32)EEquipState::Weapon_Primary;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EmberGameplayTags::GameplayEvent_ChangeEquip, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EmberGameplayTags::GameplayEvent_QuickSlot_Handle, Payload);
 }
 
 void UCharacterInputComponent::InputTag_QuickSlot_Utility_Primary()
 {
 	FGameplayEventData Payload;
 	Payload.EventMagnitude = (int32)EEquipState::Utility_Primary;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EmberGameplayTags::GameplayEvent_ChangeEquip, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EmberGameplayTags::GameplayEvent_QuickSlot_Handle, Payload);
 }
 
 void UCharacterInputComponent::InputTag_QuickSlot_Utility_Secondary()
 {
 	FGameplayEventData Payload;
 	Payload.EventMagnitude = (int32)EEquipState::Utility_Secondary;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EmberGameplayTags::GameplayEvent_ChangeEquip, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EmberGameplayTags::GameplayEvent_QuickSlot_Handle, Payload);
 
 }
 
@@ -107,12 +107,12 @@ void UCharacterInputComponent::InputTag_QuickSlot_Utility_Tertiary()
 {
 	FGameplayEventData Payload;
 	Payload.EventMagnitude = (int32)EEquipState::Utility_Tertiary;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EmberGameplayTags::GameplayEvent_ChangeEquip, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EmberGameplayTags::GameplayEvent_QuickSlot_Handle, Payload);
 }
 
 void UCharacterInputComponent::InputTag_QuickSlot_Utility_Quaternary()
 {
 	FGameplayEventData Payload;
 	Payload.EventMagnitude = (int32)EEquipState::Utility_Quaternary;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EmberGameplayTags::GameplayEvent_ChangeEquip, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), EmberGameplayTags::GameplayEvent_QuickSlot_Handle, Payload);
 }

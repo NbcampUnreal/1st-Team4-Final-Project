@@ -6,9 +6,19 @@
 #include "ItemFragment_Equipable_Attachment.h"
 #include "ItemFragment_Equipable_Utility.generated.h"
 
-/**
- * 
- */
+USTRUCT()
+struct FConsumableEffect
+{
+	GENERATED_BODY()
+	
+public:
+	UPROPERTY(EditDefaultsOnly, meta=(Categories="ItemAttribute.Comsumable"))
+	FGameplayTag EffectTag;
+
+	UPROPERTY(EditDefaultsOnly)
+	float Magnitude = 0.f;
+};
+
 UCLASS()
 class EMBER_API UItemFragment_Equipable_Utility : public UItemFragment_Equipable_Attachment
 {
@@ -20,4 +30,10 @@ public:
 public:
 	UPROPERTY(EditDefaultsOnly)
 	EUtilityType UtilityType = EUtilityType::Count;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FRarityStatRangeSet> RarityStatRangeSets;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FConsumableEffect> ConsumableEffects;
 };

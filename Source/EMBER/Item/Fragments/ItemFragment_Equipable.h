@@ -64,7 +64,7 @@ public:
 	FRarityStatRangeSet();
 	
 public:
-	UPROPERTY(EditDefaultsOnly, meta=(Categories="SetByCaller"))
+	UPROPERTY(EditDefaultsOnly, meta=(Categories="ItemAttribute"))
 	FGameplayTag StatTag;
 	
 	UPROPERTY(EditDefaultsOnly, EditFixedSize)
