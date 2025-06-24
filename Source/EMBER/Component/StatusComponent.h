@@ -34,10 +34,10 @@ public:
 
 public:
 	UStatusComponent();
-
+	
 protected:
 	virtual void BeginPlay() override;
-
+	
 public:
 	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetMaxHp(float InAmount);
@@ -65,7 +65,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Status")
 	void Damage(float InAmount);
 	UFUNCTION(BlueprintCallable, Category="Status")
-	void UseStamina(float InAmount);	
+	void UseStamina(float InAmount);
+	UFUNCTION(BlueprintCallable, Category="Status")
+	void AddHP(float InAmount);
 	UFUNCTION(BlueprintCallable, Category="Status")
 	void AddTemperature(float InAmount);
 	UFUNCTION(BlueprintCallable, Category="Status")
