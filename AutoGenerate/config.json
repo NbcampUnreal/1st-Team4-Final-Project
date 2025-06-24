@@ -2,12 +2,54 @@
     "ProjectRootPath":  "..",
     "UnrealEngineVersion":  "5.5",
     "UnrealEngineRootPath":  "C:\\Program Files\\Epic Games\\UE_5.5",
+    "MainVcxprojPath":  "Intermediate\\ProjectFiles\\EMBER.vcxproj",
+    "MainVcxprojFiltersPath":  "Intermediate\\ProjectFiles\\EMBER.vcxproj.filters",
+    "LogPath":  "Logs\\Watcher.log",
     "WatchPaths":  [
+                       ".",
                        "Source",
                        "Plugins"
                    ],
+    "WatchFileExtensions":  [
+                                ".cpp",
+                                ".h",
+                                ".hpp",
+                                ".c",
+                                ".inl"
+                            ],
     "GenerateScript":  "GenerateProjectFile.ps1",
     "DebounceTimeMs":  300000,
     "DebounceTimeForModifiedMs":  100,
-    "DebounceTimeForOtherEventsMs":  100
+    "DryRun":  false,
+    "DebounceTimeForOtherEventsMs":  100,
+    "MainUprojectPath":  "EMBER.uproject",
+    "IgnoredNamePatterns":  [
+                                ".obj",
+                                ".pdb",
+                                ".tmp",
+                                ".user",
+                                ".log",
+                                ".ilk",
+                                ".ipch",
+                                ".sdf",
+                                ".vs",
+                                ".VC.opendb",
+                                ".suo",
+                                ".ncb",
+                                ".bak",
+                                "~",
+                                ".swp",
+                                ".lock"
+                            ],
+    "IgnoredDirs":  [
+                        "/saved/",
+                        "/binaries/",
+                        "/build/",
+                        "/deriveddata/",
+                        "/staging/",
+                        "/unrealbuildtool/",
+                        "/logs/",
+                        "/backup/"
+                    ],
+    "BackupDir":  "backup"
 }
