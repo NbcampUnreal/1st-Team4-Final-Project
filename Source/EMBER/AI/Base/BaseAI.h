@@ -8,16 +8,7 @@
 #include "Engine/TargetPoint.h"
 #include "BaseAI.generated.h"
 
-
 class UBehaviorTree;
-UENUM(BlueprintType)
-enum class AISoundCategory : uint8
-{
-	MoveSound UMETA(DisplayName = "Move"),
-	AttackSound UMETA(DisplayName = "Attack"),
-	HitSound UMETA(DisplayName = "Hit"),
-	DeathSound UMETA(DisplayName = "Death")
-};
 
 UCLASS()
 class EMBER_API ABaseAI : public ACharacter
@@ -25,6 +16,7 @@ class EMBER_API ABaseAI : public ACharacter
 	GENERATED_BODY()
 public:
 	FDamagesData GetDamagesData()const { return DamageData; }
+	
 public:
 	ABaseAI();
 	virtual void BeginPlay() override;
@@ -44,7 +36,8 @@ public:
 	// virtual float GetAttackPower() const { return AttackPower; }
 	UBehaviorTree* GetBehaviorTree() const;
 
-	
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	// AI 기본 정보	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
@@ -66,6 +59,7 @@ protected:
 	UBehaviorTree* BehaviorTree;
 public:
 	UC_CharacterMovementComponent* GetAIMovement()const;
+	UStatusComponent* GetStatusComponent()const { return StatusComponent; }
 	
 	
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
@@ -97,10 +91,18 @@ private:
 	void MulticastHitted(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 	UFUNCTION()
 	void OnRep_Hitted();
+public:
+	UFUNCTION(BlueprintCallable, Category="Sound")
+	void PlaySound(AISoundCategory InSoundType);
 
 private:
 	UPROPERTY(ReplicatedUsing = "OnRep_Hitted")
 	FDamagesData DamageData;
-};
+	UPROPERTY(EditAnywhere, Category="Sound")
+	USoundBase* AISounds[(int32)AISoundCategory::Max];
+	UPROPERTY(EditAnywhere, Category="Sound")
+	USoundAttenuation* SoundAttenuation;
+	UPROPERTY(EditAnywhere, Category="Debug")
+	bool bDebug;
 
-//TODOS State, Move 컴포넌트 있고어야할듯
+};

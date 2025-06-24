@@ -25,6 +25,11 @@ UBTT_FlyMoveTo();
 	AActor* TargetActor;
 	FVector TargetLocation = FVector::ZeroVector;
 	FVector CurrentLocation;
+	FVector Direction;
+	UBlackboardComponent* BlackboardComp;
+	
+	UPROPERTY(EditAnywhere)
+	float AcceptableRadius = 200.f;
 	
 	// UPROPERTY(EditAnywhere, Category = "Blackboard")
 	// FBlackboardKeySelector TargetActorKey;
