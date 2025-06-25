@@ -82,7 +82,12 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetCurrentStamina() const;
-
+	// AI 소환 반경
+	UPROPERTY(EditAnywhere, Category = "AI")
+	float SpawnRadius;
+	// AI 최대 소환 갯수
+	UPROPERTY(EditAnywhere, Category = "AI")
+	int32 MaxAttempts;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -91,7 +96,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
 
-public:
 	//~IAbilitySystemInterface Overrides
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	//~End of IAbilitySystemInterface Overrides
@@ -117,8 +121,17 @@ private:
 	float TemperatureDropInterval;
     
 	void OnTemperatureDropTick();
+	UFUNCTION(BlueprintCallable, Category = "AI")
+	void SpawnRandomEnemy();
+	UFUNCTION(BlueprintCallable, Category = "AI")
+	void DestroyFarAIs(); // AI 삭제 함수
+	void SpawnAI(const TArray<TSubclassOf<APawn>>& AIClasses, const FString& AIType, const FVector& PlayerLocation);
 	void StartPassiveTemperatureDrop();
 	void StopPassiveTemperatureDrop();
+	bool IsInExclusionZone(const FVector& SpawnLocation);
+	bool IsInBeginnerZone(const FVector& Location);
+    FVector FindGroundLocation(UWorld* World, const FVector& Start, float TraceDistance = 3000.f);
+	FTimerHandle DestroyAITimerHandle;
 	
 	FTimerHandle WarmingTimerHandle;
 
@@ -139,6 +152,11 @@ private:
 	UPROPERTY()
 	TObjectPtr<class UArmorComponent> ArmorComponent;
 
+	UPROPERTY(EditAnywhere, Category = "AI")
+	TArray<TSubclassOf<APawn>> AggressiveAIClasses;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	TArray<TSubclassOf<APawn>> DefensiveAIClasses;
 #pragma region Inputs
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
@@ -169,7 +187,7 @@ protected:
 
 	float NormalSpeed = 200.0f;
 	float SprintSpeed = 350.0f;
-
+	
 	
 private:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
