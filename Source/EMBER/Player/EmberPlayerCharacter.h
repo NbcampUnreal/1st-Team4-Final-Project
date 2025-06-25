@@ -121,16 +121,21 @@ private:
 	float TemperatureDropInterval;
     
 	void OnTemperatureDropTick();
+	bool FindNearestGround(UWorld* World, const FVector& Origin, FVector& OutLocation, float Radius);
+	
+	// AI 자동 소환용 파라미터 및 함수 모음
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	void SpawnRandomEnemy();
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	void DestroyFarAIs(); // AI 삭제 함수
+	
 	void SpawnAI(const TArray<TSubclassOf<APawn>>& AIClasses, const FString& AIType, const FVector& PlayerLocation);
 	void StartPassiveTemperatureDrop();
 	void StopPassiveTemperatureDrop();
 	bool IsInExclusionZone(const FVector& SpawnLocation);
 	bool IsInBeginnerZone(const FVector& Location);
     FVector FindGroundLocation(UWorld* World, const FVector& Start, float TraceDistance = 3000.f);
+	FVector AdjustLocationForCollision(UWorld* World, const FVector& Candidate);
 	FTimerHandle DestroyAITimerHandle;
 	
 	FTimerHandle WarmingTimerHandle;

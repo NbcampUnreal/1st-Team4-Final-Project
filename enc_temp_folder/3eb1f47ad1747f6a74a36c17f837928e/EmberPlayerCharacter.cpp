@@ -544,8 +544,8 @@ void AEmberPlayerCharacter::SpawnAI(const TArray<TSubclassOf<APawn>>& AIClasses,
 		return;
 	}
 
-	// ▶▶▶ 지면에서 40유닛 위로 위치 조정 ◀◀◀
-	const float ZOffset = 40.0f;
+	// ▶▶▶ 지면에서 50~100유닛 위로 위치 조정 ◀◀◀
+	const float ZOffset = 100.0f;
 	FVector FinalSpawnLocation = SpawnLocation + FVector(0, 0, ZOffset);
 
 	FActorSpawnParameters SpawnParams;
