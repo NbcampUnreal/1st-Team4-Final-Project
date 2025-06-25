@@ -65,12 +65,6 @@ void UEmberGameplayAbility_QuickSlot_Handle::ActivateAbility(const FGameplayAbil
 
 	EEquipmentSlotType EquipmentSlotType = UEquipmentManagerComponent::ConvertToEquipmentSlotType(EWeaponHandType::Count, NewEquipState);
 	UItemInstance* ItemInstance = InventoryEquipmentManager->GetItemInstance(EquipmentSlotType);
-	if (ItemInstance == nullptr)
-	{
-		CancelAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true);
-		return;
-	}
-	
 	if (IsConsumableItem(ItemInstance))
 	{
 		FGameplayEventData Payload;
