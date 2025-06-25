@@ -92,7 +92,7 @@ struct TStructOpsTypeTraits<FEquipmentList> : public TStructOpsTypeTraitsBase2<F
 	};
 };
 
-UCLASS(BlueprintType)
+UCLASS(BlueprintType, Blueprintable, meta=(BlueprintSpawnableComponent))
 class EMBER_API UInventoryEquipmentManagerComponent : public UPawnComponent
 {
 	GENERATED_BODY()

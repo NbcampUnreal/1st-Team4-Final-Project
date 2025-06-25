@@ -60,7 +60,7 @@ void AEmberWorldPickupable::OnRep_PickupInfo()
 		PickupableMeshPath = ItemTemplate.PickupableMesh;
 	}
 
-	if (MeshComponent->GetStaticMesh() == nullptr && PickupableMeshPath.IsNull() == false)
+	if (MeshComponent && MeshComponent->GetStaticMesh() == nullptr && PickupableMeshPath.IsNull() == false)
 	{
 		if (UStaticMesh* PickupableMesh = UEmberAssetManager::GetAssetByPath(PickupableMeshPath))
 		{

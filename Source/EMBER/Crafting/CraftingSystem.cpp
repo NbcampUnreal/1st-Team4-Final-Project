@@ -6,6 +6,8 @@
 #include "Crafting/CraftingRecipeManager.h"
 #include "GameplayTagsManager.h"
 #include "Item/Crafting/CraftingBuilding.h"
+#include "System/EmberAssetManager.h"
+#include "UI/Data/EmberItemData.h"
 
 UCraftingSystem::UCraftingSystem()
 {
@@ -239,10 +241,41 @@ EItemRarity UCraftingSystem::EvaluateItemRarity(const FCraftingRecipeRow& Recipe
 	return EItemRarity::Common;
 }
 
-bool UCraftingSystem::ConsumeMaterials_Server(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
+bool UCraftingSystem::ConsumeMaterials_Server_Unsafe(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
 {
 	// TODO: Implement actual material consumption logic
 	UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: ConsumeMaterials_Server - STUB! Material consumption logic needed here."));
+
+	if (!Player) return false;
+
+	UInventoryManagerComponent* PlayerInventoryManager = Player->FindComponentByClass<UInventoryManagerComponent>();
+	if (!PlayerInventoryManager) return false;
+	
+	for (const TPair<FGameplayTag, int32>& SelectedMainIngredient : Recipe.Ingredients)
+	{
+		FGameplayTag IngredientTag = SelectedMainIngredient.Key;
+		int32 IngredientAmount = SelectedMainIngredient.Value;
+		
+		TSubclassOf<UItemTemplate> ItemTemplateClass = UCraftingRecipeManager::Get().GetRepresentativeItemForTag(IngredientTag);
+		int32 ItemID = UEmberItemData::Get().FindItemTemplateIDByClass(ItemTemplateClass);
+
+		TArray<FFindItemData> ItemDataList;
+		bool bFound = PlayerInventoryManager->FindItemByID(ItemID, ItemDataList);
+		if (bFound == false)
+			return false;
+		
+		int32 RequiredAmount = IngredientAmount;
+		for (const FFindItemData& FindItemData : ItemDataList)
+		{
+			int32 ConsumeCount = FMath::Clamp(RequiredAmount, 0, FindItemData.ItemCount);
+			PlayerInventoryManager->RemoveItem_Unsafe(FindItemData.ItemSlotPos, ConsumeCount);
+			RequiredAmount -= ConsumeCount;
+
+			if (RequiredAmount <= 0)
+				break;
+		}
+	}
+	
 	return true; 
 }
 

@@ -1,11 +1,12 @@
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Item/Crafting/CraftingBuilding.h"
+#include "Crafting/CraftingBuilding.h"
+#include "Interaction/Actors/EmberWorldInteractable.h"
 #include "EternalFlame.generated.h"
 
 class UParticleSystemComponent;
 class USphereComponent;
+class UInventoryManagerComponent;
 
 UCLASS()
 class EMBER_API AEternalFlame : public ACraftingBuilding

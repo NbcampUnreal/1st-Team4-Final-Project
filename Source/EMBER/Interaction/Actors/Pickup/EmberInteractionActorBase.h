@@ -2,23 +2,20 @@
 
 #pragma once
 
-#include "GameFramework/Actor.h"
+#include "CoreMinimal.h"
 #include "Interaction/Actors/EmberWorldPickupable.h"
-#include "EmberFoliageBase.generated.h"
+#include "EmberInteractionActorBase.generated.h"
 
-class AEmberInteractionActorBase;
 class UItemTemplate;
+class USphereComponent;
 
 UCLASS()
-class EMBER_API AEmberFoliageBase : public AEmberWorldPickupable
+class EMBER_API AEmberInteractionActorBase : public AEmberWorldPickupable
 {
 	GENERATED_BODY()
-	
-public:
-	AEmberFoliageBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-protected:
-	virtual void BeginPlay() override;
+public:
+	AEmberInteractionActorBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "PickupableItemBase|Info")

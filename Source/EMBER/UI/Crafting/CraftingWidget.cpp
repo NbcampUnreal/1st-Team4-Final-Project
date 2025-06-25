@@ -11,6 +11,8 @@
 #include "Item/ItemInstance.h"
 #include "Component/MontageSystemComponent.h"
 #include "Components/WidgetSwitcher.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
+#include "Managers/ItemManagerComponent.h"
 
 UCraftingWidget::UCraftingWidget(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -23,14 +25,7 @@ UCraftingWidget::UCraftingWidget(const FObjectInitializer& ObjectInitializer)
 }
 
 void UCraftingWidget::NativeConstruct()
-{
-    Super::NativeConstruct();
-
-    if (MainMaterialSelectorWidget)
-    {
-        MainMaterialSelectorWidget->OnSelectionChanged.AddDynamic(this, &UCraftingWidget::HandleMainMaterialSelectionChanged);
-    }
-
+{    Super::NativeConstruct();
     if (RecipeListWidget)
     {
         RecipeListWidget->OnRecipeListItemSelected.AddDynamic(this, &UCraftingWidget::HandleRecipeSelectedFromList);
@@ -38,12 +33,21 @@ void UCraftingWidget::NativeConstruct()
     
     if (SelectedRecipeDisplayWidget)
     {
-        SelectedRecipeDisplayWidget->OnCraftRequested.AddDynamic(this, &UCraftingWidget::HandleCraftRequest);
+        SelectedRecipeDisplayWidget->OnCraftRequested.Clear();
+        SelectedRecipeDisplayWidget->OnCraftRequested.AddUniqueDynamic(this, &UCraftingWidget::HandleCraftRequest);
     }
+
+    UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(this);
+    MessageListenerHandle = MessageSubsystem.RegisterListener(MessageChannelTag, this, &ThisClass::ConstructUI);
 }
 
 void UCraftingWidget::NativeDestruct()
 {
+    DestructUI();
+	
+    UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(this);
+    MessageSubsystem.UnregisterListener(MessageListenerHandle);
+    
     Super::NativeDestruct();
 }
 
@@ -88,6 +92,24 @@ void UCraftingWidget::InitializeForStation(ACraftingBuilding* InStationActor, FN
     RefreshAll();
 }
 
+void UCraftingWidget::ConstructUI(FGameplayTag Channel, const FCraftingWidgetInitializeMessage& Message)
+{
+    InitializeForStation(Message.CraftingBuilding, NAME_None);
+}
+
+void UCraftingWidget::DestructUI()
+{
+    if (RecipeListWidget)
+    {
+        RecipeListWidget->OnRecipeListItemSelected.RemoveDynamic(this, &UCraftingWidget::HandleRecipeSelectedFromList);
+    }
+    
+    if (SelectedRecipeDisplayWidget)
+    {
+        SelectedRecipeDisplayWidget->OnCraftRequested.RemoveDynamic(this, &UCraftingWidget::HandleCraftRequest);
+    }
+}
+
 void UCraftingWidget::PopulateActiveRecipeList()
 {
     ActiveRecipeList.Empty();
@@ -129,10 +151,6 @@ void UCraftingWidget::PopulateActiveRecipeList()
 void UCraftingWidget::ClearSelectedMainIngredients()
 {
     CurrentSelectedMainIngredients.Empty();
-    if (MainMaterialSelectorWidget)
-    {
-        MainMaterialSelectorWidget->ClearStagedMaterials();
-    }
 }
 
 void UCraftingWidget::UpdateSelectedRecipe(int32 Direction)
@@ -185,7 +203,6 @@ void UCraftingWidget::RefreshAll()
             SelectedRecipeDisplayWidget->ClearDetails();
         }
     }
-    
 }
 
 void UCraftingWidget::AttemptCraftCurrentRecipe()
@@ -194,7 +211,8 @@ void UCraftingWidget::AttemptCraftCurrentRecipe()
     
     AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(GetOwningPlayerPawn());
     UCraftingSystem* Sys = Player ? Player->FindComponentByClass<UCraftingSystem>() : nullptr;
-    if (!Sys || !Player) return;
+    UItemManagerComponent* ItemManagerComponent = Player->FindComponentByClass<UItemManagerComponent>();
+    if (!Sys || !Player || !ItemManagerComponent) return;
     
     if (CurrentStationActorRef)
     {
@@ -217,10 +235,10 @@ void UCraftingWidget::AttemptCraftCurrentRecipe()
     FCraftingResult CraftResult = Sys->Client_PreCraftCheck(Player, NamedRecipe.RecipeData, MainToUse);
     if (CraftResult.bWasSuccessful)
     {
-        if (CraftingOutputBoxWidget)
+        /*if (CraftingOutputBoxWidget)
         {
             CraftingOutputBoxWidget->TryAddItem(CraftResult.ItemTemplateClass, CraftResult.Rarity, CraftAmount);
-        }
+        }*/
         Sys->RequestServerCraft(Player, CurrentStationActorRef, NamedRecipe.RecipeRowName, MainToUse);
     }
     

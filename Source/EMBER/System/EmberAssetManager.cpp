@@ -15,6 +15,7 @@ void UEmberAssetManager::StartInitialLoading()
 	GetAssetData();
 	GetPawnData();
 	GetUIData();
+	GetRecipeData();
 }
 
 UEmberAssetManager& UEmberAssetManager::Get()
@@ -47,6 +48,11 @@ const UEmberAssetData& UEmberAssetManager::GetAssetData()
 const UEmberPawnData& UEmberAssetManager::GetPawnData()
 {
 	return GetOrLoadTypedGameData<UEmberPawnData>(PawnDataPath);
+}
+
+const UCraftingRecipeManager& UEmberAssetManager::GetRecipeData()
+{
+	return GetOrLoadTypedGameData<UCraftingRecipeManager>(RecipeDataPath);
 }
 
 UPrimaryDataAsset* UEmberAssetManager::LoadGameDataOfClass(TSubclassOf<UPrimaryDataAsset> DataClass, const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath, FPrimaryAssetType PrimaryAssetType)

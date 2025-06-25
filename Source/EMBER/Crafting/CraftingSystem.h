@@ -69,8 +69,9 @@ public:
     
     UFUNCTION(BlueprintPure, Category = "Crafting")
     int32 GetMaterialScore(const FGameplayTag& MaterialTag) const;
-    
-    bool ConsumeMaterials_Server(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
+
+    // 소비 가능한 아이템이 인벤토리에 있음을 보장해야함
+    bool ConsumeMaterials_Server_Unsafe(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients);
 
 private:
     void InitializeTagMap();

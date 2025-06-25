@@ -230,7 +230,7 @@ void UEmberGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,
 
 void UEmberGameplayAbility::GetMovementDirection(EEmberDirection& OutDirection, FVector& OutMovementVector) const
 {
-	FVector FacingVector;
+	FVector FacingVector = FVector::ZeroVector;
 	
 	if (AEmberPlayerCharacter* EmberCharacter = GetEmberCharacterFromActorInfo())
 	{

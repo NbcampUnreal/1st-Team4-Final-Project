@@ -8,12 +8,10 @@
 #include "UI/Data/EmberItemData.h"
 #include "UI/Data/EmberUIData.h"
 #include "UI/Data/EmberPawnData.h"
+#include "Crafting/CraftingRecipeManager.h"
 
 #include "EmberAssetManager.generated.h"
 
-/**
- * 
- */
 UCLASS(Config=Game)
 class EMBER_API UEmberAssetManager : public UAssetManager
 {
@@ -32,7 +30,6 @@ public:
 
 	template<typename AssetType>
 	static AssetType* GetAssetByPath(const TSoftObjectPtr<AssetType>& AssetPointer, bool bKeepInMemory = true);
-
 	
 	template<typename AssetType>
 	static TSubclassOf<AssetType> GetSubclassByPath(const TSoftClassPtr<AssetType>& AssetPointer, bool bKeepInMemory = true);
@@ -44,6 +41,7 @@ public:
 	const UEmberItemData& GetItemData();
 	const UEmberAssetData& GetAssetData();
 	const UEmberPawnData& GetPawnData();
+	const UCraftingRecipeManager& GetRecipeData();
 	
 protected:
 	UPrimaryDataAsset* LoadGameDataOfClass(TSubclassOf<UPrimaryDataAsset> DataClass, const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath, FPrimaryAssetType PrimaryAssetType);
@@ -81,7 +79,9 @@ protected:
 
 	UPROPERTY(Config)
 	TSoftObjectPtr<UEmberPawnData> PawnDataPath;
-	
+
+	UPROPERTY(Config)
+	TSoftObjectPtr<UCraftingRecipeManager> RecipeDataPath;
 	
 	UPROPERTY(Transient)
 	TMap<TObjectPtr<UClass>, TObjectPtr<UPrimaryDataAsset>> GameDataMap;
