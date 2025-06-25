@@ -36,7 +36,7 @@ void UEmberGameplayAbility_Interact_Pickup::ActivateAbility(const FGameplayAbili
 		return;
 	}
 
-	AEmberInteractionActorBase* PickupableActor = Cast<AEmberInteractionActorBase>(InteractableActor);
+	AEmberWorldPickupable* PickupableActor = Cast<AEmberWorldPickupable>(InteractableActor);
 	if (PickupableActor == nullptr)
 	{
 		CancelAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true);

@@ -44,15 +44,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "RecipeList", meta = (BindWidget))
 	TObjectPtr<UCraftingRecipeListWidget> RecipeListWidget;
-
-	UPROPERTY(BlueprintReadOnly, Category = "RecipeList", meta = (BindWidget))
-	TObjectPtr<UWidgetSwitcher> CenterContentSwitcher;
-
-	UPROPERTY(BlueprintReadOnly, Category = "RecipeList", meta = (BindWidget))
-	TObjectPtr<UCraftingIngredientWidget> GeneralRecipeIngredientsWidget;
-
-	UPROPERTY(BlueprintReadOnly, Category = "RecipeList", meta = (BindWidget))
-	TObjectPtr<UCraftingMainMaterialWidget> MainMaterialSelectorWidget;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "RecipeList", meta = (BindWidget))
 	TObjectPtr<UCraftingResultWidget> SelectedRecipeDisplayWidget;

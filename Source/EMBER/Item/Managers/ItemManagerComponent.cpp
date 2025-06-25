@@ -112,7 +112,7 @@ void UItemManagerComponent::Server_EquipmentToEquipment_Implementation(UInventor
 	}
 }
 
-bool UItemManagerComponent::TryPickupItem(AEmberInteractionActorBase* PickupableItemActor)
+bool UItemManagerComponent::TryPickupItem(AEmberWorldPickupable* PickupableItemActor)
 {
 	if (HasAuthority() == false)
 		return false;

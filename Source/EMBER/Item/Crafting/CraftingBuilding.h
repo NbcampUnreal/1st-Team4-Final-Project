@@ -39,11 +39,9 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Crafting|Output", Replicated)
     TObjectPtr<UInventoryManagerComponent> OutputInventoryComponent;
-
-    /*
+    
     UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Crafting")
-    void Server_ExecuteCrafting(FName RecipeRowName, const TArray<FGameplayTag>& SelectedMainIngredientTags, const TArray<int32>& SelectedMainIngredientQuantities, AEmberPlayerCharacter* RequestingPlayer);
-    */
+    void Server_ExecuteCrafting(FName RecipeRowName, const TArray<FGameplayTag>& SelectedMainIngredientTags, const TArray<int32>& SelectedMainIngredientQuantities, AEmberPlayerCharacter* RequestingPlayer); 
 
     UFUNCTION(BlueprintPure, Category = "Crafting")
     UAnimMontage* GetCraftingAnimation() const { return CraftingAnimation; }

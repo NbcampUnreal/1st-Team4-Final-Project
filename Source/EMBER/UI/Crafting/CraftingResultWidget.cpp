@@ -11,7 +11,7 @@ UCraftingResultWidget::UCraftingResultWidget(const FObjectInitializer& ObjectIni
     : Super(ObjectInitializer)
 {
     ResultIngredientLineEntryClass = nullptr;
-    CraftButton = nullptr;
+    Button_Craft = nullptr;
     CurrentTargetRecipeRowPtr_EditorOnly = nullptr;
 }
 
@@ -19,10 +19,11 @@ void UCraftingResultWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    if (CraftButton)
+    if (Button_Craft)
     {
         UE_LOG(LogTemp, Warning, TEXT("[DEBUG 1] CraftButton is VALID, binding OnClicked."));
-        CraftButton->OnClicked.AddDynamic(this, &UCraftingResultWidget::HandleCraftButtonClicked);
+        Button_Craft->OnReleased.RemoveDynamic(this, &UCraftingResultWidget::HandleCraftButtonClicked);
+        Button_Craft->OnReleased.AddUniqueDynamic(this, &UCraftingResultWidget::HandleCraftButtonClicked);
     }
     else
     {
@@ -34,9 +35,9 @@ void UCraftingResultWidget::NativeDestruct()
 {
     Super::NativeDestruct();
 
-    if (CraftButton)
+    if (Button_Craft)
     {
-        CraftButton->OnClicked.RemoveDynamic(this, &UCraftingResultWidget::HandleCraftButtonClicked);
+        Button_Craft->OnReleased.Clear();
     }
 }
 
@@ -65,9 +66,9 @@ void UCraftingResultWidget::SetRecipeDetails(UCraftingRecipeManager* RecipeManag
 
     const bool bCanCraft = PopulateIngredientsDisplay(RecipeManager, InRecipeRow, PlayerOwnedIngredients, CraftingAmount);
 
-    if (CraftButton)
+    if (Button_Craft)
     {
-        CraftButton->SetIsEnabled(true);
+        Button_Craft->SetIsEnabled(true);
     }
 
     if (InfoTextDisplay)
@@ -121,9 +122,9 @@ void UCraftingResultWidget::ClearDetails()
     if (InfoTextDisplay) InfoTextDisplay->SetText(FText::GetEmpty());
     if (IngredientsDisplayBox) IngredientsDisplayBox->ClearChildren();
     
-    if (CraftButton)
+    if (Button_Craft)
     {
-        CraftButton->SetIsEnabled(false);
+        Button_Craft->SetIsEnabled(false);
     }
     
     K2_OnUpdateIconAndDescription(nullptr);
@@ -164,5 +165,9 @@ bool UCraftingResultWidget::PopulateIngredientsDisplay(UCraftingRecipeManager* R
 void UCraftingResultWidget::HandleCraftButtonClicked()
 {
     UE_LOG(LogTemp, Warning, TEXT("[DEBUG 2] CraftButton CLICKED! Broadcasting OnCraftRequested..."));
-    OnCraftRequested.Broadcast();
+    
+    if (OnCraftRequested.IsBound())
+    {
+        OnCraftRequested.Broadcast();
+    }
 }

@@ -69,7 +69,7 @@ void UEmberGameplayAbility_interact_Crafting::OnAfterPushWidget(UCommonActivatab
 
 	FCraftingWidgetInitializeMessage MyCraftingInitMessage;
 	MyCraftingInitMessage.CraftingBuilding = Cast<AEternalFlame>(InteractableActor);;
-	MessageSubsystem.BroadcastMessage(EmberGameplayTags::Message_Initialize_CraftinWidget, MyCraftingInitMessage);
+	MessageSubsystem.BroadcastMessage(EmberGameplayTags::Message_Initialize_CraftingWidget, MyCraftingInitMessage);
 
 	InPushedWidget->OnDeactivated().AddWeakLambda(this, [this]()
 	{

@@ -42,7 +42,7 @@ protected:
     virtual void NativeDestruct() override;
     
     UPROPERTY(BlueprintReadOnly, Category = "CraftingResult", meta = (BindWidget))
-    TObjectPtr<UButton> CraftButton;
+    TObjectPtr<UButton> Button_Craft;
     
     UPROPERTY(BlueprintReadOnly, Category = "CraftingResult", meta = (BindWidget))
     TObjectPtr<UVerticalBox> IngredientsDisplayBox;

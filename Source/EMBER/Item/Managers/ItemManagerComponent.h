@@ -8,7 +8,7 @@
 
 class UInventoryManagerComponent;
 class UInventoryEquipmentManagerComponent;
-class AEmberInteractionActorBase;
+class AEmberWorldPickupable;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class EMBER_API UItemManagerComponent : public UControllerComponent
@@ -33,11 +33,10 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
-	bool TryPickupItem(AEmberInteractionActorBase* PickupableItemActor);
+	bool TryPickupItem(AEmberWorldPickupable* PickupableItemActor);
 	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	bool TryAutoPickupItem(UItemInstance* ItemInstance);
-
 	
 protected:
 	UFUNCTION(BlueprintCallable, BlueprintPure)

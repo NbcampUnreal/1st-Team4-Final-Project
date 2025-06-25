@@ -1,6 +1,12 @@
 #include "Crafting/CraftingRecipeManager.h"
 #include "Item/ItemTemplate.h"
+#include "System/EmberAssetManager.h"
 #include "UI/Data/EmberItemData.h"
+
+const UCraftingRecipeManager& UCraftingRecipeManager::Get()
+{
+    return UEmberAssetManager::Get().GetRecipeData();
+}
 
 const FCraftingRecipeRow* UCraftingRecipeManager::GetRecipeRowByOutputItemID(int32 TemplateID) const
 {

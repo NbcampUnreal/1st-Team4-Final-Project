@@ -8,7 +8,7 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_MyInventory);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_OtherInventory);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_InventoryEquipment);
-	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_CraftinWidget);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_CraftingWidget);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Interaction_Notice);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Interaction_Progress);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_ActionHint_Notice);

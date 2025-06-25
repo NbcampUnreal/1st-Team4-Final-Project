@@ -44,7 +44,7 @@ void ACraftingBuilding::Server_ExecuteCrafting_Implementation(FName RecipeRowNam
 
     const FCraftingRecipeRow* RecipeDataPtr = CraftingSystem->RecipeManager->RecipeDataTable->FindRow<FCraftingRecipeRow>(RecipeRowName, TEXT("Server_ExecuteCrafting"));
     if (!RecipeDataPtr) return;
-
+    
     const FCraftingRecipeRow& RecipeData = *RecipeDataPtr;
     TMap<FGameplayTag, int32> SelectedMainIngredientsMap;
     for (int32 i = 0; i < SelectedMainIngredientTags.Num(); ++i)
@@ -57,17 +57,16 @@ void ACraftingBuilding::Server_ExecuteCrafting_Implementation(FName RecipeRowNam
 
     if (CraftingSystem->CanCraftRecipeAtStation(RecipeData, this->GetStationTag()) && CraftingSystem->HasRequiredMaterials(RequestingPlayer, RecipeData, SelectedMainIngredientsMap))
     {
-        CraftingSystem->ConsumeMaterials_Server(RequestingPlayer, RecipeData, SelectedMainIngredientsMap);
+        CraftingSystem->ConsumeMaterials_Server_Unsafe(RequestingPlayer, RecipeData, SelectedMainIngredientsMap);
         
         EItemRarity FinalRarity = CraftingSystem->EvaluateItemRarity(RecipeData, SelectedMainIngredientsMap);
         TSubclassOf<UItemTemplate> ResultItemTemplateClass = RecipeData.ItemTemplateClass;
 
         if (ResultItemTemplateClass)
         {
-            UInventoryManagerComponent* PlayerInventory = RequestingPlayer->FindComponentByClass<UInventoryManagerComponent>();
-            if (PlayerInventory)
+            if (OutputInventoryComponent)
             {
-                const int32 AddedAmount = PlayerInventory->TryAddItemByRarity(ResultItemTemplateClass, FinalRarity, 1);
+                const int32 AddedAmount = OutputInventoryComponent->TryAddItemByRarity(ResultItemTemplateClass, FinalRarity, 1);
                 if (AddedAmount > 0)
                 {
                     UE_LOG(LogTemp, Log, TEXT("[SERVER] Crafting Success! Added %s to player inventory."), *ResultItemTemplateClass->GetName());
