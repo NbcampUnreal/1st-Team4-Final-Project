@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "System/AbilitySystem/Abilities/EmberGameplayAbility.h"
-#include "GameplayAbility_ChangeEquip.generated.h"
+#include "EmberGameplayAbility_ChangeEquip.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EMBER_API UGameplayAbility_ChangeEquip : public UEmberGameplayAbility
+class EMBER_API UEmberGameplayAbility_ChangeEquip : public UEmberGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UGameplayAbility_ChangeEquip(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UEmberGameplayAbility_ChangeEquip(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
