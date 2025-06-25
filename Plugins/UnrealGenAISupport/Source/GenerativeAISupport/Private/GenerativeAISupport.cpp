@@ -1,4 +1,5 @@
-﻿#include "UObject/Class.h"
+// Copyright Epic Games, Inc. All Rights Reserved.
+
 #include "GenerativeAISupport.h"
 
 #define LOCTEXT_NAMESPACE "FGenerativeAISupportModule"
@@ -10,6 +11,7 @@ FGenerativeAISupportModule::FGenerativeAISupportModule()
 
 void FGenerativeAISupportModule::StartupModule()
 {
+	// Log to debug module loading
 	UE_LOG(LogTemp, Log, TEXT("FGenerativeAISupportModule::StartupModule called"));
 }
 

@@ -1,10 +1,11 @@
-﻿// Copyright Prajwal Shetty 2024. All rights Reserved. https://prajwalshetty.com/terms
+// Copyright Prajwal Shetty 2024. All rights Reserved. https://prajwalshetty.com/terms
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GenXAIChatStructs.generated.h"
 
+// Data structure for XAI Grok chat messages
 USTRUCT(BlueprintType)
 struct FGenXAIMessage
 {
@@ -17,6 +18,7 @@ struct FGenXAIMessage
     FString Content;
 };
 
+// Settings for the XAI Grok chat API request
 USTRUCT(BlueprintType)
 struct FGenXAIChatSettings
 {

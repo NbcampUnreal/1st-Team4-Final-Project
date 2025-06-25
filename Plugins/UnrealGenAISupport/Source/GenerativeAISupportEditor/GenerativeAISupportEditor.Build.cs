@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2025 Prajwal Shetty. All rights reserved.
+// Copyright (c) 2025 Prajwal Shetty. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the root directory of this
 // source tree or http://opensource.org/licenses/MIT.
 
@@ -17,7 +17,7 @@ public class GenerativeAISupportEditor : ModuleRules
 				"Core",
 				"CoreUObject",
 				"Engine",
-                "GenerativeAISupport",  // Depend on the runtime module
+				"GenerativeAISupport",  // Depend on the runtime module
 				"Json",                 // Add JSON support for serialization
 				"JsonUtilities"  
 			}

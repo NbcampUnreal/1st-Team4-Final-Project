@@ -1,0 +1,3 @@
+[submodule "Plugins/RAGAssistant"]
+	path = Plugins/RAGAssistant
+	url = https://github.com/Ektoba/RAGAssistant.git
