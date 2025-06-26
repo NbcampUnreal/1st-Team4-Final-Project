@@ -128,7 +128,7 @@ void UBTT_FlyMoveTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 	if (IsNearTargetLocation())
-	{
+	{ 
 		UE_LOG(LogTemp, Warning, TEXT("FlyMove Success"));
 		BaseAI->GetCharacterMovement()->MaxAcceleration = 0.0f;
 		BaseAI->GetCharacterMovement()->MaxFlySpeed = 100.0f;

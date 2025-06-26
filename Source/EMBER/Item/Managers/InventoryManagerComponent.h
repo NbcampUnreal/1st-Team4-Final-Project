@@ -15,6 +15,31 @@ class UEquipmentManagerComponent;
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnInventoryEntryChanged, const FIntPoint&/*ItemSlotPos*/, UItemInstance*, int32/*ItemCount*/)
 
+USTRUCT()
+struct FFindItemData
+{
+	GENERATED_BODY()
+	
+public:
+	FFindItemData() : ItemID(INDEX_NONE), ItemCount(0), ItemSlotPos(FIntPoint()) {}
+	
+	FFindItemData& operator=(const FFindItemData& Other)
+	{
+		if (this != &Other)
+		{
+			this->ItemID = Other.ItemID;
+			this->ItemCount = Other.ItemCount;
+			this->ItemSlotPos = Other.ItemSlotPos;
+		}
+		return *this;
+	}
+	
+public:
+	int32 ItemID = INDEX_NONE;
+	int32 ItemCount = 0;
+	FIntPoint ItemSlotPos;
+};
+
 USTRUCT(BlueprintType)
 struct FInventoryEntry : public FFastArraySerializerItem
 {
@@ -118,7 +143,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	int32 TryAddItemByRarity(TSubclassOf<UItemTemplate> ItemTemplateClass, EItemRarity ItemRarity, int32 ItemCount);
 
-private:
+public:
+	UFUNCTION()
+	bool FindItemByID(int32 ItemID, TArray<FFindItemData>& OutFindItemList);
+
+public:
 	void AddItem_Unsafe(const FIntPoint& ItemSlotPos, UItemInstance* ItemInstance, int32 ItemCount);
 	UItemInstance* RemoveItem_Unsafe(const FIntPoint& ItemSlotPos, int32 ItemCount);
 	

@@ -7,6 +7,7 @@
 #include "InventoryEquipmentManagerComponent.h"
 #include "ItemTemplate.h"
 #include "ItemInstance.h"
+#include "ToolMenusEditor.h"
 #include "Engine/ActorChannel.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/Data/EmberItemData.h"
@@ -425,6 +426,47 @@ int32 UInventoryManagerComponent::TryAddItemByRarity(TSubclassOf<UItemTemplate> 
 	}
 
 	return 0;
+}
+
+bool UInventoryManagerComponent::FindItemByID(int32 FindItemID, TArray<FFindItemData>& OutFindItemList)
+{
+	check(GetOwner()->HasAuthority());
+
+	OutFindItemList.Empty();
+	
+	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(FindItemID);
+	const TArray<FInventoryEntry>& Entries = GetAllEntries();
+
+	TArray<bool> Visibles;
+	Visibles.Init(false, Entries.Num());
+	
+	for (int32 idx = 0; idx < Entries.Num(); idx++)
+	{
+		if (Visibles[idx])
+			continue;
+		
+		if (UItemInstance* ItemInstance = Entries[idx].GetItemInstance())
+		{
+			int32 EntryItemID = ItemInstance->GetItemTemplateID();
+			int32 EntryItemCount = ItemInstance->GetItemCount();
+			
+			if (FindItemID == EntryItemID)
+			{
+				FIntPoint EntryItemPos(idx % InventorySlotCount.X, idx / InventorySlotCount.X);
+				
+				FFindItemData FindItemData;
+				FindItemData.ItemID = EntryItemID;
+				FindItemData.ItemCount = EntryItemCount;
+				FindItemData.ItemSlotPos = EntryItemPos;
+					
+				OutFindItemList.Emplace(FindItemData);
+
+				MarkSlotChecks(Visibles, true, EntryItemPos, ItemTemplate.SlotCount);
+			}
+		}
+	}
+	
+	return OutFindItemList.IsEmpty() == false;
 }
 
 void UInventoryManagerComponent::AddItem_Unsafe(const FIntPoint& ItemSlotPos, UItemInstance* ItemInstance, int32 ItemCount)

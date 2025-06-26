@@ -8,6 +8,7 @@
 #include "EmberWorldInteractable.generated.h"
 
 class UAbilitySystemComponent;
+class USphereComponent;
 
 UCLASS(Abstract, BlueprintType, Blueprintable)
 class EMBER_API AEmberWorldInteractable : public AActor, public IEmberInteractable
@@ -38,6 +39,9 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USphereComponent> InteractionCollision;
 	
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTagContainer RequiredTags;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interaction/Actors/Pickup/EmberPickupableItemBase.h"
+#include "Interaction/Actors/Pickup/EmberInteractionActorBase.h"
 #include "Item/Drop/LootTable.h"
 #include "PickupItemActor.generated.h"
 
@@ -11,7 +11,7 @@ class UUserWidget;
 class UNiagaraComponent;
 
 UCLASS()
-class EMBER_API APickupItemActor : public AEmberPickupableItemBase
+class EMBER_API APickupItemActor : public AEmberInteractionActorBase
 {
 	GENERATED_BODY()
 
