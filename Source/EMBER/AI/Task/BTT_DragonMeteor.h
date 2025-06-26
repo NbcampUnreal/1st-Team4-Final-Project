@@ -7,7 +7,6 @@
 class ADragon;
 class ACAIController;
 class UDragonAnimInstance;
-class UAnimMontage;
 
 UCLASS()
 class EMBER_API UBTT_DragonMeteor : public UBTTaskNode
@@ -18,12 +17,11 @@ public:
 	UBTT_DragonMeteor();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory) override;
 
+	void FinishFromLanded();
+
 protected:
 	UFUNCTION()
 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-
-	UFUNCTION()
-	void OnMontageTimeout();
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Meteor")
@@ -31,9 +29,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Meteor")
 	float LaunchZPower = 1000.f;
-
-	UPROPERTY(EditAnywhere, Category = "Meteor")
-	TSubclassOf<AActor> MeteorSpawnerClass;
 
 	UPROPERTY()
 	ADragon* Dragon;
@@ -46,8 +41,4 @@ private:
 
 	UPROPERTY()
 	UBehaviorTreeComponent* BTComp;
-	
-	void MeteorSpawn();
-
-	FTimerHandle MontageTimeoutHandle;
 };

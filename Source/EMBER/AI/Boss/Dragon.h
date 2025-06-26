@@ -7,7 +7,9 @@
 class ACAIController;
 class ADragonSpitProjectile;
 class ADragonBreathActor;
-class UBTT_DragonAttack;
+class UBTT_DragonMeteor;
+class ADragonMeteorSpawner;
+class UNiagaraSystem;
 
 UCLASS()
 class EMBER_API ADragon : public ABaseAI
@@ -17,6 +19,7 @@ class EMBER_API ADragon : public ABaseAI
 public:
 	ADragon();
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION()
 	void SpawnSpit();
@@ -28,12 +31,15 @@ public:
 	void StopBreath();
 
 	void Landed(const FHitResult& Hit) override;
+	virtual void OnDeath() override;
 
 	void SetLaunchZPower(float InZPower) { LaunchZPower = InZPower; }
 	float GetLaunchZPower() const { return LaunchZPower; }
 
-	UBTT_DragonAttack* GetCurrentAttackTask() const { return CurrentAttackTask; }
-	void SetCurrentAttackTask(UBTT_DragonAttack* Task) { CurrentAttackTask = Task; }
+	void SetActiveMeteorTask(UBTT_DragonMeteor* Task) { CurrentMeteorTask = Task; }
+	void StartMeteorPhase();
+	void UpdateOrbit(float DeltaTime);
+	bool HasStartedMeteorPhase() const { return bMeteorStarted; }
 
 	AActor* GetTargetActor() { return TargetActor; }
 
@@ -48,14 +54,33 @@ private:
 	ADragonBreathActor* CurrentBreath;
 
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ADragonMeteorSpawner> MeteorSpawnerClass; 
+
+	UPROPERTY()
+	ADragonMeteorSpawner* CurrentMeteorSpawner;
+
+	UPROPERTY()
+	UBTT_DragonMeteor* CurrentMeteorTask = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<ACAIController> AIController;
 
 	UPROPERTY(EditDefaultsOnly)
 	UCBehaviorTreeComponent* BTComp;
 
+	UPROPERTY(EditDefaultsOnly)
+	UNiagaraSystem* LandingEffect;
+
 	UPROPERTY()
 	AActor* TargetActor;
 
+	UPROPERTY()
+	float OrbitAngle = 0.f;
+	
+	UPROPERTY()
+	FVector OrbitCenter;
+
 	float LaunchZPower = 300.f;
-	UBTT_DragonAttack* CurrentAttackTask;
+	bool bMeteorStarted = false;
+	bool bOrbiting = false;
 };

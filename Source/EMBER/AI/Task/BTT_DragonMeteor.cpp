@@ -3,7 +3,6 @@
 #include "AI/CAIController.h"
 #include "AI/AnimInstance/DragonAnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 UBTT_DragonMeteor::UBTT_DragonMeteor()
 {
@@ -40,22 +39,17 @@ EBTNodeResult::Type UBTT_DragonMeteor::ExecuteTask(UBehaviorTreeComponent& Comp,
 	Dragon->GetCharacterMovement()->GravityScale = 0.f;
 	AIController->StopMovement();
 
-	float TotalLength = 0.f;
-	const int32 SectionCount = MeteorMontage->CompositeSections.Num();
-	for (int32 i = 0; i < SectionCount; ++i)
-		TotalLength += MeteorMontage->GetSectionLength(i);
-
-	Dragon->GetWorldTimerManager().SetTimer(
-		MontageTimeoutHandle,
-		this,
-		&UBTT_DragonMeteor::OnMontageTimeout,
-		TotalLength + 0.5f,
-		false
-	);
-
-	MeteorSpawn();
+	Dragon->SetActiveMeteorTask(this);
 	
 	return EBTNodeResult::InProgress;
+}
+
+void UBTT_DragonMeteor::FinishFromLanded()
+{
+	if (BTComp)
+	{
+		FinishLatentTask(*BTComp, EBTNodeResult::Succeeded);
+	}
 }
 
 void UBTT_DragonMeteor::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
@@ -67,25 +61,4 @@ void UBTT_DragonMeteor::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 	}
 
 	FinishLatentTask(*BTComp, EBTNodeResult::Succeeded);
-}
-
-void UBTT_DragonMeteor::OnMontageTimeout()
-{
-	if (BTComp)
-	{
-		FinishLatentTask(*BTComp, EBTNodeResult::Succeeded);
-	}
-}
-
-void UBTT_DragonMeteor::MeteorSpawn()
-{
-	if (!Dragon || !MeteorSpawnerClass) return;
-
-	const FVector SpawnLocation = Dragon->GetActorLocation() + FVector(0, 0, 2000.f);
-
-	GetWorld()->SpawnActor<AActor>(
-		MeteorSpawnerClass,
-		SpawnLocation,
-		FRotator::ZeroRotator
-	);
 }
