@@ -289,3 +289,10 @@ DerivedDataCache/*
 
 # Local content that should not be checked in
 LocalContent/*
+AutoGenerate/backup/
+
+.cursor/
+
+AutoGenerate/
+
+Plugins/UnrealGenAISupport/Content/Python/utils/__pycache__/
