@@ -38,7 +38,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Ember|Melee Attack")
 	TObjectPtr<UAnimMontage> AttackMontage;
 	
-	UPROPERTY(EditDefaultsOnly, Category="D1|Equipment")
+	UPROPERTY(EditDefaultsOnly, Category="Ember|Equipment")
 	float DefaultAttackRate = 1.f;
 
 private:

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFlag.h"
+#include "Fragments/ItemFragment_Equipable_Utility.h"
 #include "System/GameplayTagStackContainer.h"
 #include "UObject/Object.h"
 #include "ItemInstance.generated.h"
@@ -55,7 +56,7 @@ public:
 	const UItemFragment* FindFragmentByClass(TSubclassOf<UItemFragment> FragmentClass) const;
 
 	template <typename FragmentClass>
-	const FragmentClass* FindFragmentByClass() const
+	FragmentClass* FindFragmentByClass() const
 	{
 		return (FragmentClass*)FindFragmentByClass(FragmentClass::StaticClass());
 	}

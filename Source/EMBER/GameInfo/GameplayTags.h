@@ -5,8 +5,10 @@
 namespace EmberGameplayTags
 {
 	// Message
-	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_Inventory);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_MyInventory);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_OtherInventory);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_InventoryEquipment);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Initialize_CraftingWidget);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Interaction_Notice);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_Interaction_Progress);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_ActionHint_Notice);
@@ -46,10 +48,15 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Dash_Check);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Dash_Active);
 	
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_QuickSlot_Handle);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ChangeEquip);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Consume_Item);
+	
 	
 	// ItemAttribute
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemAttribute_BaseDamage);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemAttribute_Defense);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemAttribute_Consumable_Add_Health);
 
 	// Status
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Interact);
@@ -61,6 +68,9 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_HitReact);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Dash);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Jump);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_QuickSlot_Handle);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_ChangeEquip);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Consume_Item);
 
 	// Gameplay Event
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_Begin);
@@ -68,7 +78,9 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_End);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Trace);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Reward_Item);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_QuickSlot_Handle);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_ChangeEquip);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Consume_Item);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_HitReact);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Jump);
 

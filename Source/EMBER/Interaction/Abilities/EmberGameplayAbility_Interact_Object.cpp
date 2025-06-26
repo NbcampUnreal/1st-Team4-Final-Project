@@ -14,9 +14,7 @@ UEmberGameplayAbility_Interact_Object::UEmberGameplayAbility_Interact_Object(con
 
 	FGameplayTagContainer DefaultAbilityTags;
 	DefaultAbilityTags.AddTag(EmberGameplayTags::Ability_Interact_Object);
-
 	SetAssetTags(DefaultAbilityTags);
-	
 	ActivationOwnedTags.AddTag(EmberGameplayTags::Status_Interact);
 }
 
