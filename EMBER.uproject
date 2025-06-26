@@ -94,6 +94,10 @@
 		{
 			"Name": "GenAI_DeepseekProvider",
 			"Enabled": false
+		},
+		{
+			"Name": "GenerativeAISupport",
+			"Enabled": false
 		}
 	]
 }
