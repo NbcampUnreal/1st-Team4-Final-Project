@@ -12,7 +12,9 @@
 				"Engine",
 				"AIModule",
 				"GameplayAbilities",
-				"Blutility"
+				"Blutility",
+				"UMG",
+				"CommonUI"
 			]
 		}
 	],

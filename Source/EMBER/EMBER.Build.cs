@@ -40,6 +40,7 @@ public class EMBER : ModuleRules
                         "WorldPartitionEditor",
                         "EditorFramework",
                         "EditorSubsystem",
+                        "OnlineSubsystem",
                     });
         PublicIncludePaths.AddRange(
                     new string[]

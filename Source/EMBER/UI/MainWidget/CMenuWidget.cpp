@@ -1,47 +1,43 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "CMenuWidget.h"
 
 void UCMenuWidget::Setup()
 {
-	AddToViewport();
+	this->AddToViewport();
 
-	TObjectPtr<UWorld> world = GetWorld();
-	if (ensure(world != nullptr) == false)
-		return;
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
 
-	TObjectPtr<APlayerController> playerController = world->GetFirstPlayerController();
-	if (ensure(playerController != nullptr) == false)
-		return;
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (!ensure(PlayerController != nullptr)) return;
 
-	FInputModeUIOnly input;
-	input.SetWidgetToFocus(TakeWidget());
-	input.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	FInputModeUIOnly InputModeData;
+	InputModeData.SetWidgetToFocus(this->TakeWidget());
+	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	playerController->SetInputMode(input);
-	playerController->bShowMouseCursor = true;
+	PlayerController->SetInputMode(InputModeData);
+
+	PlayerController->bShowMouseCursor = true;
 }
 
 void UCMenuWidget::Teardown()
 {
-	RemoveFromViewport();
+	this->RemoveFromViewport();
 
-	TObjectPtr<UWorld> world = GetWorld();
-	if (ensure(world != nullptr) == false)
-		return;
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
 
-	TObjectPtr<APlayerController> playerController = world->GetFirstPlayerController();
-	if (ensure(playerController != nullptr) == false)
-		return;
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (!ensure(PlayerController != nullptr)) return;
 
-	FInputModeGameOnly input;
+	FInputModeGameOnly InputModeData;
+	PlayerController->SetInputMode(InputModeData);
 
-	playerController->SetInputMode(input);
-	playerController->bShowMouseCursor = false;
+	PlayerController->bShowMouseCursor = false;
 }
 
-void UCMenuWidget::SetMenuInterface(TObjectPtr<IMenuInterface> InMenuInterface)
+void UCMenuWidget::SetMenuInterface(IMenuInterface* InMenuInterface)
 {
 	MenuInterface = InMenuInterface;
 }
+
+	
