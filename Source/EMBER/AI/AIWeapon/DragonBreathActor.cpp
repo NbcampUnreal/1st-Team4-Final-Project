@@ -1,9 +1,9 @@
 #include "AI/AIWeapon/DragonBreathActor.h"
+#include "AI/Boss/Dragon.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 ADragonBreathActor::ADragonBreathActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -13,14 +13,24 @@ void ADragonBreathActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (BreathEffect)
+	Dragon = Cast<ADragon>(UGameplayStatics::GetActorOfClass(GetWorld(), ADragon::StaticClass()));
+
+	if (Dragon && BreathEffect)
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-			GetWorld(),
+		BreathEffectComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
 			BreathEffect,
-			GetActorLocation(),
-			GetActorRotation()
+			Dragon->GetMesh(),
+			FName("MouthSocket"),
+			FVector::ZeroVector,
+			FRotator(0.f, -90.f, 0.f),
+			EAttachLocation::SnapToTargetIncludingScale,
+			true
 			);
+
+		if (BreathEffectComponent)
+		{
+			BreathEffectComponent->SetRelativeScale3D(FVector(2.f));
+		}
 	}
 }
 
@@ -33,54 +43,70 @@ void ADragonBreathActor::Tick(float DeltaTime)
 
 void ADragonBreathActor::SprayDamage()
 {
-	const FVector Origin = GetActorLocation();
-	const FRotator ForwardRot = GetActorRotation();
+	if (!Dragon) return;
+	
+	FVector Forward = FVector::ZeroVector;
 
-	const int32 NumTraces = FMath::Max(TraceCount, 1);
-	const float AngleStep = (NumTraces > 1) ? TotalSpreadAngle / (NumTraces - 1) : 0.f;
-
-	for (int32 i = 0; i < NumTraces; ++i)
+	if (Dragon)
 	{
-		const float AngleOffset = -TotalSpreadAngle / 2.f + i * AngleStep;
-		const FRotator SpreadRot = ForwardRot + FRotator(0.f, AngleOffset, 0.f);
-		const FVector End = Origin + SpreadRot.Vector() * TraceLength;
+		if (USkeletalMeshComponent* Mesh = Dragon->GetMesh())
+		{
+			const FTransform SocketTransform = Mesh->GetSocketTransform("MouthSocket", RTS_World);
+			FRotator AdjustedRot = SocketTransform.GetRotation().Rotator();
+			AdjustedRot.Pitch += -90.f;
+			Forward = AdjustedRot.Vector();
+		}
+	}
+
+	if (Forward.IsNearlyZero())
+	{
+		Forward = GetActorForwardVector();
+	}
+	
+	const FVector Start = GetActorLocation();
+	const FVector End = Start + Forward * BoxLength;
+	const FVector BoxHalfExtent(BoxLength * 0.5f, BoxWidth * 0.5f, BoxHeight * 0.5f);
+	const FQuat BoxRotation = FRotationMatrix::MakeFromX(Forward).ToQuat();
 
 #if !(UE_BUILD_SHIPPING)
-		DrawDebugSphere(
+		DrawDebugBox(
 			GetWorld(),
-			End,
-			TraceRadius,
-			12,
-			FColor::Red,
+			(Start + End) * 0.5f,
+			BoxHalfExtent,
+			BoxRotation,
+			FColor::Orange,
 			false,
-			0.f,
-			0,
-			1.f);
+			0.05f
+			);
 #endif
 
-		FHitResult Hit;
-		FCollisionQueryParams Params;
-		Params.AddIgnoredActor(this);
+	TArray<FHitResult> Hits;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
 
-		bool bHit = GetWorld()->SweepSingleByChannel(
-			Hit,
-			Origin,
-			End,
-			FQuat::Identity,
-			ECC_Pawn,
-			FCollisionShape::MakeSphere(TraceRadius),
-			Params);
+	if (Dragon)
+	{
+		Params.AddIgnoredActor(Dragon);
+	}
+	
+	bool bHit = GetWorld()->SweepMultiByChannel(
+							Hits,
+								Start,
+								End,
+								BoxRotation,
+								ECC_Pawn,
+								FCollisionShape::MakeBox(BoxHalfExtent),
+								Params);
 
-		if (bHit && Hit.GetActor() && !DamagedActors.Contains(Hit.GetActor()))
+	if (bHit)
+	{
+		for (const FHitResult& Hit : Hits)
 		{
-			UGameplayStatics::ApplyDamage(
-				Hit.GetActor(),
-				Damage,
-				GetInstigatorController(),
-				this,
-				UDamageType::StaticClass());
+			ACharacter* HitCharacter = Cast<ACharacter>(Hit.GetActor());
+			if (!HitCharacter || HitCharacter == Dragon) continue;
+			if (HitCharacter->GetClass() == Dragon->GetClass()) continue;
 
-			DamagedActors.Add(Hit.GetActor());
+			//HitDatas[CurrAttackIndex].SendDamage(Dragon, this, HitCharacter);
 		}
 	}
 }

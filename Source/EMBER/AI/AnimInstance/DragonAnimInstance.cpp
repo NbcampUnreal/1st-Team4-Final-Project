@@ -70,3 +70,13 @@ void UDragonAnimInstance::AnimNotify_Land()
 	}
 }
 
+void UDragonAnimInstance::AnimNotify_Glide()
+{
+	if (Dragon)
+	{
+		//if (!Dragon->)
+	}
+}
+
+
+

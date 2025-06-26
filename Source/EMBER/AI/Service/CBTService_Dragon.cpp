@@ -159,6 +159,11 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 				AIState->SetSpitAttackMode();
 			}
 		}
+		else if (MissCount >= 10)
+		{
+			AIState->SetBreathAttackMode();
+			Weapon->ResetMissStack();
+		}
 		else
 		{
 			AIState->SetNormalAttackMode();
@@ -170,11 +175,6 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		{
 			Weapon->IncreaseMissStack();
 		}
-	}
-	else if (MissCount >= 5)
-	{
-		AIState->SetBreathAttackMode();
-		Weapon->ResetMissStack();
 	}
 	else
 	{

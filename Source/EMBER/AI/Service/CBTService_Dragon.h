@@ -22,7 +22,7 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Action")
-	float ActionRange = 2000.f;
+	float ActionRange = 1500.f;
 
 	UPROPERTY(EditAnywhere, Category = "Action")
 	float MeleeRange = 1000.f;
