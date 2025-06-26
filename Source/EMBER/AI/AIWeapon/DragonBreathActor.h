@@ -4,7 +4,10 @@
 #include "GameFramework/Actor.h"
 #include "DragonBreathActor.generated.h"
 
+struct FDamageData;
+class ADragon;
 class UNiagaraSystem;
+class UNiagaraComponent;
 
 UCLASS()
 class EMBER_API ADragonBreathActor : public AActor
@@ -18,27 +21,31 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonBreath|Damage")
-	float Damage = 10.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonBreath|Collision")
+	float BoxLength = 1200.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonBreath|Collision")
+	float BoxWidth = 200.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonBreath|Trace")
-	float TraceLength = 1200.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonBreath|Trace")
-	float TraceRadius = 100.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonBreath|Trace")
-	int32 TraceCount = 10;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonBreath|Trace")
-	float TotalSpreadAngle = 30.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonBreath|Collision")
+	float BoxHeight = 200.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DragonBreath|VFX")
 	UNiagaraSystem* BreathEffect;
 
+	UPROPERTY()
+	UNiagaraComponent* BreathEffectComponent;
+
+	UPROPERTY()
+	ADragon* Dragon;
+
+	UPROPERTY(EditAnywhere, Category = "DragonBreath|HitData")
+	TArray<FDamageData> HitDatas;
+
 private:
 	TSet<AActor*> DamagedActors;
 	FTimerHandle DestroyHandle;
+	int32 CurrAttackIndex;
 
 	void SprayDamage();
 };
