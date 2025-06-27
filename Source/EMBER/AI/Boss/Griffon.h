@@ -1,11 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/Base/PassiveAI.h"
+#include "AI/Base/BaseAI.h"
 #include "Griffon.generated.h"
 
 UCLASS()
-class EMBER_API AGriffon : public APassiveAI
+class EMBER_API AGriffon : public ABaseAI
 {
 	GENERATED_BODY()
 

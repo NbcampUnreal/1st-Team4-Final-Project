@@ -24,6 +24,11 @@ bool UC_StateComponent::IsIdleMode() const
 	return CurrentStateType == EStateType::Idle;
 }
 
+bool UC_StateComponent::IsRunMode() const
+{
+	return CurrentStateType == EStateType::Run;
+}
+
 bool UC_StateComponent::IsAnimMode() const
 {
 	return CurrentStateType == EStateType::Anim;
@@ -67,6 +72,11 @@ bool UC_StateComponent::IsDetectMode() const
 void UC_StateComponent::SetIdleMode()
 {
 	CurrentStateType = EStateType::Idle;
+}
+
+void UC_StateComponent::SetRunMode()
+{
+	CurrentStateType = EStateType::Run;
 }
 
 void UC_StateComponent::SetAnimMode()

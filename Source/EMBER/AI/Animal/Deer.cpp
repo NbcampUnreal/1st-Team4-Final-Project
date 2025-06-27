@@ -9,25 +9,24 @@ ADeer::ADeer()
 {
 	// MaxHP = 100;
 	// CurrentHP = MaxHP;
-	bIsDie = false;
+	// bIsDie = false;
 }
 
-float ADeer::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
-                        AActor* DamageCauser)
-{
-	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-	UDeer_AnimInstance* AnimInstance = Cast<UDeer_AnimInstance>(GetMesh()->GetAnimInstance());
-	ACAIController* AIController = Cast<ACAIController>(GetController());
-	AActor* TargetActor = Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
-
-	GetController()->StopMovement();
-	if (AnimInstance)
-	{
-		AnimInstance->StopAllMontages(0.5f);
-		AnimInstance->PlayStateMontage(EAnimActionType::HitFront);
-	}
-
-
-	return ActualDamage;
-}
+// float ADeer::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
+//                         AActor* DamageCauser)
+// {
+// 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+//
+// 	UDeer_AnimInstance* AnimInstance = Cast<UDeer_AnimInstance>(GetMesh()->GetAnimInstance());
+// 	ACAIController* AIController = Cast<ACAIController>(GetController());
+//
+// 	GetController()->StopMovement();
+// 	if (AnimInstance)
+// 	{
+// 		AnimInstance->StopAllMontages(0.5f);
+// 		AnimInstance->PlayStateMontage(EAnimActionType::HitFront);
+// 	}
+//
+//
+// 	return ActualDamage;
+// }

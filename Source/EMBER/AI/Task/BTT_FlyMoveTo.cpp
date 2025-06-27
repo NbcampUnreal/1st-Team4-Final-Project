@@ -90,16 +90,16 @@ bool UBTT_FlyMoveTo::IsNearGround()
 		ECC_Visibility,
 		Params
 	);
-	// DrawDebugLine(
-	// 	BaseAI->GetWorld(),
-	// 	Start,
-	// 	End,
-	// 	bHit ? FColor::Green : FColor::Red, // 맞으면 초록, 아니면 빨강
-	// 	false,
-	// 	0.1f,
-	// 	0,
-	// 	2.0f
-	// );
+	DrawDebugLine(
+		BaseAI->GetWorld(),
+		Start,
+		End,
+		bHit ? FColor::Green : FColor::Red, // 맞으면 초록, 아니면 빨강
+		false,
+		0.1f,
+		0,
+		2.0f
+	);
 
 
 	return bHit;
