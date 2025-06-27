@@ -51,6 +51,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_ChangeEquip,								"Ability.ChangeEquip");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Consume_Item,							"Ability.Consume_item");
 	
+	UE_DEFINE_GAMEPLAY_TAG(Ability_BodyTemperature,							"Ability.BodyTemperature");
+	
 	// ItemAttribute
 	UE_DEFINE_GAMEPLAY_TAG(ItemAttribute_BaseDamage,						"ItemAttribute.BaseDamage");
 	UE_DEFINE_GAMEPLAY_TAG(ItemAttribute_Defense,							"ItemAttribute.Defense");
@@ -70,6 +72,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_QuickSlot_Handle,							"Status.QuickSlot.Handle");
 	UE_DEFINE_GAMEPLAY_TAG(Status_ChangeEquip,								"Status.ChangeEquip");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Consume_Item,								"Status.Consume.Item");
+	
+	UE_DEFINE_GAMEPLAY_TAG(Status_BodyTemperature,							"Status.BodyTemperature");
 
 	// Gameplay Event
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_Begin,						"GameplayEvent.Montage.Begin");

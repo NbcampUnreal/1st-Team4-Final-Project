@@ -93,7 +93,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Status")
 	float MaxStamina = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Status")
-	float MaxTemperature = 100.0f;
+	float MaxTemperature = 50.f;
 	UPROPERTY(EditAnywhere, Category = "Status")
 	float MaxFatigueLevel = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Status")
