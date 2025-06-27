@@ -33,7 +33,7 @@ void UEmberGameInstance::Init()
 		SessionInterface = Subsystem->GetSessionInterface();
 		if (SessionInterface.IsValid()) {
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UEmberGameInstance::OnCreateSessionComplete);
-			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UEmberGameInstance::OnDestroySessionComplete);
+			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UEmberGameInstance::OnCreateSessionComplete);
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UEmberGameInstance::OnFindSessionsComplete);
 			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UEmberGameInstance::OnJoinSessionComplete);
 		}
