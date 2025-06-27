@@ -7,6 +7,8 @@
 
 #include "CServerRow.h"
 #include "MenuInterface.h"
+#include "GameFramework/GameModeBase.h"
+#include "kismet/GameplayStatics.h"
 
 UCMainMenuWidget::UCMainMenuWidget(const FObjectInitializer& ObjectInitializer)
 {
@@ -20,6 +22,10 @@ bool UCMainMenuWidget::Initialize()
 {
 	bool Success = Super::Initialize();
 	if (!Success) return false;
+
+	if (ensure(SoloButton != nullptr) == false)
+		return false;
+	SoloButton->OnClicked.AddDynamic(this, &UCMainMenuWidget::SoloServer);
 
 	if (!ensure(HostButton != nullptr)) return false;
 	HostButton->OnClicked.AddDynamic(this, &UCMainMenuWidget::HostServer);
@@ -37,6 +43,29 @@ bool UCMainMenuWidget::Initialize()
 	ConfirmJoinMenuButton->OnClicked.AddDynamic(this, &UCMainMenuWidget::JoinServer);
 
 	return true;
+}
+
+void UCMainMenuWidget::SoloServer()
+{
+	{
+		if (APlayerController* PC = GetOwningPlayer())
+		{
+			PC->SetShowMouseCursor(false);
+			PC->SetInputMode(FInputModeGameOnly());
+		}
+		// 현재 GameMode 로그
+		if (UWorld* World = GetWorld())
+		{
+			AGameModeBase* currentGameMode = World->GetAuthGameMode();
+			if (currentGameMode != nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Current GameMode: %s"), *currentGameMode->GetClass()->GetName());
+			}
+		}
+
+		FString URL = TEXT("/Game/AI/Test_Map/NewLevelDesign?GameMode=/Game/GameMode/BP_EmberGameMode_C");
+		UGameplayStatics::OpenLevel(this, FName(*URL));
+	}
 }
 
 void UCMainMenuWidget::HostServer()
@@ -93,7 +122,7 @@ void UCMainMenuWidget::OpenJoinMenu()
 	if (!ensure(JoinMenu != nullptr)) return;
 	MenuSwitcher->SetActiveWidget(JoinMenu);
 	if (MenuInterface != nullptr) {
-		
+
 		MenuInterface->RefreshServerList();
 	}
 }

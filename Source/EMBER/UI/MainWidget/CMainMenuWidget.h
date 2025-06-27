@@ -27,6 +27,8 @@ protected:
 
 private:
 	UFUNCTION()
+	void SoloServer();
+	UFUNCTION()
 	void HostServer();
 
 	UFUNCTION()
@@ -43,6 +45,8 @@ private:
 	void QuitPressed();
 
 protected:
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class UButton* SoloButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* HostButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))

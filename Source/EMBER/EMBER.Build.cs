@@ -41,6 +41,7 @@ public class EMBER : ModuleRules
                         "EditorFramework",
                         "EditorSubsystem",
                         "OnlineSubsystem",
+						"OnlineSubsystemSteam",
                     });
         PublicIncludePaths.AddRange(
                     new string[]

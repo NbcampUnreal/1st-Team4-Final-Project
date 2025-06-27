@@ -14,13 +14,13 @@ struct FEffectData
     GENERATED_BODY()
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
-    EEffectType EffectType;
+    EEffectType EffectType{};
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect", meta = (EditCondition = "EffectType == EEffectType::Niagara", EditConditionHides))
-    TObjectPtr<UNiagaraSystem> NiagaraSystem;
+    TObjectPtr<UNiagaraSystem> NiagaraSystem{};
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect", meta = (EditCondition = "EffectType == EEffectType::Particle", EditConditionHides))
-    TObjectPtr<UParticleSystem> ParticleSystem;
+    TObjectPtr<UParticleSystem> ParticleSystem{};
 };
 
 USTRUCT(BlueprintType)
@@ -29,13 +29,13 @@ struct FSound2D
     GENERATED_BODY()
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TObjectPtr<USoundWave> Sound; // 2D 사운드 에셋
+    TObjectPtr<USoundWave> Sound{}; // 2D 사운드 에셋
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float Volume; // 볼륨
+    float Volume{}; // 볼륨
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float Pitch; // 피치
+    float Pitch{}; // 피치
 };
 
 USTRUCT(BlueprintType)
@@ -43,13 +43,13 @@ struct FParryData
 {
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float PlayRate;	//공격속도
+	float PlayRate = 1.0f;	//공격속도
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FEffectData HitEffect;
+    FEffectData HitEffect{};
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FSound2D HitSound;
+    FSound2D HitSound{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TArray<TObjectPtr<UAnimMontage>> Montages;
+    TArray<TObjectPtr<UAnimMontage>> Montages{};
 };
 
 USTRUCT(BlueprintType)
@@ -57,13 +57,13 @@ struct FEquipment
 {
     GENERATED_BODY()
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float PlayRate;
+    float PlayRate=1.0f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FSound2D EquipSound;
+    FSound2D EquipSound{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TObjectPtr<UAnimMontage> HolsterMontage;
+    TObjectPtr<UAnimMontage> HolsterMontage{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TObjectPtr<UAnimMontage> DrawMontage;
+    TObjectPtr<UAnimMontage> DrawMontage{};
 };
 
 USTRUCT(BlueprintType)
@@ -71,15 +71,15 @@ struct FDamageData
 {
     GENERATED_BODY()
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float Damage;
+    float Damage{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float PlayRate = 1.0f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FEffectData HitEffect;
+    FEffectData HitEffect{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FSound2D HitSound;
+    FSound2D HitSound{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TObjectPtr<UAnimMontage> Montages;
+    TObjectPtr<UAnimMontage> Montages{};
 
 public:
     void SendDamage(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther);
@@ -93,17 +93,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float PlayRate = 1.0f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FEffectData AttackEffect;
+    FEffectData AttackEffect{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FSound2D AttackSound;
+    FSound2D AttackSound{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TObjectPtr<UAnimMontage> Montages;
+    TObjectPtr<UAnimMontage> Montages{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 MontageIndex;
+    int32 MontageIndex{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool bCanMove;
+    bool bCanMove{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool bCanFixedCamera;
+    bool bCanFixedCamera{};
 
 public:
     void DoAction(ACharacter* InOwner);
@@ -114,7 +114,7 @@ struct FActionDamageEvent : public FDamageEvent
 {
     GENERATED_BODY()
 public:
-    FDamageData* DamageData;
+    FDamageData* DamageData{};
 };
 
 
@@ -124,43 +124,43 @@ struct FCharacterStatus
     GENERATED_BODY()
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float CurrentHP;
+    float CurrentHP{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float MaxHP;
+    float MaxHP{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float CurrentStamina;
+    float CurrentStamina{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float MaxStamina;
+    float MaxStamina{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float CurrentTemperature;
+    float CurrentTemperature{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float MaxTemperature;
+    float MaxTemperature{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float CurrentFatigueLevel;
+    float CurrentFatigueLevel{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float MaxFatigueLevel;
+    float MaxFatigueLevel{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float CurrentWeight;
+    float CurrentWeight{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float MaxWeight;
+    float MaxWeight{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float CurrentEnergy;
+    float CurrentEnergy{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float MaxEnergy;
+    float MaxEnergy{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float CurrentPhysicalStrength;
+    float CurrentPhysicalStrength{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float MaxPhysicalStrength;
+    float MaxPhysicalStrength{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float CurrentDexterity;
+    float CurrentDexterity{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float MaxDexterity;
+    float MaxDexterity{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float CurrentXP;
+    float CurrentXP{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float MaxXP;
+    float MaxXP{};
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 Level;
+    int32 Level{};
 public:
     float GetCurrentHP() const;
     float GetMaxHP() const;
@@ -210,11 +210,11 @@ struct FDamagesData
     UPROPERTY()
     float Power;
     UPROPERTY()
-    class ACharacter* Character;
+    class ACharacter* Character{};
     UPROPERTY()
-    class AActor* Causer;
+    class AActor* Causer{};
     UPROPERTY()
-    UAnimMontage* Montage;
+    UAnimMontage* Montage{};
     UPROPERTY()
-    float PlayRate;
+    float PlayRate =1.0f;
 };
