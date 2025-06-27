@@ -340,11 +340,6 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
 		FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
 		AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
 	}
-
-	if (StatusComponent->GetHp() <= 0)
-	{
-		OnDeath();
-	}
 	
 	return damage;
 }

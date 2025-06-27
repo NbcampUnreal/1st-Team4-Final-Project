@@ -16,7 +16,7 @@ void AEmberHUD::BeginPlay()
 	{
 		if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(PlayerController->Player))
 		{
-			MainScreenWidget = UCommonUIExtensions::PushContentToLayer_ForPlayer(LocalPlayer, EmberHUDInfo.HUDWidgetTag, EmberHUDInfo.HUDWidgetClass);
+			UCommonUIExtensions::PushContentToLayer_ForPlayer(LocalPlayer, EmberHUDInfo.HUDWidgetTag, EmberHUDInfo.HUDWidgetClass);
 		}
 	}
 }
