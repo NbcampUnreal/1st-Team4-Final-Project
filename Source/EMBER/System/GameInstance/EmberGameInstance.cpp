@@ -98,20 +98,13 @@ void UEmberGameInstance::CreateSession()
 	if (SessionInterface.IsValid()) {
 		FOnlineSessionSettings SessionSettings;
 		SessionSettings.bIsLANMatch = false;
-		SessionSettings.NumPublicConnections = 2;
+		SessionSettings.NumPublicConnections = 3;
 		SessionSettings.bShouldAdvertise = true;
-
 		SessionSettings.bUsesPresence = true;
 		SessionSettings.bUseLobbiesIfAvailable = true;
 
-		// 추가 설정
-		SessionSettings.bAllowInvites = true;
-		SessionSettings.bAllowJoinViaPresence = true;
-		SessionSettings.bAllowJoinInProgress = true;
-
-		// 고유 식별자 추가 (자신의 게임만 찾기 위해)
-		SessionSettings.Set(FName("GAME_TYPE"), FString("EMBER_GAME"), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
-
+		// 포트 정보 명시적으로 등록
+		//SessionSettings.Set(SETTING_PORT, 7777, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 		SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 	}
@@ -146,7 +139,7 @@ void UEmberGameInstance::RefreshServerList()
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	if (SessionSearch.IsValid())
 	{
-		SessionSearch->bIsLanQuery = false;
+		//SessionSearch->bIsLanQuery = true;
 		SessionSearch->MaxSearchResults = 100;
 		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE,true,EOnlineComparisonOp::Equals);
 		UE_LOG(LogTemp, Warning, TEXT("Starting Find Session"));
@@ -173,94 +166,35 @@ void UEmberGameInstance::OnFindSessionsComplete(bool Success)
 
 void UEmberGameInstance::Join(uint32 Index)
 {
-	UE_LOG(LogTemp, Warning, TEXT("=== Join() called with Index: %d ==="), Index);
-
-	if (!SessionInterface.IsValid()) {
-		UE_LOG(LogTemp, Error, TEXT("SessionInterface is NOT valid"));
-		return;
-	}
-	UE_LOG(LogTemp, Warning, TEXT("SessionInterface is valid"));
-
-	if (!SessionSearch.IsValid()) {
-		UE_LOG(LogTemp, Error, TEXT("SessionSearch is NOT valid"));
-		return;
-	}
-	UE_LOG(LogTemp, Warning, TEXT("SessionSearch is valid"));
-
-	if (Index >= (uint32)SessionSearch->SearchResults.Num()) {
-		UE_LOG(LogTemp, Error, TEXT("Index %d is out of range. SearchResults count: %d"), Index, SessionSearch->SearchResults.Num());
-		return;
-	}
-	UE_LOG(LogTemp, Warning, TEXT("Index is valid. SearchResults count: %d"), SessionSearch->SearchResults.Num());
-
-	const FOnlineSessionSearchResult& SelectedSession = SessionSearch->SearchResults[Index];
-	UE_LOG(LogTemp, Warning, TEXT("Selected session ID: %s"), *SelectedSession.GetSessionIdStr());
+	if (!SessionInterface.IsValid()) return;
+	if (!SessionSearch.IsValid()) return;
 
 	if (Menu != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Tearing down menu"));
 		Menu->Teardown();
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Calling JoinSession with SESSION_NAME: %s"), *SESSION_NAME.ToString());
 	SessionInterface->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[Index]);
-	UE_LOG(LogTemp, Warning, TEXT("JoinSession called successfully"));
 }
 
 void UEmberGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-	UE_LOG(LogTemp, Warning, TEXT("=== OnJoinSessionComplete called ==="));
-	UE_LOG(LogTemp, Warning, TEXT("SessionName: %s"), *SessionName.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("Result: %d"), (int32)Result);
-
-	// 결과 코드별 상세 로그
-	switch (Result)
-	{
-	case EOnJoinSessionCompleteResult::Success:
-		UE_LOG(LogTemp, Warning, TEXT("Join Success"));
-		break;
-	case EOnJoinSessionCompleteResult::SessionIsFull:
-		UE_LOG(LogTemp, Error, TEXT("Session is full"));
-		return;
-	case EOnJoinSessionCompleteResult::SessionDoesNotExist:
-		UE_LOG(LogTemp, Error, TEXT("Session does not exist"));
-		return;
-	case EOnJoinSessionCompleteResult::CouldNotRetrieveAddress:
-		UE_LOG(LogTemp, Error, TEXT("Could not retrieve address"));
-		return;
-	case EOnJoinSessionCompleteResult::AlreadyInSession:
-		UE_LOG(LogTemp, Error, TEXT("Already in session"));
-		return;
-	default:
-		UE_LOG(LogTemp, Error, TEXT("Unknown join error: %d"), (int32)Result);
-		return;
-	}
-	if (!SessionInterface.IsValid()) {
-		UE_LOG(LogTemp, Error, TEXT("SessionInterface is not valid in OnJoinSessionComplete"));
-		return;
-	}
-
-	if (Result != EOnJoinSessionCompleteResult::Success) {
-		UE_LOG(LogTemp, Error, TEXT("Join session failed with result: %d"), (int32)Result);
-		return;
-	}
+	if (!SessionInterface.IsValid()) return;
 
 	FString Address;
 	if (!SessionInterface->GetResolvedConnectString(SessionName, Address)) {
-		UE_LOG(LogTemp, Error, TEXT("Could not get connect string for session: %s"), *SessionName.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Could not get connect string."));
 		return;
 	}
 
 	UEngine* Engine = GetEngine();
 	if (!ensure(Engine != nullptr)) return;
-
-	UE_LOG(LogTemp, Warning, TEXT("Joining %s"), *Address);
+	UE_LOG(LogTemp,Warning,L"Joining %s",*Address);
 	Engine->AddOnScreenDebugMessage(0, 5, FColor::Green, FString::Printf(TEXT("Joining %s"), *Address));
 
 	APlayerController* PlayerController = GetFirstLocalPlayerController();
 	if (!ensure(PlayerController != nullptr)) return;
 
-	UE_LOG(LogTemp, Warning, TEXT("Calling ClientTravel to: %s"), *Address);
 	PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 }
 
