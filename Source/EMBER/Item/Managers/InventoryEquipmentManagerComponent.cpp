@@ -38,13 +38,9 @@ void FEquipmentEntry::Init(UItemInstance* InItemInstance, int32 InItemCount)
 	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemInstance->GetItemTemplateID());
 	ItemCount = FMath::Clamp(InItemCount, 1, ItemTemplate.MaxStackCount);
 	
-	if (InventoryEquipmentManager->IsSameEquipState(EquipmentSlotType, EquipmentManager->GetCurrentEquipState()))
-	{
-		EquipmentManager->Equip(EquipmentSlotType, ItemInstance);
-	}
+	EquipmentManager->Equip(EquipmentSlotType, ItemInstance);
 }
 
-PRAGMA_DISABLE_OPTIMIZATION
 UItemInstance* FEquipmentEntry::Reset()
 {
 	UEquipmentManagerComponent* EquipmentManager = InventoryEquipmentManager->GetEquipmentManager();
@@ -67,7 +63,6 @@ UItemInstance* FEquipmentEntry::Reset()
 	
 	return RemovedItemInstance;
 }
-PRAGMA_ENABLE_OPTIMIZATION
 
 bool FEquipmentList::NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams)
 {

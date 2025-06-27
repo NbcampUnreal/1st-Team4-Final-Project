@@ -18,6 +18,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "NavigationSystem.h"
+#include "Components/CapsuleComponent.h"
 #include "TimerManager.h"
 
 AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
@@ -339,6 +340,11 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
 		FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
 		AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
 	}
+
+	if (StatusComponent->GetHp() <= 0)
+	{
+		OnDeath();
+	}
 	
 	return damage;
 }
@@ -506,14 +512,12 @@ void AEmberPlayerCharacter::SpawnAI(const TArray<TSubclassOf<APawn>>& AIClasses,
 {
 	if (AIClasses.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s AI 클래스 배열이 비어 있습니다."), *AIType);
 		return;
 	}
 
 	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 	if (!NavSys || !NavSys->GetMainNavData())
 	{
-		UE_LOG(LogTemp, Error, TEXT("네비게이션 시스템 오류!"));
 		return;
 	}
 
@@ -533,7 +537,7 @@ void AEmberPlayerCharacter::SpawnAI(const TArray<TSubclassOf<APawn>>& AIClasses,
 			if (!IsInExclusionZone(SpawnLocation))
 			{
 				// 땅 위로 위치 보정 추가
-				SpawnLocation = FindGroundLocation(GetWorld(), SpawnLocation);
+				SpawnLocation = FindGroundLocation(GetWorld(), SpawnLocation, 3000.0f);
 				bFoundValidLocation = true;
 				break;
 			}
@@ -542,56 +546,174 @@ void AEmberPlayerCharacter::SpawnAI(const TArray<TSubclassOf<APawn>>& AIClasses,
 
 	if (!bFoundValidLocation)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s AI: 유효한 스폰 위치를 찾지 못했습니다."), *AIType);
 		return;
 	}
+
+	// ▶▶▶ 지면에서 40유닛 위로 위치 조정 ◀◀◀
+	const float ZOffset = 40.0f;
+	FVector FinalSpawnLocation = SpawnLocation + FVector(0, 0, ZOffset);
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	APawn* SpawnedEnemy = GetWorld()->SpawnActor<APawn>(
 		SelectedClass,
-		SpawnLocation,
+		FinalSpawnLocation,
 		FRotator::ZeroRotator,
 		SpawnParams
 	);
 
+	// 디버그 시각화
 	if (SpawnedEnemy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s AI 스폰 성공: %s, 위치: %s"),
-			*AIType,
-			*SpawnedEnemy->GetName(),
-			*SpawnLocation.ToString());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s AI 스폰 실패!"), *AIType);
+		DrawDebugSphere(GetWorld(), FinalSpawnLocation, 30.0f, 12, FColor::Cyan, false, 5.0f);
 	}
 }
-// 소스 파일에 구현
+
+// 지면 위치 찾기 함수
 FVector AEmberPlayerCharacter::FindGroundLocation(UWorld* World, const FVector& Start, float TraceDistance)
 {
 	FHitResult Hit;
-	FVector TraceStart = Start + FVector(0, 0, 500); // 위에서 시작
-	FVector TraceEnd = Start - FVector(0, 0, TraceDistance); // 아래로 쏨
+	FVector TraceStart = Start + FVector(0, 0, 1000);
 
 	FCollisionQueryParams Params;
 	Params.bTraceComplex = true;
-	Params.AddIgnoredActor(this); // 플레이어 캐릭터 무시
+	Params.AddIgnoredActor(this);
 
-	if (World->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_WorldStatic, Params))
+	// 1. 스피어 트레이스
+	const float SphereRadius = 100.0f;
+	const float SafeTraceDistance = FMath::Max(TraceDistance, 3000.0f);
+	FVector SafeTraceEnd = Start - FVector(0, 0, SafeTraceDistance);
+
+	if (World->SweepSingleByChannel(
+		Hit,
+		TraceStart,
+		SafeTraceEnd,
+		FQuat::Identity,
+		ECC_WorldStatic,
+		FCollisionShape::MakeSphere(SphereRadius),
+		Params))
 	{
-		return Hit.ImpactPoint;
+		FVector Candidate = Hit.ImpactPoint;
+		FVector Adjusted = AdjustLocationForCollision(World, Candidate);
+		DrawDebugSphere(World, Adjusted, SphereRadius, 12, FColor::Green, false, 2.0f);
+		return Adjusted;
 	}
-	// 못 찾으면 원래 위치 반환 (안전장치)
-	return Start;
+
+	// 2. 라인 트레이스
+	FVector FallbackTraceEnd = Start - FVector(0, 0, 15000.0f);
+	if (World->LineTraceSingleByChannel(Hit, TraceStart, FallbackTraceEnd, ECC_WorldStatic, Params))
+	{
+		FVector Candidate = Hit.ImpactPoint;
+		FVector Adjusted = AdjustLocationForCollision(World, Candidate);
+		DrawDebugPoint(World, Adjusted, 15, FColor::Yellow, false, 2.0f);
+		return Adjusted;
+	}
+
+	// 3. 주변 지형 스캔
+	FVector GroundLocation = Start;
+	if (FindNearestGround(World, Start, GroundLocation, 500.0f))
+	{
+		FVector Adjusted = AdjustLocationForCollision(World, GroundLocation);
+		DrawDebugPoint(World, Adjusted, 20, FColor::Blue, false, 2.0f);
+		return Adjusted;
+	}
+
+	// 4. 최종 안전장치
+	DrawDebugLine(World, TraceStart, FallbackTraceEnd, FColor::Red, false, 2.0f);
+	return AdjustLocationForCollision(World, Start);
+}
+
+// 충돌 검사 및 위치 보정 함수
+FVector AEmberPlayerCharacter::AdjustLocationForCollision(UWorld* World, const FVector& Candidate)
+{
+	if (!World) return Candidate;
+
+	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	if (!CapsuleComp) return Candidate;
+
+	const float CapsuleRadius = CapsuleComp->GetScaledCapsuleRadius();
+	const float CapsuleHalfHeight = CapsuleComp->GetScaledCapsuleHalfHeight();
+	const FVector CapsuleOffset(0, 0, CapsuleHalfHeight);
+
+	FCollisionQueryParams OverlapParams;
+	OverlapParams.AddIgnoredActor(this);
+
+	bool bOverlapped = World->OverlapAnyTestByChannel(
+		Candidate + CapsuleOffset,
+		FQuat::Identity,
+		ECC_WorldStatic,
+		FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight),
+		OverlapParams
+	);
+
+	if (!bOverlapped) return Candidate;
+
+	const float StepSize = 10.0f;
+	const int32 MaxSteps = 20;
+
+	for (int32 i = 1; i <= MaxSteps; ++i)
+	{
+		FVector TestLocation = Candidate + FVector(0, 0, i * StepSize);
+
+		if (!World->OverlapAnyTestByChannel(
+			TestLocation + CapsuleOffset,
+			FQuat::Identity,
+			ECC_WorldStatic,
+			FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight),
+			OverlapParams))
+		{
+			return TestLocation;
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Failed to find collision-free position!"));
+	return Candidate;
+}
+
+// 주변 지형 탐색 헬퍼 함수
+bool AEmberPlayerCharacter::FindNearestGround(UWorld* World, const FVector& Origin, FVector& OutLocation, float Radius)
+{
+	TArray<FHitResult> Hits;
+	FCollisionQueryParams Params;
+	Params.bTraceComplex = true;
+	Params.AddIgnoredActor(this);
+
+	const int32 RayCount = 12;
+	float BestDistance = BIG_NUMBER;
+	bool bFound = false;
+
+	for (int i = 0; i < RayCount; i++)
+	{
+		float Angle = 2 * PI * i / RayCount;
+		FVector Direction(FMath::Cos(Angle), FMath::Sin(Angle), -1);
+		FVector RayStart = Origin + FVector(0, 0, 500);
+		FVector RayEnd = RayStart + Direction * Radius * 2;
+
+		FHitResult LocalHit;
+		if (World->LineTraceSingleByChannel(
+			LocalHit,
+			RayStart,
+			RayEnd,
+			ECC_WorldStatic,
+			Params))
+		{
+			float Distance = FVector::Dist(Origin, LocalHit.ImpactPoint);
+			if (Distance < BestDistance)
+			{
+				BestDistance = Distance;
+				OutLocation = LocalHit.ImpactPoint;
+				bFound = true;
+			}
+		}
+	}
+	return bFound;
 }
 
 void AEmberPlayerCharacter::SpawnRandomEnemy()
 {
 	if (IsInExclusionZone(GetActorLocation()))
 	{
-		UE_LOG(LogTemp, Log, TEXT("플레이어가 금지 구역 안에 있습니다. AI 스폰 중지."));
 		return;
 	}
 
@@ -634,13 +756,11 @@ void AEmberPlayerCharacter::SpawnRandomEnemy()
 	if (IsInBeginnerZone(MyLocation))
 	{
 		MissingDefensive = FMath::Max(0, TargetAggressiveCount + TargetDefensiveCount - DefensiveCount);
-		UE_LOG(LogTemp, Log, TEXT("초보자 구역: 비선공 AI만 %d마리 스폰 시도"), MissingDefensive);
 	}
 	else
 	{
 		MissingAggressive = FMath::Max(0, TargetAggressiveCount - AggressiveCount);
 		MissingDefensive = FMath::Max(0, TargetDefensiveCount - DefensiveCount);
-		UE_LOG(LogTemp, Log, TEXT("일반 구역: 선공 %d, 비선공 %d 스폰 시도"), MissingAggressive, MissingDefensive);
 	}
 
 	// 비선공 AI 스폰
@@ -702,9 +822,6 @@ void AEmberPlayerCharacter::DestroyFarAIs()
 	// 2. 수집된 AI 삭제
 	for (APawn* Pawn : AIsToDestroy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AI Destroyed: %s (Distance: %.0f)"),
-			*Pawn->GetName(),
-			FVector::Dist(PlayerLocation, Pawn->GetActorLocation()));
 		Pawn->Destroy();
 	}
 }

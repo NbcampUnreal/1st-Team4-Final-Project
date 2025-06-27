@@ -90,8 +90,13 @@
 			"Enabled": true
 		},
 		{
+			"Name": "MovieRenderPipeline",
+			"Enabled": true
+		},
+		{
 			"Name": "OnlineSubsystemSteam",
 			"Enabled": true
 		}
+	
 	]
 }

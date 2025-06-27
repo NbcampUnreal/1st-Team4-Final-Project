@@ -34,6 +34,9 @@ protected:
 	UFUNCTION()
 	void AnimNotify_Land();
 
+	UFUNCTION()
+	void AnimNotify_Glide();
+
 private:
 	TObjectPtr<ADragon> Dragon;
 

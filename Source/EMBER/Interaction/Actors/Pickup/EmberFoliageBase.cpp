@@ -3,14 +3,18 @@
 
 #include "EmberFoliageBase.h"
 
-#include "EmberPickupableItemBase.h"
+#include "EmberInteractionActorBase.h"
+#include "EmberPickupable.h"
 #include "ItemInstance.h"
 #include "ItemTemplate.h"
 #include "UI/Data/EmberItemData.h"
 
 AEmberFoliageBase::AEmberFoliageBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-
+	bReplicates = true;
+	
+	InteractionInfo.bVisible = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 void AEmberFoliageBase::BeginPlay()

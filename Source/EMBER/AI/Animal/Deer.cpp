@@ -19,6 +19,8 @@ float ADeer::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEve
 
 	UDeer_AnimInstance* AnimInstance = Cast<UDeer_AnimInstance>(GetMesh()->GetAnimInstance());
 	ACAIController* AIController = Cast<ACAIController>(GetController());
+	if (AIController == nullptr)
+		return 0.0f;
 	AActor* TargetActor = Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
 
 	GetController()->StopMovement();

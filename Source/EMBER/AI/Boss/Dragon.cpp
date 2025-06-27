@@ -2,8 +2,13 @@
 #include "CAIController.h"
 #include "AIWeapon/DragonSpitProjectile.h"
 #include "AIWeapon/DragonBreathActor.h"
+#include "AIWeapon/DragonMeteorSpawner.h"
+#include "AnimInstance/DragonAnimInstance.h"
 #include "BehaviorTree/CBehaviorTreeComponent.h"
+#include "Task/BTT_DragonMeteor.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 
 ADragon::ADragon()
 {
@@ -15,6 +20,16 @@ void ADragon::BeginPlay()
 
 	AIController = Cast<ACAIController>(GetController());
 	BTComp = FindComponentByClass<UCBehaviorTreeComponent>();
+}
+
+void ADragon::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (bOrbiting)
+	{
+		UpdateOrbit(DeltaSeconds);
+	}
 }
 
 void ADragon::SpawnSpit()
@@ -105,4 +120,84 @@ void ADragon::Landed(const FHitResult& Hit)
 	Super::Landed(Hit);
 
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
+	if (LandingEffect)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			GetWorld(),
+			LandingEffect,
+			Hit.ImpactPoint,
+			FRotator::ZeroRotator,
+			FVector(3.f),
+			true,
+			true,
+			ENCPoolMethod::None,
+			true);
+	}
+	if (CurrentMeteorTask)
+	{
+		if (UDragonAnimInstance* DragonAnim = Cast<UDragonAnimInstance>(GetMesh()->GetAnimInstance()))
+		{
+			DragonAnim->Montage_Stop(0.2f);
+		}
+		
+		CurrentMeteorTask->FinishFromLanded();
+		CurrentMeteorTask = nullptr;
+	}
+}
+
+void ADragon::OnDeath()
+{
+	Super::OnDeath();
+
+	if (CurrentMeteorSpawner)
+	{
+		CurrentMeteorSpawner->Destroy();
+		CurrentMeteorSpawner = nullptr;
+	}
+}
+
+void ADragon::StartMeteorPhase()
+{
+	if (bMeteorStarted) return;
+	bMeteorStarted = true;
+
+	if (MeteorSpawnerClass && !CurrentMeteorSpawner)
+	{
+		FVector SpawnLocation = GetActorLocation() + FVector(0, 0, 2000.f);
+		CurrentMeteorSpawner = GetWorld()->SpawnActor<ADragonMeteorSpawner>(
+			MeteorSpawnerClass,
+			SpawnLocation,
+			FRotator::ZeroRotator);
+
+		if (CurrentMeteorSpawner)
+		{
+			CurrentMeteorSpawner->Initialize(this);
+		}
+	}
+
+	bOrbiting = true;
+	OrbitAngle = 0.f;
+	OrbitCenter = GetActorLocation();
+}
+
+void ADragon::UpdateOrbit(float DeltaTime)
+{
+	const float OrbitSpeed = 90.f;
+	const float OrbitRadius = 800.f;
+
+	OrbitAngle += OrbitSpeed * DeltaTime;
+	const float Radians = FMath::DegreesToRadians(OrbitAngle);
+	const FVector Offset = FVector(FMath::Cos(Radians), FMath::Sin(Radians), 0.f) * OrbitRadius;
+
+	FVector NewLocation = OrbitCenter + Offset;
+	NewLocation.Z = GetActorLocation().Z;
+
+	SetActorLocation(NewLocation);
+	SetActorRotation((OrbitCenter - NewLocation).Rotation());
+
+	if (OrbitAngle >= 360.f)
+	{
+		bOrbiting = false;
+	}
 }

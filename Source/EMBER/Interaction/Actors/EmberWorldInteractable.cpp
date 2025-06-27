@@ -3,6 +3,7 @@
 
 #include "EmberWorldInteractable.h"
 #include "AbilitySystemComponent.h"
+#include "Components/SphereComponent.h"
 
 AEmberWorldInteractable::AEmberWorldInteractable(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -19,6 +20,10 @@ AEmberWorldInteractable::AEmberWorldInteractable(const FObjectInitializer& Objec
 	MeshComponent->SetCanEverAffectNavigation(true);
 	MeshComponent->SetupAttachment(GetRootComponent());
 
+	InteractionCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
+	InteractionCollision->SetCollisionProfileName(TEXT("Interactable"));
+	InteractionCollision->SetupAttachment(GetRootComponent());
+	
 	InteractionInfo.bVisible = false;
 }
 
