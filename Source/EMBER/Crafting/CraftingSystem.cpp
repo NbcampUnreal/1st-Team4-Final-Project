@@ -243,27 +243,26 @@ EItemRarity UCraftingSystem::EvaluateItemRarity(const FCraftingRecipeRow& Recipe
 
 bool UCraftingSystem::ConsumeMaterials_Server_Unsafe(AEmberPlayerCharacter* Player, const FCraftingRecipeRow& Recipe, const TMap<FGameplayTag, int32>& InSelectedMainIngredients)
 {
-	// TODO: Implement actual material consumption logic
-	UE_LOG(LogTemp, Warning, TEXT("CraftingSystem: ConsumeMaterials_Server - STUB! Material consumption logic needed here."));
-
-	if (!Player) return false;
+	if (!Player || !RecipeManager) return false;
 
 	UInventoryManagerComponent* PlayerInventoryManager = Player->FindComponentByClass<UInventoryManagerComponent>();
 	if (!PlayerInventoryManager) return false;
-	
-	for (const TPair<FGameplayTag, int32>& SelectedMainIngredient : Recipe.Ingredients)
+    
+	for (const TPair<FGameplayTag, int32>& RequiredIngredient : Recipe.Ingredients)
 	{
-		FGameplayTag IngredientTag = SelectedMainIngredient.Key;
-		int32 IngredientAmount = SelectedMainIngredient.Value;
-		
-		TSubclassOf<UItemTemplate> ItemTemplateClass = UCraftingRecipeManager::Get().GetRepresentativeItemForTag(IngredientTag);
+		FGameplayTag IngredientTag = RequiredIngredient.Key;
+		int32 IngredientAmount = RequiredIngredient.Value;
+       
+		TSubclassOf<UItemTemplate> ItemTemplateClass = RecipeManager->GetRepresentativeItemForTag(IngredientTag);
+		if (!ItemTemplateClass) continue;
+       
 		int32 ItemID = UEmberItemData::Get().FindItemTemplateIDByClass(ItemTemplateClass);
 
 		TArray<FFindItemData> ItemDataList;
 		bool bFound = PlayerInventoryManager->FindItemByID(ItemID, ItemDataList);
 		if (bFound == false)
 			return false;
-		
+       
 		int32 RequiredAmount = IngredientAmount;
 		for (const FFindItemData& FindItemData : ItemDataList)
 		{
