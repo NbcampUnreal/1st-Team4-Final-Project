@@ -9,7 +9,9 @@
 /**
  * 
  */
+class UCommonActivatableWidget;
 UCLASS()
+
 class EMBER_API AEmberHUD : public AHUD
 {
 	GENERATED_BODY()
@@ -18,4 +20,7 @@ public:
 	//~AHUD Overrides
 	virtual void BeginPlay() override;
 	//~End of AHUD Overrides 
+protected:
+	UPROPERTY(BlueprintReadWrite)
+	UCommonActivatableWidget* MainScreenWidget;
 };
