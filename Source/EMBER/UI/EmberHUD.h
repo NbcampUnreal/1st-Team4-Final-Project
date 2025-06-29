@@ -11,6 +11,7 @@
  */
 class UCommonActivatableWidget;
 UCLASS()
+
 class EMBER_API AEmberHUD : public AHUD
 {
 	GENERATED_BODY()
