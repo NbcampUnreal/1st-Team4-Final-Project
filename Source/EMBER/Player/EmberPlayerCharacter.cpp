@@ -202,7 +202,11 @@ void AEmberPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
 
 	Subsystem->AddMappingContext(InputConfigDataAsset->InputMappingContext, 0);
-
+	if (PlayerInputComponent == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Player, WarriorInputComponent is null");
+		return;
+	}
 	UEmberEnhancedInputComponent* WarriorInputComponent = CastChecked<UEmberEnhancedInputComponent>(PlayerInputComponent);
 
 	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Move, ETriggerEvent::Triggered, this, &ThisClass::Move);
