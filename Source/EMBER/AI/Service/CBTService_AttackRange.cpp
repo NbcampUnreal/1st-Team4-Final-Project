@@ -11,8 +11,9 @@ void UCBTService_AttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	
 }
-
+#if WITH_EDITOR
 FName UCBTService_AttackRange::GetNodeIconName() const
 {
 	return "AttackRange";
 }
+#endif

@@ -14,7 +14,9 @@ class EMBER_API UCBTDecorator_FarAttack : public UBTDecorator
 {
 	GENERATED_BODY()
 public:
+#if WITH_EDITOR
 	virtual FName GetNodeIconName() const override;
+#endif
 protected:
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 

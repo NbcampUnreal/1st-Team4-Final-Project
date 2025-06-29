@@ -7,10 +7,12 @@
 #include "Base/BaseAI.h"
 #include "Kismet/KismetMathLibrary.h"
 
+#if WITH_EDITOR
 FName UCBTDecorator_FarAttack::GetNodeIconName() const
 {
 	return "Far Attack Range";
 }
+#endif
 
 bool UCBTDecorator_FarAttack::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {

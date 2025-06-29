@@ -36,13 +36,14 @@ public class EMBER : ModuleRules
                         "AIModule",
                         "Slate",
                         "SlateCore",
-                        "UnrealEd",
-                        "WorldPartitionEditor",
-                        "EditorFramework",
-                        "EditorSubsystem",
                         "OnlineSubsystem",
 						"OnlineSubsystemSteam",
                     });
+		if(Target.bBuildEditor == true)
+		{
+			PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd" ,"EditorFramework",
+                        "EditorSubsystem","WorldPartitionEditor"});
+		}
         PublicIncludePaths.AddRange(
                     new string[]
                     {

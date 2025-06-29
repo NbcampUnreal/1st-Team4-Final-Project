@@ -7,7 +7,9 @@
 #include "InventoryEquipmentManagerComponent.h"
 #include "ItemTemplate.h"
 #include "ItemInstance.h"
+#if WITH_EDITOR
 #include "ToolMenusEditor.h"
+# endif
 #include "Engine/ActorChannel.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/Data/EmberItemData.h"
