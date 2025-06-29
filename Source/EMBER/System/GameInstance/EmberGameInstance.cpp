@@ -107,7 +107,7 @@ void UEmberGameInstance::Host(FString InServerName)
 
 void UEmberGameInstance::OnCreateSessionComplete(FName InSessionName, bool bSucess)
 {
-	if (bSucess == false)
+	/*if (bSucess == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Could not create session"));
 		LoadMainMenu();
@@ -126,6 +126,34 @@ void UEmberGameInstance::OnCreateSessionComplete(FName InSessionName, bool bSuce
 	UWorld* World = GetWorld();
 	if (!ensure(World != nullptr)) return;
 
+	World->ServerTravel("/Game/Loby/Maps/LobyMap?listen");*/
+	if (bSucess == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Could not create session"));
+		LoadMainMenu();
+		return;
+	}
+
+	// ⭐️ StartSession 호출
+	if (SessionInterface.IsValid())
+	{
+		SessionInterface->StartSession(InSessionName);
+	}
+
+	if (Menu != nullptr)
+	{
+		Menu->Teardown();
+	}
+
+	UEngine* Engine = GetEngine();
+	if (!ensure(Engine != nullptr)) return;
+
+	Engine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Hosting"));
+
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	World->GetAuthGameMode()->bUseSeamlessTravel = true;
 	World->ServerTravel("/Game/Loby/Maps/LobyMap?listen");
 }
 
@@ -220,6 +248,7 @@ void UEmberGameInstance::OnJoinSessionComplete(FName InSessionName, EOnJoinSessi
 	if (SessionInterface->GetResolvedConnectString(InSessionName, address) == false)
 	{
 		UE_LOG(LogTemp, Warning, L"JoinSession, Could not get connect string");
+		LoadMainMenu();
 		return;
 	}
 
