@@ -15,21 +15,30 @@ class EMBER_API UCServerRow : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	void SetUP(class UCMainMenuWidget* InParent, uint32 InIndex);
-
+	void Setup(class UCMainMenuWidget* InParent, uint32 InIndex);
 private:
 	UFUNCTION()
 	void OnClicked();
 
+protected:
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 public:
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UTextBlock> ServerName;
-
+	class UTextBlock* ServerName;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* HostUser;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* ConnectionFraction;
+	UPROPERTY(BlueprintReadOnly)
+	bool bSelected = false;
 private:
-	UPROPERTY(meta = (BinWidget))
+	UPROPERTY(meta = (BindWidget))
 	UButton* RowButton;
 	UPROPERTY()
 	UCMainMenuWidget* Parent;
-
 	uint32 Index;
+	UPROPERTY(EditAnywhere)
+	bool bHeader;
+
 };

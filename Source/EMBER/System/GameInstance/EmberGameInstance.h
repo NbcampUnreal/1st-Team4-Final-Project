@@ -8,6 +8,7 @@
 #include "UI/MainWidget/MenuInterface.h"
 #include "EmberGameInstance.generated.h"
 
+class UCMenuWidget;
 /**
  * 
  */
@@ -16,10 +17,12 @@ class EMBER_API UEmberGameInstance : public UGameInstance , public IMenuInterfac
 {
 	GENERATED_BODY()
 public:
+	FORCEINLINE int32 GetConectedPlayerCount() { return ConectedPlayerCount; }
+public:
 	UEmberGameInstance(const FObjectInitializer& ObjectInitializer);
+
 	virtual void Init();
 
-protected:
 	UFUNCTION(BlueprintCallable)
 	void LoadMenuWidget();
 
@@ -27,30 +30,37 @@ protected:
 	void InGameLoadMenu();
 
 	UFUNCTION(Exec)
-	void Host() override;
+	void Host(FString InServerName) override;
 
 	UFUNCTION(Exec)
 	void Join(uint32 InIndex) override;
 
+public:
 	virtual void LoadMainMenu() override;
 
 	virtual void RefreshServerList() override;
 
-private:
-	void OnCreateSessionComplete(FName SessionName, bool bSuccess);
-	void OnDestroySessionComplete(FName SessionName, bool bSuccess);
+	void OnCreateSessionComplete(FName InSessionName, bool bSucess);
+	void OnDestroySessionComplete(FName InSessionName, bool bSucess);
 	void CreateSession();
-	void OnFindSessionsComplete(bool bSuccess);
-	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+	void OnFindSessionsComplete(bool bSucess);
+	void OnJoinSessionComplete(FName InSessionName, EOnJoinSessionCompleteResult::Type InResult);
 
-public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	bool bIsRunning;
+	void StartSession();
+
+	void FOnNetworkFailure(UWorld* InWorld, UNetDriver* InNetDriver, ENetworkFailure::Type InFaulureType, const FString& InErrorString);
+
 private:
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> InGameMenuClass;
 
 	class UCMainMenuWidget* Menu;
+
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
+	//FString DesiredServerName;
+
+	int32 ConectedPlayerCount;
+	FName CurrentSessionName;
+
 };

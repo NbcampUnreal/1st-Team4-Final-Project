@@ -12,22 +12,28 @@
 class UCBaseButton;
 class UHorizontalBox;
 
+USTRUCT()
+struct FServerData
+{
+	GENERATED_BODY()
+
+	FString Name;
+	uint16 CurrentPlayers;
+	uint16 MaxPlayers;
+	FString HostUserName;
+};
+
 UCLASS()
 class EMBER_API UCMainMenuWidget : public UCMenuWidget
 {
 	GENERATED_BODY()
 public:
-	UCMainMenuWidget();
 	UCMainMenuWidget(const FObjectInitializer& ObjectInitializer);
 
-	void SetServerList(TArray<FString> ServerNames);
-	void SelectIndex(uint32 InIndex);
 protected:
 	virtual bool Initialize();
 
 private:
-	UFUNCTION()
-	void SoloServer();
 	UFUNCTION()
 	void HostServer();
 
@@ -36,34 +42,55 @@ private:
 
 
 	UFUNCTION()
-	void OpenJoinMenu();
+	void OpenHostMenu();
 
+	UFUNCTION()
+	void OpenJoinMenu();
 	UFUNCTION()
 	void OpenMainMenu();
 
 	UFUNCTION()
 	void QuitPressed();
 
-protected:
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class UButton* SoloButton;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+public:
+	void SetServerList(TArray<FServerData> InServerName);
+	void SelectIndex(uint32 InIndex);
+	void UpdateChildren();
+private:
+	UPROPERTY(meta = (BindWidget))
 	class UButton* HostButton;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* JoinButton;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* CancelJoinMenuButton;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* ConfirmJoinMenuButton;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+
+	UPROPERTY(meta = (BindWidget))
 	class UWidgetSwitcher* MenuSwitcher;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+
+	UPROPERTY(meta = (BindWidget))
 	class UWidget* MainMenu;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+
+	UPROPERTY(meta = (BindWidget))
 	class UWidget* JoinMenu;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* HostMenu;
+
+	UPROPERTY(meta = (BindWidget))
+	class UEditableTextBox* ServerHostName;
+	UPROPERTY(meta = (BindWidget))
+	UButton* ConfirmHostMenuButton;
+	UPROPERTY(meta = (BindWidget))
+	UButton* CancelHostMenuButton;
+
+	UPROPERTY(meta = (BindWidget))
 	class UPanelWidget* ServerList;
 
 private:

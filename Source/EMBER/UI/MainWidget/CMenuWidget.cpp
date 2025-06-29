@@ -21,7 +21,7 @@ void UCMenuWidget::Setup()
 
 void UCMenuWidget::Teardown()
 {
-	this->RemoveFromViewport();
+	RemoveFromViewport();
 
 	UWorld* World = GetWorld();
 	if (!ensure(World != nullptr)) return;
@@ -37,7 +37,6 @@ void UCMenuWidget::Teardown()
 
 void UCMenuWidget::SetMenuInterface(IMenuInterface* InMenuInterface)
 {
-	MenuInterface = InMenuInterface;
+	this->MenuInterface = InMenuInterface;
 }
 
-	

@@ -17,6 +17,7 @@ class EMBER_API UCMenuWidget : public UUserWidget
 public:
 	void Setup();
 	void Teardown();
+
 	void SetMenuInterface(IMenuInterface* InMenuInterface);
 
 protected:
