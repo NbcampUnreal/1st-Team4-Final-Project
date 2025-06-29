@@ -45,7 +45,7 @@ public:
 	void CreateSession();
 	void OnFindSessionsComplete(bool bSucess);
 	void OnJoinSessionComplete(FName InSessionName, EOnJoinSessionCompleteResult::Type InResult);
-
+	void OnStartSessionComplete(FName SessionName, bool bWasSuccessful);
 	void StartSession();
 
 	void FOnNetworkFailure(UWorld* InWorld, UNetDriver* InNetDriver, ENetworkFailure::Type InFaulureType, const FString& InErrorString);
@@ -58,9 +58,8 @@ private:
 
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
-	//FString DesiredServerName;
+	FString DesiredServerName;
 
 	int32 ConectedPlayerCount;
-	FName CurrentSessionName;
 
 };

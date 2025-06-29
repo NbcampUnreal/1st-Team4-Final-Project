@@ -10,7 +10,7 @@
 #include "Online/OnlineSessionNames.h"
 #include "UI/MainWidget/CMainMenuWidget.h"
 
-//const static FName SESSION_NAME = L"Game";
+const static FName SESSION_NAME = L"Game";
 const static FName SERVER_NAME_SETTINGS_KEY = L"ServerName";
 
 UEmberGameInstance::UEmberGameInstance(const FObjectInitializer& ObjectInitializer)
@@ -43,6 +43,7 @@ void UEmberGameInstance::Init()
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UEmberGameInstance::OnDestroySessionComplete);
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UEmberGameInstance::OnFindSessionsComplete);
 			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UEmberGameInstance::OnJoinSessionComplete);
+
 		}
 		else
 		{
@@ -86,17 +87,17 @@ void UEmberGameInstance::InGameLoadMenu()
 
 void UEmberGameInstance::Host(FString InServerName)
 {
-	CurrentSessionName = *InServerName;
+	DesiredServerName = InServerName;
 	if (SessionInterface.IsValid() == false)
 	{
 		UE_LOG(LogTemp, Warning, L"Session Interface is null");
 		return;
 	}
-	FNamedOnlineSession* existingSession = SessionInterface->GetNamedSession(CurrentSessionName);
+	FNamedOnlineSession* existingSession = SessionInterface->GetNamedSession(SESSION_NAME);
 	if (existingSession != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, L"Destroy Session");
-		SessionInterface->DestroySession(CurrentSessionName);
+		SessionInterface->DestroySession(SESSION_NAME);
 	}
 	else
 	{
@@ -107,26 +108,6 @@ void UEmberGameInstance::Host(FString InServerName)
 
 void UEmberGameInstance::OnCreateSessionComplete(FName InSessionName, bool bSucess)
 {
-	/*if (bSucess == false)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Could not create session"));
-		LoadMainMenu();
-		return;
-	}
-	if (Menu != nullptr)
-	{
-		Menu->Teardown();
-	}
-	GetWorld()->GetAuthGameMode()->bUseSeamlessTravel = true;
-	UEngine* Engine = GetEngine();
-	if (!ensure(Engine != nullptr)) return;
-
-	Engine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Hosting"));
-
-	UWorld* World = GetWorld();
-	if (!ensure(World != nullptr)) return;
-
-	World->ServerTravel("/Game/Loby/Maps/LobyMap?listen");*/
 	if (bSucess == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Could not create session"));
@@ -134,9 +115,15 @@ void UEmberGameInstance::OnCreateSessionComplete(FName InSessionName, bool bSuce
 		return;
 	}
 
-	// ⭐️ StartSession 호출
 	if (SessionInterface.IsValid())
 	{
+		// Delegate 등록
+		SessionInterface->AddOnStartSessionCompleteDelegate_Handle(
+			FOnStartSessionCompleteDelegate::CreateUObject(
+				this, &UEmberGameInstance::OnStartSessionComplete
+			)
+		);
+
 		SessionInterface->StartSession(InSessionName);
 	}
 
@@ -149,12 +136,12 @@ void UEmberGameInstance::OnCreateSessionComplete(FName InSessionName, bool bSuce
 	if (!ensure(Engine != nullptr)) return;
 
 	Engine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Hosting"));
-
-	UWorld* World = GetWorld();
+	
+	/*UWorld* World = GetWorld();
 	if (!ensure(World != nullptr)) return;
 
 	World->GetAuthGameMode()->bUseSeamlessTravel = true;
-	World->ServerTravel("/Game/Loby/Maps/LobyMap?listen");
+	World->ServerTravel("/Game/Loby/Maps/LobyMap?listen");*/
 }
 
 void UEmberGameInstance::OnDestroySessionComplete(FName InSessionName, bool bSucess)
@@ -168,7 +155,8 @@ void UEmberGameInstance::OnDestroySessionComplete(FName InSessionName, bool bSuc
 
 void UEmberGameInstance::CreateSession()
 {
-	if (SessionInterface.IsValid()) {
+	if (SessionInterface.IsValid())
+	{
 		FOnlineSessionSettings sessionSettings;
 		if (IOnlineSubsystem::Get()->GetSubsystemName() == "NULL")
 		{
@@ -186,10 +174,10 @@ void UEmberGameInstance::CreateSession()
 		sessionSettings.bAllowJoinViaPresence = true;
 		sessionSettings.bUseLobbiesIfAvailable = true; // 이 값이 반드시 같아야 함
 
-		sessionSettings.Set(SERVER_NAME_SETTINGS_KEY, CurrentSessionName.ToString(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+		sessionSettings.Set(SERVER_NAME_SETTINGS_KEY, DesiredServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
-		SessionInterface->CreateSession(0, CurrentSessionName, sessionSettings);
-		UE_LOG(LogTemp, Warning, TEXT("Create Session, Session %s"), *CurrentSessionName.ToString());
+		SessionInterface->CreateSession(0, SESSION_NAME, sessionSettings);
+		UE_LOG(LogTemp, Warning, TEXT("Create Session, Session %s"), *DesiredServerName);
 	}
 	else
 	{
@@ -245,7 +233,7 @@ void UEmberGameInstance::OnJoinSessionComplete(FName InSessionName, EOnJoinSessi
 	}
 
 	FString address{};
-	if (SessionInterface->GetResolvedConnectString(InSessionName, address) == false)
+	if (SessionInterface->GetResolvedConnectString(SESSION_NAME, address) == false)
 	{
 		UE_LOG(LogTemp, Warning, L"JoinSession, Could not get connect string");
 		LoadMainMenu();
@@ -263,7 +251,29 @@ void UEmberGameInstance::OnJoinSessionComplete(FName InSessionName, EOnJoinSessi
 	UE_LOG(LogTemp, Warning, L"Join session complete");
 	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Blue, TEXT("Join session complete"));
 	PlayerController->ClientTravel(address, ETravelType::TRAVEL_Absolute);
-	SessionInterface->UpdateSession(IOnlineSubsystem::Get()->GetSubsystemName(), *SessionInterface.Get()->GetSessionSettings(IOnlineSubsystem::Get()->GetSubsystemName()));
+	//SessionInterface->UpdateSession(IOnlineSubsystem::Get()->GetSubsystemName(), *SessionInterface.Get()->GetSessionSettings(IOnlineSubsystem::Get()->GetSubsystemName()));
+}
+
+void UEmberGameInstance::OnStartSessionComplete(FName SessionName, bool bWasSuccessful)
+{
+	if (!bWasSuccessful)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StartSession failed"));
+		LoadMainMenu();
+		return;
+	}
+
+	UEngine* Engine = GetEngine();
+	if (!ensure(Engine != nullptr)) return;
+
+	Engine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Hosting"));
+
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	World->GetAuthGameMode()->bUseSeamlessTravel = true;
+	World->ServerTravel("/Game/Loby/Maps/LobyMap?listen");
+
 }
 
 void UEmberGameInstance::StartSession()
@@ -271,7 +281,7 @@ void UEmberGameInstance::StartSession()
 	if (SessionInterface.IsValid() == false)
 		return;
 
-	SessionInterface->StartSession(CurrentSessionName);
+	SessionInterface->StartSession(SESSION_NAME);
 }
 
 void UEmberGameInstance::FOnNetworkFailure(UWorld* InWorld, UNetDriver* InNetDriver,
@@ -299,10 +309,10 @@ void UEmberGameInstance::Join(uint32 InIndex)
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Joining session at index %d"), InIndex);
-	UE_LOG(LogTemp, Warning, TEXT("Session name to join: %s"), *CurrentSessionName.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Session name to join: %s"), *DesiredServerName);
 
 
-	SessionInterface->JoinSession(0, CurrentSessionName, SessionSearch->SearchResults[InIndex]);
+	SessionInterface->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[InIndex]);
 }
 
 void UEmberGameInstance::LoadMainMenu()
