@@ -61,10 +61,8 @@ void ADragon::SpawnSpit()
 	SpawnParams.Instigator = GetInstigator();
 
 	ADragonSpitProjectile* SpitProjectile = GetWorld()->SpawnActor<ADragonSpitProjectile>(SpitClass, SpawnLocation, SpawnRotation, SpawnParams);
-	if (SpitProjectile)
-	{
-		SpitProjectile->SetTargetActor(TargetActor);
-	}
+	SpitProjectile->SetTargetActor(TargetActor);
+	
 }
 
 void ADragon::SpawnBreath()
