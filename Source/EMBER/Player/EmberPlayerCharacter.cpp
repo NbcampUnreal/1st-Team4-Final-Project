@@ -577,12 +577,6 @@ void AEmberPlayerCharacter::SpawnAI(const TArray<TSubclassOf<APawn>>& AIClasses,
 		FRotator::ZeroRotator,
 		SpawnParams
 	);
-
-	// 디버그 시각화
-	if (SpawnedEnemy)
-	{
-		DrawDebugSphere(GetWorld(), FinalSpawnLocation, 30.0f, 12, FColor::Cyan, false, 5.0f);
-	}
 }
 
 // 지면 위치 찾기 함수
@@ -611,7 +605,6 @@ FVector AEmberPlayerCharacter::FindGroundLocation(UWorld* World, const FVector& 
 	{
 		FVector Candidate = Hit.ImpactPoint;
 		FVector Adjusted = AdjustLocationForCollision(World, Candidate);
-		DrawDebugSphere(World, Adjusted, SphereRadius, 12, FColor::Green, false, 2.0f);
 		return Adjusted;
 	}
 
