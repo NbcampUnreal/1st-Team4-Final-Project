@@ -36,11 +36,7 @@ public class EMBER : ModuleRules
                         "AIModule",
                         "Slate",
                         "SlateCore",
-                        "UnrealEd",
-                        "WorldPartitionEditor",
-                        "EditorFramework",
-                        "EditorSubsystem",
-                    });
+                        });
         PublicIncludePaths.AddRange(
                     new string[]
                     {

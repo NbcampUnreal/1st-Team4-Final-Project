@@ -37,6 +37,10 @@ void UEmberGameplayAbility_Interact::ActivateAbility(const FGameplayAbilitySpecH
 
 void UEmberGameplayAbility_Interact::UpdateInteractions(const FEmberInteractionInfo& InteractionInfo)
 {
+	AActor* InteractableActor = Cast<AActor>(InteractionInfo.Interactable.GetObject());
+	FString ActorName = IsValid(InteractableActor) ? InteractableActor->GetName() : TEXT("None");
+	UE_LOG(LogTemp, Warning, TEXT("[DEBUG 1] Scanner found interactable: %s"), *ActorName);
+	
 	FEmberInteractionMessage Message;
 	Message.Instigator = GetAvatarActorFromActorInfo();
 	Message.bShouldRefresh = true;
@@ -56,6 +60,14 @@ void UEmberGameplayAbility_Interact::TriggerInteraction()
 	
 	if (GetAbilitySystemComponentFromActorInfo())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[DEBUG 2] F-Key pressed! Trying to trigger interaction..."));
+		
+		if (CurrentInteractionInfo.Interactable == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[DEBUG 2] FAILED: CurrentInteractionInfo is NULL!"));
+			return;
+		}
+		
 		AActor* Instigator = GetAvatarActorFromActorInfo();
 		AActor* InteractableActor = Cast<AActor>(CurrentInteractionInfo.Interactable.GetObject());
 
