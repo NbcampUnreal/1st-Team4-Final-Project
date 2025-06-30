@@ -37,11 +37,7 @@ void UMontageSystemComponent::BeginPlay()
     {
         for (FMontagesData* data : datas)
         {
-            if ((EStateType)i == data->Type)
-            {
-                Datas[i] = data;
-                continue;
-            }
+            Datas[(int32)data->Type] = data;
         }//for(data)
     }
 }
