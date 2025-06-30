@@ -43,6 +43,10 @@ public:
 
 	AActor* GetTargetActor() { return TargetActor; }
 
+protected:
+	virtual void HandleBeginOverlap(AActor* OtherActor) override;
+	virtual void HandleEndOverlap(AActor* OtherActor) override;
+
 private:
 	UPROPERTY(EditdefaultsOnly)
 	TSubclassOf<ADragonSpitProjectile> SpitClass;

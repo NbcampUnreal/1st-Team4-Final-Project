@@ -6,10 +6,11 @@
 #include "GameFramework/HUD.h"
 #include "EmberHUD.generated.h"
 
-/**
- * 
- */
+
 class UCommonActivatableWidget;
+class UCUserWidget_AIHP;
+class ABaseAI;
+
 UCLASS()
 
 class EMBER_API AEmberHUD : public AHUD
@@ -19,8 +20,8 @@ class EMBER_API AEmberHUD : public AHUD
 public:
 	//~AHUD Overrides
 	virtual void BeginPlay() override;
-	//~End of AHUD Overrides 
-protected:
+	//~End of AHUD Overrides
+
 	UPROPERTY(BlueprintReadWrite)
 	UCommonActivatableWidget* MainScreenWidget;
 };
