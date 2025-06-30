@@ -337,7 +337,7 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
 	//DamageData.PlayRate = event->DamageData->PlayRate;
 	MulticastHitted(damage, DamageEvent, EventInstigator, DamageCauser);
 
-	if (UAbilitySystemComponent* EmberASC = GetAbilitySystemComponent())
+	/*if (UAbilitySystemComponent* EmberASC = GetAbilitySystemComponent())
 	{
 		FGameplayEventData Payload;
 		Payload.EventTag = EmberGameplayTags::GameplayEvent_HitReact;
@@ -345,7 +345,7 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
 
 		FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
 		AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
-	}
+	}*/
 	
 	return damage;
 }
@@ -362,12 +362,13 @@ void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamage
 	StatusComponent->Damage(DamageData.Power);
 	if (StatusComponent->GetHp() <= 0.0f)
 	{
+		OnDeath();
 		return;
 	}
 
+	MontageComponent->PlayMontage(EStateType::Hitted);
 	// 애니메이션 종료시 캐릭터 상태 관리를 위해 GaemplayAbility에서 애니메이션 재생 구현
 	/*
-	MontageComponent->PlayMontage(EStateType::Hitted);
 	if (HasAuthority() == true)
 	{
 		UE_LOG(LogTemp, Error, L"server hp %f", StatusComponent->GetHp());
@@ -390,6 +391,8 @@ void AEmberPlayerCharacter::OnRep_Hitted()
 
 void AEmberPlayerCharacter::OnDeath()
 {
+	
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MontageComponent->PlayMontage(EStateType::Dead);
 }
 void AEmberPlayerCharacter::EndDeath()
