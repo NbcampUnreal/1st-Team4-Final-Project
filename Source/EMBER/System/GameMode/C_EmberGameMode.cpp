@@ -4,35 +4,26 @@
 #include "System/GameMode/C_EmberGameMode.h"
 #include "../Interaction/RespawnSubsystem.h"
 
+
 void AC_EmberGameMode::RestartPlayer(AController* NewPlayer)
 {
-	if (!NewPlayer || !DefaultPawnClass) return;
-
-	URespawnSubsystem* RespawnSS = GetGameInstance()->GetSubsystem<URespawnSubsystem>();
-	FTransform SpawnTransform = RespawnSS
-		? RespawnSS->GetRespawnTransform()
-		: FTransform::Identity;
-
-	if (APawn* OldPawn = NewPlayer->GetPawn())
+	if (NewPlayer == nullptr || NewPlayer->IsPendingKillPending())
 	{
-		OldPawn->DetachFromControllerPendingDestroy();
-		OldPawn->Destroy();
+		return;
 	}
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = GetInstigator();
-	SpawnParams.SpawnCollisionHandlingOverride =
-		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	AActor* StartSpot = FindPlayerStart(NewPlayer);
 
-	APawn* NewPawn = GetWorld()->SpawnActor<APawn>(
-		DefaultPawnClass,
-		SpawnTransform.GetLocation(),
-		SpawnTransform.GetRotation().Rotator(),
-		SpawnParams);
-
-	if (NewPawn)
+	// If a start spot wasn't found,
+	if (StartSpot == nullptr)
 	{
-		NewPlayer->Possess(NewPawn);
+		// Check for a previously assigned spot
+		if (NewPlayer->StartSpot != nullptr)
+		{
+			StartSpot = NewPlayer->StartSpot.Get();
+			UE_LOG(LogGameMode, Warning, TEXT("RestartPlayer: Player start not found, using last start spot"));
+		}	
 	}
+
+	RestartPlayerAtPlayerStart(NewPlayer, StartSpot);
 }

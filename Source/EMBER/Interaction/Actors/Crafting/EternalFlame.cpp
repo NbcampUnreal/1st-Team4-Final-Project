@@ -59,5 +59,5 @@ void AEternalFlame::OnInteractionSuccess(AActor* Interactor)
 {
 	Super::OnInteractionSuccess(Interactor);
 	URespawnSubsystem* Subsystem = UEmberBlueprintFunctionLibrary::GetRespawnSubsystem();
-	Subsystem->SetNewRespawnTransform(GetTransform());
+	Subsystem->SetNewRespawnTransform(Interactor->GetTransform());
 }

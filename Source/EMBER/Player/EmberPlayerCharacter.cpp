@@ -21,6 +21,7 @@
 #include "Components/CapsuleComponent.h"
 #include "TimerManager.h"
 #include "GameFramework/GameModeBase.h"
+#include "Interaction/RespawnSubsystem.h"
 
 AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 	: Super(Init.SetDefaultSubobjectClass<UC_CharacterMovementComponent>
@@ -401,12 +402,14 @@ void AEmberPlayerCharacter::OnDeath()
 			FTimerHandle UnusedHandle;
 			GetWorldTimerManager().SetTimer(UnusedHandle, FTimerDelegate::CreateLambda([this, PC]()
 			{
+				URespawnSubsystem* RespawnSubsystems = GetGameInstance()->GetSubsystem<URespawnSubsystem>();
+				FTransform Respawn = RespawnSubsystems->GetRespawnTransform();
 				if (UWorld* World = GetWorld())
 				{
 					if (AGameModeBase* GM = World->GetAuthGameMode<AGameModeBase>())
 					{
 						//스폰 위치 설정은 GameMode 쪽에서 처리
-						GM->RestartPlayer(PC);
+						GM->RestartPlayerAtTransform(PC,Respawn);
 					}
 				}
 			}), 5.0f, false);
