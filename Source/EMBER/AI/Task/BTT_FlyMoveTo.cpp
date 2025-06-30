@@ -57,7 +57,7 @@ EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	CurrentLocation = BaseAI->GetActorLocation();
 	Direction = (TargetLocation - CurrentLocation).GetSafeNormal();
 	// float Speed = BaseAI->GetCharacterMovement()->MaxFlySpeed;
-	BaseAI->GetCharacterMovement()->MaxAcceleration = 400.0f;
+	BaseAI->GetCharacterMovement()->MaxAcceleration = 700.0f;
 	// BaseAI->GetCharacterMovement()
 	// BaseAI->GetCharacterMovement()->MaxAcceleration = Speed;
 	// BaseAI->GetCharacterMovement()->Velocity = Direction * Speed;
@@ -104,30 +104,27 @@ bool UBTT_FlyMoveTo::IsNearGround()
 
 	return bHit;
 }
-bool UBTT_FlyMoveTo::IsNearTargetLocation()
-{
-	if (TargetActor)
-	{
-		TargetLocation = TargetActor->GetActorLocation();
-	}
-	FVector2D Current2D = FVector2D(BaseAI->GetActorLocation());
-	FVector2D Target2D = FVector2D(TargetLocation);
-
-	float Distance = FVector2D::Distance(Current2D, Target2D);
-	return Distance <= AcceptableRadius;
-}
 // bool UBTT_FlyMoveTo::IsNearTargetLocation()
 // {
-// 	CurrentLocation = BaseAI->GetActorLocation();
-// 	float Distance = FVector::Dist(CurrentLocation, TargetLocation);
+// 	FVector2D Current2D = FVector2D(CurrentLocation);
+// 	FVector2D Target2D = FVector2D(TargetLocation);
+//
+// 	float Distance = FVector2D::Distance(Current2D, Target2D);
 // 	return Distance <= AcceptableRadius;
 // }
+bool UBTT_FlyMoveTo::IsNearTargetLocation()
+{
+	CurrentLocation = BaseAI->GetActorLocation();
+	float Distance = FVector::Dist(CurrentLocation, TargetLocation);
+	return Distance <= AcceptableRadius;
+}
 
 void UBTT_FlyMoveTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 	Direction = (TargetLocation - CurrentLocation).GetSafeNormal(); 
 	BaseAI->AddMovementInput(Direction, 1.f);
+	
 	if (BaseAI->GetCharacterMovement()->MaxFlySpeed > BlackboardComp->GetValueAsFloat("FlySpeed"))
 	{
 		BaseAI->GetCharacterMovement()->MaxAcceleration = 0;
@@ -147,7 +144,7 @@ void UBTT_FlyMoveTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	{
 		UE_LOG(LogTemp, Warning, TEXT("FlyMove Success"));
 		BaseAI->GetCharacterMovement()->MaxAcceleration = 0.0f;
-		BaseAI->GetCharacterMovement()->MaxFlySpeed = 100.0f;
+		BaseAI->GetCharacterMovement()->MaxFlySpeed = 0.0f;
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 }
