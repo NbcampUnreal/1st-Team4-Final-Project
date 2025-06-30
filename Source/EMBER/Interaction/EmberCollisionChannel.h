@@ -1,3 +1,3 @@
 ﻿#pragma once
 
-#define Ember_TraceChannel_Interaction		ECC_GameTraceChannel8
+#define Ember_TraceChannel_Interaction		ECC_GameTraceChannel1

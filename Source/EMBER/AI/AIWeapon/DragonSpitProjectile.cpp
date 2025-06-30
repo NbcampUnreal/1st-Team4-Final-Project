@@ -19,13 +19,7 @@ ADragonSpitProjectile::ADragonSpitProjectile()
 
 	SpitEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SpitEffect"));
 	SpitEffect->SetupAttachment(SpitCollision);
-	if (SpitNiagara == nullptr)
-	{
-		UE_LOG(LogTemp,Error,L"Dragon.cpp, niagara is null");
-	}
-	else
-	SpitEffect->SetAsset(SpitNiagara);
-	SpitEffect->SetAutoActivate(false);
+	
 
 	SpitMovement = CreateDefaultSubobject<UProjectileMovementComponent>(FName("SpitMovement"));
 	SpitMovement->InitialSpeed = 3000.f;
@@ -39,7 +33,15 @@ ADragonSpitProjectile::ADragonSpitProjectile()
 void ADragonSpitProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
+	if (SpitNiagara == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Dragon.cpp, niagara is null");
+	}
+	else
+	{
+		SpitEffect->SetAsset(SpitNiagara);
+		SpitEffect->SetAutoActivate(false);
+	}
 	SpitCollision->OnComponentHit.AddDynamic(this, &ADragonSpitProjectile::OnHit);
 }
 

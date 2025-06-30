@@ -51,6 +51,8 @@ void UEmberGameplayAbility_Interact_Active::ActivateAbility(const FGameplayAbili
 
 bool UEmberGameplayAbility_Interact_Active::TriggerInteraction()
 {
+	UE_LOG(LogTemp, Warning, TEXT("[DEBUG 3] TriggerInteraction function has started!"));
+
 	bool bCanActivate = false;
 	bool bTriggerSuccessful = false;
 
@@ -58,19 +60,31 @@ bool UEmberGameplayAbility_Interact_Active::TriggerInteraction()
 	Payload.EventTag = EmberGameplayTags::Ability_Interact;
 	Payload.Instigator = GetAvatarActorFromActorInfo();
 	Payload.Target = InteractableActor;
-	
+    
 	if (UAbilitySystemComponent* AbilitySystem = GetAbilitySystemComponentFromActorInfo())
 	{
+		FString AbilityClassName = IsValid(InteractionInfo.AbilityToGrant) ? InteractionInfo.AbilityToGrant->GetName() : TEXT("None");
+		UE_LOG(LogTemp, Warning, TEXT("[DEBUG 3] AbilityToGrant is: %s"), *AbilityClassName);
+
 		if (FGameplayAbilitySpec* AbilitySpec = AbilitySystem->FindAbilitySpecFromClass(InteractionInfo.AbilityToGrant))
 		{
 			bCanActivate = AbilitySpec->Ability->CanActivateAbility(AbilitySpec->Handle, AbilitySystem->AbilityActorInfo.Get());
+          
+			UE_LOG(LogTemp, Warning, TEXT("[DEBUG 3] CanActivateAbility returned: %s"), bCanActivate ? TEXT("true") : TEXT("false"));
+
 			bTriggerSuccessful = AbilitySystem->TriggerAbilityFromGameplayEvent(
-				AbilitySpec->Handle,
-				AbilitySystem->AbilityActorInfo.Get(),
-				EmberGameplayTags::Ability_Interact,
-				&Payload,
-				*AbilitySystem
+			   AbilitySpec->Handle,
+			   AbilitySystem->AbilityActorInfo.Get(),
+			   EmberGameplayTags::Ability_Interact,
+			   &Payload,
+			   *AbilitySystem
 			);
+
+			UE_LOG(LogTemp, Warning, TEXT("[DEBUG 3] TriggerAbilityFromGameplayEvent returned: %s"), bTriggerSuccessful ? TEXT("true") : TEXT("false"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[DEBUG 3] FAILED: FindAbilitySpecFromClass could not find the ability. Is the ability granted to the player?"));
 		}
 	}
 

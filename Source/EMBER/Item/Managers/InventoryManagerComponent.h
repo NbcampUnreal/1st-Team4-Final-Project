@@ -14,6 +14,7 @@ class UInventoryManagerComponent;
 class UEquipmentManagerComponent;
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnInventoryEntryChanged, const FIntPoint&/*ItemSlotPos*/, UItemInstance*, int32/*ItemCount*/)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemAdded, TSubclassOf<UItemTemplate>, ItemClass, int32, Quantity);
 
 USTRUCT()
 struct FFindItemData
@@ -168,6 +169,9 @@ private:
 	
 public:
 	FOnInventoryEntryChanged OnInventoryEntryChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnInventoryItemAdded OnItemAdded;
 	
 private:
 	friend class UItemManagerComponent;

@@ -16,5 +16,7 @@ class EMBER_API UCBTService_AttackRange : public UBTService
 
 protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+#if WITH_EDITOR
 	virtual FName GetNodeIconName() const override;
+#endif
 };

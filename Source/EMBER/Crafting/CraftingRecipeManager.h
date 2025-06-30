@@ -63,10 +63,7 @@ class EMBER_API UCraftingRecipeManager : public UPrimaryDataAsset
 {
     GENERATED_BODY()
 
-public:
-    static const UCraftingRecipeManager& Get();
-    
-public:
+public:    
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crafting")
     UDataTable* RecipeDataTable;
 

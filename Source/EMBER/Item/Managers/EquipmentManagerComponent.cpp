@@ -154,6 +154,20 @@ void FEquipList::Unequip(EEquipmentSlotType EquipmentSlotType)
 	MarkItemDirty(Entry);
 }
 
+void FEquipList::Equip_UnSafe(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance)
+{
+	FEquipEntry& Entry = Entries[(int32)(EquipmentSlotType)];
+	Entry.ItemInstance = ItemInstance;
+	MarkItemDirty(Entry);
+}
+
+void FEquipList::Unequip_UnSafe(EEquipmentSlotType EquipmentSlotType)
+{
+	FEquipEntry& Entry = Entries[(int32)(EquipmentSlotType)];
+	Entry.ItemInstance = nullptr;
+	MarkItemDirty(Entry);
+}
+
 UEquipmentManagerComponent::UEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer), EquipList(this)
 {
 	SetIsReplicatedByDefault(true);
@@ -344,10 +358,11 @@ void UEquipmentManagerComponent::Equip(EEquipmentSlotType EquipmentSlotType, UIt
 	if (EquippableFragment == nullptr)
 		return;
 	
+	
 	if (EquippableFragment->EquipmentType == EEquipmentType::Weapon || EquippableFragment->EquipmentType == EEquipmentType::Utility)
 	{
 		EquipList.Equip(EquipmentSlotType, ItemInstance);
-
+		
 		if (IsUsingRegisteredSubObjectList() && IsReadyForReplication() && ItemInstance)
 		{
 			AddReplicatedSubObject(ItemInstance);
@@ -355,6 +370,7 @@ void UEquipmentManagerComponent::Equip(EEquipmentSlotType EquipmentSlotType, UIt
 	}
 	else if (EquippableFragment->EquipmentType == EEquipmentType::Armor)
 	{
+		EquipList.Equip_UnSafe(EquipmentSlotType, ItemInstance);
 		Equip_Armor(ItemInstance);
 	}
 }
@@ -387,6 +403,7 @@ void UEquipmentManagerComponent::Unequip(EEquipmentSlotType EquipmentSlotType)
 	}
 	else if (EquipableFragment->EquipmentType == EEquipmentType::Armor)
 	{
+		EquipList.Unequip(EquipmentSlotType);
 		Unequip_Armor(RemovedItemInstance);
 	}
 }
