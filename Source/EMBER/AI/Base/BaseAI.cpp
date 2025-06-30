@@ -186,7 +186,7 @@ void ABaseAI::PlaySound(AISoundCategory InSoundType)
 void ABaseAI::OnDeath()
 {
 	UE_LOG(LogTemp, Display, TEXT("OnDeath"));
-
+	this->GetCharacterMovement()->GravityScale = 0.0f;
 	AIState->SetDeadMode();
 	bIsDie = true;
 

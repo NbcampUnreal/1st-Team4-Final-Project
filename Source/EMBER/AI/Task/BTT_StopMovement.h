@@ -4,21 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTT_Guard.generated.h"
+#include "BTT_StopMovement.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EMBER_API UBTT_Guard : public UBTTask_BlackboardBase
+class EMBER_API UBTT_StopMovement : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
-	UBTT_Guard();
-
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	void ActorRotateUpdate();
-
-	UBehaviorTreeComponent* Owner;
-	FTimerHandle TimerHandle;
 };

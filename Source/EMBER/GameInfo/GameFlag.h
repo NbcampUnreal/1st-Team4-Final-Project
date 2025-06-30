@@ -23,6 +23,7 @@ UENUM()
 enum class EStateType : uint8
 {
 	Idle UMETA(DisplayName = "Idle"),
+	Run UMETA(DisplayName = "Run"),
 	Anim UMETA(DisplayName = "Anim"),
 	Detect UMETA(DisplayName = "Detect"),
 	Equip UMETA(DisplayName = "Equip"),

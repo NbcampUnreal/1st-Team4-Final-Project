@@ -1,18 +1,21 @@
-#include "BTT_Fly.h"
-#include "AI/Base/BaseAI.h"
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "AI/Task/BTT_GriffonFly.h"
+
 #include "CAIController.h"
-#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "Base/BaseAI.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-UBTT_Fly::UBTT_Fly()
+UBTT_GriffonFly::UBTT_GriffonFly()
 {
 	NodeName = "Fly";
 	bNotifyTick = true;
 	FlyHeight = 700.0f;
 }
 
-EBTNodeResult::Type UBTT_Fly::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTT_GriffonFly::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AIController = Cast<ACAIController>(OwnerComp.GetAIOwner());
 	BlackboardComp = OwnerComp.GetBlackboardComponent();
@@ -28,15 +31,14 @@ EBTNodeResult::Type UBTT_Fly::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 	}
 
 	AI->GetCharacterMovement()->StopMovementImmediately();
-	AI->GetCharacterMovement()->MaxFlySpeed = 700;
 	AI->GetCharacterMovement()->GravityScale = 0.0f;
-	AI->GetCharacterMovement()->Velocity = FVector(0, 0, 400);
+	AI->GetCharacterMovement()->Velocity = FVector(0, 0, 500);
 	AI->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 
 	return EBTNodeResult::InProgress;
 }
 
-void UBTT_Fly::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTT_GriffonFly::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
