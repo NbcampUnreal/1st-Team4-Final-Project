@@ -207,7 +207,13 @@ void AEmberPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		UE_LOG(LogTemp, Error, L"Player, WarriorInputComponent is null");
 		return;
 	}
+	if (ensure(PlayerInputComponent != nullptr) == false)
+		return;
+
 	UEmberEnhancedInputComponent* WarriorInputComponent = CastChecked<UEmberEnhancedInputComponent>(PlayerInputComponent);
+
+	if(ensure(WarriorInputComponent != nullptr) == false)
+		return;
 
 	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Move, ETriggerEvent::Triggered, this, &ThisClass::Move);
 	WarriorInputComponent->BindNativeAction(InputConfigDataAsset, EmberGameplayTags::InputTag_Movement_Look, ETriggerEvent::Triggered, this, &ThisClass::Look);
