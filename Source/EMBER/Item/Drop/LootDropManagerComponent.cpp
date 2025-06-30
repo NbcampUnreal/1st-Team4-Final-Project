@@ -22,6 +22,8 @@ void ULootDropManagerComponent::BeginPlay()
 	{
 		if (MonsterDiedChannel.IsValid())
 		{
+			if (GetWorld() == nullptr)
+				return;
 			UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(GetWorld());
 			MessageListenerHandle = MessageSubsystem.RegisterListener(MonsterDiedChannel, this, &ULootDropManagerComponent::OnMonsterDiedMessageReceived);
 			UE_LOG(LogTemp, Log, TEXT("LootDropManagerComponent: Listening for monster deaths on channel %s"), *MonsterDiedChannel.ToString());
