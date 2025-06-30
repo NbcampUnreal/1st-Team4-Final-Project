@@ -101,6 +101,11 @@ void AEmberPlayerCharacter::OnRep_PlayerState()
 
 	if (ArmorComponent != nullptr)
 		ArmorComponent->InitializeArmorForLateJoiners();
+
+	if (AEmberPlayerState* EmberPlayerState = GetPlayerState<AEmberPlayerState>())
+	{
+		SetAbilitySystemComponent(EmberPlayerState->GetAbilitySystemComponent());
+	}
 }
 
 void AEmberPlayerCharacter::InitAbilityActorInfo()
