@@ -29,7 +29,7 @@ private:
 	
 protected:	//	재정의
 	virtual void BeginPlay() override;
-	virtual float GetMaxSpeed() const override;
+	//virtual float GetMaxSpeed() const override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 public:	//	추가
