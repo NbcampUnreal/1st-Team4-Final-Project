@@ -38,10 +38,8 @@ void FEquipmentEntry::Init(UItemInstance* InItemInstance, int32 InItemCount)
 	const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemInstance->GetItemTemplateID());
 	ItemCount = FMath::Clamp(InItemCount, 1, ItemTemplate.MaxStackCount);
 	
-	if (InventoryEquipmentManager->IsSameEquipState(EquipmentSlotType, EquipmentManager->GetCurrentEquipState()))
-	{
+	if ((EEquipmentSlotType::Utility_Primary <= EquipmentSlotType && EquipmentSlotType <= EEquipmentSlotType::Utility_Quaternary) == false)
 		EquipmentManager->Equip(EquipmentSlotType, ItemInstance);
-	}
 }
 
 UItemInstance* FEquipmentEntry::Reset()
