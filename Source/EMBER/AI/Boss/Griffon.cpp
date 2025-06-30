@@ -2,9 +2,13 @@
 #include "CAIController.h"
 #include "C_StateComponent.h"
 #include "StatusComponent.h"
+#include "EmberPlayerCharacter.h"
+#include "CUserWidget_AIHP.h"
+#include "UI/EmberHUD.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "kismet/GameplayStatics.h"
+#include "CommonActivatableWidget.h"
 
 AGriffon::AGriffon()
 {
@@ -50,6 +54,71 @@ float AGriffon::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
 	}
 	
 	return ActualDamage;
+}
+
+void AGriffon::HandleBeginOverlap(AActor* OtherActor)
+{
+	if (AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(OtherActor))
+	{
+		if (APlayerController* PC = Cast<APlayerController>(Player->GetController()))
+		{
+			if (AEmberHUD* EmberHUD = Cast<AEmberHUD>(PC->GetHUD()))
+			{
+				if (EmberHUD->MainScreenWidget)
+				{
+					if (UUserWidget* RootUserWidget = Cast<UUserWidget>(EmberHUD->MainScreenWidget))
+					{
+						if (UWidget* Found = RootUserWidget->GetWidgetFromName(TEXT("WBP_HUD_AIHP")))
+						{
+							if (UCUserWidget_AIHP* AIHPWidget = Cast<UCUserWidget_AIHP>(Found))
+							{
+								AIHPWidget->SetTargetAI(this);
+								UE_LOG(LogTemp, Warning, TEXT("SetTargetAI(this) called from HandleBeginOverlap"));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void AGriffon::HandleEndOverlap(AActor* OtherActor)
+{
+	if (AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(OtherActor))
+	{
+		if (APlayerController* PC = Cast<APlayerController>(Player->GetController()))
+		{
+			if (AEmberHUD* EmberHUD = Cast<AEmberHUD>(PC->GetHUD()))
+			{
+				if (EmberHUD->MainScreenWidget)
+				{
+					if (UUserWidget* RootUserWidget = Cast<UUserWidget>(EmberHUD->MainScreenWidget))
+					{
+						if (UWidget* Found = RootUserWidget->GetWidgetFromName(TEXT("WBP_HUD_AIHP")))
+						{
+							if (UCUserWidget_AIHP* AIHPWidget = Cast<UCUserWidget_AIHP>(Found))
+							{
+								if (AIHPWidget->GetTargetAI() == this)
+								{
+									AIHPWidget->SetTargetAI(nullptr);
+									UE_LOG(LogTemp, Warning, TEXT("SetTargetAI(nullptr) called from HandleEndOverlap"));
+								}
+							}
+							else
+							{
+								UE_LOG(LogTemp, Warning, TEXT("AIHPWidget cast failed in HandleEndOverlap"));
+							}
+						}
+						else
+						{
+							UE_LOG(LogTemp, Warning, TEXT("AIHPWidget not found in HandleEndOverlap"));
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 //void AGriffon::OnTargetPerceptionUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)

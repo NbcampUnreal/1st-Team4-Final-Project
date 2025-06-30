@@ -11,7 +11,9 @@ class EMBER_API UStatusComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintCallable, Category="Status")
 	FORCEINLINE float GetMaxHp() { return MaxHP; }
+	UFUNCTION(BlueprintCallable, Category="Status")
 	FORCEINLINE float GetHp() { return HP; }
 	FORCEINLINE float GetMaxStamina() { return MaxStamina; }
 	FORCEINLINE float GetStamina() { return Stamina; }
