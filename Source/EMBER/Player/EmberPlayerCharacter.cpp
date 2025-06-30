@@ -20,6 +20,7 @@
 #include "NavigationSystem.h"
 #include "Components/CapsuleComponent.h"
 #include "TimerManager.h"
+#include "GameFramework/GameModeBase.h"
 
 AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 	: Super(Init.SetDefaultSubobjectClass<UC_CharacterMovementComponent>
@@ -391,10 +392,29 @@ void AEmberPlayerCharacter::OnDeath()
 {
 	MontageComponent->PlayMontage(EStateType::Dead);
 }
-
 void AEmberPlayerCharacter::EndDeath()
 {
 	Destroy();
+	
+	if (HasAuthority())
+	{
+		AController* PC = GetController();
+		if (PC)
+		{
+			FTimerHandle UnusedHandle;
+			GetWorldTimerManager().SetTimer(UnusedHandle, FTimerDelegate::CreateLambda([this, PC]()
+			{
+				if (UWorld* World = GetWorld())
+				{
+					if (AGameModeBase* GM = World->GetAuthGameMode<AGameModeBase>())
+					{
+						//스폰 위치 설정은 GameMode 쪽에서 처리
+						GM->RestartPlayer(PC);
+					}
+				}
+			}), 5.0f, false);
+		}
+	}
 }
 
 void AEmberPlayerCharacter::ApplyWarmingEffect_Implementation()
