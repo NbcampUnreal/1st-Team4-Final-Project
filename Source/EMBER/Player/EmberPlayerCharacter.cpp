@@ -219,7 +219,6 @@ UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() cons
 
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
 {
-	int fgdfg = 3;
 	if (MovementComponent)
 	{
 		MovementComponent->OnMove(value);
@@ -386,11 +385,6 @@ void AEmberPlayerCharacter::OnRep_Hitted()
 void AEmberPlayerCharacter::OnDeath()
 {
 	MontageComponent->PlayMontage(EStateType::Dead);
-}
-void AEmberPlayerCharacter::EndDeath()
-{
-	Destroy();
-	
 	if (HasAuthority())
 	{
 		AController* PC = GetController();
@@ -410,6 +404,10 @@ void AEmberPlayerCharacter::EndDeath()
 			}), 5.0f, false);
 		}
 	}
+}
+void AEmberPlayerCharacter::EndDeath()
+{
+	Destroy();
 }
 
 void AEmberPlayerCharacter::ApplyWarmingEffect_Implementation()

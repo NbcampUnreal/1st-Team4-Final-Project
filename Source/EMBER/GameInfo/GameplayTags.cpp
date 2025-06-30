@@ -1,4 +1,5 @@
-﻿#include "GameplayTags.h"
+﻿
+#include "GameplayTags.h"
 
 namespace EmberGameplayTags
 {
