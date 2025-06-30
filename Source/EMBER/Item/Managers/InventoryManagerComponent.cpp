@@ -422,6 +422,12 @@ int32 UInventoryManagerComponent::TryAddItemByRarity(TSubclassOf<UItemTemplate> 
 				}
 			}
 		}
+		
+		if (AddableItemCount > 0)
+		{
+			OnItemAdded.Broadcast(ItemTemplateClass, AddableItemCount);
+		}
+		
 		return AddableItemCount;
 	}
 
@@ -472,10 +478,10 @@ bool UInventoryManagerComponent::FindItemByID(int32 FindItemID, TArray<FFindItem
 void UInventoryManagerComponent::AddItem_Unsafe(const FIntPoint& ItemSlotPos, UItemInstance* ItemInstance, int32 ItemCount)
 {
 	check(GetOwner()->HasAuthority());
-	
+    
 	const int32 Index = ItemSlotPos.Y * InventorySlotCount.X + ItemSlotPos.X;
 	FInventoryEntry& Entry = InventoryList.Entries[Index];
-	
+    
 	if (Entry.GetItemInstance())
 	{
 		Entry.ItemCount += ItemCount;
@@ -485,11 +491,11 @@ void UInventoryManagerComponent::AddItem_Unsafe(const FIntPoint& ItemSlotPos, UI
 	{
 		if (ItemInstance == nullptr)
 			return;
-		
+       
 		const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemInstance->GetItemTemplateID());
-		
+       
 		Entry.Init(ItemInstance, ItemCount);
-		
+       
 		if (IsReadyForReplication() && ItemInstance)
 		{
 			AddReplicatedSubObject(ItemInstance);
@@ -497,6 +503,21 @@ void UInventoryManagerComponent::AddItem_Unsafe(const FIntPoint& ItemSlotPos, UI
 
 		MarkSlotChecks(true, ItemSlotPos, ItemTemplate.SlotCount);
 		InventoryList.CustomMarkItemDirty(GetOwner() ,Entry, ItemSlotPos);
+	}
+
+	if (ItemInstance && ItemCount > 0)
+	{
+		const int32 ItemID = ItemInstance->GetItemTemplateID();
+        
+		const UItemTemplate* ItemTemplateCDO = &UEmberItemData::Get().FindItemTemplateByID(ItemID);
+		if (ItemTemplateCDO)
+		{
+			TSubclassOf<UItemTemplate> ItemTemplateClass = ItemTemplateCDO->GetClass();
+			if (ItemTemplateClass)
+			{
+				OnItemAdded.Broadcast(ItemTemplateClass, ItemCount);
+			}
+		}
 	}
 }
 
