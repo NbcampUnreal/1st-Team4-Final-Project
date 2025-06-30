@@ -31,9 +31,8 @@ EBTNodeResult::Type UBTT_GriffonFly::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	}
 
 	AI->GetCharacterMovement()->StopMovementImmediately();
-	AI->GetCharacterMovement()->MaxFlySpeed = 700;
 	AI->GetCharacterMovement()->GravityScale = 0.0f;
-	AI->GetCharacterMovement()->Velocity = FVector(0, 0, 400);
+	AI->GetCharacterMovement()->Velocity = FVector(0, 0, 500);
 	AI->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 
 	return EBTNodeResult::InProgress;
@@ -55,4 +54,5 @@ void UBTT_GriffonFly::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 		{
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
-	}}
+	}
+}
