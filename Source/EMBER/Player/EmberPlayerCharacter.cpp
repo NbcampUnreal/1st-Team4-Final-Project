@@ -20,6 +20,7 @@
 #include "NavigationSystem.h"
 #include "Components/CapsuleComponent.h"
 #include "TimerManager.h"
+#include "GameFramework/GameModeBase.h"
 
 AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 	: Super(Init.SetDefaultSubobjectClass<UC_CharacterMovementComponent>
@@ -100,6 +101,11 @@ void AEmberPlayerCharacter::OnRep_PlayerState()
 
 	if (ArmorComponent != nullptr)
 		ArmorComponent->InitializeArmorForLateJoiners();
+
+	if (AEmberPlayerState* EmberPlayerState = GetPlayerState<AEmberPlayerState>())
+	{
+		SetAbilitySystemComponent(EmberPlayerState->GetAbilitySystemComponent());
+	}
 }
 
 void AEmberPlayerCharacter::InitAbilityActorInfo()
@@ -386,10 +392,29 @@ void AEmberPlayerCharacter::OnDeath()
 {
 	MontageComponent->PlayMontage(EStateType::Dead);
 }
-
 void AEmberPlayerCharacter::EndDeath()
 {
 	Destroy();
+	
+	if (HasAuthority())
+	{
+		AController* PC = GetController();
+		if (PC)
+		{
+			FTimerHandle UnusedHandle;
+			GetWorldTimerManager().SetTimer(UnusedHandle, FTimerDelegate::CreateLambda([this, PC]()
+			{
+				if (UWorld* World = GetWorld())
+				{
+					if (AGameModeBase* GM = World->GetAuthGameMode<AGameModeBase>())
+					{
+						//스폰 위치 설정은 GameMode 쪽에서 처리
+						GM->RestartPlayer(PC);
+					}
+				}
+			}), 5.0f, false);
+		}
+	}
 }
 
 void AEmberPlayerCharacter::ApplyWarmingEffect_Implementation()
@@ -557,12 +582,6 @@ void AEmberPlayerCharacter::SpawnAI(const TArray<TSubclassOf<APawn>>& AIClasses,
 		FRotator::ZeroRotator,
 		SpawnParams
 	);
-
-	// 디버그 시각화
-	if (SpawnedEnemy)
-	{
-		DrawDebugSphere(GetWorld(), FinalSpawnLocation, 30.0f, 12, FColor::Cyan, false, 5.0f);
-	}
 }
 
 // 지면 위치 찾기 함수
@@ -591,7 +610,6 @@ FVector AEmberPlayerCharacter::FindGroundLocation(UWorld* World, const FVector& 
 	{
 		FVector Candidate = Hit.ImpactPoint;
 		FVector Adjusted = AdjustLocationForCollision(World, Candidate);
-		DrawDebugSphere(World, Adjusted, SphereRadius, 12, FColor::Green, false, 2.0f);
 		return Adjusted;
 	}
 
