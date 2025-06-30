@@ -19,8 +19,11 @@ public:
 	UFUNCTION()
 	void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
 
+	UPROPERTY(EditAnywhere)
+	float Runaway;
+	
 	UBehaviorTreeComponent* OwnerCompRef;
-	ABaseAI* ControlledAnimal;
+	ABaseAI* BaseAI;
 	UBlackboardComponent* BlackboardComponent;
-	TObjectPtr<UCBehaviorTreeComponent> BehaviorComp;
+	TObjectPtr<UC_StateComponent> AIState;
 };

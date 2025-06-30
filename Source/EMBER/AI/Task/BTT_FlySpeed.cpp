@@ -2,6 +2,7 @@
 #include "C_CharacterMovementComponent.h"
 #include "AI/Base/BaseAI.h"
 #include "AI/CAIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 EBTNodeResult::Type UBTT_FlySpeed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -27,6 +28,7 @@ EBTNodeResult::Type UBTT_FlySpeed::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 	}
 	// UE_LOG(LogTemp, Error, L"%s, %p", *ai->GetActorLabel(), this);
 
+	UBlackboardComponent* BlackboardComponent = Cast<UBlackboardComponent>(OwnerComp.GetBlackboardComponent());
 	move.Get()->SetFlySpeed(FlySpeedType);
 	return EBTNodeResult::Succeeded;
 }

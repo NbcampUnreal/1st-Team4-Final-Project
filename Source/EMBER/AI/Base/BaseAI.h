@@ -9,6 +9,7 @@
 #include "BaseAI.generated.h"
 
 class UBehaviorTree;
+class USphereComponent;
 
 UCLASS()
 class EMBER_API ABaseAI : public ACharacter
@@ -38,6 +39,7 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+
 protected:
 	// AI 기본 정보	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Stat")
@@ -57,6 +59,20 @@ protected:
 	TObjectPtr<UCBehaviorTreeComponent> BehaviorTreeComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "AI/BehaviorTree")
 	UBehaviorTree* BehaviorTree;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USphereComponent* WidgetTrigger;
+
+	UFUNCTION()
+	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
+	virtual void HandleBeginOverlap(AActor* OtherActor) {}
+	virtual void HandleEndOverlap(AActor* OtherActor) {}
 public:
 	UC_CharacterMovementComponent* GetAIMovement()const;
 	UStatusComponent* GetStatusComponent()const { return StatusComponent; }
