@@ -115,6 +115,18 @@ void UEmberGameInstance::OnCreateSessionComplete(FName InSessionName, bool bSucc
 		return;
 	}
 
+	if (Menu != nullptr)
+	{
+		Menu->Teardown();
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Session created successfully, waiting for StartSession."));
+
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+	World->GetAuthGameMode()->bUseSeamlessTravel = true;
+	World->ServerTravel(TEXT("/Game/Loby/Maps/LobyMap?listen"));
+
 	if (SessionInterface.IsValid())
 	{
 		// Register delegate for StartSessionComplete
@@ -126,13 +138,6 @@ void UEmberGameInstance::OnCreateSessionComplete(FName InSessionName, bool bSucc
 
 		SessionInterface->StartSession(InSessionName);
 	}
-
-	if (Menu != nullptr)
-	{
-		Menu->Teardown();
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Session created successfully, waiting for StartSession."));
 }
 
 void UEmberGameInstance::OnStartSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -146,11 +151,9 @@ void UEmberGameInstance::OnStartSessionComplete(FName SessionName, bool bWasSucc
 
 	UE_LOG(LogTemp, Warning, TEXT("StartSession succeeded. Doing ServerTravel."));
 
-	UWorld* World = GetWorld();
-	if (!ensure(World != nullptr)) return;
+	
 
-	World->GetAuthGameMode()->bUseSeamlessTravel = true;
-	World->ServerTravel(TEXT("/Game/Loby/Maps/LobyMap?listen"));
+	
 }
 
 void UEmberGameInstance::OnDestroySessionComplete(FName InSessionName, bool bSuccess)
@@ -178,7 +181,7 @@ void UEmberGameInstance::CreateSession()
 		{
 			sessionSettings.bIsLANMatch = false;
 		}
-
+		//auto* Mutable = const_cast<FOnlineSessionSearchResult*>(&SearchResult);
 		sessionSettings.NumPublicConnections = 5;
 		ConectedPlayerCount = sessionSettings.NumPublicConnections;
 		sessionSettings.bShouldAdvertise = true;
@@ -259,7 +262,11 @@ void UEmberGameInstance::Join(uint32 InIndex)
 	UE_LOG(LogTemp, Warning, TEXT("Joining session at index %d"), InIndex);
 	UE_LOG(LogTemp, Warning, TEXT("Session name to join: %s"), *DesiredServerName);
 
-	SessionInterface->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[InIndex]);
+	bool b = SessionInterface->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[InIndex]);
+
+	//UE_LOG(LogTemp, Error, L"JoinSession SearhResult %d", SessionSearch->SearchResults[InIndex]);
+	UE_LOG(LogTemp, Error, L"JoinSession Name %s", *SESSION_NAME.ToString());
+	UE_LOG(LogTemp, Error, L"JoinSession result %d", b);
 }
 
 void UEmberGameInstance::OnJoinSessionComplete(FName InSessionName, EOnJoinSessionCompleteResult::Type InResult)
@@ -270,6 +277,7 @@ void UEmberGameInstance::OnJoinSessionComplete(FName InSessionName, EOnJoinSessi
 		return;
 	}
 
+	UE_LOG(LogTemp, Error, L"SessionComp result %d", InResult);
 	FString address;
 	if (SessionInterface->GetResolvedConnectString(SESSION_NAME, address))
 	{
