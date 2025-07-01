@@ -21,7 +21,7 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 	TObjectPtr<ACAIController> Controller = Cast<ACAIController>(OwnerComp.GetOwner());
-	if(Controller.Get() == nullptr)
+	if (Controller.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"Controller is null");
 		return;
@@ -32,8 +32,8 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		UE_LOG(LogTemp, Error, L"AI is null");
 		return;
 	}
-	
- 	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
+
+	TObjectPtr<UCBehaviorTreeComponent> AIState = Cast<UCBehaviorTreeComponent>(AI->GetComponentByClass(UCBehaviorTreeComponent::StaticClass()));
 	if (AIState.Get() == nullptr)
 	{
 		UE_LOG(LogTemp, Error, L"AIstate is null");
@@ -131,17 +131,17 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 			return;
 		}
 	}
-	
+
 	//Target과 가까우면 AttackMode
 	float distance = AI.Get()->GetDistanceTo(Target);
 	int32 AttackCount = Weapon->GetAttackStack();
 	int32 MissCount = Weapon->GetMissStack();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,FString::Printf(TEXT("Distance: %.1f | AttackCount: %d | MissCount: %d"), distance, AttackCount, MissCount));
-	
-	if(distance < ActionRange || (AttackCount >= 3 && distance > MeleeRange))
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Distance: %.1f | AttackCount: %d | MissCount: %d"), distance, AttackCount, MissCount));
+
+	if (distance < ActionRange || (AttackCount >= 3 && distance > MeleeRange))
 	{
 		AIState->SetActionMode();
-		
+
 		if (AttackCount >= 3)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Special Attack Block"));
@@ -167,7 +167,7 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		else
 		{
 			AIState->SetNormalAttackMode();
-			int32 RandomValue = FMath::RandRange(0,2);
+			int32 RandomValue = FMath::RandRange(0, 2);
 			Blackboard->SetValueAsInt("NormalAttackIdx", RandomValue);
 		}
 
@@ -180,33 +180,33 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	{
 		AIState->SetChaseMode();
 	}
+	if (bDrawDebug == true)
+	{
 
-#if WITH_EDITOR
-	DrawDebugSphere(
-		GetWorld(),
-		AI->GetActorLocation(),
-		ActionRange,
-		32,
-		FColor::Blue,
-		false,
-		-1.f,
-		0,
-		2.f
-	);
+		DrawDebugSphere(
+			GetWorld(),
+			AI->GetActorLocation(),
+			ActionRange,
+			32,
+			FColor::Blue,
+			false,
+			-1.f,
+			0,
+			2.f
+		);
 
-	DrawDebugSphere(
-		GetWorld(),
-		AI->GetActorLocation(),
-		MeleeRange,
-		32,
-		FColor::Red,
-		false,
-		-1.f,
-		0,
-		2.f
-	);
-#endif
+		DrawDebugSphere(
+			GetWorld(),
+			AI->GetActorLocation(),
+			MeleeRange,
+			32,
+			FColor::Red,
+			false,
+			-1.f,
+			0,
+			2.f
+		);
+	}
 }
-
 
 
