@@ -60,6 +60,11 @@ void UCBTService_Passive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 	{
 		BTState->SetIdleMode();
 	}
+	if (State->IsRunMode())
+	{
+		BTState->SetRunMode();
+	}
+
 	
 	if (TagetActor)
 	{
@@ -70,7 +75,7 @@ void UCBTService_Passive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 		if (Distance < RunRange)
 		{
-			BTState->SetRunMode();
+			State->SetRunMode();
 		}
 		return;
 	}
