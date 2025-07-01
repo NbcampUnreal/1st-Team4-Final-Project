@@ -157,6 +157,8 @@ void ADragon::OnDeath()
 		CurrentMeteorSpawner->Destroy();
 		CurrentMeteorSpawner = nullptr;
 	}
+
+	OnDeathDispatcher.Broadcast();
 }
 
 void ADragon::StartMeteorPhase()
