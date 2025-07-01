@@ -1,6 +1,10 @@
 #include "Component/StatusComponent.h"
 
+#include "AbilitySystemComponent.h"
+#include "EmberPlayerCharacter.h"
+#include "GameFlag.h"
 #include "GameFramework/Character.h"
+#include "GameInfo/GameplayTags.h"
 #include "Net/UnrealNetwork.h"
 
 UStatusComponent::UStatusComponent()
@@ -164,9 +168,56 @@ void UStatusComponent::LevelUp()
 	//TODOS �������� �����Ұ� �ۼ�
 }
 
+void UStatusComponent::StartDeath()
+{
+	if (DeathState != EDeathState::NotDead)
+	{
+		return;
+	}
+
+	DeathState = EDeathState::DeathStarted;
+
+	if (OwnerCharacter)
+	{
+		AEmberPlayerCharacter* EmberCharacter = Cast<AEmberPlayerCharacter>(OwnerCharacter);
+		if (UAbilitySystemComponent* EmberASC = EmberCharacter->GetAbilitySystemComponent())
+		{
+			EmberASC->SetLooseGameplayTagCount(EmberGameplayTags::Status_Death_Dying, 1);
+		}
+	}
+
+	OnDeathStarted.Broadcast(OwnerCharacter);
+
+	OwnerCharacter->ForceNetUpdate();
+}
+
+void UStatusComponent::FinishDeath()
+{
+	if (DeathState != EDeathState::DeathStarted)
+	{
+		return;
+	}
+
+	DeathState = EDeathState::DeathFinished;
+
+	if (OwnerCharacter)
+	{
+		AEmberPlayerCharacter* EmberCharacter = Cast<AEmberPlayerCharacter>(OwnerCharacter);
+		if (UAbilitySystemComponent* EmberASC = EmberCharacter->GetAbilitySystemComponent())
+		{
+			EmberASC->SetLooseGameplayTagCount(EmberGameplayTags::Status_Death_Dying, 1);
+		}
+	}
+
+	OnDeathFinished.Broadcast(OwnerCharacter);
+
+	OwnerCharacter->ForceNetUpdate();
+}
+
 void UStatusComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ThisClass, HP);
     DOREPLIFETIME(ThisClass, Temperature);
+	DOREPLIFETIME(ThisClass, DeathState);
 }

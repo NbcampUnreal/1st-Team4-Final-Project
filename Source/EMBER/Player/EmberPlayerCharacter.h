@@ -109,6 +109,17 @@ public:
 	virtual void PostNetInit() override;
 
 	void SetControlRotation(bool bEnable);
+
+protected:
+	// Begins the death sequence for the character (disables collision, disables movement, etc...)
+	UFUNCTION()
+	virtual void OnDeathStarted(AActor* OwningActor);
+
+	// Ends the death sequence for the character (detaches controller, destroys pawn, etc...)
+	UFUNCTION()
+	virtual void OnDeathFinished(AActor* OwningActor);
+	
+	void DisableMovementAndCollision();
 	
 private:
 
