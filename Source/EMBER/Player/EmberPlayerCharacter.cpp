@@ -20,6 +20,8 @@
 #include "NavigationSystem.h"
 #include "Components/CapsuleComponent.h"
 #include "TimerManager.h"
+#include "GameFramework/GameModeBase.h"
+#include "Interaction/RespawnSubsystem.h"
 
 AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 	: Super(Init.SetDefaultSubobjectClass<UC_CharacterMovementComponent>
@@ -100,6 +102,11 @@ void AEmberPlayerCharacter::OnRep_PlayerState()
 
 	if (ArmorComponent != nullptr)
 		ArmorComponent->InitializeArmorForLateJoiners();
+
+	if (AEmberPlayerState* EmberPlayerState = GetPlayerState<AEmberPlayerState>())
+	{
+		SetAbilitySystemComponent(EmberPlayerState->GetAbilitySystemComponent());
+	}
 }
 
 void AEmberPlayerCharacter::InitAbilityActorInfo()
@@ -218,7 +225,6 @@ UAbilitySystemComponent* AEmberPlayerCharacter::GetAbilitySystemComponent() cons
 
 void AEmberPlayerCharacter::Move(const FInputActionValue& value)
 {
-	int fgdfg = 3;
 	if (MovementComponent)
 	{
 		MovementComponent->OnMove(value);
@@ -331,7 +337,7 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
 	//DamageData.PlayRate = event->DamageData->PlayRate;
 	MulticastHitted(damage, DamageEvent, EventInstigator, DamageCauser);
 
-	if (UAbilitySystemComponent* EmberASC = GetAbilitySystemComponent())
+	/*if (UAbilitySystemComponent* EmberASC = GetAbilitySystemComponent())
 	{
 		FGameplayEventData Payload;
 		Payload.EventTag = EmberGameplayTags::GameplayEvent_HitReact;
@@ -339,7 +345,7 @@ float AEmberPlayerCharacter::TakeDamage(float Damage, FDamageEvent const& Damage
 
 		FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
 		AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
-	}
+	}*/
 	
 	return damage;
 }
@@ -356,12 +362,13 @@ void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamage
 	StatusComponent->Damage(DamageData.Power);
 	if (StatusComponent->GetHp() <= 0.0f)
 	{
+		OnDeath();
 		return;
 	}
 
+	MontageComponent->PlayMontage(EStateType::Hitted);
 	// 애니메이션 종료시 캐릭터 상태 관리를 위해 GaemplayAbility에서 애니메이션 재생 구현
 	/*
-	MontageComponent->PlayMontage(EStateType::Hitted);
 	if (HasAuthority() == true)
 	{
 		UE_LOG(LogTemp, Error, L"server hp %f", StatusComponent->GetHp());
@@ -384,9 +391,31 @@ void AEmberPlayerCharacter::OnRep_Hitted()
 
 void AEmberPlayerCharacter::OnDeath()
 {
+	
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MontageComponent->PlayMontage(EStateType::Dead);
+	if (HasAuthority())
+	{
+		AController* PC = GetController();
+		if (PC)
+		{
+			FTimerHandle UnusedHandle;
+			GetWorldTimerManager().SetTimer(UnusedHandle, FTimerDelegate::CreateLambda([this, PC]()
+			{
+				URespawnSubsystem* RespawnSubsystems = GetGameInstance()->GetSubsystem<URespawnSubsystem>();
+				FTransform Respawn = RespawnSubsystems->GetRespawnTransform();
+				if (UWorld* World = GetWorld())
+				{
+					if (AGameModeBase* GM = World->GetAuthGameMode<AGameModeBase>())
+					{
+						//스폰 위치 설정은 GameMode 쪽에서 처리
+						GM->RestartPlayerAtTransform(PC,Respawn);
+					}
+				}
+			}), 5.0f, false);
+		}
+	}
 }
-
 void AEmberPlayerCharacter::EndDeath()
 {
 	Destroy();
@@ -557,12 +586,6 @@ void AEmberPlayerCharacter::SpawnAI(const TArray<TSubclassOf<APawn>>& AIClasses,
 		FRotator::ZeroRotator,
 		SpawnParams
 	);
-
-	// 디버그 시각화
-	if (SpawnedEnemy)
-	{
-		DrawDebugSphere(GetWorld(), FinalSpawnLocation, 30.0f, 12, FColor::Cyan, false, 5.0f);
-	}
 }
 
 // 지면 위치 찾기 함수
@@ -591,7 +614,6 @@ FVector AEmberPlayerCharacter::FindGroundLocation(UWorld* World, const FVector& 
 	{
 		FVector Candidate = Hit.ImpactPoint;
 		FVector Adjusted = AdjustLocationForCollision(World, Candidate);
-		DrawDebugSphere(World, Adjusted, SphereRadius, 12, FColor::Green, false, 2.0f);
 		return Adjusted;
 	}
 

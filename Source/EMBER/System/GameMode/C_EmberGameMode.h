@@ -13,5 +13,7 @@ UCLASS()
 class EMBER_API AC_EmberGameMode : public AGameMode
 {
 	GENERATED_BODY()
-	
+
+public:
+	virtual void RestartPlayer(AController* NewPlayer) override;
 };

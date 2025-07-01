@@ -1,8 +1,11 @@
 #include "Interaction/Actors/Crafting/EternalFlame.h"
 
 #include "Components/SphereComponent.h"
+#include "Interaction/EmberBlueprintFunctionLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Interaction/EmberTemperature.h"
+#include "Interaction/RespawnSubsystem.h"
+#include "System/GameMode/C_EmberGameMode.h"
 
 AEternalFlame::AEternalFlame()
 {
@@ -50,4 +53,11 @@ void AEternalFlame::OnWarmingZoneOverlapEnd(UPrimitiveComponent* OverlappedCompo
 		TemperatureHandler->Execute_RemoveWarmingEffect(OtherActor);
 		UE_LOG(LogTemp, Log, TEXT("EternalFlame: Removed warming effect from %s"), *OtherActor->GetName());
 	}
+}
+
+void AEternalFlame::OnInteractionSuccess(AActor* Interactor)
+{
+	Super::OnInteractionSuccess(Interactor);
+	URespawnSubsystem* Subsystem = UEmberBlueprintFunctionLibrary::GetRespawnSubsystem();
+	Subsystem->SetNewRespawnTransform(Interactor->GetTransform());
 }
