@@ -43,6 +43,11 @@ public:
 
 	AActor* GetTargetActor() { return TargetActor; }
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathSignature);
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnDeathSignature OnDeathDispatcher;
+	
 protected:
 	virtual void HandleBeginOverlap(AActor* OtherActor) override;
 	virtual void HandleEndOverlap(AActor* OtherActor) override;
