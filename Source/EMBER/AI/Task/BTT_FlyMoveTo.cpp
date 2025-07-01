@@ -56,11 +56,8 @@ EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 
 	CurrentLocation = BaseAI->GetActorLocation();
 	Direction = (TargetLocation - CurrentLocation).GetSafeNormal();
-	// float Speed = BaseAI->GetCharacterMovement()->MaxFlySpeed;
 	BaseAI->GetCharacterMovement()->MaxAcceleration = 700.0f;
-	// BaseAI->GetCharacterMovement()
-	// BaseAI->GetCharacterMovement()->MaxAcceleration = Speed;
-	// BaseAI->GetCharacterMovement()->Velocity = Direction * Speed;
+	
 	FRotator NewRotation = Direction.Rotation();
 	BaseAI->SetActorRotation(NewRotation);
 
@@ -104,14 +101,6 @@ bool UBTT_FlyMoveTo::IsNearGround()
 
 	return bHit;
 }
-// bool UBTT_FlyMoveTo::IsNearTargetLocation()
-// {
-// 	FVector2D Current2D = FVector2D(CurrentLocation);
-// 	FVector2D Target2D = FVector2D(TargetLocation);
-//
-// 	float Distance = FVector2D::Distance(Current2D, Target2D);
-// 	return Distance <= AcceptableRadius;
-// }
 bool UBTT_FlyMoveTo::IsNearTargetLocation()
 {
 	CurrentLocation = BaseAI->GetActorLocation();
@@ -125,9 +114,9 @@ void UBTT_FlyMoveTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	Direction = (TargetLocation - CurrentLocation).GetSafeNormal(); 
 	BaseAI->AddMovementInput(Direction, 1.f);
 	
-	if (BaseAI->GetCharacterMovement()->MaxFlySpeed > BlackboardComp->GetValueAsFloat("FlySpeed"))
+	if (BaseAI->GetCharacterMovement()->Velocity.Size() > BlackboardComp->GetValueAsFloat("FlySpeed"))
 	{
-		BaseAI->GetCharacterMovement()->MaxAcceleration = 0;
+		BaseAI->GetCharacterMovement()->MaxAcceleration = 100.0f;
 	}
 
 	if (IsNearGround())

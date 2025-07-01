@@ -13,4 +13,5 @@ class EMBER_API ARabbit : public APassiveAI
 public:
 	ARabbit();
 	virtual void OnDeath() override;
+	virtual void Destroy();
 };
