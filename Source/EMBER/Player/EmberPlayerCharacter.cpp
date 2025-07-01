@@ -360,13 +360,24 @@ void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamage
 	AActor* DamageCauser)
 {
 	StatusComponent->Damage(DamageData.Power);
-	if (StatusComponent->GetHp() <= 0.0f)
+	if (UAbilitySystemComponent* EmberASC = GetAbilitySystemComponent())
 	{
-		OnDeath();
-		return;
+		if (StatusComponent->GetHp() <= 0.0f)
+		{
+			//TODOS PlayerDead 상태변화
+			OnDeath();
+			return;
+		}
+
+		FGameplayEventData Payload;
+		Payload.EventTag = EmberGameplayTags::GameplayEvent_HitReact;
+		Payload.Target = this;
+
+		FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
+		AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
 	}
 
-	MontageComponent->PlayMontage(EStateType::Hitted);
+	//MontageComponent->PlayMontage(EStateType::Hitted);
 	// 애니메이션 종료시 캐릭터 상태 관리를 위해 GaemplayAbility에서 애니메이션 재생 구현
 	/*
 	if (HasAuthority() == true)
@@ -393,7 +404,7 @@ void AEmberPlayerCharacter::OnDeath()
 {
 	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	MontageComponent->PlayMontage(EStateType::Dead);
+	//MontageComponent->PlayMontage(EStateType::Dead);
 	if (HasAuthority())
 	{
 		AController* PC = GetController();
