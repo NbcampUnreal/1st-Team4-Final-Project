@@ -21,7 +21,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float Runaway;
-	
+	FAIRequestID QuestID;
 	UBehaviorTreeComponent* OwnerCompRef;
 	ABaseAI* BaseAI;
 	UBlackboardComponent* BlackboardComponent;

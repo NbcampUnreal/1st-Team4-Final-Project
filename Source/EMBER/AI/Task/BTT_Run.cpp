@@ -12,13 +12,12 @@ UBTT_Run::UBTT_Run()
 EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	OwnerCompRef = &OwnerComp;
-	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetOwner());
+	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetAIOwner());
 	BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	BaseAI = Cast<ABaseAI>(Controller->GetPawn());
 	AActor* Target = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
 
 	AIState = Cast<UC_StateComponent>(BaseAI->GetComponentByClass(UC_StateComponent::StaticClass()));
-	
 
 
 	if (Target == nullptr)
@@ -34,8 +33,16 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 	FVector Direction = (AI_Location - TargetLocation).GetSafeNormal(); //방향벡터만 남기고 1로 설정
 	FVector NewLocation = AI_Location + Direction * Runaway;
 
-	Controller->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_Run::OnMoveCompleted);
-	Controller->MoveToLocation(NewLocation, 50.f);
+	Controller->StopMovement(); // 이 줄을 주석 해제해보세요
+
+	// ExecuteTask 안에서:
+	Controller->ReceiveMoveCompleted.RemoveAll(this);
+	QuestID = Controller->MoveToLocation(NewLocation, 50.f);
+	if (!QuestID.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("MoveToLocation 실패"));
+		return EBTNodeResult::Failed;
+	}
 	Controller->ReceiveMoveCompleted.AddDynamic(this, &UBTT_Run::OnMoveCompleted);
 
 	return EBTNodeResult::InProgress;
@@ -43,15 +50,21 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 
 void UBTT_Run::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
 {
-	if (Result == EPathFollowingResult::Success)
+	UE_LOG(LogTemp, Error, TEXT("OnMoveCompleted 호출"));
+	UE_LOG(LogTemp, Warning, TEXT("Expected QuestID: %d, Actual RequestID: %d"), QuestID.GetID(), RequestID.GetID());
+	if (QuestID == RequestID)
 	{
-		// UE_LOG(LogTemp, Warning, TEXT("On Run Completed"));
+		UE_LOG(LogTemp, Warning, TEXT("Invalid MoveComplete"));
+		// if (Result == EPathFollowingResult::Success)
+		// {
+		// 	UE_LOG(LogTemp, Warning, TEXT("On Run Completed"));
+		// }
+		// else
+		// {
+		// 	UE_LOG(LogTemp, Error, TEXT("Run failed"));
+		// }
+		AIState->SetIdleMode();
+		BlackboardComponent->SetValueAsObject("TargetActor", nullptr);
+		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 	}
-	else
-	{
-		// UE_LOG(LogTemp, Error, TEXT("Run failed"));
-	}
-	AIState->SetIdleMode();
-	BlackboardComponent->SetValueAsObject("TargetActor", nullptr);
-	FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 }
