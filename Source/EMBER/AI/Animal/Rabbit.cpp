@@ -21,13 +21,12 @@ void ARabbit::OnDeath()
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(UpdateDistanceTimer, this,
-	                                       &ARabbit::Destroy,
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this,
+	                                       &ARabbit::Cleaning,
 	                                       5.0f, false);
 }
 
-void ARabbit::Destroy()
+void ARabbit::Cleaning()
 {
-	this->Destroy();
+	Destroy();
 }
