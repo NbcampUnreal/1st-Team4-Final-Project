@@ -30,7 +30,7 @@ void UGriffon_AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (ABaseAI* AI = Cast<ABaseAI>(TryGetPawnOwner()))
 	{
 		FVector Velocity = AI->GetVelocity();
-		CurrentFlySpeed = FVector(Velocity.X, Velocity.Y, Velocity.Z).Size();
+		CurrentFlySpeed = FVector(Velocity.X, Velocity.Y, 0).Size();
 		if (Controller = Cast<ACAIController>(AI->GetController()))
 		{
 			if (Blackboard = Cast<UBlackboardComponent>(Controller->GetBlackboardComponent()))

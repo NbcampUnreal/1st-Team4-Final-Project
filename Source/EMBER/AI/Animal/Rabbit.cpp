@@ -16,8 +16,18 @@ void ARabbit::OnDeath()
 {
 	Super::OnDeath();
 	UE_LOG(LogTemp, Warning, TEXT("Rabbit Death"));
-	
+
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(UpdateDistanceTimer, this,
+	                                       &ARabbit::Destroy,
+	                                       5.0f, false);
+}
+
+void ARabbit::Destroy()
+{
+	this->Destroy();
 }
