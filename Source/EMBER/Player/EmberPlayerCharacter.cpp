@@ -43,8 +43,11 @@ AEmberPlayerCharacter::AEmberPlayerCharacter(const FObjectInitializer& Init)
 	CharacterInputComponent = CreateDefaultSubobject<UCharacterInputComponent>(TEXT("CharacterInput"));
 
 	MontageComponent = CreateDefaultSubobject<UMontageSystemComponent>(TEXT("MontageComponent"));
-	StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
 	ArmorComponent = CreateDefaultSubobject<UArmorComponent>(TEXT("ArmorComponent"));
+
+	StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
+	StatusComponent->OnDeathStarted.AddDynamic(this, &ThisClass::OnDeathStarted);
+	StatusComponent->OnDeathFinished.AddDynamic(this, &ThisClass::OnDeathFinished);
 
 	Tags.Add("Player");
 	SetReplicates(true);
@@ -135,6 +138,39 @@ void AEmberPlayerCharacter::SetControlRotation(bool bEnable)
 	{
 		CameraLogicComp->DisableControlRotation();
 	}
+}
+
+void AEmberPlayerCharacter::OnDeathStarted(AActor* OwningActor)
+{
+	DisableMovementAndCollision();
+}
+
+void AEmberPlayerCharacter::OnDeathFinished(AActor* OwningActor)
+{
+	// 향후 구현 예정
+}
+
+void AEmberPlayerCharacter::DisableMovementAndCollision()
+{
+	if (Controller)
+	{
+		Controller->SetIgnoreMoveInput(true);
+	}
+
+	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+	{
+		Capsule->SetCollisionResponseToAllChannels(ECR_Ignore);
+		Capsule->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+		Capsule->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
+	}
+	
+	if (UCharacterMovementComponent* LyraCharacterMovement = Cast<UCharacterMovementComponent>(GetCharacterMovement()))
+	{
+		LyraCharacterMovement->Velocity = FVector(0.f, 0.f, LyraCharacterMovement->Velocity.Z);
+		LyraCharacterMovement->UpdateComponentVelocity();
+	}
+
+	bUseControllerRotationYaw = false;
 }
 
 
@@ -361,21 +397,29 @@ void AEmberPlayerCharacter::MulticastHitted_Implementation(float Damage, FDamage
 {
 	StatusComponent->Damage(DamageData.Power);
 	if (UAbilitySystemComponent* EmberASC = GetAbilitySystemComponent())
-	{
+	
 		if (StatusComponent->GetHp() <= 0.0f)
 		{
 			//TODOS PlayerDead 상태변화
+			FGameplayEventData Payload;
+			Payload.EventTag = EmberGameplayTags::GameplayEvent_Death;
+			Payload.Instigator = DamageCauser;
+			Payload.Target = this;
+			FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
+			AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
+			
 			OnDeath();
 			return;
 		}
-
-		FGameplayEventData Payload;
-		Payload.EventTag = EmberGameplayTags::GameplayEvent_HitReact;
-		Payload.Target = this;
-
-		FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
-		AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
-	}
+		else
+		{
+			FGameplayEventData Payload;
+			Payload.EventTag = EmberGameplayTags::GameplayEvent_HitReact;
+			Payload.Instigator = DamageCauser;
+			Payload.Target = this;
+			FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
+			AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
+		}
 
 	//MontageComponent->PlayMontage(EStateType::Hitted);
 	// 애니메이션 종료시 캐릭터 상태 관리를 위해 GaemplayAbility에서 애니메이션 재생 구현
@@ -402,8 +446,7 @@ void AEmberPlayerCharacter::OnRep_Hitted()
 
 void AEmberPlayerCharacter::OnDeath()
 {
-	
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	//MontageComponent->PlayMontage(EStateType::Dead);
 	if (HasAuthority())
 	{

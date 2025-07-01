@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "StatusComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDeathEvent, AActor*, OwningActor);
 
 UCLASS(ClassGroup = (Custom),meta = (BlueprintSpawnableComponent))
 class EMBER_API UStatusComponent : public UActorComponent
@@ -89,6 +90,25 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Status")
 	void LevelUp();
 
+/* Death */
+public:
+	virtual void StartDeath();
+	virtual void FinishDeath();
+
+	UFUNCTION()
+	virtual void OnRep_DeathState(EDeathState OldDeathState);
+	
+	EDeathState GetDeathState() { return DeathState; }
+	
+	UPROPERTY(BlueprintAssignable)
+	FDeathEvent OnDeathStarted;
+
+	UPROPERTY(BlueprintAssignable)
+	FDeathEvent OnDeathFinished;
+
+	UPROPERTY(ReplicatedUsing = OnRep_DeathState)
+	EDeathState DeathState;
+	
 private:
 	UPROPERTY(EditAnywhere, Category = "Status")
 	float MaxHP = 100.0f;
@@ -129,5 +149,9 @@ private:
 	int32 Level;
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
-
 };
+
+inline void UStatusComponent::OnRep_DeathState(EDeathState OldDeathState)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnRep_DeathState"));
+}

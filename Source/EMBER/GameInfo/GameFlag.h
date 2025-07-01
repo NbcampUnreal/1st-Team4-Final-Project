@@ -234,3 +234,11 @@ enum class AISoundCategory : uint8
 	DeathSound UMETA(DisplayName = "Death"),
 	Max
 };
+
+UENUM(BlueprintType)
+enum class EDeathState : uint8
+{
+	NotDead = 0,
+	DeathStarted,
+	DeathFinished
+};

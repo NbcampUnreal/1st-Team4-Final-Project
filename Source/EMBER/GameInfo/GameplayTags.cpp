@@ -44,6 +44,7 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Mining,									"Ability.Mining");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Jump,									"Ability.Jump");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_HitReact,								"Ability.HitReact");
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Death,									"Ability.Death");
 
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Dash_Check,								"Ability.Dash.Check");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Dash_Active,								"Ability.Dash.Active");
@@ -67,6 +68,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact,									"Status.HitReact");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Dash,										"Status.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Jump,										"Status.Jump");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Death,									"Status.Death");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Death_Dying,								"Status.Death_Dying");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Status_QuickSlot_Handle,							"Status.QuickSlot.Handle");
 	UE_DEFINE_GAMEPLAY_TAG(Status_ChangeEquip,								"Status.ChangeEquip");
@@ -83,6 +86,7 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Consume_Item,						"GameplayEvent.Consume.Item");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_HitReact,							"GameplayEvent.HitReact");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Jump,								"GameplayEvent.Jump");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Death,								"GameplayEvent.Death");
 
 	// Cooldown
 	UE_DEFINE_GAMEPLAY_TAG(Cooldown_Dash,									"Cooldown.Dash");
