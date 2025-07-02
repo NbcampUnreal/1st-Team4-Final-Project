@@ -20,19 +20,19 @@ EBTNodeResult::Type UBTT_DragonFly::ExecuteTask(UBehaviorTreeComponent& Comp, ui
 	Dragon = Cast<ADragon>(AIController ? AIController->GetPawn() : nullptr);
 	if (!Dragon)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Dragon is null"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Dragon is null"));
 		return EBTNodeResult::Failed;
 	}
 	if (!FlyMontage)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("FlyMontage is null"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("FlyMontage is null"));
 		return EBTNodeResult::Failed;
 	}
 
 	UDragonAnimInstance* DragonAnim = Cast<UDragonAnimInstance>(Dragon->GetMesh()->GetAnimInstance());
 	if (!DragonAnim)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("DragonAnim is null"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("DragonAnim is null"));
 
 		return EBTNodeResult::Failed;
 	}

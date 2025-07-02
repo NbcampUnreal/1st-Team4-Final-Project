@@ -13,7 +13,7 @@ UBTT_DragonLand::UBTT_DragonLand()
 
 EBTNodeResult::Type UBTT_DragonLand::ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, TEXT("UBTT_DragonLand::ExecuteTask"));
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, TEXT("UBTT_DragonLand::ExecuteTask"));
 	BTComp = &Comp;
 
 	AIController = Cast<ACAIController>(Comp.GetAIOwner());
@@ -42,7 +42,7 @@ void UBTT_DragonLand::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 
 void UBTT_DragonLand::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("UBTT_DragonLand::OnMontageEnded"));
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("UBTT_DragonLand::OnMontageEnded"));
 
 	if (Dragon)
 	{
@@ -54,7 +54,7 @@ void UBTT_DragonLand::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 	if (BTComp)
 	{
 		FinishLatentTask(*BTComp, EBTNodeResult::Succeeded);
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, TEXT("UBTT_DragonLand::FinishLatentTask"));
+		//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, TEXT("UBTT_DragonLand::FinishLatentTask"));
 
 	}
 	

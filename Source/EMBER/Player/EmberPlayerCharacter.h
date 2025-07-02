@@ -79,10 +79,18 @@ protected:
 	float GetMaxStamina() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetMaxTemparature() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetCurrentHP() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetCurrentStamina() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetCurrentTemparature() const;
+
+	
 	// AI 소환 반경
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float SpawnRadius;

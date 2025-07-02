@@ -68,7 +68,7 @@ void UBTT_DragonAttack::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("FinishDragonAttackMontage")));
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("FinishDragonAttackMontage")));
 	FinishLatentTask(*BTComp, EBTNodeResult::Succeeded);
 }
 
@@ -76,7 +76,7 @@ void UBTT_DragonAttack::OnMontageTimeout()
 {
 	if (BTComp)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("DragonAttackTaskTimeOut")));
+		//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("DragonAttackTaskTimeOut")));
 		FinishLatentTask(*BTComp, EBTNodeResult::Succeeded);
 	}
 }

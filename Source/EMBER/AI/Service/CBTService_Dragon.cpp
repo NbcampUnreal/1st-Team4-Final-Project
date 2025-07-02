@@ -96,7 +96,7 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		if (Status->GetHp() < Status->GetMaxHp() * 0.5f)
 		{
 			Blackboard->SetValueAsBool("IsHalfHP", true);
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Half HP"));
+			//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Half HP"));
 		}
 	}
 	if (Status && !Blackboard->GetValueAsBool("IsMeteorPhase"))
@@ -104,7 +104,7 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		if (Status->GetHp() <= Status->GetMaxHp() * 0.3f)
 		{
 			Blackboard->SetValueAsBool("IsMeteorPhase", true);
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Meteor Phase triggered"));
+			//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Meteor Phase triggered"));
 
 		}
 	}
@@ -136,7 +136,7 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	float distance = AI.Get()->GetDistanceTo(Target);
 	int32 AttackCount = Weapon->GetAttackStack();
 	int32 MissCount = Weapon->GetMissStack();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Distance: %.1f | AttackCount: %d | MissCount: %d"), distance, AttackCount, MissCount));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Distance: %.1f | AttackCount: %d | MissCount: %d"), distance, AttackCount, MissCount));
 
 	if (distance < ActionRange || (AttackCount >= 3 && distance > MeleeRange))
 	{
@@ -144,17 +144,17 @@ void UCBTService_Dragon::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
 		if (AttackCount >= 3)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Special Attack Block"));
+			//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Special Attack Block"));
 
 			if (distance <= MeleeRange)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Combo Attack Triggered"));
+				//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Combo Attack Triggered"));
 
 				AIState->SetComboAttackMode();
 			}
 			else
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("Spit Attack Triggered"));
+				//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("Spit Attack Triggered"));
 
 				AIState->SetSpitAttackMode();
 			}
