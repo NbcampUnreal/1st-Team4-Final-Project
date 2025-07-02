@@ -242,3 +242,11 @@ enum class EDeathState : uint8
 	DeathStarted,
 	DeathFinished
 };
+
+UENUM(BlueprintType)
+enum class EBodyTemperatureChange : uint8
+{
+	Increase,
+	Decrease,
+	MAX UMETA(Hidden)
+};

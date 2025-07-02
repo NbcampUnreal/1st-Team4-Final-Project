@@ -53,6 +53,8 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ChangeEquip);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Consume_Item);
 	
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_BodyTemperature);
+	
 	
 	// ItemAttribute
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ItemAttribute_BaseDamage);
@@ -74,6 +76,7 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_QuickSlot_Handle);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_ChangeEquip);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Consume_Item);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_BodyTemperature);
 
 	// Gameplay Event
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_Begin);
@@ -86,6 +89,7 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Consume_Item);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_HitReact);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Jump);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_BodyTemperature_Change);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Death);
 
 	// Cooldown
