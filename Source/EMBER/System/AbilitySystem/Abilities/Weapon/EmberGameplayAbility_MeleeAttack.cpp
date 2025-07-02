@@ -29,7 +29,7 @@ void UEmberGameplayAbility_MeleeAttack::ActivateAbility(const FGameplayAbilitySp
 	AEmberPlayerCharacter* player = Cast<AEmberPlayerCharacter>(GetAvatarActorFromActorInfo());
 	if (player != nullptr)
 	{
-		UStatusComponent* status = Cast<UStatusComponent>(player->GetComponentByClass(UStatusComponent::StaticClass()));
+		UStatusComponent* status = player->GetStatusComponent();
 		if (status != nullptr)
 		{
 			if (status->GetStamina() < player->GetAttackAmount())

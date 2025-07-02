@@ -83,7 +83,7 @@ void UEmberGameplayAbility_Jump_WIth_Dash::StartJump()
 		if (EmberCharacter->IsLocallyControlled() && EmberCharacter->bPressedJump == false)
 		{
 			EmberCharacter->UnCrouch();
-			UStatusComponent* status = Cast<UStatusComponent>(EmberCharacter->GetComponentByClass(UStatusComponent::StaticClass()));
+			UStatusComponent* status = EmberCharacter->GetStatusComponent();
 			if (status != nullptr)
 			{
 				if (status->GetStamina() < EmberCharacter->GetJumpAmount())
