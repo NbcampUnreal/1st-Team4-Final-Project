@@ -274,11 +274,15 @@ void AEmberPlayerCharacter::Look(const FInputActionValue& value)
 
 void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
 {
-
+	if (StatusComponent->GetStamina() < UseSprintAmount)
+	{
+		MovementComponent->OnRun();
+		return;
+	}
 	if (GetCharacterMovement())
 	{
 		MovementComponent->OnSprint();
-		StatusComponent->UseStamina(UseAmount);
+		StatusComponent->UseStamina(UseSprintAmount);
 		GetWorldTimerManager().ClearTimer(StaminaRegenHandle);
 	}
 }

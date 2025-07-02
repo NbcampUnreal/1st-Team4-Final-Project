@@ -26,32 +26,32 @@ UEmberGameplayAbility_MeleeAttack::UEmberGameplayAbility_MeleeAttack(const FObje
 void UEmberGameplayAbility_MeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
-	if (UAbilityTask_WaitGameplayEvent* GameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EmberGameplayTags::GameplayEvent_Trace, nullptr, false, true))
-	{
-		GameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnHitTarget);
-		GameplayEventTask->ReadyForActivation();
-	}
-	
-	if (UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("MeleeAttack"), AttackMontage, DefaultAttackRate, NAME_None, false, 1.f, 0.f, false))
-	{
-		PlayMontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnMontageFinished);
-		PlayMontageTask->ReadyForActivation();
-	}
-
-	if (UAbilityTask_WaitGameplayEvent* GameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EmberGameplayTags::GameplayEvent_Montage_End, nullptr, true, true))
-	{
-		GameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnMontageEventTriggered);
-		GameplayEventTask->ReadyForActivation();
-	}
-
 	AEmberPlayerCharacter* player = Cast<AEmberPlayerCharacter>(GetAvatarActorFromActorInfo());
 	if (player != nullptr)
 	{
 		UStatusComponent* status = Cast<UStatusComponent>(player->GetComponentByClass(UStatusComponent::StaticClass()));
 		if (status != nullptr)
 		{
-			status->UseStamina(player->GetUseAmount());
+			if (status->GetStamina() < player->GetAttackAmount())
+				return;
+			status->UseStamina(player->GetAttackAmount());
+			if (UAbilityTask_WaitGameplayEvent* GameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EmberGameplayTags::GameplayEvent_Trace, nullptr, false, true))
+			{
+				GameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnHitTarget);
+				GameplayEventTask->ReadyForActivation();
+			}
+
+			if (UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("MeleeAttack"), AttackMontage, DefaultAttackRate, NAME_None, false, 1.f, 0.f, false))
+			{
+				PlayMontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnMontageFinished);
+				PlayMontageTask->ReadyForActivation();
+			}
+
+			if (UAbilityTask_WaitGameplayEvent* GameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EmberGameplayTags::GameplayEvent_Montage_End, nullptr, true, true))
+			{
+				GameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnMontageEventTriggered);
+				GameplayEventTask->ReadyForActivation();
+			}
 		}
 	}
 }
@@ -60,22 +60,22 @@ void UEmberGameplayAbility_MeleeAttack::OnHitTarget(FGameplayEventData Payload)
 {
 	if (HasAuthority(&CurrentActivationInfo) == false)
 		return;
-	
+
 	AEquipmentBase* WeaponActor = const_cast<AEquipmentBase*>(Cast<AEquipmentBase>(Payload.Instigator));
 	if (WeaponActor == nullptr)
 		return;
-	
+
 	UEmberAbilitySystemComponent* SourceASC = GetEmberAbilitySystemComponentFromActorInfo();
 	if (SourceASC == nullptr)
 		return;
-	
+
 	if (SourceASC->FindAbilitySpecFromHandle(CurrentSpecHandle) == nullptr)
 		return;
-	
+
 	float BaseDamage = GetEquipmentStatValue(EmberGameplayTags::ItemAttribute_BaseDamage, WeaponActor);
-	
+
 	FGameplayAbilityTargetDataHandle TargetDataHandle(MoveTemp(const_cast<FGameplayAbilityTargetDataHandle&>(Payload.TargetData)));
-	
+
 	for (int32 i = 0; i < TargetDataHandle.Data.Num(); i++)
 	{
 		const TSharedPtr<FGameplayAbilityTargetData>& TargetData = TargetDataHandle.Data[i];
@@ -83,7 +83,7 @@ void UEmberGameplayAbility_MeleeAttack::OnHitTarget(FGameplayEventData Payload)
 		FHitResult* HitResult = const_cast<FHitResult*>(TargetData->GetHitResult());
 		if (HitResult == nullptr)
 			continue;
-		
+
 		UGameplayStatics::ApplyPointDamage(
 			HitResult->GetActor(),
 			BaseDamage,

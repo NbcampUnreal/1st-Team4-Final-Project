@@ -31,7 +31,9 @@ class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystem
 {
 	GENERATED_BODY()
 public:
-	FORCEINLINE float GetUseAmount() { return UseAmount; }
+	FORCEINLINE float GetSprintAmount() { return UseSprintAmount; }
+	FORCEINLINE float GetAttackAmount() { return UseAttackAmount; }
+	FORCEINLINE float GetJumpAmount() { return UseJumpAmount; }
 public:
 	// Sets default values for this character's properties
 	AEmberPlayerCharacter(const FObjectInitializer& Init);
@@ -233,5 +235,9 @@ private:
 	UPROPERTY(ReplicatedUsing = "OnRep_Hitted")
 	FDamagesData DamageData;
 	UPROPERTY( EditAnywhere)
-	float UseAmount = 0.1f;
+	float UseSprintAmount = 0.1f;
+	UPROPERTY(EditAnywhere)
+	float UseAttackAmount = 0.1f;
+	UPROPERTY(EditAnywhere)
+	float UseJumpAmount = 0.1f;
 };

@@ -56,11 +56,13 @@ void UEmberGameplayAbility_Jump::StartJump()
 			UStatusComponent* status = Cast<UStatusComponent>(EmberCharacter->GetComponentByClass(UStatusComponent::StaticClass()));
 			if (status != nullptr)
 			{
-				status->UseStamina(EmberCharacter->GetUseAmount());
+				if (status->GetStamina() < EmberCharacter->GetJumpAmount())
+					return;
+				status->UseStamina(EmberCharacter->GetJumpAmount());
 				GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, FString::Printf(TEXT("%f"), status->GetStamina()));
-			}
 
-			EmberCharacter->Jump();
+				EmberCharacter->Jump();
+			}
 		}
 	}
 }
