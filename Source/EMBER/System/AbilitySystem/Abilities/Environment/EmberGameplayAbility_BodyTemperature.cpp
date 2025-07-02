@@ -53,6 +53,11 @@ void UEmberGameplayAbility_BodyTemperature::OnChangeBodyTemperature(FGameplayEve
 	}
 	else if (BodyTemperature == EBodyTemperatureChange::Decrease)
 	{
+		if (WeatherCondition && WeatherCondition->IsActive())
+		{
+			WeatherCondition->EndTask();
+		}
+		
 		WeatherCondition = UEmberAbilityTask_WeatherCondition::WaitForDecreaseBodyTemperature(this, FEmberBodyTemperatureQuery(), DecreaseIntervalRate, DecreaseAmount);
 		if (WeatherCondition)
 		{

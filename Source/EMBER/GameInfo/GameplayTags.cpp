@@ -41,6 +41,7 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Interact_Active,							"Ability.Interact.Active");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Logging,									"Ability.Logging");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Mining,									"Ability.Mining");
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Death,									"Ability_Death");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Jump,									"Ability.Jump");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_HitReact,								"Ability.HitReact");
 
