@@ -276,6 +276,7 @@ void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
 {
 	if (StatusComponent->GetStamina() < UseSprintAmount)
 	{
+		bIsSprint = true;
 		MovementComponent->OnRun();
 		return;
 	}
@@ -291,6 +292,7 @@ void AEmberPlayerCharacter::StopSprint(const FInputActionValue& value)
 {
 	if (GetCharacterMovement())
 	{
+		bIsSprint = false;
 		MovementComponent->OnRun();
 		GetWorldTimerManager().SetTimer(
 			StaminaRegenHandle,
@@ -565,6 +567,17 @@ void AEmberPlayerCharacter::OnTemperatureDropTick()
 	if (StatusComponent)
 	{
 		StatusComponent->UseTemperature(TemperatureDropAmount);
+		if (StatusComponent->GetTemperature()/StatusComponent->GetMaxTemperature() <= 0.4)
+		{
+			MovementComponent->OnWalk();
+		}
+		else
+		{
+			if (bIsSprint == false)
+				MovementComponent->OnRun();
+			else
+				MovementComponent->OnSprint();
+		}
 		UE_LOG(LogTemp, Log, TEXT("Passive drop tick: Current Temperature is %f"), StatusComponent->GetTemperature());
 	}
 }

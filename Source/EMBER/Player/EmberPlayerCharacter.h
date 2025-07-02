@@ -240,4 +240,6 @@ private:
 	float UseAttackAmount = 0.1f;
 	UPROPERTY(EditAnywhere)
 	float UseJumpAmount = 0.1f;
+
+	bool bIsSprint{};
 };
