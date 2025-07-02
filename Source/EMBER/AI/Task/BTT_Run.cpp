@@ -19,21 +19,18 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 
 	AIState = Cast<UC_StateComponent>(BaseAI->GetComponentByClass(UC_StateComponent::StaticClass()));
 
-
 	if (Target == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("RunTarget is null"));
 		return EBTNodeResult::InProgress;
 	}
-	// Controller->StopMovement();
+	Controller->StopMovement();
 	BaseAI->GetMesh()->GetAnimInstance()->StopAllMontages(1.0f);
 
 	FVector TargetLocation = Target->GetActorLocation();
 	FVector AI_Location = BaseAI->GetActorLocation();
 	FVector Direction = (AI_Location - TargetLocation).GetSafeNormal(); //방향벡터만 남기고 1로 설정
 	FVector NewLocation = AI_Location + Direction * Runaway;
-
-	Controller->StopMovement(); // 이 줄을 주석 해제해보세요
 
 	// ExecuteTask 안에서:
 	Controller->ReceiveMoveCompleted.RemoveAll(this);
@@ -50,21 +47,11 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 
 void UBTT_Run::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
 {
-	UE_LOG(LogTemp, Error, TEXT("OnMoveCompleted 호출"));
-	UE_LOG(LogTemp, Warning, TEXT("Expected QuestID: %d, Actual RequestID: %d"), QuestID.GetID(), RequestID.GetID());
-	if (QuestID == RequestID)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalid MoveComplete"));
-		// if (Result == EPathFollowingResult::Success)
-		// {
-		// 	UE_LOG(LogTemp, Warning, TEXT("On Run Completed"));
-		// }
-		// else
-		// {
-		// 	UE_LOG(LogTemp, Error, TEXT("Run failed"));
-		// }
-		AIState->SetIdleMode();
-		BlackboardComponent->SetValueAsObject("TargetActor", nullptr);
-		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
-	}
+	// UE_LOG(LogTemp, Error, TEXT("OnMoveCompleted 호출"));
+	// UE_LOG(LogTemp, Warning, TEXT("Expected QuestID: %d, Actual RequestID: %d"), QuestID.GetID(), RequestID.GetID());
+	//
+	// UE_LOG(LogTemp, Warning, TEXT("Invalid MoveComplete"));
+	AIState->SetIdleMode();
+	BlackboardComponent->SetValueAsObject("TargetActor", nullptr);
+	FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 }
