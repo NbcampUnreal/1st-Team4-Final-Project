@@ -339,6 +339,16 @@ float AEmberPlayerCharacter::GetMaxStamina() const
 	}
 	return 0.f;
 }
+
+float AEmberPlayerCharacter::GetMaxTemparature() const
+{
+	if (StatusComponent)
+	{
+		return StatusComponent->GetMaxTemperature();
+	}
+	return 0.f;
+}
+
 float AEmberPlayerCharacter::GetCurrentHP() const
 {
 	if (StatusComponent)
@@ -353,6 +363,15 @@ float AEmberPlayerCharacter::GetCurrentStamina() const
 	if (StatusComponent)
 	{
 		return StatusComponent->GetStamina();
+	}
+	return 0.f;
+}
+
+float AEmberPlayerCharacter::GetCurrentTemparature() const
+{
+	if (StatusComponent)
+	{
+		return StatusComponent->GetTemperature();
 	}
 	return 0.f;
 }

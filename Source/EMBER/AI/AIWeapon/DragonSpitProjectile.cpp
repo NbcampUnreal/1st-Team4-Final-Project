@@ -50,7 +50,7 @@ void ADragonSpitProjectile::SetTargetActor(AActor* Target)
 	TargetActor = Target;
 	
 	if (!TargetActor || !SpitMovement) return;
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("TargetActor: %s"), *GetNameSafe(TargetActor)));
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("TargetActor: %s"), *GetNameSafe(TargetActor)));
 
 	FVector Direction = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 	SpitMovement->Velocity = Direction * SpitMovement->InitialSpeed;
