@@ -204,6 +204,10 @@ protected:
 	float NormalSpeed = 200.0f;
 	float SprintSpeed = 350.0f;
 	
+	FTimerHandle StaminaRegenHandle;
+	FTimerHandle StaminaUseHandle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StaminaRegenInterval = 0.2f;
 	
 private:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
