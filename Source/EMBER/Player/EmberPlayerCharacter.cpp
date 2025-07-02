@@ -462,7 +462,7 @@ void AEmberPlayerCharacter::OnDeath()
 				{
 					if (AGameModeBase* GM = World->GetAuthGameMode<AGameModeBase>())
 					{
-						//스폰 위치 설정은 GameMode 쪽에서 처리
+						//스폰 위치 설정은 GameMode 쪽에서 처리gh
 						GM->RestartPlayerAtTransform(PC,Respawn);
 					}
 				}
