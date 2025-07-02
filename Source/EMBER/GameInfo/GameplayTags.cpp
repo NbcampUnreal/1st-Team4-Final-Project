@@ -1,5 +1,4 @@
-﻿
-#include "GameplayTags.h"
+﻿#include "GameplayTags.h"
 
 namespace EmberGameplayTags
 {
@@ -42,9 +41,9 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Interact_Active,							"Ability.Interact.Active");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Logging,									"Ability.Logging");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Mining,									"Ability.Mining");
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Death,									"Ability_Death");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Jump,									"Ability.Jump");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_HitReact,								"Ability.HitReact");
-	UE_DEFINE_GAMEPLAY_TAG(Ability_Death,									"Ability.Death");
 
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Dash_Check,								"Ability.Dash.Check");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Dash_Active,								"Ability.Dash.Active");
@@ -52,6 +51,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_QuickSlot_Handle,						"Ability.QuickSlot.Handle");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_ChangeEquip,								"Ability.ChangeEquip");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Consume_Item,							"Ability.Consume_item");
+	
+	UE_DEFINE_GAMEPLAY_TAG(Ability_BodyTemperature,							"Ability.BodyTemperature");
 	
 	// ItemAttribute
 	UE_DEFINE_GAMEPLAY_TAG(ItemAttribute_BaseDamage,						"ItemAttribute.BaseDamage");
@@ -74,6 +75,8 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_QuickSlot_Handle,							"Status.QuickSlot.Handle");
 	UE_DEFINE_GAMEPLAY_TAG(Status_ChangeEquip,								"Status.ChangeEquip");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Consume_Item,								"Status.Consume.Item");
+	
+	UE_DEFINE_GAMEPLAY_TAG(Status_BodyTemperature,							"Status.BodyTemperature");
 
 	// Gameplay Event
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_Begin,						"GameplayEvent.Montage.Begin");
@@ -87,6 +90,7 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_HitReact,							"GameplayEvent.HitReact");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Jump,								"GameplayEvent.Jump");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Death,								"GameplayEvent.Death");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_BodyTemperature_Change,			"GameplayEvent_BodyTemperature_Change");
 
 	// Cooldown
 	UE_DEFINE_GAMEPLAY_TAG(Cooldown_Dash,									"Cooldown.Dash");
