@@ -53,11 +53,14 @@ void UEmberGameplayAbility_Jump::StartJump()
 		if (EmberCharacter->IsLocallyControlled() && EmberCharacter->bPressedJump == false)
 		{
 			EmberCharacter->UnCrouch();
-			UStatusComponent* status = Cast<UStatusComponent>(EmberCharacter->GetComponentByClass(UStatusComponent::StaticClass()));
-			if (status != nullptr)
+
+			if (EmberCharacter->HasAuthority())
 			{
-				status->UseStamina(EmberCharacter->GetUseAmount());
-				GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, FString::Printf(TEXT("%f"), status->GetStamina()));
+				if (UStatusComponent* status = EmberCharacter->GetStatusComponent())
+				{
+					status->UseStamina(EmberCharacter->GetJumpAmount());
+					GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, FString::Printf(TEXT("%f"), status->GetStamina()));
+				}
 			}
 
 			EmberCharacter->Jump();
