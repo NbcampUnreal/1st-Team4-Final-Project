@@ -278,7 +278,7 @@ void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
 	if (GetCharacterMovement())
 	{
 		MovementComponent->OnSprint();
-		StatusComponent->UseStamina(0.1f);
+		StatusComponent->UseStamina(UseAmount);
 		GetWorldTimerManager().ClearTimer(StaminaRegenHandle);
 	}
 }

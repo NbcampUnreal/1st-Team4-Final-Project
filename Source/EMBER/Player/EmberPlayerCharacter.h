@@ -30,7 +30,8 @@ UCLASS()
 class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface, public IEmberTemperature
 {
 	GENERATED_BODY()
-
+public:
+	FORCEINLINE float GetUseAmount() { return UseAmount; }
 public:
 	// Sets default values for this character's properties
 	AEmberPlayerCharacter(const FObjectInitializer& Init);
@@ -223,4 +224,6 @@ public:
 private:
 	UPROPERTY(ReplicatedUsing = "OnRep_Hitted")
 	FDamagesData DamageData;
+	UPROPERTY( EditAnywhere)
+	float UseAmount = 0.1f;
 };

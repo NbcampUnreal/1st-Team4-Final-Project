@@ -4,6 +4,7 @@
 #include "EmberGameplayAbility_Jump.h"
 
 #include "EmberPlayerCharacter.h"
+#include "StatusComponent.h"
 #include "GameInfo/GameplayTags.h"
 
 UEmberGameplayAbility_Jump::UEmberGameplayAbility_Jump(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -52,6 +53,13 @@ void UEmberGameplayAbility_Jump::StartJump()
 		if (EmberCharacter->IsLocallyControlled() && EmberCharacter->bPressedJump == false)
 		{
 			EmberCharacter->UnCrouch();
+			UStatusComponent* status = Cast<UStatusComponent>(EmberCharacter->GetComponentByClass(UStatusComponent::StaticClass()));
+			if (status != nullptr)
+			{
+				status->UseStamina(EmberCharacter->GetUseAmount());
+				GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, FString::Printf(TEXT("%f"), status->GetStamina()));
+			}
+
 			EmberCharacter->Jump();
 		}
 	}

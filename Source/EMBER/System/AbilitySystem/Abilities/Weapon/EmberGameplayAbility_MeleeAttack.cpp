@@ -4,6 +4,7 @@
 #include "EmberGameplayAbility_MeleeAttack.h"
 
 #include "EmberPlayerCharacter.h"
+#include "StatusComponent.h"
 #include "System/AbilitySystem/EmberAbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
@@ -42,6 +43,16 @@ void UEmberGameplayAbility_MeleeAttack::ActivateAbility(const FGameplayAbilitySp
 	{
 		GameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnMontageEventTriggered);
 		GameplayEventTask->ReadyForActivation();
+	}
+
+	AEmberPlayerCharacter* player = Cast<AEmberPlayerCharacter>(GetAvatarActorFromActorInfo());
+	if (player != nullptr)
+	{
+		UStatusComponent* status = Cast<UStatusComponent>(player->GetComponentByClass(UStatusComponent::StaticClass()));
+		if (status != nullptr)
+		{
+			status->UseStamina(player->GetUseAmount());
+		}
 	}
 }
 
