@@ -278,6 +278,8 @@ void AEmberPlayerCharacter::StartSprint(const FInputActionValue& value)
 	if (GetCharacterMovement())
 	{
 		MovementComponent->OnSprint();
+		StatusComponent->UseStamina(0.1f);
+		GetWorldTimerManager().ClearTimer(StaminaRegenHandle);
 	}
 }
 
@@ -286,6 +288,19 @@ void AEmberPlayerCharacter::StopSprint(const FInputActionValue& value)
 	if (GetCharacterMovement())
 	{
 		MovementComponent->OnRun();
+		GetWorldTimerManager().SetTimer(
+			StaminaRegenHandle,
+			[this]()
+			{
+				StatusComponent->UseStamina(-0.2f); 
+				if (StatusComponent->GetStamina() >= StatusComponent->GetMaxStamina())
+				{
+					GetWorldTimerManager().ClearTimer(StaminaRegenHandle);
+				}
+			},
+			StaminaRegenInterval,
+			true
+		);
 	}
 }
 
