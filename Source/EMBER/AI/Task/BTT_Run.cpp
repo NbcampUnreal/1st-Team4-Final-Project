@@ -6,23 +6,18 @@
 UBTT_Run::UBTT_Run()
 {
 	NodeName = "RunState";
+	Runaway = 1500.0f;
 }
 
 EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	OwnerCompRef = &OwnerComp;
-	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetOwner());
+	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetAIOwner());
 	BlackboardComponent = OwnerComp.GetBlackboardComponent();
-	ControlledAnimal = Cast<ABaseAI>(Controller->GetPawn());
+	BaseAI = Cast<ABaseAI>(Controller->GetPawn());
 	AActor* Target = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
 
-	BehaviorComp = Cast<UCBehaviorTreeComponent>(
-		ControlledAnimal->GetComponentByClass(UBehaviorTreeComponent::StaticClass()));
-	if (BehaviorComp == nullptr)
-	{
-		UE_LOG(LogTemp, Error, L"BehaviorComp is null");
-		return EBTNodeResult::Failed;
-	}
+	AIState = Cast<UC_StateComponent>(BaseAI->GetComponentByClass(UC_StateComponent::StaticClass()));
 
 	if (Target == nullptr)
 	{
@@ -30,15 +25,21 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 		return EBTNodeResult::InProgress;
 	}
 	Controller->StopMovement();
-	ControlledAnimal->GetMesh()->GetAnimInstance()->StopAllMontages(1.0f);
+	BaseAI->GetMesh()->GetAnimInstance()->StopAllMontages(1.0f);
 
 	FVector TargetLocation = Target->GetActorLocation();
-	FVector AI_Location = ControlledAnimal->GetActorLocation();
+	FVector AI_Location = BaseAI->GetActorLocation();
 	FVector Direction = (AI_Location - TargetLocation).GetSafeNormal(); //방향벡터만 남기고 1로 설정
-	FVector NewLocation = AI_Location + Direction * 1500.0f;
+	FVector NewLocation = AI_Location + Direction * Runaway;
 
-	Controller->ReceiveMoveCompleted.RemoveDynamic(this, &UBTT_Run::OnMoveCompleted);
-	Controller->MoveToLocation(NewLocation, 50.f);
+	// ExecuteTask 안에서:
+	Controller->ReceiveMoveCompleted.RemoveAll(this);
+	QuestID = Controller->MoveToLocation(NewLocation, 50.f);
+	if (!QuestID.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("MoveToLocation 실패"));
+		return EBTNodeResult::Failed;
+	}
 	Controller->ReceiveMoveCompleted.AddDynamic(this, &UBTT_Run::OnMoveCompleted);
 
 	return EBTNodeResult::InProgress;
@@ -46,17 +47,11 @@ EBTNodeResult::Type UBTT_Run::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uin
 
 void UBTT_Run::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
 {
-	if (Result == EPathFollowingResult::Success)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("On Run Completed"));
-		BehaviorComp->SetIdleMode();
-		BlackboardComponent->SetValueAsObject("TargetActor", nullptr);
-		FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Run failed"));
-		// BlackboardComponent->SetValueAsObject("TargetActor", nullptr);
-		// FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
-	}
+	// UE_LOG(LogTemp, Error, TEXT("OnMoveCompleted 호출"));
+	// UE_LOG(LogTemp, Warning, TEXT("Expected QuestID: %d, Actual RequestID: %d"), QuestID.GetID(), RequestID.GetID());
+	//
+	// UE_LOG(LogTemp, Warning, TEXT("Invalid MoveComplete"));
+	AIState->SetIdleMode();
+	BlackboardComponent->SetValueAsObject("TargetActor", nullptr);
+	FinishLatentTask(*OwnerCompRef, EBTNodeResult::Succeeded);
 }

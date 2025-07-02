@@ -1,11 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/Base/PassiveAI.h"
+#include "AI/Base/BaseAI.h"
 #include "Griffon.generated.h"
 
 UCLASS()
-class EMBER_API AGriffon : public APassiveAI
+class EMBER_API AGriffon : public ABaseAI
 {
 	GENERATED_BODY()
 
@@ -16,4 +16,8 @@ public:
 
 	
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+protected:
+	virtual void HandleBeginOverlap(AActor* OtherActor) override;
+	virtual void HandleEndOverlap(AActor* OtherActor) override;
 };

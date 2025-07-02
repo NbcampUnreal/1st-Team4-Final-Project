@@ -74,5 +74,4 @@ void UEmberGameplayAbility_HitReact::OnNetSync()
 void UEmberGameplayAbility_HitReact::OnMontageFinished()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
-
 }

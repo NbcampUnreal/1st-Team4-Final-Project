@@ -19,13 +19,7 @@ ADragonSpitProjectile::ADragonSpitProjectile()
 
 	SpitEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SpitEffect"));
 	SpitEffect->SetupAttachment(SpitCollision);
-	if (SpitNiagara == nullptr)
-	{
-		UE_LOG(LogTemp,Error,L"Dragon.cpp, niagara is null");
-	}
-	else
-	SpitEffect->SetAsset(SpitNiagara);
-	SpitEffect->SetAutoActivate(false);
+	
 
 	SpitMovement = CreateDefaultSubobject<UProjectileMovementComponent>(FName("SpitMovement"));
 	SpitMovement->InitialSpeed = 3000.f;
@@ -39,7 +33,15 @@ ADragonSpitProjectile::ADragonSpitProjectile()
 void ADragonSpitProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
+	if (SpitNiagara == nullptr)
+	{
+		UE_LOG(LogTemp, Error, L"Dragon.cpp, niagara is null");
+	}
+	else
+	{
+		SpitEffect->SetAsset(SpitNiagara);
+		SpitEffect->SetAutoActivate(false);
+	}
 	SpitCollision->OnComponentHit.AddDynamic(this, &ADragonSpitProjectile::OnHit);
 }
 
@@ -48,7 +50,7 @@ void ADragonSpitProjectile::SetTargetActor(AActor* Target)
 	TargetActor = Target;
 	
 	if (!TargetActor || !SpitMovement) return;
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("TargetActor: %s"), *GetNameSafe(TargetActor)));
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("TargetActor: %s"), *GetNameSafe(TargetActor)));
 
 	FVector Direction = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 	SpitMovement->Velocity = Direction * SpitMovement->InitialSpeed;

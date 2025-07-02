@@ -5,6 +5,7 @@
 
 #include "EmberPlayerCharacter.h"
 #include "GameFlag.h"
+#include "StatusComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameInfo/GameplayTags.h"
 #include "System/AbilitySystem/EmberAbilitySystemComponent.h"
@@ -82,6 +83,9 @@ void UEmberGameplayAbility_Jump_WIth_Dash::StartJump()
 		if (EmberCharacter->IsLocallyControlled() && EmberCharacter->bPressedJump == false)
 		{
 			EmberCharacter->UnCrouch();
+			UStatusComponent* status = Cast<UStatusComponent>(EmberCharacter->GetComponentByClass(UStatusComponent::StaticClass()));
+			if (status != nullptr)
+				status->UseStamina(EmberCharacter->GetUseAmount());
 			EmberCharacter->Jump();
 		}
 	}

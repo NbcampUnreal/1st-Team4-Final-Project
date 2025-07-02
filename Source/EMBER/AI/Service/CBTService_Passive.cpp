@@ -47,24 +47,24 @@ void UCBTService_Passive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 	
 	AActor* TagetActor = Cast<AActor>(Controller->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
 
-	if (State->IsDetectMode())
+	if (State->IsDetectMode() && !BTState->IsRunMode())
 	{
 		BTState->SetDetectMode();
-	}
-	if (State->IsHittdMode())
-	{
-		BTState->SetHittedMode();
 	}
 
 	if (State->IsDeadMode())
 	{
 		BTState->SetDeadMode();
 	}
-
 	if (State->IsIdleMode())
 	{
 		BTState->SetIdleMode();
 	}
+	if (State->IsRunMode())
+	{
+		BTState->SetRunMode();
+	}
+
 	
 	if (TagetActor)
 	{
@@ -75,14 +75,9 @@ void UCBTService_Passive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 		if (Distance < RunRange)
 		{
-			BTState->SetRunMode();
+			State->SetRunMode();
 		}
 		return;
 	}
 
-	if (BTState->IsHittedMode())
-	{
-		BTState->SetRunMode();
-		return;
-	}
 }

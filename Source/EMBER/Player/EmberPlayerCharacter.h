@@ -30,7 +30,8 @@ UCLASS()
 class EMBER_API AEmberPlayerCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface, public IEmberTemperature
 {
 	GENERATED_BODY()
-
+public:
+	FORCEINLINE float GetUseAmount() { return UseAmount; }
 public:
 	// Sets default values for this character's properties
 	AEmberPlayerCharacter(const FObjectInitializer& Init);
@@ -78,10 +79,18 @@ protected:
 	float GetMaxStamina() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetMaxTemparature() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetCurrentHP() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	float GetCurrentStamina() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	float GetCurrentTemparature() const;
+
+	
 	// AI 소환 반경
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float SpawnRadius;
@@ -109,6 +118,17 @@ public:
 	virtual void PostNetInit() override;
 
 	void SetControlRotation(bool bEnable);
+
+protected:
+	// Begins the death sequence for the character (disables collision, disables movement, etc...)
+	UFUNCTION()
+	virtual void OnDeathStarted(AActor* OwningActor);
+
+	// Ends the death sequence for the character (detaches controller, destroys pawn, etc...)
+	UFUNCTION()
+	virtual void OnDeathFinished(AActor* OwningActor);
+	
+	void DisableMovementAndCollision();
 	
 private:
 
@@ -193,6 +213,10 @@ protected:
 	float NormalSpeed = 200.0f;
 	float SprintSpeed = 350.0f;
 	
+	FTimerHandle StaminaRegenHandle;
+	FTimerHandle StaminaUseHandle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StaminaRegenInterval = 0.2f;
 	
 private:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
@@ -208,4 +232,6 @@ public:
 private:
 	UPROPERTY(ReplicatedUsing = "OnRep_Hitted")
 	FDamagesData DamageData;
+	UPROPERTY( EditAnywhere)
+	float UseAmount = 0.1f;
 };

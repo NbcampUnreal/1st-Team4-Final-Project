@@ -31,4 +31,7 @@ private:
 
 	UFUNCTION()
 	void OnWarmingZoneOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	//UFUNCTION(BlueprintCallable)
+	virtual void OnInteractionSuccess(AActor* Interactor) override;
 };

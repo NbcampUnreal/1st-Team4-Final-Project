@@ -4,9 +4,12 @@
 #include "EmberPlayerCharacter.h"
 #include "Components/SphereComponent.h"
 #include "GameInfo/GameplayTags.h"
+#include "Interaction/EmberBlueprintFunctionLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Interaction/EmberTemperature.h"
 #include "Notify/AnimNotifyState_SendGameplayEvent.h"
+#include "Interaction/RespawnSubsystem.h"
+#include "System/GameMode/C_EmberGameMode.h"
 
 AEternalFlame::AEternalFlame()
 {
@@ -82,4 +85,11 @@ void AEternalFlame::OnWarmingZoneOverlapEnd(UPrimitiveComponent* OverlappedCompo
 			AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
 		}
 	}
+}
+
+void AEternalFlame::OnInteractionSuccess(AActor* Interactor)
+{
+	Super::OnInteractionSuccess(Interactor);
+	URespawnSubsystem* Subsystem = UEmberBlueprintFunctionLibrary::GetRespawnSubsystem();
+	Subsystem->SetNewRespawnTransform(Interactor->GetTransform());
 }

@@ -7,8 +7,12 @@
 #include "BehaviorTree/CBehaviorTreeComponent.h"
 #include "Task/BTT_DragonMeteor.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "EmberPlayerCharacter.h"
+#include "CUserWidget_AIHP.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "UI/EmberHUD.h"
+#include "CommonActivatableWidget.h"
 
 ADragon::ADragon()
 {
@@ -57,10 +61,8 @@ void ADragon::SpawnSpit()
 	SpawnParams.Instigator = GetInstigator();
 
 	ADragonSpitProjectile* SpitProjectile = GetWorld()->SpawnActor<ADragonSpitProjectile>(SpitClass, SpawnLocation, SpawnRotation, SpawnParams);
-	if (SpitProjectile)
-	{
-		SpitProjectile->SetTargetActor(TargetActor);
-	}
+	SpitProjectile->SetTargetActor(TargetActor);
+	
 }
 
 void ADragon::SpawnBreath()
@@ -155,6 +157,8 @@ void ADragon::OnDeath()
 		CurrentMeteorSpawner->Destroy();
 		CurrentMeteorSpawner = nullptr;
 	}
+
+	OnDeathDispatcher.Broadcast();
 }
 
 void ADragon::StartMeteorPhase()
@@ -199,5 +203,70 @@ void ADragon::UpdateOrbit(float DeltaTime)
 	if (OrbitAngle >= 360.f)
 	{
 		bOrbiting = false;
+	}
+}
+
+void ADragon::HandleBeginOverlap(AActor* OtherActor)
+{
+	if (AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(OtherActor))
+	{
+		if (APlayerController* PC = Cast<APlayerController>(Player->GetController()))
+		{
+			if (AEmberHUD* EmberHUD = Cast<AEmberHUD>(PC->GetHUD()))
+			{
+				if (EmberHUD->MainScreenWidget)
+				{
+					if (UUserWidget* RootUserWidget = Cast<UUserWidget>(EmberHUD->MainScreenWidget))
+					{
+						if (UWidget* Found = RootUserWidget->GetWidgetFromName(TEXT("WBP_HUD_AIHP")))
+						{
+							if (UCUserWidget_AIHP* AIHPWidget = Cast<UCUserWidget_AIHP>(Found))
+							{
+								AIHPWidget->SetTargetAI(this);
+								UE_LOG(LogTemp, Warning, TEXT("SetTargetAI(this) called from HandleBeginOverlap"));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void ADragon::HandleEndOverlap(AActor* OtherActor)
+{
+	if (AEmberPlayerCharacter* Player = Cast<AEmberPlayerCharacter>(OtherActor))
+	{
+		if (APlayerController* PC = Cast<APlayerController>(Player->GetController()))
+		{
+			if (AEmberHUD* EmberHUD = Cast<AEmberHUD>(PC->GetHUD()))
+			{
+				if (EmberHUD->MainScreenWidget)
+				{
+					if (UUserWidget* RootUserWidget = Cast<UUserWidget>(EmberHUD->MainScreenWidget))
+					{
+						if (UWidget* Found = RootUserWidget->GetWidgetFromName(TEXT("WBP_HUD_AIHP")))
+						{
+							if (UCUserWidget_AIHP* AIHPWidget = Cast<UCUserWidget_AIHP>(Found))
+							{
+								if (AIHPWidget->GetTargetAI() == this)
+								{
+									AIHPWidget->SetTargetAI(nullptr);
+									UE_LOG(LogTemp, Warning, TEXT("SetTargetAI(nullptr) called from HandleEndOverlap"));
+								}
+							}
+							else
+							{
+								UE_LOG(LogTemp, Warning, TEXT("AIHPWidget cast failed in HandleEndOverlap"));
+							}
+						}
+						else
+						{
+							UE_LOG(LogTemp, Warning, TEXT("AIHPWidget not found in HandleEndOverlap"));
+						}
+					}
+				}
+			}
+		}
 	}
 }

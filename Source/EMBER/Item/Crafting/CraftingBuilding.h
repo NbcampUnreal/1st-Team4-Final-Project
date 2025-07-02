@@ -1,17 +1,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Interaction/Actors/EmberWorldInteractable.h"
 #include "Crafting/CraftingRecipeManager.h"
 #include "GameFlag.h"
 #include "GameplayTagContainer.h"
-#include "Interaction/Actors/EmberWorldInteractable.h"
 #include "CraftingBuilding.generated.h"
 
 class UInventoryManagerComponent;
-class UStaticMeshComponent;
-class USphereComponent;
-class UCraftingWidget;
 class AEmberPlayerCharacter;
 class UAnimMontage;
 
@@ -24,7 +20,6 @@ public:
     ACraftingBuilding();
 
 protected:
-    virtual void BeginPlay() override;
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Crafting")

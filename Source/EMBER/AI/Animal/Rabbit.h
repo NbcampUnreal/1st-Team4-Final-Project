@@ -12,5 +12,8 @@ class EMBER_API ARabbit : public APassiveAI
 
 public:
 	ARabbit();
+
+	FTimerHandle TimerHandle;
 	virtual void OnDeath() override;
+	virtual void Cleaning();
 };

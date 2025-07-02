@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "StatusComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDeathEvent, AActor*, OwningActor);
 
 UCLASS(ClassGroup = (Custom),meta = (BlueprintSpawnableComponent))
 class EMBER_API UStatusComponent : public UActorComponent
@@ -11,7 +12,9 @@ class EMBER_API UStatusComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintCallable, Category="Status")
 	FORCEINLINE float GetMaxHp() { return MaxHP; }
+	UFUNCTION(BlueprintCallable, Category="Status")
 	FORCEINLINE float GetHp() { return HP; }
 	FORCEINLINE float GetMaxStamina() { return MaxStamina; }
 	FORCEINLINE float GetStamina() { return Stamina; }
@@ -87,13 +90,32 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Status")
 	void LevelUp();
 
+/* Death */
+public:
+	virtual void StartDeath();
+	virtual void FinishDeath();
+
+	UFUNCTION()
+	virtual void OnRep_DeathState(EDeathState OldDeathState);
+	
+	EDeathState GetDeathState() { return DeathState; }
+	
+	UPROPERTY(BlueprintAssignable)
+	FDeathEvent OnDeathStarted;
+
+	UPROPERTY(BlueprintAssignable)
+	FDeathEvent OnDeathFinished;
+
+	UPROPERTY(ReplicatedUsing = OnRep_DeathState)
+	EDeathState DeathState;
+	
 private:
 	UPROPERTY(EditAnywhere, Category = "Status")
 	float MaxHP = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Status")
 	float MaxStamina = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Status")
-	float MaxTemperature = 100.f;
+	float MaxTemperature = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Status")
 	float MaxFatigueLevel = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Status")
@@ -128,3 +150,8 @@ private:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 };
+
+inline void UStatusComponent::OnRep_DeathState(EDeathState OldDeathState)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnRep_DeathState"));
+}

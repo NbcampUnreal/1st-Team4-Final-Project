@@ -39,10 +39,10 @@ EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	}
 
 	// UE_LOG(LogTemp, Warning, TEXT("KeyType: %s"), *KeyTypeClass->GetName());
-	
+
 	if (KeyTypeClass == UBlackboardKeyType_Vector::StaticClass())
 	{
-		 TargetLocation = BlackboardComp->GetValueAsVector(BlackboardKey.SelectedKeyName);
+		TargetLocation = BlackboardComp->GetValueAsVector(BlackboardKey.SelectedKeyName);
 	}
 	else if (KeyTypeClass == UBlackboardKeyType_Object::StaticClass())
 	{
@@ -51,16 +51,13 @@ EBTNodeResult::Type UBTT_FlyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	}
 	else
 	{
-		UE_LOG(LogTemp,Warning,L"Wrong Type in FlyMoveTO")
+		UE_LOG(LogTemp, Warning, L"Wrong Type in FlyMoveTO")
 	}
-	
+
 	CurrentLocation = BaseAI->GetActorLocation();
 	Direction = (TargetLocation - CurrentLocation).GetSafeNormal();
-	float Speed = BaseAI->GetCharacterMovement()->MaxFlySpeed;
-	BaseAI->GetCharacterMovement()->MaxAcceleration = 800.f;
-	// BaseAI->GetCharacterMovement()
-	// BaseAI->GetCharacterMovement()->MaxAcceleration = Speed;
-	// BaseAI->GetCharacterMovement()->Velocity = Direction * Speed;
+	BaseAI->GetCharacterMovement()->MaxAcceleration = 700.0f;
+	
 	FRotator NewRotation = Direction.Rotation();
 	BaseAI->SetActorRotation(NewRotation);
 
@@ -75,9 +72,9 @@ bool UBTT_FlyMoveTo::IsNearGround()
 	{
 		return false;
 	}
-	
+
 	FVector Start = BaseAI->GetActorLocation();
-	FVector End = Start - FVector(0, 0, AcceptableRadius+150.f); 
+	FVector End = Start - FVector(0, 0, AcceptableRadius + 150.f);
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(BaseAI);
@@ -90,21 +87,20 @@ bool UBTT_FlyMoveTo::IsNearGround()
 		ECC_Visibility,
 		Params
 	);
-	// DrawDebugLine(
-	// 	BaseAI->GetWorld(),
-	// 	Start,
-	// 	End,
-	// 	bHit ? FColor::Green : FColor::Red, // 맞으면 초록, 아니면 빨강
-	// 	false,
-	// 	0.1f,
-	// 	0,
-	// 	2.0f
-	// );
+	DrawDebugLine(
+		BaseAI->GetWorld(),
+		Start,
+		End,
+		bHit ? FColor::Green : FColor::Red, // 맞으면 초록, 아니면 빨강
+		false,
+		0.1f,
+		0,
+		2.0f
+	);
 
 
 	return bHit;
 }
-
 bool UBTT_FlyMoveTo::IsNearTargetLocation()
 {
 	CurrentLocation = BaseAI->GetActorLocation();
@@ -115,24 +111,29 @@ bool UBTT_FlyMoveTo::IsNearTargetLocation()
 void UBTT_FlyMoveTo::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
+	Direction = (TargetLocation - CurrentLocation).GetSafeNormal(); 
 	BaseAI->AddMovementInput(Direction, 1.f);
 	
+	if (BaseAI->GetCharacterMovement()->Velocity.Size() > BlackboardComp->GetValueAsFloat("FlySpeed"))
+	{
+		BaseAI->GetCharacterMovement()->MaxAcceleration = 100.0f;
+	}
+
 	if (IsNearGround())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("On Ground"));
 		BaseAI->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		BaseAI->GetCharacterMovement()->GravityScale = 1.0f;
-		
-		UGriffon_AnimInstance* AnimInstance = Cast<UGriffon_AnimInstance>( BaseAI->GetMesh()->GetAnimInstance());
+
+		UGriffon_AnimInstance* AnimInstance = Cast<UGriffon_AnimInstance>(BaseAI->GetMesh()->GetAnimInstance());
 		AnimInstance->PlayLandingAnimation();
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 	if (IsNearTargetLocation())
-	{ 
+	{
 		UE_LOG(LogTemp, Warning, TEXT("FlyMove Success"));
 		BaseAI->GetCharacterMovement()->MaxAcceleration = 0.0f;
-		BaseAI->GetCharacterMovement()->MaxFlySpeed = 100.0f;
+		BaseAI->GetCharacterMovement()->MaxFlySpeed = 0.0f;
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
-
 }

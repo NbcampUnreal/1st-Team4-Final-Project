@@ -23,6 +23,7 @@ UENUM()
 enum class EStateType : uint8
 {
 	Idle UMETA(DisplayName = "Idle"),
+	Run UMETA(DisplayName = "Run"),
 	Anim UMETA(DisplayName = "Anim"),
 	Detect UMETA(DisplayName = "Detect"),
 	Equip UMETA(DisplayName = "Equip"),
@@ -232,6 +233,14 @@ enum class AISoundCategory : uint8
 	HitSound UMETA(DisplayName = "Hit"),
 	DeathSound UMETA(DisplayName = "Death"),
 	Max
+};
+
+UENUM(BlueprintType)
+enum class EDeathState : uint8
+{
+	NotDead = 0,
+	DeathStarted,
+	DeathFinished
 };
 
 UENUM(BlueprintType)

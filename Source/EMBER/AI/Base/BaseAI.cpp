@@ -16,6 +16,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "Components/SphereComponent.h"
 
 ABaseAI::ABaseAI()
 {
@@ -33,6 +34,13 @@ ABaseAI::ABaseAI()
 
 	// WalkSpeed = 200.0f;
 	// RunSpeed = 700.0f;
+
+	WidgetTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("WidgetTrigger"));
+	WidgetTrigger->SetupAttachment(RootComponent);
+	WidgetTrigger->SetSphereRadius(10000.f);
+	WidgetTrigger->SetCollisionProfileName(TEXT("Trigger"));
+	WidgetTrigger->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	WidgetTrigger->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
 void ABaseAI::BeginPlay()
@@ -52,6 +60,12 @@ void ABaseAI::BeginPlay()
 	//ACAIController* Controller = Cast<ACAIController>(GetController());
 	// Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAI::OnTargetPerceptionUpdated);
 	// SetWalkSpeed();
+
+	if (WidgetTrigger)
+	{
+		WidgetTrigger->OnComponentBeginOverlap.AddDynamic(this, &ABaseAI::OnTriggerBeginOverlap);
+		WidgetTrigger->OnComponentEndOverlap.AddDynamic(this, &ABaseAI::OnTriggerEndOverlap);
+	}
 }
 
 float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
@@ -97,6 +111,20 @@ float ABaseAI::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
    LastDamageCauser = DamageCauser;
 
 	return ActualDamage;
+}
+
+void ABaseAI::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	HandleBeginOverlap(OtherActor);
+
+	UE_LOG(LogTemp, Warning, TEXT("WidgetTrigger Overlap"));
+}
+
+void ABaseAI::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	HandleEndOverlap(OtherActor);
 }
 
 UC_CharacterMovementComponent* ABaseAI::GetAIMovement() const
@@ -158,7 +186,7 @@ void ABaseAI::PlaySound(AISoundCategory InSoundType)
 void ABaseAI::OnDeath()
 {
 	UE_LOG(LogTemp, Display, TEXT("OnDeath"));
-
+	this->GetCharacterMovement()->GravityScale = 1.0f;
 	AIState->SetDeadMode();
 	bIsDie = true;
 

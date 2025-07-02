@@ -23,6 +23,7 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
+	UFUNCTION()
 	void OnMonsterDiedMessageReceived(FGameplayTag Channel, const FMonsterDiedMessage& Message);
 
 protected:

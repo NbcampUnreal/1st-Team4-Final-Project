@@ -83,6 +83,8 @@ public:
 private:
 	void Equip(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
 	void Unequip(EEquipmentSlotType EquipmentSlotType);
+	void Equip_UnSafe(EEquipmentSlotType EquipmentSlotType, UItemInstance* ItemInstance);
+	void Unequip_UnSafe(EEquipmentSlotType EquipmentSlotType);
 
 public:
 	TArray<FEquipEntry>& GetAllEntries() { return Entries; }

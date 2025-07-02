@@ -44,10 +44,12 @@ void APickupItemActor::OnRep_LootContent()
 	if (ItemInstance)
 	{
 		int32 ItemID = UEmberItemData::Get().FindItemTemplateIDByClass(LootContent.ItemTemplateClass);
+		const UItemTemplate& ItemTemplate = UEmberItemData::Get().FindItemTemplateByID(ItemID);
 		ItemInstance->Init(ItemID, LootContent.Rarity, LootContent.Quantity);
 		PickupInfo.ItemInstance = ItemInstance;
-
-		Super::OnRep_PickupInfo();
+		InteractionInfo.Title = ItemTemplate.DisplayName;
+		
+		OnRep_PickupInfo();
 	}
 
 	if (RarityEffectComponent)
