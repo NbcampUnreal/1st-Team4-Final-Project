@@ -59,7 +59,7 @@ protected:
 	UC_CameraComponent* CameraLogicComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStatusComponent* StatusComponent;
-		UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UMontageSystemComponent> MontageComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	FVector2D PitchRange = FVector2D(-50, 50);
