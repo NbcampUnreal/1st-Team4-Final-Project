@@ -86,6 +86,7 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Consume_Item,						"GameplayEvent.Consume.Item");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_HitReact,							"GameplayEvent.HitReact");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Jump,								"GameplayEvent.Jump");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_BodyTemperature_Change,			"GameplayEvent_BodyTemperature_Change");
 
 	// Cooldown
 	UE_DEFINE_GAMEPLAY_TAG(Cooldown_Dash,									"Cooldown.Dash");

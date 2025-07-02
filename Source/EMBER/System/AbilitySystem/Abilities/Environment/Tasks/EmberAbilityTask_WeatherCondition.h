@@ -5,20 +5,20 @@
 #include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
 #include "System/AbilitySystem/Abilities/Environment/FEmberBodyTemperatureQuery.h"
-#include "EmberAbilityTask_DecreaseBodyTemperature.generated.h"
+#include "EmberAbilityTask_WeatherCondition.generated.h"
 
 class AEmberPlayerCharacter;
 
 UCLASS()
-class EMBER_API UEmberAbilityTask_DecreaseBodyTemperature : public UAbilityTask
+class EMBER_API UEmberAbilityTask_WeatherCondition : public UAbilityTask
 {
 	GENERATED_BODY()
 public:
-	UEmberAbilityTask_DecreaseBodyTemperature(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UEmberAbilityTask_WeatherCondition(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Ability|Tasks", meta=(HidePin="OwningAbility", DefaultToSelf="OwningAbility", BlueprintInternalUseOnly="true"))
-	static UEmberAbilityTask_DecreaseBodyTemperature* WaitForDecreaseBodyTemperature(UGameplayAbility* OwningAbility, FEmberBodyTemperatureQuery BodyTemperatureQuery, float InDecreaseIntervalRate = 1.f, float InDecreaseAmount = 0.1f);
+	static UEmberAbilityTask_WeatherCondition* WaitForDecreaseBodyTemperature(UGameplayAbility* OwningAbility, FEmberBodyTemperatureQuery BodyTemperatureQuery, float InDecreaseIntervalRate = 1.f, float InDecreaseAmount = 0.1f);
 
 protected:
 	//~UAbilityTask Overrides

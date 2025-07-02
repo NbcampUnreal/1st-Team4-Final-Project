@@ -16,7 +16,7 @@ void UStatusComponent::BeginPlay()
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
 	HP = MaxHP;
 	Stamina = MaxStamina;
-	Temperature = 36.5f;
+	Temperature = MaxTemperature;
 	Energy = MaxEnergy;
 	PhysicalStrength = MaxPhysicalStrength;
 	Dexterity = MaxDexterity;

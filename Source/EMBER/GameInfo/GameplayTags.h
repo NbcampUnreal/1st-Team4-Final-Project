@@ -86,6 +86,7 @@ namespace EmberGameplayTags
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Consume_Item);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_HitReact);
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Jump);
+	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_BodyTemperature_Change);
 
 	// Cooldown
 	EMBER_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cooldown_Dash);

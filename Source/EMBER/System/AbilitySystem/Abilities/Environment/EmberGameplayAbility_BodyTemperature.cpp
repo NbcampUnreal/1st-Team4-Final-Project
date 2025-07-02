@@ -3,8 +3,10 @@
 
 #include "EmberGameplayAbility_BodyTemperature.h"
 
+#include "GameFlag.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "GameInfo/GameplayTags.h"
-#include "Tasks/EmberAbilityTask_DecreaseBodyTemperature.h"
+#include "Tasks/EmberAbilityTask_WeatherCondition.h"
 
 UEmberGameplayAbility_BodyTemperature::UEmberGameplayAbility_BodyTemperature(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -22,15 +24,40 @@ UEmberGameplayAbility_BodyTemperature::UEmberGameplayAbility_BodyTemperature(con
 	DecreaseAmount = 0.1f;
 }
 
-void UEmberGameplayAbility_BodyTemperature::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
-	const FGameplayEventData* TriggerEventData)
+void UEmberGameplayAbility_BodyTemperature::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (UEmberAbilityTask_DecreaseBodyTemperature* DecreaseBodyTemperatureTask = UEmberAbilityTask_DecreaseBodyTemperature::WaitForDecreaseBodyTemperature(this, FEmberBodyTemperatureQuery(), DecreaseIntervalRate, DecreaseAmount))
+	WeatherCondition = UEmberAbilityTask_WeatherCondition::WaitForDecreaseBodyTemperature(this, FEmberBodyTemperatureQuery(), DecreaseIntervalRate, DecreaseAmount);
+	if (WeatherCondition)
 	{
-		DecreaseBodyTemperatureTask->ReadyForActivation();
+		WeatherCondition->ReadyForActivation();
+	}
+	
+	if (UAbilityTask_WaitGameplayEvent* GameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EmberGameplayTags::GameplayEvent_BodyTemperature_Change, nullptr, false, true))
+	{
+		GameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnChangeBodyTemperature);
+		GameplayEventTask->ReadyForActivation();
+	}
+}
+
+void UEmberGameplayAbility_BodyTemperature::OnChangeBodyTemperature(FGameplayEventData TriggerEventData)
+{
+	EBodyTemperatureChange BodyTemperature = (EBodyTemperatureChange)TriggerEventData.EventMagnitude;
+	if (BodyTemperature == EBodyTemperatureChange::Increase)
+	{
+		if (WeatherCondition && WeatherCondition->IsActive())
+		{
+			WeatherCondition->EndTask();
+		}
+	}
+	else if (BodyTemperature == EBodyTemperatureChange::Decrease)
+	{
+		WeatherCondition = UEmberAbilityTask_WeatherCondition::WaitForDecreaseBodyTemperature(this, FEmberBodyTemperatureQuery(), DecreaseIntervalRate, DecreaseAmount);
+		if (WeatherCondition)
+		{
+			WeatherCondition->ReadyForActivation();
+		}
 	}
 }
 

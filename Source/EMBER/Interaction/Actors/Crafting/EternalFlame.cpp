@@ -1,8 +1,12 @@
 #include "Interaction/Actors/Crafting/EternalFlame.h"
 
+#include "AbilitySystemComponent.h"
+#include "EmberPlayerCharacter.h"
 #include "Components/SphereComponent.h"
+#include "GameInfo/GameplayTags.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Interaction/EmberTemperature.h"
+#include "Notify/AnimNotifyState_SendGameplayEvent.h"
 
 AEternalFlame::AEternalFlame()
 {
@@ -39,6 +43,20 @@ void AEternalFlame::OnWarmingZoneOverlapBegin(UPrimitiveComponent* OverlappedCom
 		TemperatureHandler->Execute_ApplyWarmingEffect(OtherActor);
 		UE_LOG(LogTemp, Log, TEXT("EternalFlame: Applied warming effect to %s"), *OtherActor->GetName());
 	}
+
+	if (AEmberPlayerCharacter* EmberCharacter = Cast<AEmberPlayerCharacter>(OtherActor))
+	{
+		if (UAbilitySystemComponent* AbilitySystemComponent = EmberCharacter->GetAbilitySystemComponent())
+		{
+			FGameplayEventData Payload;
+			Payload.EventTag = EmberGameplayTags::GameplayEvent_BodyTemperature_Change;
+			Payload.Target = this;
+			Payload.EventMagnitude = (int32)EBodyTemperatureChange::Increase;
+
+			FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
+			AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
+		}
+	}
 }
 
 void AEternalFlame::OnWarmingZoneOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -49,5 +67,19 @@ void AEternalFlame::OnWarmingZoneOverlapEnd(UPrimitiveComponent* OverlappedCompo
 	{
 		TemperatureHandler->Execute_RemoveWarmingEffect(OtherActor);
 		UE_LOG(LogTemp, Log, TEXT("EternalFlame: Removed warming effect from %s"), *OtherActor->GetName());
+	}
+
+	if (AEmberPlayerCharacter* EmberCharacter = Cast<AEmberPlayerCharacter>(OtherActor))
+	{
+		if (UAbilitySystemComponent* AbilitySystemComponent = EmberCharacter->GetAbilitySystemComponent())
+		{
+			FGameplayEventData Payload;
+			Payload.EventTag = EmberGameplayTags::GameplayEvent_BodyTemperature_Change;
+			Payload.Target = this;
+			Payload.EventMagnitude = (int32)EBodyTemperatureChange::Decrease;
+
+			FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
+			AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);
+		}
 	}
 }

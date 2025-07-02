@@ -93,7 +93,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Status")
 	float MaxStamina = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Status")
-	float MaxTemperature = 50.f;
+	float MaxTemperature = 100.f;
 	UPROPERTY(EditAnywhere, Category = "Status")
 	float MaxFatigueLevel = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Status")
@@ -127,5 +127,4 @@ private:
 	int32 Level;
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
-
 };

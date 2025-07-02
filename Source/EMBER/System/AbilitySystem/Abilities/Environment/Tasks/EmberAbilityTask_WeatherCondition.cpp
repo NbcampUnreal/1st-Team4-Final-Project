@@ -1,20 +1,20 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EmberAbilityTask_DecreaseBodyTemperature.h"
+#include "EmberAbilityTask_WeatherCondition.h"
 
 #include "EmberPlayerCharacter.h"
 #include "StatusComponent.h"
 #include "System/AbilitySystem/Abilities/EmberGameplayAbility.h"
 
-UEmberAbilityTask_DecreaseBodyTemperature::UEmberAbilityTask_DecreaseBodyTemperature(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UEmberAbilityTask_WeatherCondition::UEmberAbilityTask_WeatherCondition(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	
 }
 
-UEmberAbilityTask_DecreaseBodyTemperature* UEmberAbilityTask_DecreaseBodyTemperature::WaitForDecreaseBodyTemperature(UGameplayAbility* OwningAbility, FEmberBodyTemperatureQuery BodyTemperatureQuery, float InDecreaseIntervalRate, float InDecreaseAmount)
+UEmberAbilityTask_WeatherCondition* UEmberAbilityTask_WeatherCondition::	WaitForDecreaseBodyTemperature(UGameplayAbility* OwningAbility, FEmberBodyTemperatureQuery BodyTemperatureQuery, float InDecreaseIntervalRate, float InDecreaseAmount)
 {
-	UEmberAbilityTask_DecreaseBodyTemperature* Task = NewAbilityTask<UEmberAbilityTask_DecreaseBodyTemperature>(OwningAbility);
+	UEmberAbilityTask_WeatherCondition* Task = NewAbilityTask<UEmberAbilityTask_WeatherCondition>(OwningAbility);
 	if (OwningAbility)
 	{
 		Task->TargetCharacter = Cast<AEmberPlayerCharacter>(OwningAbility->GetAvatarActorFromActorInfo());
@@ -25,7 +25,7 @@ UEmberAbilityTask_DecreaseBodyTemperature* UEmberAbilityTask_DecreaseBodyTempera
 	return Task;
 }
 
-void UEmberAbilityTask_DecreaseBodyTemperature::Activate()
+void UEmberAbilityTask_WeatherCondition::Activate()
 {
 	Super::Activate();
 
@@ -38,7 +38,7 @@ void UEmberAbilityTask_DecreaseBodyTemperature::Activate()
 	}
 }
 
-void UEmberAbilityTask_DecreaseBodyTemperature::OnDestroy(bool bInOwnerFinished)
+void UEmberAbilityTask_WeatherCondition::OnDestroy(bool bInOwnerFinished)
 {
 	if (UWorld* World = GetWorld())
 	{
@@ -48,7 +48,7 @@ void UEmberAbilityTask_DecreaseBodyTemperature::OnDestroy(bool bInOwnerFinished)
 	Super::OnDestroy(bInOwnerFinished);
 }
 
-void UEmberAbilityTask_DecreaseBodyTemperature::PerformTask()
+void UEmberAbilityTask_WeatherCondition::PerformTask()
 {
 	if (TargetCharacter == nullptr)
 		return;
