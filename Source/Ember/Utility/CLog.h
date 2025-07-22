@@ -6,16 +6,24 @@
 
 #define LogLine(){ CLog::Log(__FILE__, __FUNCTION__, __LINE__); }
 #define PrintLine(){ CLog::Print(__FILE__, __FUNCTION__, __LINE__); }
-#define DebugLog(val) CLog::Log(this, TEXT(__FUNCTION__), val)
+#define DebugLogD(val) CLog::Log(this, TEXT(__FUNCTION__), val,ELogVerbosity::Type::Display)
+#define DebugLogW(val) CLog::Log(this, TEXT(__FUNCTION__), val,ELogVerbosity::Type::Warning)
+#define DebugLogE(val) CLog::Log(this, TEXT(__FUNCTION__), val, ELogVerbosity::Type::Error)
+
+UENUM()
+enum class ELogType : uint8
+{
+	Display, Warning, Error
+};
 
 class EMBER_API CLog
 {
 public:
-	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, int32 InValue);
-	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, float InValue);
-	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, const FString& InValue);
-	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, const FVector& InValue);
-	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, const FRotator& InValue);
+	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName,  int32 InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
+	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, float InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
+	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, const FString& InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
+	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, const FVector& InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
+	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, const FRotator& InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
 
 	static void Log(int32 InValue);
 	static void Log(float InValue);
