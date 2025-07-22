@@ -1,57 +1,113 @@
 #include "CLog.h"
 #include "Engine.h"
 
-DEFINE_LOG_CATEGORY_STATIC(GP, Display, All)
+DEFINE_LOG_CATEGORY_STATIC(Ember, Display, All)
 
-void CLog::Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, int32 InValue)
+void CLog::Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, int32 InValue, ELogVerbosity::Type InLogType)
 {
-	UE_LOG(GP, Display, L"[%s/%s] %d", *Class.GetName(), FunctionName, InValue);
+	switch (InLogType)
+	{
+		case ELogVerbosity::Type::Display:
+			UE_LOG(Ember, Display, L"[%s/%s] %d", *Class.GetName(), FunctionName, InValue);
+			break;
+		case ELogVerbosity::Type::Warning:
+			UE_LOG(Ember, Warning, L"[%s/%s] %d", *Class.GetName(), FunctionName, InValue);
+			break;
+		case ELogVerbosity::Type::Error:
+			UE_LOG(Ember, Error, L"[%s/%s] %d", *Class.GetName(), FunctionName, InValue);
+			break;
+	}
 }
 
-void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, float InValue)
+void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, float InValue, ELogVerbosity::Type InLogType)
 {
-	UE_LOG(GP, Display, L"[%s/%s] %f", *Class.GetName(), FunctionName, InValue);
+	switch (InLogType)
+	{
+	case ELogVerbosity::Type::Display:
+		UE_LOG(Ember, Display, L"[%s/%s] %f", *Class.GetName(), FunctionName, InValue);
+		break;
+	case ELogVerbosity::Type::Warning:
+		UE_LOG(Ember, Warning, L"[%s/%s] %f", *Class.GetName(), FunctionName, InValue);
+		break;
+	case ELogVerbosity::Type::Error:
+		UE_LOG(Ember, Error, L"[%s/%s] %f", *Class.GetName(), FunctionName, InValue);
+		break;
+	}
+	
 }
 
-void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, const FString& InValue)
+void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, const FString& InValue, ELogVerbosity::Type InLogType)
 {
-	UE_LOG(GP, Display, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue);
+	switch (InLogType)
+	{
+	case ELogVerbosity::Type::Display:
+		UE_LOG(Ember, Display, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue);
+		break;
+	case ELogVerbosity::Type::Warning:
+		UE_LOG(Ember, Warning, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue);
+		break;
+	case ELogVerbosity::Type::Error:
+		UE_LOG(Ember, Error, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue);
+		break;
+	}
 }
 
-void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, const FVector& InValue)
+void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, const FVector& InValue, ELogVerbosity::Type InLogType)
 {
-	UE_LOG(GP, Display, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+	switch (InLogType)
+	{
+	case ELogVerbosity::Type::Display:
+		UE_LOG(Ember, Display, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		break;
+	case ELogVerbosity::Type::Warning:
+		UE_LOG(Ember, Warning, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		break;
+	case ELogVerbosity::Type::Error:
+		UE_LOG(Ember, Error, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		break;
+	}
 }
 
-void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, const FRotator& InValue)
+void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, const FRotator& InValue, ELogVerbosity::Type InLogType)
 {
-	UE_LOG(GP, Display, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+	switch (InLogType)
+	{
+	case ELogVerbosity::Type::Display:
+		UE_LOG(Ember, Display, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		break;
+	case ELogVerbosity::Type::Warning:
+		UE_LOG(Ember, Warning, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		break;
+	case ELogVerbosity::Type::Error:
+		UE_LOG(Ember, Error, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		break;
+	}
 }
 
 void CLog::Log(int32 InValue)
 {
-	//GLog->Log("GP", ELogVerbosity::Display, FString::FromInt(InValue));
-	UE_LOG(GP, Display, L"%d", InValue);
+	//GLog->Log("Ember", ELogVerbosity::Display, FString::FromInt(InValue));
+	UE_LOG(Ember, Display, L"%d", InValue);
 }
 
 void CLog::Log(float InValue)
 {
-	UE_LOG(GP, Display, L"%f", InValue);
+	UE_LOG(Ember, Display, L"%f", InValue);
 }
 
 void CLog::Log(const FString& InValue)
 {
-	UE_LOG(GP, Display, L"%s", *InValue);
+	UE_LOG(Ember, Display, L"%s", *InValue);
 }
 
 void CLog::Log(const FVector& InValue)
 {
-	UE_LOG(GP, Display, L"%s", *InValue.ToString());
+	UE_LOG(Ember, Display, L"%s", *InValue.ToString());
 }
 
 void CLog::Log(const FRotator& InValue)
 {
-	UE_LOG(GP, Display, L"%s", *InValue.ToString());
+	UE_LOG(Ember, Display, L"%s", *InValue.ToString());
 }
 
 void CLog::Log(const UObject* InValue)
@@ -63,7 +119,7 @@ void CLog::Log(const UObject* InValue)
 
 	str.Append(!!InValue ? " Not Null" : "Null");
 
-	UE_LOG(GP, Display, L"%s", *str);
+	UE_LOG(Ember, Display, L"%s", *str);
 }
 
 void CLog::Log(const FString& InFileName, const FString& InFuncName, int32 InLineNumber)
@@ -76,7 +132,7 @@ void CLog::Log(const FString& InFileName, const FString& InFuncName, int32 InLin
 	length = InFileName.Len() - 1;
 	FString fileName = InFileName.Right(length - index);
 
-	UE_LOG(GP, Display, L"%s, %s, %d", *fileName, *InFuncName, InLineNumber);
+	UE_LOG(Ember, Display, L"%s, %s, %d", *fileName, *InFuncName, InLineNumber);
 }
 
 void CLog::Print(int32 InValue, int32 InKey, float InDuration, FColor InColor)
