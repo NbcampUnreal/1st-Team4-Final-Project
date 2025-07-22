@@ -47,6 +47,20 @@ protected:
 	void Look(const FInputActionValue& Value);
 	UFUNCTION()
 	void Attack();
+
+	// Sprint ฐüทร
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float WalkSpeed = 300.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float SprintSpeed = 600.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* SprintAction;
+
+	void StartSprinting();
+	void StopSprinting();
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

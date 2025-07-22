@@ -23,7 +23,13 @@ AEmberCharacter::AEmberCharacter()
 
 	// 캐릭터가 직접 회전하지 않도록
 	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->bOrientRotationToMovement = true; // 이동 방향으로 캐릭터 회전
+
+	// 기본 이속을 WalkSpeed로 설정
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->MaxWalkSpeed = WalkSpeed;
+		MoveComp->bOrientRotationToMovement = true; // 이동 방향으로 캐릭터 회전
+	}
 }
 void AEmberCharacter::BeginPlay()
 {
@@ -49,6 +55,10 @@ void AEmberCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 		EnhancedInput->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInput->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+
+		EnhancedInput->BindAction(SprintAction, ETriggerEvent::Started, this, &AEmberCharacter::StartSprinting);
+		EnhancedInput->BindAction(SprintAction, ETriggerEvent::Completed, this, &AEmberCharacter::StopSprinting);
+
 	}
 }
 
@@ -79,4 +89,20 @@ void AEmberCharacter::Look(const FInputActionValue& Value)
 void AEmberCharacter::Attack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Attack triggered!"));
+}
+
+void AEmberCharacter::StartSprinting()
+{
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->MaxWalkSpeed = SprintSpeed;
+	}
+}
+
+void AEmberCharacter::StopSprinting()
+{
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->MaxWalkSpeed = WalkSpeed;
+	}
 }
