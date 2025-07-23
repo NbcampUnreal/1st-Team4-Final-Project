@@ -43,12 +43,9 @@ protected:
 	class UInputAction* JumpAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* AttackAction;
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
-	UFUNCTION()
-	void Attack();
 
-	// Sprint 관련
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* PickupAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float WalkSpeed = 300.f;
 
@@ -61,6 +58,21 @@ protected:
 	void StartSprinting();
 	void StopSprinting();
 
+	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+	UFUNCTION()
+	void Attack();
+	// 아이템 줍기 함수
+	void PickupItem();
+	// Sprint 관련
+
+
+
+	// 상호작용 거리
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	float InteractDistance = 300.0f;
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	bool bDrawInteractionDebug = true;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
