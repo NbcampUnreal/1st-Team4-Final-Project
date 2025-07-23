@@ -32,7 +32,7 @@ bld/
 .vs/
 
 ## Visual Studio 2017 auto generated files
-Generated\ Files/
+Generated/ Files/
 
 ## Files built by Visual Studio
 *_i.c
@@ -290,3 +290,5 @@ DerivedDataCache/*
 # Local content that should not be checked in
 LocalContent/*
 트레일러/트레일러.mp4
+Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UnrealEditor/Inc/AdvancedSessions/UHT
+Plugins/AdvancedSessions/AdvancedSteamSessions/Intermediate/Build/Win64/UnrealEditor/Inc/AdvancedSteamSessions/UHT
