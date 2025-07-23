@@ -21,10 +21,13 @@ protected:
 	void UpdateWeather();
 	void AddNiagara();
 	void PlayerDamage();
-
+	void SpawnSnowFX();
 private:
 	UPROPERTY(EditAnywhere)
 	float WeatherTerm;
+	UPROPERTY(EditDefaultsOnly, Category = "Weather")
+	TSubclassOf<AActor> SnowFXClass;
+
 	float GameTime; //게임내시간
 	float Temperature; //서버 온도
 
