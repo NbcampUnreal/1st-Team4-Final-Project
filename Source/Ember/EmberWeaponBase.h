@@ -14,18 +14,18 @@ class EMBER_API AEmberWeaponBase : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AEmberWeaponBase();
-	
-	/* 기본 데미지 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Stats")
-	float Damage;
+
+	/* 공격 */
+	UFUNCTION(BlueprintCallable, Category="Weapon")
+	void Attack();
 
 	/* 공격 쿨다운 (초) */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Stats")
 	float Cooldown;
 
-	/*  내구도 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Stats")
-	float Durability;
+	/*  내구도 -> 필요했던가?? */
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Stats")
+	//float Durability;
 
 	/* 애님몽타주 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Animation")
@@ -34,7 +34,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	float LastAttackTime; /* 쿨타임 체크용 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon|Components")
+	bool CanAttack() const;
+	virtual void OnAttack();
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon|Mesh")
 	USkeletalMeshComponent* MeshComp;
 public:	
 	// Called every frame
