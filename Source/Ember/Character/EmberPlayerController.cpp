@@ -1,4 +1,5 @@
 #include "EmberPlayerController.h"
+#include "Utility/CLog.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 
@@ -6,20 +7,32 @@ void AEmberPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// LocalPlayerÏôÄ PawnÏù¥ Ïú†Ìö®Ìïú ÏãúÏ†êÍπåÏßÄ Í∏∞Îã§Î¶º
+	// LocalPlayerøÕ Pawn¿Ã ¿Ø»ø«— Ω√¡°±Ó¡ˆ ±‚¥Ÿ∏≤
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEmberPlayerController::SetupInputMapping, 0.1f, false);
 }
 
 void AEmberPlayerController::SetupInputMapping()
 {
-	if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
-		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	TObjectPtr<ULocalPlayer> player = GetLocalPlayer();
+	if (player == nullptr)
 	{
-		if (DefaultMappingContext)
-		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-			UE_LOG(LogTemp, Warning, TEXT("MappingContext Ï†ÅÏö©Îê®"));
-		}
+		DebugLogE("Local player is null");
+		return;
 	}
+
+	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> subsystem = player->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	if (subsystem == nullptr)
+	{
+		DebugLogE("subsystem is null");
+		return;
+	}
+
+	if (DefaultMappingContext == nullptr)
+	{
+		DebugLogE("Input Mapping Context is null");
+		return;
+	}
+
+	subsystem->AddMappingContext(DefaultMappingContext, 0);
 }

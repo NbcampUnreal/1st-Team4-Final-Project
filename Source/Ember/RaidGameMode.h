@@ -26,7 +26,7 @@ private:
 	float WeatherTerm;
 	float GameTime; //게임내시간
 	float Temperature; //서버 온도
-	ARaidGameState* RaidGameState;
+	
 	EWeatherType CurrentWeather; //서버 날씨상태
 	FTimerHandle GameTimer;
 };

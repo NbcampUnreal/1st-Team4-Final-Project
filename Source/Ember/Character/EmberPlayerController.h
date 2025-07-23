@@ -13,14 +13,27 @@ UCLASS()
 class EMBER_API AEmberPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+public:
+	// Enhanced Input Mapping Context
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputMappingContext> DefaultMappingContext;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<class UInputAction> MoveAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr< UInputAction> LookAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr< UInputAction> JumpAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* AttackAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* SprintAction;
 
 protected:
 	virtual void BeginPlay() override;
 
-	// Enhanced Input Mapping Context
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputMappingContext> DefaultMappingContext;
-
 	UFUNCTION()
 	void SetupInputMapping();
+
+
 };

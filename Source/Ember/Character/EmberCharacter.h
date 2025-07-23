@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "EnhancedInputComponent.h"
@@ -13,67 +14,60 @@
 #include "EmberCharacter.generated.h"
 
 UCLASS()
-class EMBER_API AEmberCharacter : public ACharacter, public IGenericTeamAgentInterface
+class EMBER_API AEmberCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
-
-public:
-	// Sets default values for this character's properties
-	AEmberCharacter();
-
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	class USpringArmComponent* SpringArm;
-
+	TObjectPtr<class USpringArmComponent> SpringArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	class UCameraComponent* Camera;
+	TObjectPtr<class UCameraComponent> Camera;
 
-	// Input Actions
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputMappingContext* DefaultMappingContext;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* MoveAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* LookAction;
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* JumpAction;
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* AttackAction;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
-	UInputAction* PickupAction;
+	// Sprint ����
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float WalkSpeed = 300.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float SprintSpeed = 600.f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* SprintAction;
+	//GAS
+	UPROPERTY(EditAnywhere, Category = "GAS")
+	TObjectPtr<UAbilitySystemComponent> ASC;
+	UPROPERTY(EditAnywhere, Category = "GAS")
+	TMap<int32, TSubclassOf<class UGameplayAbility>> GameAbilities;
+public:
+	AEmberCharacter();
 
-	void StartSprinting();
-	void StopSprinting();
+protected:
+	virtual void BeginPlay() override;
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	UFUNCTION()
 	void Attack();
-	// ������ �ݱ� �Լ�
+
+	void StartSprinting();
+	void StopSprinting();
+
 	void PickupItem();
-	// Sprint ����
-
-
-
-	// ��ȣ�ۿ� �Ÿ�
+	
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	float InteractDistance = 300.0f;
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	bool bDrawInteractionDebug = true;
+	
+public:
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:
+	void SetupGASInputComponent();
+	void GASInputPressed(int32 Input);
+	void GASInputReleased(int32 Input);
+
+public:
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 /* 팀 설정 */
 public:
@@ -81,12 +75,6 @@ public:
 	virtual FGenericTeamId GetGenericTeamId() const override;
 	//~ End of IGenericTeamAgentInterface interface
 	
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-
+private:
+	TObjectPtr<class AEmberPlayerController> PlayerController;
 };
