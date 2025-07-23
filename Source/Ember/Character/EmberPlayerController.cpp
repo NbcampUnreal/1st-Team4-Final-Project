@@ -1,4 +1,5 @@
 #include "EmberPlayerController.h"
+#include "Utility/CLog.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 
@@ -13,13 +14,25 @@ void AEmberPlayerController::BeginPlay()
 
 void AEmberPlayerController::SetupInputMapping()
 {
-	if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
-		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	TObjectPtr<ULocalPlayer> player = GetLocalPlayer();
+	if (player == nullptr)
 	{
-		if (DefaultMappingContext)
-		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-			UE_LOG(LogTemp, Warning, TEXT("MappingContext ภ๛ฟ๋ตส"));
-		}
+		DebugLogE("Local player is null");
+		return;
 	}
+
+	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> subsystem = player->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	if (subsystem == nullptr)
+	{
+		DebugLogE("subsystem is null");
+		return;
+	}
+
+	if (DefaultMappingContext == nullptr)
+	{
+		DebugLogE("Input Mapping Context is null");
+		return;
+	}
+
+	subsystem->AddMappingContext(DefaultMappingContext, 0);
 }

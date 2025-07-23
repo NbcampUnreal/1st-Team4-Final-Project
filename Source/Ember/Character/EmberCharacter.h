@@ -3,50 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "InputMappingContext.h"
-#include "InputAction.h"
 #include "EmberCharacter.generated.h"
 
 UCLASS()
-class EMBER_API AEmberCharacter : public ACharacter
+class EMBER_API AEmberCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
-
-public:
-	// Sets default values for this character's properties
-	AEmberCharacter();
-
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	class USpringArmComponent* SpringArm;
-
+	TObjectPtr<class USpringArmComponent> SpringArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	class UCameraComponent* Camera;
-
-	// Input Actions
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputMappingContext* DefaultMappingContext;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* MoveAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* LookAction;
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* JumpAction;
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* AttackAction;
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
-	UFUNCTION()
-	void Attack();
+	TObjectPtr<class UCameraComponent> Camera;
 
 	// Sprint ฐüทร
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
@@ -55,18 +25,38 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float SprintSpeed = 600.f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* SprintAction;
+	//GAS
+	UPROPERTY(EditAnywhere, Category = "GAS")
+	TObjectPtr<UAbilitySystemComponent> ASC;
+	UPROPERTY(EditAnywhere, Category = "GAS")
+	TMap<int32, TSubclassOf<class UGameplayAbility>> GameAbilities;
+public:
+	AEmberCharacter();
+
+protected:
+	virtual void BeginPlay() override;
+
+	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+	UFUNCTION()
+	void Attack();
 
 	void StartSprinting();
 	void StopSprinting();
 
 public:
-	// Called every frame
+	virtual void PossessedBy(AController* NewController) override;
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	void SetupGASInputComponent();
+	void GASInputPressed(int32 Input);
+	void GASInputReleased(int32 Input);
 
+public:
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+private:
+	TObjectPtr<class AEmberPlayerController> PlayerController;
 };
