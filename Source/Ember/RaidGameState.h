@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameState.h"
-// #include "Utility/GameFlag.h"
+#include "Utility/GameFlag.h"
 #include "RaidGameState.generated.h"
 
 
@@ -13,8 +13,7 @@ class EMBER_API ARaidGameState : public AGameState
 {
 	GENERATED_BODY()
 	public:
-	// ARaidGameState();
 	
-	// EWeatherType CurrentWeather;
-	// EWorldTimeState CurrentTimeOfDay;
+	EWeatherType CurrentWeather;
+	EWorldTimeState CurrentTimeOfDay;
 };

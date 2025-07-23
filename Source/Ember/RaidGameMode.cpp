@@ -1,7 +1,7 @@
 #include "RaidGameMode.h"
 #include "Character/EmberCharacter.h"
 #include "EngineUtils.h"
-// #include "RaidGameState.h"
+#include "RaidGameState.h"
 
 ARaidGameMode::ARaidGameMode()
 {
@@ -12,24 +12,24 @@ ARaidGameMode::ARaidGameMode()
 void ARaidGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	// RaidGameState = GetGameState<ARaidGameState>();
+	RaidGameState = GetGameState<ARaidGameState>();
 	GetWorld()->GetTimerManager().SetTimer(GameTimer, this, &ARaidGameMode::UpdateWeather, WeatherTerm);
 }
 
 void ARaidGameMode::UpdateWeather()
 {
-	// switch (RaidGameState->CurrentWeather)
-	// {
-	// case EWeatherType::Clear:
-	// 	RaidGameState->CurrentWeather = EWeatherType::Snow;
-	// 	break;
-	// case EWeatherType::Snow:
-	// 	RaidGameState->CurrentWeather = EWeatherType::Storm;
-	// 	break;
-	// case EWeatherType::Storm:
-	// 	RaidGameState->CurrentWeather = EWeatherType::Clear;
-	// default: break;
-	// }
+	switch (RaidGameState->CurrentWeather)
+	{
+	case EWeatherType::Clear:
+		RaidGameState->CurrentWeather = EWeatherType::Snow;
+		break;
+	case EWeatherType::Snow:
+		RaidGameState->CurrentWeather = EWeatherType::Storm;
+		break;
+	case EWeatherType::Storm:
+		RaidGameState->CurrentWeather = EWeatherType::Clear;
+	default: break;
+	}
 }
 
 void ARaidGameMode::AddNiagara()
