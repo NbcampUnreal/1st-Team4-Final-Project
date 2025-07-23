@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "MonsterBase.generated.h"
+#include "MonsterAIBase.generated.h"
 
 UCLASS(Abstract)
-class EMBER_API AMonsterBase : public ACharacter
+class EMBER_API AMonsterAIBase : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	AMonsterBase();
+	AMonsterAIBase();
 
 protected:
 	virtual void BeginPlay() override;
