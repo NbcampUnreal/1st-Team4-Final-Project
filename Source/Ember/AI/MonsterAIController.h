@@ -6,7 +6,11 @@
 #include "Runtime/AIModule/Classes/AIController.h"
 #include "MonsterAIController.generated.h"
 
-struct FAIStimulus;
+enum EGameTeamID :uint8
+{
+	Monster = 0,
+	Team1
+};
 
 UCLASS()
 class EMBER_API AMonsterAIController : public AAIController
@@ -19,14 +23,22 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+/* 팀 설정 */
+public:
+	//~ IGenericTeamAgentInterface interface
+	virtual FGenericTeamId GetGenericTeamId() const override;
+	//~ End of IGenericTeamAgentInterface interface
+	
+/* AI 감지 */
+protected:
 	UFUNCTION()
-	virtual void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+	virtual void OnTargetPerceptionUpdated(AActor* Actor, struct FAIStimulus Stimulus);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UAIPerceptionComponent> AIPerceptionComponent;
 	
-/* AI 시야 감지 */
+/* AI 감지 - 시야 */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UAISenseConfig_Sight> AISenseConfigSight;

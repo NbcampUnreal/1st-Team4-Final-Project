@@ -7,12 +7,13 @@
 #include "InputActionValue.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GenericTeamAgentInterface.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
 #include "EmberCharacter.generated.h"
 
 UCLASS()
-class EMBER_API AEmberCharacter : public ACharacter
+class EMBER_API AEmberCharacter : public ACharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -62,17 +63,24 @@ protected:
 	void Look(const FInputActionValue& Value);
 	UFUNCTION()
 	void Attack();
-	// ¾ÆÀÌÅÛ ÁÝ±â ÇÔ¼ö
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý±ï¿½ ï¿½Ô¼ï¿½
 	void PickupItem();
-	// Sprint °ü·Ã
+	// Sprint ï¿½ï¿½ï¿½ï¿½
 
 
 
-	// »óÈ£ÀÛ¿ë °Å¸®
+	// ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½Å¸ï¿½
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	float InteractDistance = 300.0f;
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	bool bDrawInteractionDebug = true;
+
+/* íŒ€ ì„¤ì • */
+public:
+	//~ IGenericTeamAgentInterface interface
+	virtual FGenericTeamId GetGenericTeamId() const override;
+	//~ End of IGenericTeamAgentInterface interface
+	
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

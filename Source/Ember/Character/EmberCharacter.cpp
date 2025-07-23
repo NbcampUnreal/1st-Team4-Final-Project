@@ -2,6 +2,8 @@
 
 
 #include "EmberCharacter.h"
+
+#include "AI/MonsterAIController.h"
 #include "Item/BaseItem.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -36,6 +38,11 @@ void AEmberCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+}
+
+FGenericTeamId AEmberCharacter::GetGenericTeamId() const
+{
+	return FGenericTeamId((uint8)EGameTeamID::Team1);
 }
 
 void AEmberCharacter::Tick(float DeltaTime)

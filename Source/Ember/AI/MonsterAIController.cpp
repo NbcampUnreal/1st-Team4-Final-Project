@@ -8,10 +8,9 @@
 #include "Utility/CHelpers.h"
 #include "Utility/CLog.h"
 
-
-// Sets default values
 AMonsterAIController::AMonsterAIController()
 {
+	bWantsPlayerState = true;
 	PrimaryActorTick.bCanEverTick = false;
 
 	CHelpers::CreateActorComponent(this, &AISenseConfigSight, TEXT("AISenseConfigSight"));
@@ -23,13 +22,16 @@ AMonsterAIController::AMonsterAIController()
 	AIPerceptionComponent->ConfigureSense(*AISenseConfigSight);
 	AIPerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &ThisClass::OnTargetPerceptionUpdated);
-
 }
 
-// Called when the game starts or when spawned
 void AMonsterAIController::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+FGenericTeamId AMonsterAIController::GetGenericTeamId() const
+{
+	return FGenericTeamId((uint8)EGameTeamID::Monster);
 }
 
 void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
