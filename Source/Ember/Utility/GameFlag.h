@@ -16,3 +16,11 @@ enum class EWorldTimeState
 	Evening UMETA(DisplayName = "EVENING"),
 	Night UMETA(DisplayName = "NIGHT"),
 };
+
+enum class ESpeedType
+{
+	Walk UMETA(DisplayName = "Walk"),
+	Run UMETA(DisplayName = "Run"),
+	Sprint UMETA(DisplayName = "Sprint"),
+	Max UMETA(DisplayName = "Max")
+};
