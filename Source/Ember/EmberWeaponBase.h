@@ -35,7 +35,7 @@ protected:
 	virtual void BeginPlay() override;
 	float LastAttackTime; /* 쿨타임 체크용 */
 	bool CanAttack() const;
-	virtual void OnAttack();
+	virtual void OnAttack() PURE_VIRTUAL(AEmberWeaponBase::OnAttack, );
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon|Mesh")
 	USkeletalMeshComponent* MeshComp;
 public:	
