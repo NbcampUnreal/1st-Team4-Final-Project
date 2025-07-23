@@ -7,7 +7,7 @@
 class UInputMappingContext;
 
 /**
- * гц╥╧юл╬Н даф╝╥я╥╞ - ют╥б ╦егн даеь╫╨ф╝ ╪Ёа╓©К
+ * М■▄К═┬Л²╢Л√╢ Л╩╗М┼╦К║╓К÷╛ - Л·┘К═╔ К╖╓М∙▒ Л╩╗М┘█Л┼╓М┼╦ Л└╓Л═∙Л ╘
  */
 UCLASS()
 class EMBER_API AEmberPlayerController : public APlayerController
