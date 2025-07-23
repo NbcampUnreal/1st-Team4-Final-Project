@@ -6,7 +6,7 @@ void AEmberPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// LocalPlayer¿Í PawnÀÌ À¯È¿ÇÑ ½ÃÁ¡±îÁö ±â´Ù¸²
+	// LocalPlayerì™€ Pawnì´ ìœ íš¨í•œ ì‹œì ê¹Œì§€ ê¸°ë‹¤ë¦¼
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEmberPlayerController::SetupInputMapping, 0.1f, false);
 }
@@ -19,7 +19,7 @@ void AEmberPlayerController::SetupInputMapping()
 		if (DefaultMappingContext)
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-			UE_LOG(LogTemp, Warning, TEXT("MappingContext Àû¿ëµÊ"));
+			UE_LOG(LogTemp, Warning, TEXT("MappingContext ì ìš©ë¨"));
 		}
 	}
 }
