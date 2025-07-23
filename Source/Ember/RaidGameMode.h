@@ -4,14 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "Utility/GameFlag.h"
 #include "RaidGameMode.generated.h"
-
-enum class WeatherType
-{
-	Clear UMETA(DisplayName = "CLEAR"),
-	Snow UMETA(DisplayName = "SNOW"),
-	Storm UMETA(DisplayName = "STORM"),
-};
 
 UCLASS()
 class EMBER_API ARaidGameMode : public AGameMode
@@ -23,13 +17,16 @@ public:
 	virtual void BeginPlay() override;
 
 protected:
+	void UpdateWeather();
+	void AddNiagara();
 	void PlayerDamage();
-	
 
-protected:
-	float GameTime;
-	float Temperature;
-	
-	WeatherType CurrentWeather;
+private:
+	UPROPERTY(EditAnywhere)
+	float WeatherTerm;
+	float GameTime; //게임내시간
+	float Temperature; //서버 온도
+	ARaidGameState* RaidGameState;
+	EWeatherType CurrentWeather; //서버 날씨상태
 	FTimerHandle GameTimer;
 };
