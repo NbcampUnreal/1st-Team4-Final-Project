@@ -1,4 +1,4 @@
-#include "EmberCharacter.h"
+ï»¿#include "EmberCharacter.h"
 
 #include <assert.h>
 #include <Utility/CHelpers.h>
@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "EmberPlayerController.h"
 #include "EmberPlayerState.h"
+#include "Item/BaseItem.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -17,21 +18,21 @@ AEmberCharacter::AEmberCharacter()
 	ASC == nullptr;
 	PrimaryActorTick.bCanEverTick = true;
 
-	// ½ºÇÁ¸µ¾Ï »ı¼º ¹× ¼³Á¤
+	// ìŠ¤í”„ë§ì•” ìƒì„± ë° ì„¤ì •
 	CHelpers::CreateComponent(this, &SpringArm, "SpringArm", RootComponent);
-	SpringArm->TargetArmLength = 300.f; // Ä«¸Ş¶ó °Å¸®
-	SpringArm->bUsePawnControlRotation = true; // ¸¶¿ì½º·Î È¸Àü
+	SpringArm->TargetArmLength = 300.f; // ì¹´ë©”ë¼ ê±°ë¦¬
+	SpringArm->bUsePawnControlRotation = true; // ë§ˆìš°ìŠ¤ë¡œ íšŒì „
 
-	// Ä«¸Ş¶ó »ı¼º ¹× ½ºÇÁ¸µ¾Ï¿¡ ºÙÀÌ±â
+	// ì¹´ë©”ë¼ ìƒì„± ë° ìŠ¤í”„ë§ì•”ì— ë¶™ì´ê¸°
 	CHelpers::CreateComponent(this, &Camera,"Camera", SpringArm);
-	Camera->bUsePawnControlRotation = false; // Ä«¸Ş¶ó´Â ½ºÇÁ¸µ¾Ï¿¡ µû¶ó°¨ (Á÷Á¢ È¸Àü X)
+	Camera->bUsePawnControlRotation = false; // ì¹´ë©”ë¼ëŠ” ìŠ¤í”„ë§ì•”ì— ë”°ë¼ê° (ì§ì ‘ íšŒì „ X)
 
-	// Ä³¸¯ÅÍ°¡ Á÷Á¢ È¸ÀüÇÏÁö ¾Êµµ·Ï
+	// ìºë¦­í„°ê°€ ì§ì ‘ íšŒì „í•˜ì§€ ì•Šë„ë¡
 	bUseControllerRotationYaw = false;
 
-	// ±âº» ÀÌ¼ÓÀ» WalkSpeed·Î ¼³Á¤
+	// ê¸°ë³¸ ì´ì†ì„ WalkSpeedë¡œ ì„¤ì •
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-	GetCharacterMovement()->bOrientRotationToMovement = true;// ÀÌµ¿ ¹æÇâÀ¸·Î Ä³¸¯ÅÍ È¸Àü
+	GetCharacterMovement()->bOrientRotationToMovement = true;// ì´ë™ ë°©í–¥ìœ¼ë¡œ ìºë¦­í„° íšŒì „
 }
 void AEmberCharacter::BeginPlay()
 {
@@ -195,3 +196,53 @@ void AEmberCharacter::StopSprinting()
 	}
 }
 
+void AEmberCharacter::PickupItem()
+{
+	FVector Start = Camera->GetComponentLocation();
+	FRotator ControlRot = GetControlRotation();
+	FVector Direction = ControlRot.Vector();
+	float Distance = InteractDistance;
+	FVector End = Start + Direction * Distance;
+	float ActualDist = FVector::Distance(Start, End);
+	// ë””ë²„ê·¸ ë¡œê·¸
+	UE_LOG(LogTemp, Warning, TEXT("==== PickupItem Debug ===="));
+	UE_LOG(LogTemp, Warning, TEXT("Start         : %s"), *Start.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("End           : %s"), *End.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Direction     : %s"), *Direction.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Control Rot   : %s"), *ControlRot.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Actual Length : %.2f"), ActualDist);
+	// ì‹œê°ì  ë””ë²„ê·¸
+	DrawDebugDirectionalArrow(GetWorld(), Start, End, 150.0f, FColor::Red, false, 5.0f, 0, 3.0f);
+	DrawDebugSphere(GetWorld(), Start, 10.f, 12, FColor::Green, false, 5.0f);
+	DrawDebugSphere(GetWorld(), End, 10.f, 12, FColor::Blue, false, 5.0f);
+	// ë¼ì¸íŠ¸ë ˆì´ìŠ¤
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+	{
+		AActor* HitActor = HitResult.GetActor();
+		UE_LOG(LogTemp, Warning, TEXT("LineTrace HIT!"));
+		if (HitActor)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Hit Actor     : %s"), *HitActor->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Hit Actor     : nullptr"));
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Impact Point  : %s"), *HitResult.ImpactPoint.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Impact Normal : %s"), *HitResult.ImpactNormal.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Hit Bone Name : %s"), *HitResult.BoneName.ToString());
+		// ì•„ì´í…œ ìƒí˜¸ì‘ìš©
+		if (ABaseItem* Item = Cast<ABaseItem>(HitActor))
+		{
+			Item->Interact(this);
+			UE_LOG(LogTemp, Warning, TEXT("Item Interacted: %s"), *Item->GetName());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LineTrace MISS â€” nothing hit."));
+	}
+}

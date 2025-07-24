@@ -44,6 +44,10 @@ protected:
 	void StartSprinting();
 	void StopSprinting();
 
+	void PickupItem();
+	// Sprint ฐüทร
+	UPROPERTY(EditDefaultsOnly, Category = "Interact")
+	float InteractDistance = 400.0f;
 public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void Tick(float DeltaTime) override;
