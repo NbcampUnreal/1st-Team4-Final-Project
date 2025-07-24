@@ -13,17 +13,17 @@
 // Sets default values for this component's properties
 UCustomMoveComponent::UCustomMoveComponent()
 {
+}
+
+void UCustomMoveComponent::BeginPlay()
+{
+	Super::BeginPlay();
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
 	if (OwnerCharacter == nullptr)
 	{
 		DebugLogE("Owner Character is null");
 		return;
 	}
-}
-
-void UCustomMoveComponent::BeginPlay()
-{
-	Super::BeginPlay();
 }
 
 void UCustomMoveComponent::Move(const FInputActionValue& Value)

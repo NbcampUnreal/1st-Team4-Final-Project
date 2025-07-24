@@ -13,6 +13,8 @@
 #include "InputAction.h"
 #include "EmberCharacter.generated.h"
 
+class UWeaponComponent;
+
 UCLASS()
 class EMBER_API AEmberCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface
 {
@@ -23,10 +25,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	TObjectPtr<class UCameraComponent> Camera;
 
-	UPROPERTY(VisibleAnywhere, Category = MoveComponent)
+	UPROPERTY(VisibleAnywhere, Category = Component)
 	TObjectPtr<class UCustomMoveComponent> MoveComponent;
-	UPROPERTY(VisibleAnywhere, Category = MoveComponent)
+	UPROPERTY(VisibleAnywhere, Category = Component)
 	TObjectPtr<class UCustomCameraComponent> CameraComponent;
+	UPROPERTY(VisibleAnywhere, Category = Component)
+	TObjectPtr<UWeaponComponent> WeaponComponent;
 
 	//GAS
 	UPROPERTY(EditAnywhere, Category = "GAS")

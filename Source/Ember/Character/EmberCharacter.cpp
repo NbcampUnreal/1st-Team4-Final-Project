@@ -18,29 +18,28 @@
 #include "Component/CustomCameraComponent.h"
 #include "Component/CustomMoveComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Component/WeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
 // Sets default values
 AEmberCharacter::AEmberCharacter()
 {
 	ASC == nullptr;
 	PrimaryActorTick.bCanEverTick = true;
 
-	// �������� ���� �� ����
 	CHelpers::CreateComponent(this, &SpringArm, "SpringArm", RootComponent);
 	SpringArm->TargetArmLength = 300.f; // ī�޶� �Ÿ�
 	SpringArm->bUsePawnControlRotation = true; // ���콺�� ȸ��
 
-	// ī�޶� ���� �� �������Ͽ� ���̱�
 	CHelpers::CreateComponent(this, &Camera,"Camera", SpringArm);
 	Camera->bUsePawnControlRotation = false; // ī�޶�� �������Ͽ� ���� (���� ȸ�� X)
 
 	CHelpers::CreateActorComponent(this, &MoveComponent, "Movement Component");
 	CHelpers::CreateActorComponent(this, &CameraComponent, "Camera Component");
+	CHelpers::CreateActorComponent(this, &WeaponComponent, "Weapon Component");
 
-	// ĳ���Ͱ� ���� ȸ������ �ʵ���
 	bUseControllerRotationYaw = false;
 
-	// �⺻ �̼��� WalkSpeed�� ����
 	GetCharacterMovement()->bOrientRotationToMovement = true;// �̵� �������� ĳ���� ȸ��
 }
 void AEmberCharacter::BeginPlay()

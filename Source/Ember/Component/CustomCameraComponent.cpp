@@ -7,14 +7,15 @@
 UCustomCameraComponent::UCustomCameraComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	OwnerCharacter = Cast<ACharacter>(GetOwner());
-	if (OwnerCharacter == nullptr)
-		DebugLogE("Onwer character is null");
 }
 
 void UCustomCameraComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OwnerCharacter = Cast<ACharacter>(GetOwner());
+	if (OwnerCharacter == nullptr)
+		DebugLogE("Onwer character is null");
 }
 
 void UCustomCameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
