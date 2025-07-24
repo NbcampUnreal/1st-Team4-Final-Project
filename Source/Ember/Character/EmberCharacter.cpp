@@ -209,7 +209,7 @@ void AEmberCharacter::PickupItem()
 		// 아이템 상호작용
 		if (ABaseItem* Item = Cast<ABaseItem>(HitActor))
 		{
-			Item->Interact(this);
+			Item->Use(this);
 			UE_LOG(LogTemp, Warning, TEXT("Item Interacted: %s"), *Item->GetName());
 		}
 	}
