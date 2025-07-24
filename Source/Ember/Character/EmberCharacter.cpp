@@ -1,4 +1,10 @@
-﻿#include "EmberCharacter.h"
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "EmberCharacter.h"
+
+#include "AI/MonsterAIController.h"
+#include "Item/BaseItem.h"
 
 #include <assert.h>
 #include <Utility/CHelpers.h>
@@ -7,7 +13,6 @@
 #include "AbilitySystemComponent.h"
 #include "EmberPlayerController.h"
 #include "EmberPlayerState.h"
-#include "Item/BaseItem.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -18,21 +23,21 @@ AEmberCharacter::AEmberCharacter()
 	ASC == nullptr;
 	PrimaryActorTick.bCanEverTick = true;
 
-	// 스프링암 생성 및 설정
+	// �������� ���� �� ����
 	CHelpers::CreateComponent(this, &SpringArm, "SpringArm", RootComponent);
-	SpringArm->TargetArmLength = 300.f; // 카메라 거리
-	SpringArm->bUsePawnControlRotation = true; // 마우스로 회전
+	SpringArm->TargetArmLength = 300.f; // ī�޶� �Ÿ�
+	SpringArm->bUsePawnControlRotation = true; // ���콺�� ȸ��
 
-	// 카메라 생성 및 스프링암에 붙이기
+	// ī�޶� ���� �� �������Ͽ� ���̱�
 	CHelpers::CreateComponent(this, &Camera,"Camera", SpringArm);
-	Camera->bUsePawnControlRotation = false; // 카메라는 스프링암에 따라감 (직접 회전 X)
+	Camera->bUsePawnControlRotation = false; // ī�޶�� �������Ͽ� ���� (���� ȸ�� X)
 
-	// 캐릭터가 직접 회전하지 않도록
+	// ĳ���Ͱ� ���� ȸ������ �ʵ���
 	bUseControllerRotationYaw = false;
 
-	// 기본 이속을 WalkSpeed로 설정
+	// �⺻ �̼��� WalkSpeed�� ����
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-	GetCharacterMovement()->bOrientRotationToMovement = true;// 이동 방향으로 캐릭터 회전
+	GetCharacterMovement()->bOrientRotationToMovement = true;// �̵� �������� ĳ���� ȸ��
 }
 void AEmberCharacter::BeginPlay()
 {
@@ -67,6 +72,11 @@ void AEmberCharacter::PossessedBy(AController* NewController)
 	SetupGASInputComponent();
 }
 
+
+FGenericTeamId AEmberCharacter::GetGenericTeamId() const
+{
+	return FGenericTeamId((uint8)EGameTeamID::Team1);
+}
 
 void AEmberCharacter::Tick(float DeltaTime)
 {
@@ -246,3 +256,4 @@ void AEmberCharacter::PickupItem()
 		UE_LOG(LogTemp, Warning, TEXT("LineTrace MISS — nothing hit."));
 	}
 }
+
