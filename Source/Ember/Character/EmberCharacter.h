@@ -6,10 +6,15 @@
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "GenericTeamAgentInterface.h"
+#include "InputMappingContext.h"
+#include "InputAction.h"
 #include "EmberCharacter.generated.h"
 
 UCLASS()
-class EMBER_API AEmberCharacter : public ACharacter, public IAbilitySystemInterface
+class EMBER_API AEmberCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 protected:
@@ -36,6 +41,13 @@ protected:
 	virtual void BeginPlay() override;
 	UFUNCTION()
 	void Attack();
+	
+void PickupItem();
+	
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	float InteractDistance = 300.0f;
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	bool bDrawInteractionDebug = true;
 
 public:
 	virtual void PossessedBy(AController* NewController) override;
@@ -50,6 +62,12 @@ protected:
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+/* 팀 설정 */
+public:
+	//~ IGenericTeamAgentInterface interface
+	virtual FGenericTeamId GetGenericTeamId() const override;
+	//~ End of IGenericTeamAgentInterface interface
+	
 private:
 	TObjectPtr<class AEmberPlayerController> PlayerController;
 };
