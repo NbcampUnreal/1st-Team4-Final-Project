@@ -76,4 +76,9 @@ public:
 				return component;
 		return nullptr;
 	}
+	template<typename T>
+	static TObjectPtr<T> GetComponentCheck(TObjectPtr<AActor> InActor)
+	{
+		return CastChecked<T>(InActor->GetComponentByClass(T::StaticClass()));
+	}
 };

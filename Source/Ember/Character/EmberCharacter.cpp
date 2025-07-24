@@ -15,6 +15,8 @@
 #include "EmberPlayerState.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Component/CustomCameraComponent.h"
+#include "Component/CustomMoveComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
@@ -32,16 +34,19 @@ AEmberCharacter::AEmberCharacter()
 	CHelpers::CreateComponent(this, &Camera,"Camera", SpringArm);
 	Camera->bUsePawnControlRotation = false; // ī�޶�� �������Ͽ� ���� (���� ȸ�� X)
 
+	CHelpers::CreateActorComponent(this, &MoveComponent, "Movement Component");
+	CHelpers::CreateActorComponent(this, &CameraComponent, "Camera Component");
+
 	// ĳ���Ͱ� ���� ȸ������ �ʵ���
 	bUseControllerRotationYaw = false;
 
 	// �⺻ �̼��� WalkSpeed�� ����
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	GetCharacterMovement()->bOrientRotationToMovement = true;// �̵� �������� ĳ���� ȸ��
 }
 void AEmberCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	MoveComponent->OnWalk();
 }
 
 void AEmberCharacter::PossessedBy(AController* NewController)
@@ -98,12 +103,9 @@ void AEmberCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		DebugLogE("PlayerController is null");
 		return;
 	}
-	EnhancedInput->BindAction(PlayerController.Get()->MoveAction, ETriggerEvent::Triggered, this, &AEmberCharacter::Move);
-	EnhancedInput->BindAction(PlayerController.Get()->LookAction, ETriggerEvent::Triggered, this, &AEmberCharacter::Look);
+	EnhancedInput->BindAction(PlayerController.Get()->MoveAction, ETriggerEvent::Triggered, MoveComponent.Get(), &UCustomMoveComponent::Move);
+	EnhancedInput->BindAction(PlayerController.Get()->LookAction, ETriggerEvent::Triggered, CameraComponent.Get(), &UCustomCameraComponent::Look);
 	//EnhancedInput->BindAction(AttackAction, ETriggerEvent::Started, this, &AEmberCharacter::Attack);
-
-	//EnhancedInput->BindAction(SprintAction, ETriggerEvent::Started, this, &AEmberCharacter::StartSprinting);
-	//EnhancedInput->BindAction(SprintAction, ETriggerEvent::Completed, this, &AEmberCharacter::StopSprinting);
 
 	SetupGASInputComponent();
 }
@@ -161,49 +163,9 @@ UAbilitySystemComponent* AEmberCharacter::GetAbilitySystemComponent() const
 	return ASC;
 }
 
-void AEmberCharacter::Move(const FInputActionValue& Value)
-{
-	FVector2D MovementVector = Value.Get<FVector2D>();
-	if (Controller != nullptr)
-	{
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
-	}
-}
-
-void AEmberCharacter::Look(const FInputActionValue& Value)
-{
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	AddControllerYawInput(LookAxisVector.X);
-	AddControllerPitchInput(LookAxisVector.Y);
-}
-
 void AEmberCharacter::Attack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Attack triggered!"));
-}
-
-void AEmberCharacter::StartSprinting()
-{
-	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
-	{
-		MoveComp->MaxWalkSpeed = SprintSpeed;
-	}
-}
-
-void AEmberCharacter::StopSprinting()
-{
-	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
-	{
-		MoveComp->MaxWalkSpeed = WalkSpeed;
-	}
 }
 
 void AEmberCharacter::PickupItem()
@@ -256,4 +218,3 @@ void AEmberCharacter::PickupItem()
 		UE_LOG(LogTemp, Warning, TEXT("LineTrace MISS — nothing hit."));
 	}
 }
-

@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS(BlueprintType)
+UCLASS()
 class EMBER_API UWeaponDataAsset : public UDataAsset
 {
 	GENERATED_BODY()

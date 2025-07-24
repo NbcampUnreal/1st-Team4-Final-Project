@@ -17,7 +17,8 @@ enum class EWorldTimeState
 	Night UMETA(DisplayName = "NIGHT"),
 };
 
-enum class ESpeedType
+UENUM(BlueprintType)
+enum class ESpeedType : uint8
 {
 	Walk UMETA(DisplayName = "Walk"),
 	Run UMETA(DisplayName = "Run"),

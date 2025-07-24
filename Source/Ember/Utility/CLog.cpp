@@ -3,83 +3,83 @@
 
 DEFINE_LOG_CATEGORY_STATIC(Ember, Display, All)
 
-void CLog::Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, int32 InValue, ELogVerbosity::Type InLogType)
+void CLog::Log(const UObject* Class, const TCHAR* FunctionName, int32 InValue, ELogVerbosity::Type InLogType)
 {
 	switch (InLogType)
 	{
 		case ELogVerbosity::Type::Display:
-			UE_LOG(Ember, Display, L"[%s/%s] %d", *Class.GetName(), FunctionName, InValue);
+			UE_LOG(Ember, Display, L"[%s/%s] %d", *Class->GetName(), FunctionName, InValue);
 			break;
 		case ELogVerbosity::Type::Warning:
-			UE_LOG(Ember, Warning, L"[%s/%s] %d", *Class.GetName(), FunctionName, InValue);
+			UE_LOG(Ember, Warning, L"[%s/%s] %d", *Class->GetName(), FunctionName, InValue);
 			break;
 		case ELogVerbosity::Type::Error:
-			UE_LOG(Ember, Error, L"[%s/%s] %d", *Class.GetName(), FunctionName, InValue);
+			UE_LOG(Ember, Error, L"[%s/%s] %d", *Class->GetName(), FunctionName, InValue);
 			break;
 	}
 }
 
-void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, float InValue, ELogVerbosity::Type InLogType)
+void CLog::Log(const UObject* Class, const TCHAR*FunctionName, float InValue, ELogVerbosity::Type InLogType)
 {
 	switch (InLogType)
 	{
 	case ELogVerbosity::Type::Display:
-		UE_LOG(Ember, Display, L"[%s/%s] %f", *Class.GetName(), FunctionName, InValue);
+		UE_LOG(Ember, Display, L"[%s/%s] %f", *Class->GetName(), FunctionName, InValue);
 		break;
 	case ELogVerbosity::Type::Warning:
-		UE_LOG(Ember, Warning, L"[%s/%s] %f", *Class.GetName(), FunctionName, InValue);
+		UE_LOG(Ember, Warning, L"[%s/%s] %f", *Class->GetName(), FunctionName, InValue);
 		break;
 	case ELogVerbosity::Type::Error:
-		UE_LOG(Ember, Error, L"[%s/%s] %f", *Class.GetName(), FunctionName, InValue);
+		UE_LOG(Ember, Error, L"[%s/%s] %f", *Class->GetName(), FunctionName, InValue);
 		break;
 	}
 	
 }
 
-void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, const FString& InValue, ELogVerbosity::Type InLogType)
+void CLog::Log(const UObject* Class, const TCHAR*FunctionName, const FString& InValue, ELogVerbosity::Type InLogType)
 {
 	switch (InLogType)
 	{
 	case ELogVerbosity::Type::Display:
-		UE_LOG(Ember, Display, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue);
+		UE_LOG(Ember, Display, L"[%s/%s] %s", *Class->GetName(), FunctionName, *InValue);
 		break;
 	case ELogVerbosity::Type::Warning:
-		UE_LOG(Ember, Warning, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue);
+		UE_LOG(Ember, Warning, L"[%s/%s] %s", *Class->GetName(), FunctionName, *InValue);
 		break;
 	case ELogVerbosity::Type::Error:
-		UE_LOG(Ember, Error, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue);
+		UE_LOG(Ember, Error, L"[%s/%s] %s", *Class->GetName(), FunctionName, *InValue);
 		break;
 	}
 }
 
-void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, const FVector& InValue, ELogVerbosity::Type InLogType)
+void CLog::Log(const UObject* Class, const TCHAR*FunctionName, const FVector& InValue, ELogVerbosity::Type InLogType)
 {
 	switch (InLogType)
 	{
 	case ELogVerbosity::Type::Display:
-		UE_LOG(Ember, Display, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		UE_LOG(Ember, Display, L"[%s/%s] %s", *Class->GetName(), FunctionName, *InValue.ToString());
 		break;
 	case ELogVerbosity::Type::Warning:
-		UE_LOG(Ember, Warning, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		UE_LOG(Ember, Warning, L"[%s/%s] %s", *Class->GetName(), FunctionName, *InValue.ToString());
 		break;
 	case ELogVerbosity::Type::Error:
-		UE_LOG(Ember, Error, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		UE_LOG(Ember, Error, L"[%s/%s] %s", *Class->GetName(), FunctionName, *InValue.ToString());
 		break;
 	}
 }
 
-void CLog::Log(TObjectPtr<UObject> Class, const TCHAR*FunctionName, const FRotator& InValue, ELogVerbosity::Type InLogType)
+void CLog::Log(const UObject* Class, const TCHAR*FunctionName, const FRotator& InValue, ELogVerbosity::Type InLogType)
 {
 	switch (InLogType)
 	{
 	case ELogVerbosity::Type::Display:
-		UE_LOG(Ember, Display, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		UE_LOG(Ember, Display, L"[%s/%s] %s", *Class->GetName(), FunctionName, *InValue.ToString());
 		break;
 	case ELogVerbosity::Type::Warning:
-		UE_LOG(Ember, Warning, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		UE_LOG(Ember, Warning, L"[%s/%s] %s", *Class->GetName(), FunctionName, *InValue.ToString());
 		break;
 	case ELogVerbosity::Type::Error:
-		UE_LOG(Ember, Error, L"[%s/%s] %s", *Class.GetName(), FunctionName, *InValue.ToString());
+		UE_LOG(Ember, Error, L"[%s/%s] %s", *Class->GetName(), FunctionName, *InValue.ToString());
 		break;
 	}
 }
