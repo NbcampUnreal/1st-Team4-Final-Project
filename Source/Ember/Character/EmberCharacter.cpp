@@ -1,4 +1,10 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
 #include "EmberCharacter.h"
+
+#include "AI/MonsterAIController.h"
+#include "Item/BaseItem.h"
 
 #include <assert.h>
 #include <Utility/CHelpers.h>
@@ -17,21 +23,21 @@ AEmberCharacter::AEmberCharacter()
 	ASC == nullptr;
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Ω∫«¡∏µæœ ª˝º∫ π◊ º≥¡§
+	// ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ
 	CHelpers::CreateComponent(this, &SpringArm, "SpringArm", RootComponent);
-	SpringArm->TargetArmLength = 300.f; // ƒ´∏ﬁ∂Û ∞≈∏Æ
-	SpringArm->bUsePawnControlRotation = true; // ∏∂øÏΩ∫∑Œ »∏¿¸
+	SpringArm->TargetArmLength = 300.f; // ƒ´ÔøΩﬁ∂ÔøΩ ÔøΩ≈∏ÔøΩ
+	SpringArm->bUsePawnControlRotation = true; // ÔøΩÔøΩÔøΩÏΩ∫ÔøΩÔøΩ »∏ÔøΩÔøΩ
 
-	// ƒ´∏ﬁ∂Û ª˝º∫ π◊ Ω∫«¡∏µæœø° ∫Ÿ¿Ã±‚
+	// ƒ´ÔøΩﬁ∂ÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩœøÔøΩ ÔøΩÔøΩÔøΩÃ±ÔøΩ
 	CHelpers::CreateComponent(this, &Camera,"Camera", SpringArm);
-	Camera->bUsePawnControlRotation = false; // ƒ´∏ﬁ∂Û¥¬ Ω∫«¡∏µæœø° µ˚∂Û∞® (¡˜¡¢ »∏¿¸ X)
+	Camera->bUsePawnControlRotation = false; // ƒ´ÔøΩﬁ∂ÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩœøÔøΩ ÔøΩÔøΩÔøΩÔøΩ (ÔøΩÔøΩÔøΩÔøΩ »∏ÔøΩÔøΩ X)
 
-	// ƒ≥∏Ø≈Õ∞° ¡˜¡¢ »∏¿¸«œ¡ˆ æ µµ∑œ
+	// ƒ≥ÔøΩÔøΩÔøΩÕ∞ÔøΩ ÔøΩÔøΩÔøΩÔøΩ »∏ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩ µÔøΩÔøΩÔøΩ
 	bUseControllerRotationYaw = false;
 
-	// ±‚∫ª ¿Ãº”¿ª WalkSpeed∑Œ º≥¡§
+	// ÔøΩ‚∫ª ÔøΩÃºÔøΩÔøΩÔøΩ WalkSpeedÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-	GetCharacterMovement()->bOrientRotationToMovement = true;// ¿Ãµø πÊ«‚¿∏∑Œ ƒ≥∏Ø≈Õ »∏¿¸
+	GetCharacterMovement()->bOrientRotationToMovement = true;// ÔøΩÃµÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ƒ≥ÔøΩÔøΩÔøΩÔøΩ »∏ÔøΩÔøΩ
 }
 void AEmberCharacter::BeginPlay()
 {
@@ -66,6 +72,11 @@ void AEmberCharacter::PossessedBy(AController* NewController)
 	SetupGASInputComponent();
 }
 
+
+FGenericTeamId AEmberCharacter::GetGenericTeamId() const
+{
+	return FGenericTeamId((uint8)EGameTeamID::Team1);
+}
 
 void AEmberCharacter::Tick(float DeltaTime)
 {
@@ -192,6 +203,57 @@ void AEmberCharacter::StopSprinting()
 	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
 	{
 		MoveComp->MaxWalkSpeed = WalkSpeed;
+	}
+}
+
+void AEmberCharacter::PickupItem()
+{
+	FVector Start = Camera->GetComponentLocation();
+	FRotator ControlRot = GetControlRotation();
+	FVector Direction = ControlRot.Vector();
+	float Distance = InteractDistance;
+	FVector End = Start + Direction * Distance;
+	float ActualDist = FVector::Distance(Start, End);
+	// ÎîîÎ≤ÑÍ∑∏ Î°úÍ∑∏
+	UE_LOG(LogTemp, Warning, TEXT("==== PickupItem Debug ===="));
+	UE_LOG(LogTemp, Warning, TEXT("Start         : %s"), *Start.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("End           : %s"), *End.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Direction     : %s"), *Direction.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Control Rot   : %s"), *ControlRot.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Actual Length : %.2f"), ActualDist);
+	// ÏãúÍ∞ÅÏ†Å ÎîîÎ≤ÑÍ∑∏
+	DrawDebugDirectionalArrow(GetWorld(), Start, End, 150.0f, FColor::Red, false, 5.0f, 0, 3.0f);
+	DrawDebugSphere(GetWorld(), Start, 10.f, 12, FColor::Green, false, 5.0f);
+	DrawDebugSphere(GetWorld(), End, 10.f, 12, FColor::Blue, false, 5.0f);
+	// ÎùºÏù∏Ìä∏Î†àÏù¥Ïä§
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+	{
+		AActor* HitActor = HitResult.GetActor();
+		UE_LOG(LogTemp, Warning, TEXT("LineTrace HIT!"));
+		if (HitActor)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Hit Actor     : %s"), *HitActor->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Hit Actor     : nullptr"));
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Impact Point  : %s"), *HitResult.ImpactPoint.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Impact Normal : %s"), *HitResult.ImpactNormal.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Hit Bone Name : %s"), *HitResult.BoneName.ToString());
+		// ÏïÑÏù¥ÌÖú ÏÉÅÌò∏ÏûëÏö©
+		if (ABaseItem* Item = Cast<ABaseItem>(HitActor))
+		{
+			Item->Interact(this);
+			UE_LOG(LogTemp, Warning, TEXT("Item Interacted: %s"), *Item->GetName());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LineTrace MISS ‚Äî nothing hit."));
 	}
 }
 
