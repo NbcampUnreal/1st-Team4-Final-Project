@@ -19,7 +19,7 @@ public:
     virtual void Interact(AActor* Interactor);
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
-    FText InteractionText = FText::FromString("상호작용");
+    FText InteractionText;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
     bool bCanInteract = true;

@@ -5,6 +5,8 @@
 #include "Component/InteractionComponent.h"
 #include "BaseItem.generated.h"
 
+class UStaticMeshComponent;
+class UInteractionComponent;
 UCLASS()
 class EMBER_API ABaseItem : public AActor
 {
@@ -13,11 +15,8 @@ class EMBER_API ABaseItem : public AActor
 public:
 	ABaseItem();
 
-protected:
-	virtual void BeginPlay() override;
 
 public:
-	virtual void Tick(float DeltaTime) override;
 
 	/** 아이템 메시 (외형) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
