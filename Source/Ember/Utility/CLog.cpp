@@ -135,6 +135,22 @@ void CLog::Log(const FString& InFileName, const FString& InFuncName, int32 InLin
 	UE_LOG(Ember, Display, L"%s, %s, %d", *fileName, *InFuncName, InLineNumber);
 }
 
+void CLog::Log(const FString& InValue, ELogVerbosity::Type InLogType)
+{
+	switch (InLogType)
+	{
+	case ELogVerbosity::Type::Display:
+		UE_LOG(Ember, Display,  L"%s", *InValue);
+		break;
+	case ELogVerbosity::Type::Warning:
+		UE_LOG(Ember, Warning,  L"%s", *InValue);
+		break;
+	case ELogVerbosity::Type::Error:
+		UE_LOG(Ember, Error, L"%s", *InValue);
+		break;
+	}
+}
+
 void CLog::Print(int32 InValue, int32 InKey, float InDuration, FColor InColor)
 {
 	GEngine->AddOnScreenDebugMessage(InKey, InDuration, InColor, FString::FromInt(InValue));

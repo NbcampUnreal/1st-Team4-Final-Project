@@ -9,6 +9,9 @@
 #define DebugLogD(val) CLog::Log(this, TEXT(__FUNCTION__), val,ELogVerbosity::Type::Display)
 #define DebugLogW(val) CLog::Log(this, TEXT(__FUNCTION__), val,ELogVerbosity::Type::Warning)
 #define DebugLogE(val) CLog::Log(this, TEXT(__FUNCTION__), val, ELogVerbosity::Type::Error)
+#define DebugLogDD(val) CLog::Log(val, ELogVerbosity::Type::Display)
+#define DebugLogWW(val) CLog::Log(val, ELogVerbosity::Type::Warning)
+#define DebugLogEE(val) CLog::Log(val, ELogVerbosity::Type::Error)
 
 UENUM()
 enum class ELogType : uint8
@@ -32,7 +35,8 @@ public:
 	static void Log(const FRotator& InValue);
 	static void Log(const UObject* InValue);
 	static void Log(const FString& InFileName, const FString& InFuncName, int32 InLineNumber);
-
+	static void Log(const FString& InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
+	
 	static void Print(int32 InValue, int32 InKey = -1, float InDuration = 10, FColor InColor = FColor::Blue);
 	static void Print(float InValue, int32 InKey = -1, float InDuration = 10, FColor InColor = FColor::Blue);
 	static void Print(const FString& InValue, int32 InKey = -1, float InDuration = 10, FColor InColor = FColor::Blue);

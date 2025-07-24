@@ -19,7 +19,6 @@ public:
 
 protected:
 	void UpdateWeather();
-	void AddNiagara();
 	void PlayerDamage();
 	void SpawnSnowFX();
 private:

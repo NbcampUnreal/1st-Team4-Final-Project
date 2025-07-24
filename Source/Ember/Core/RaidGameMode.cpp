@@ -1,7 +1,9 @@
-#include "RaidGameMode.h"
+#include "Core/RaidGameMode.h"
+#include "Core/RaidGameState.h"
 #include "Character/EmberCharacter.h"
+#include "Utility/CLog.h"
 #include "EngineUtils.h"
-#include "RaidGameState.h"
+#include "SNegativeActionButton.h"
 #include "kismet/GameplayStatics.h"
 
 ARaidGameMode::ARaidGameMode()
@@ -19,22 +21,25 @@ void ARaidGameMode::BeginPlay()
 
 void ARaidGameMode::UpdateWeather()
 {
-	switch (RaidGameState->CurrentWeather)
+	if (RaidGameState)
 	{
-	case EWeatherType::Clear:
-		RaidGameState->CurrentWeather = EWeatherType::Snow;
-		break;
-	case EWeatherType::Snow:
-		RaidGameState->CurrentWeather = EWeatherType::Storm;
-		break;
-	case EWeatherType::Storm:
-		RaidGameState->CurrentWeather = EWeatherType::Clear;
-	default: break;
+		switch (RaidGameState->CurrentWeather)
+		{
+		case EWeatherType::Clear:
+			CLog::Log("Weather: Snow", ELogVerbosity::Type::Warning);
+			RaidGameState->CurrentWeather = EWeatherType::Snow;
+			SpawnSnowFX();
+			break;
+		case EWeatherType::Snow:
+			CLog::Log("Weather: Storm", ELogVerbosity::Type::Warning);
+			RaidGameState->CurrentWeather = EWeatherType::Storm;
+			break;
+		case EWeatherType::Storm:
+			CLog::Log("Weather: Clear", ELogVerbosity::Type::Warning);
+			RaidGameState->CurrentWeather = EWeatherType::Clear;
+		default: break;
+		}
 	}
-}
-
-void ARaidGameMode::AddNiagara()
-{
 }
 
 void ARaidGameMode::PlayerDamage()
@@ -58,8 +63,10 @@ void ARaidGameMode::SpawnSnowFX()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	AActor* SnowFXActor = GetWorld()->SpawnActor<AActor>(SnowFXClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+	AActor* SnowFXActor = GetWorld()->SpawnActor<
+		AActor>(SnowFXClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
 
 	// 플레이어에 붙이기 (FX가 따라다니게)
 	SnowFXActor->AttachToActor(Player, FAttachmentTransformRules::KeepRelativeTransform);
+	SnowFXActor->GetRootComponent()->SetRelativeLocation(FVector(0, 0, 200)); // 머리 위로 띄우기
 }
