@@ -10,7 +10,7 @@
  * 
  */
 UCLASS(BlueprintType)
-class Ember_API UWeaponDataAsset : public UDataAsset
+class EMBER_API UWeaponDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
