@@ -2,8 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Component/InteractionComponent.h"
 #include "BaseItem.generated.h"
 
+class UStaticMeshComponent;
+class UInteractionComponent;
 UCLASS()
 class EMBER_API ABaseItem : public AActor
 {
@@ -12,11 +15,8 @@ class EMBER_API ABaseItem : public AActor
 public:
 	ABaseItem();
 
-protected:
-	virtual void BeginPlay() override;
 
 public:
-	virtual void Tick(float DeltaTime) override;
 
 	/** 아이템 메시 (외형) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
@@ -30,11 +30,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	int32 ItemID;
 
-	/** 상호작용 함수 */
-	UFUNCTION(BlueprintCallable, Category = "Item")
-	virtual void Interact(AActor* InteractingActor);
+	/** 상호작용 함수에서 컴포넌트로 변경*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UInteractionComponent* InteractionComp;
 
-	/** 아이템 삭제 */
-	UFUNCTION(BlueprintCallable, Category = "Item")
-	void DestroyItem();
+	// 아이템 사용 - 상속 클래스에서 구현
+	virtual void Use(AActor* User);
 };
