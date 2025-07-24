@@ -17,4 +17,9 @@ protected:
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	void Look(const struct FInputActionValue& Value);
+
+private:
+	TObjectPtr<ACharacter> OwnerCharacter;
 };

@@ -20,13 +20,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = MoveComponent)
 	TObjectPtr<class UCustomMoveComponent> MoveComponent;
-
-	// Sprint ฐüทร
-	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	float WalkSpeed = 300.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	float SprintSpeed = 600.f;
+	UPROPERTY(VisibleAnywhere, Category = MoveComponent)
+	TObjectPtr<class UCustomCameraComponent> CameraComponent;
 
 	//GAS
 	UPROPERTY(EditAnywhere, Category = "GAS")
@@ -39,14 +34,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
 	UFUNCTION()
 	void Attack();
-
-	void StartSprinting();
-	void StopSprinting();
 
 public:
 	virtual void PossessedBy(AController* NewController) override;

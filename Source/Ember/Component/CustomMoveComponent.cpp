@@ -5,13 +5,14 @@
 
 #include "InputActionValue.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Utility/CLog.h"
 
 // Sets default values for this component's properties
 UCustomMoveComponent::UCustomMoveComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
-
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
 	if (OwnerCharacter == nullptr)
 	{
@@ -20,20 +21,9 @@ UCustomMoveComponent::UCustomMoveComponent()
 	}
 }
 
-
-// Called when the game starts
 void UCustomMoveComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-}
-
-
-// Called every frame
-void UCustomMoveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 }
 
 void UCustomMoveComponent::Move(const FInputActionValue& Value)
@@ -54,7 +44,27 @@ void UCustomMoveComponent::Move(const FInputActionValue& Value)
 	OwnerCharacter->AddMovementInput(right,moveVector.X);
 }
 
-void UCustomMoveComponent::Look(const FInputActionValue& Value)
+void UCustomMoveComponent::OnSprint()
 {
+	SetSpeed(ESpeedType::Sprint);
 }
 
+void UCustomMoveComponent::OnRun()
+{
+	SetSpeed(ESpeedType::Run);
+}
+
+void UCustomMoveComponent::OnWalk()
+{
+	SetSpeed(ESpeedType::Walk);
+}
+
+void UCustomMoveComponent::SetSpeed(ESpeedType SpeedType)
+{
+	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(int32)SpeedType];
+}
+
+float UCustomMoveComponent::GetCurrentSpeed() const
+{
+	return Speed[(int32)CurrentSpeedType];
+}

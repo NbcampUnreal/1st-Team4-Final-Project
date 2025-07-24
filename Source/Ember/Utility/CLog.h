@@ -19,11 +19,11 @@ enum class ELogType : uint8
 class EMBER_API CLog
 {
 public:
-	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName,  int32 InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
-	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, float InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
-	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, const FString& InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
-	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, const FVector& InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
-	static void Log(TObjectPtr<UObject> Class, const TCHAR* FunctionName, const FRotator& InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
+	static void Log(const UObject* Class, const TCHAR* FunctionName,  int32 InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
+	static void Log(const UObject* Class, const TCHAR* FunctionName, float InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
+	static void Log(const UObject* Class, const TCHAR* FunctionName, const FString& InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
+	static void Log(const UObject* Class, const TCHAR* FunctionName, const FVector& InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
+	static void Log(const UObject* Class, const TCHAR* FunctionName, const FRotator& InValue, ELogVerbosity::Type InLogType = ELogVerbosity::Type::Display);
 
 	static void Log(int32 InValue);
 	static void Log(float InValue);
