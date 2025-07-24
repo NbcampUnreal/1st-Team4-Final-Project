@@ -18,6 +18,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	TObjectPtr<class UCameraComponent> Camera;
 
+	UPROPERTY(VisibleAnywhere, Category = MoveComponent)
+	TObjectPtr<class UCustomMoveComponent> MoveComponent;
+
 	// Sprint ฐüทร
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float WalkSpeed = 300.f;
@@ -30,6 +33,7 @@ protected:
 	TObjectPtr<UAbilitySystemComponent> ASC;
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TMap<int32, TSubclassOf<class UGameplayAbility>> GameAbilities;
+
 public:
 	AEmberCharacter();
 

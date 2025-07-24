@@ -9,6 +9,7 @@
 #include "EmberPlayerState.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Component/CustomMoveComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
@@ -25,6 +26,8 @@ AEmberCharacter::AEmberCharacter()
 	// 카메라 생성 및 스프링암에 붙이기
 	CHelpers::CreateComponent(this, &Camera,"Camera", SpringArm);
 	Camera->bUsePawnControlRotation = false; // 카메라는 스프링암에 따라감 (직접 회전 X)
+
+	CHelpers::CreateActorComponent(this, &MoveComponent, "Movement");
 
 	// 캐릭터가 직접 회전하지 않도록
 	bUseControllerRotationYaw = false;
@@ -87,7 +90,7 @@ void AEmberCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		DebugLogE("PlayerController is null");
 		return;
 	}
-	EnhancedInput->BindAction(PlayerController.Get()->MoveAction, ETriggerEvent::Triggered, this, &AEmberCharacter::Move);
+	EnhancedInput->BindAction(PlayerController.Get()->MoveAction, ETriggerEvent::Triggered, MoveComponent.Get(), &UCustomMoveComponent::Move);
 	EnhancedInput->BindAction(PlayerController.Get()->LookAction, ETriggerEvent::Triggered, this, &AEmberCharacter::Look);
 	//EnhancedInput->BindAction(AttackAction, ETriggerEvent::Started, this, &AEmberCharacter::Attack);
 
