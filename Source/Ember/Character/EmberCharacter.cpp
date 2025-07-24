@@ -41,12 +41,12 @@ AEmberCharacter::AEmberCharacter()
 	bUseControllerRotationYaw = false;
 
 	// �⺻ �̼��� WalkSpeed�� ����
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	GetCharacterMovement()->bOrientRotationToMovement = true;// �̵� �������� ĳ���� ȸ��
 }
 void AEmberCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	MoveComponent->OnWalk();
 }
 
 void AEmberCharacter::PossessedBy(AController* NewController)
@@ -166,22 +166,6 @@ UAbilitySystemComponent* AEmberCharacter::GetAbilitySystemComponent() const
 void AEmberCharacter::Attack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Attack triggered!"));
-}
-
-void AEmberCharacter::StartSprinting()
-{
-	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
-	{
-		MoveComp->MaxWalkSpeed = SprintSpeed;
-	}
-}
-
-void AEmberCharacter::StopSprinting()
-{
-	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
-	{
-		MoveComp->MaxWalkSpeed = WalkSpeed;
-	}
 }
 
 void AEmberCharacter::PickupItem()
