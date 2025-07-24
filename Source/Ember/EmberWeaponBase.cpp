@@ -3,6 +3,9 @@
 
 #include "EmberWeaponBase.h"
 
+#include "GameFramework/Character.h"
+#include "Utility/CLog.h"
+
 // Sets default values
 AEmberWeaponBase::AEmberWeaponBase()
 {
@@ -15,8 +18,8 @@ AEmberWeaponBase::AEmberWeaponBase()
 // Called when the game starts or when spawned
 void AEmberWeaponBase::BeginPlay()
 {
+	OwnerCharacter = CastChecked<ACharacter>(GetOwner());
 	Super::BeginPlay();
-	
 }
 
 void AEmberWeaponBase::Attack()
@@ -31,6 +34,18 @@ void AEmberWeaponBase::Attack()
 	OnAttack();
 
 }
+
+void AEmberWeaponBase::AttachTo(FName InSocketName)
+{
+	if (OwnerCharacter == nullptr)
+	{
+		DebugLogE("Owner Character is null");
+		return;
+	}
+	
+	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), InSocketName);
+}
+
 bool AEmberWeaponBase::CanAttack() const
 {
 	float TimeSinceLast = GetWorld()->TimeSeconds - LastAttackTime;
