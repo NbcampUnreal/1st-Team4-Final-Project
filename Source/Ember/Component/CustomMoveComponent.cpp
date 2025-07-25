@@ -64,6 +64,16 @@ void UCustomMoveComponent::SetSpeed(ESpeedType SpeedType)
 	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(int32)SpeedType];
 }
 
+void UCustomMoveComponent::ShouldMove(bool InCanMove)
+{
+	bCanMove = InCanMove;
+	if (bCanMove == false)
+		OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_None);
+	else
+		OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	
+}
+
 float UCustomMoveComponent::GetCurrentSpeed() const
 {
 	return Speed[(int32)CurrentSpeedType];

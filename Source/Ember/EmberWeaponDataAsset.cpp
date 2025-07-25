@@ -14,7 +14,7 @@ UWeaponDataAsset::UWeaponDataAsset()
 
 void UWeaponDataAsset::Beginplay(ACharacter* InOwner)
 {
-	AEmberWeaponBase* weapon{};
+	//AEmberWeaponBase* weapon{};
 
 	if (WeaponClass == nullptr)
 	{
@@ -24,5 +24,5 @@ void UWeaponDataAsset::Beginplay(ACharacter* InOwner)
 
 	FActorSpawnParameters parames;
 	parames.Owner = InOwner;
-	weapon = InOwner->GetWorld()->SpawnActor<AEmberWeaponBase>(WeaponClass, parames);
+	Weapon = InOwner->GetWorld()->SpawnActor<AEmberWeaponBase>(WeaponClass, parames);
 }

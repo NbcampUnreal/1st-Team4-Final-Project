@@ -13,7 +13,10 @@ UCLASS()
 class EMBER_API UWeaponDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
-
+public:
+	FORCEINLINE class AEmberWeaponBase* GetWeapon() { return Weapon; }
+	FORCEINLINE bool GetCanMove() { return bCanMove; }
+	FORCEINLINE UAnimMontage* GetAttackMontage() { return AttackMontage; }
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AEmberWeaponBase> WeaponClass;
@@ -52,6 +55,11 @@ private:
 	/* 공격시 스태미너 소모량 */
 	UPROPERTY(EditAnywhere, Category="Weapon|Cost", meta=(ClampMin="0.0"))
 	float StaminaCost = 5.0f;
+
+	UPROPERTY(EditAnywhere, Category="Weapon|Move")
+	bool bCanMove;
+private:
+	TObjectPtr<AEmberWeaponBase> Weapon;
 
 public:
 	UWeaponDataAsset();

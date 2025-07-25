@@ -28,7 +28,9 @@ public:
 	void OnWalk();
 
 	void SetSpeed(ESpeedType SpeedType);
-	
+
+	void ShouldMove(bool InCanMove);
+
 public:
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentSpeed() const;
@@ -36,4 +38,6 @@ public:
 private:
 	TObjectPtr<ACharacter> OwnerCharacter;
 	ESpeedType CurrentSpeedType;
+
+	bool bCanMove{};
 };

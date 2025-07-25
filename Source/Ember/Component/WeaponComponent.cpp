@@ -1,5 +1,6 @@
 #include "Component/WeaponComponent.h"
 
+#include "EmberWeaponBase.h"
 #include "GameFramework/Character.h"
 #include "Utility/CLog.h"
 
@@ -31,5 +32,15 @@ void UWeaponComponent::BeginPlay()
 void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
+void UWeaponComponent::DoAttack()
+{
+	if(WeaponAsset->GetWeapon() == nullptr)
+	{
+		DebugLogE("Weapon is null");
+		return;
+	}
+	WeaponAsset->GetWeapon()->Attack();
 }
 
