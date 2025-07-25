@@ -18,7 +18,8 @@ public:
 	/* 공격 */
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	void Attack();
-
+	UFUNCTION(BlueprintCallable)
+	void AttachTo(FName InSocketName);
 	/* 공격 쿨다운 (초) */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Stats")
 	float Cooldown;
@@ -30,6 +31,10 @@ public:
 	/* 애님몽타주 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Animation")
 	UAnimMontage* EquipMontage;
+protected:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	ACharacter* OwnerCharacter;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

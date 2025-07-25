@@ -13,6 +13,8 @@
 #include "InputAction.h"
 #include "EmberCharacter.generated.h"
 
+class UWeaponComponent;
+
 UCLASS()
 class EMBER_API AEmberCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface
 {
@@ -23,39 +25,34 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	TObjectPtr<class UCameraComponent> Camera;
 
-	// Sprint ����
-	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	float WalkSpeed = 300.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	float SprintSpeed = 600.f;
+	UPROPERTY(VisibleAnywhere, Category = Component)
+	TObjectPtr<class UCustomMoveComponent> MoveComponent;
+	UPROPERTY(VisibleAnywhere, Category = Component)
+	TObjectPtr<class UCustomCameraComponent> CameraComponent;
+	UPROPERTY(VisibleAnywhere, Category = Component)
+	TObjectPtr<UWeaponComponent> WeaponComponent;
 
 	//GAS
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> ASC;
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TMap<int32, TSubclassOf<class UGameplayAbility>> GameAbilities;
+
 public:
 	AEmberCharacter();
 
 protected:
 	virtual void BeginPlay() override;
-
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
 	UFUNCTION()
 	void Attack();
-
-	void StartSprinting();
-	void StopSprinting();
-
-	void PickupItem();
+	
+void PickupItem();
 	
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	float InteractDistance = 300.0f;
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	bool bDrawInteractionDebug = true;
-	
+
 public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void Tick(float DeltaTime) override;
