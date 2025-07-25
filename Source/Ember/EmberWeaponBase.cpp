@@ -4,6 +4,7 @@
 #include "EmberWeaponBase.h"
 
 #include "GameFramework/Character.h"
+#include "Item/RuneItem.h"
 #include "Utility/CLog.h"
 
 // Sets default values
@@ -13,6 +14,21 @@ AEmberWeaponBase::AEmberWeaponBase()
 	PrimaryActorTick.bCanEverTick = true;
 	Cooldown = 1.0f;
 	//Durability = 100.0f;
+}
+
+void AEmberWeaponBase::ApplyRune(ARuneItem* Rune)
+{
+	if (!Rune) return;
+	if (EquippedRunes.Num() >= MaxRuneSlots)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("더 이상 룬을 장착할 수 없습니다. (Max slots: %d)"),
+			MaxRuneSlots);
+		return;
+	}
+	EquippedRunes.Add(Rune);
+	// CurrentDamage += Rune->DamageBonus;
+	//UE_LOG(LogTemp, Log, TEXT("Rune Class: %s"), Rune->GetName() );
 }
 
 // Called when the game starts or when spawned
@@ -45,6 +61,7 @@ void AEmberWeaponBase::AttachTo(FName InSocketName)
 	
 	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), InSocketName);
 }
+
 
 bool AEmberWeaponBase::CanAttack() const
 {

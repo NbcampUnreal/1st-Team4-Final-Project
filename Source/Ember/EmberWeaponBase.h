@@ -23,7 +23,14 @@ public:
 	/* 공격 쿨다운 (초) */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Stats")
 	float Cooldown;
-
+	/* 룬관련 */
+	UPROPERTY(VisibleAnywhere, Category="Weapon|Rune")
+	TArray<TObjectPtr<ARuneItem>> EquippedRunes;
+	UPROPERTY(EditAnywhere, Category="Weapon|Rune")
+	int MaxRuneSlots = 3;
+	UFUNCTION(BlueprintCallable, Category="Weapon|Rune")
+	void ApplyRune(ARuneItem* Rune);
+	
 	/*  내구도 -> 필요했던가?? */
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Stats")
 	//float Durability;
