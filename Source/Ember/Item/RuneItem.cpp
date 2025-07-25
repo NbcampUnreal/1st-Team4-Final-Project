@@ -1,10 +1,10 @@
 #include "RuneItem.h"
 #include "Character/EmberCharacter.h"
-#include "Component/RuneSystemComponent.h" // ·é ÀåÂø ½Ã½ºÅÛÀÌ µû·Î ÀÖ´Ù°í °¡Á¤
+#include "Component/RuneSystemComponent.h" // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 ARuneItem::ARuneItem()
 {
-    // ·é Å¸ÀÔ°ú º¸³Ê½º ¼öÄ¡ ¼³Á¤ °¡´É
+    // ï¿½ï¿½ Å¸ï¿½Ô°ï¿½ ï¿½ï¿½ï¿½Ê½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 }
 
 void ARuneItem::Use(AActor* User)
@@ -13,8 +13,13 @@ void ARuneItem::Use(AActor* User)
     {
         if (URuneSystemComponent* RuneSystem = Character->FindComponentByClass<URuneSystemComponent>())
         {
-            RuneSystem->EquipRune(this); // ÇØ´ç ·é ÀåÂø Ã³¸®
+            RuneSystem->EquipRune(this); // ï¿½Ø´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
             Destroy();
         }
     }
+}
+
+FString ARuneItem::GetName() const
+{
+    return RuneType.ToString();
 }
