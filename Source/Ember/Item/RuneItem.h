@@ -13,11 +13,12 @@ public:
     ARuneItem();
 
     virtual void Use(AActor* User) override;
+    FString GetName() const;
 
 protected:
     UPROPERTY(EditAnywhere, Category = "Rune")
     FName RuneType;
-
+    
     UPROPERTY(EditAnywhere, Category = "Rune")
     int32 BonusValue;
 };

@@ -1,11 +1,13 @@
 #include "RuneSystemComponent.h"
+#include "Character/EmberCharacter.h"
+#include "EmberWeaponBase.h"
 #include "Item/RuneItem.h"
 
 URuneSystemComponent::URuneSystemComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
 
-    // ÃÊ±âÈ­
+    // ï¿½Ê±ï¿½È­
     EquippedRunes.SetNum(MaxRuneSlots);
 }
 
@@ -13,21 +15,29 @@ bool URuneSystemComponent::EquipRune(ARuneItem* NewRune)
 {
     if (!NewRune) return false;
 
-    // ºñ¾îÀÖ´Â ½½·Ô¿¡ ÀåÂø
+    // ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Ô¿ï¿½ ï¿½ï¿½ï¿½ï¿½
     for (int32 i = 0; i < EquippedRunes.Num(); ++i)
     {
         if (!EquippedRunes[i])
         {
             EquippedRunes[i] = NewRune;
 
-            // ·é È¿°ú Àû¿ëÀº ¿©±â¼­ (ex. ´É·ÂÄ¡ Áõ°¡)
+            // ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¼­ (ex. ï¿½É·ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½)
             UE_LOG(LogTemp, Log, TEXT("Rune equipped in slot %d: %s"), i, *NewRune->GetName());
-
             return true;
         }
     }
 
     UE_LOG(LogTemp, Warning, TEXT("No empty rune slots available."));
+
+    if (AEmberCharacter* OwnerChar = Cast<AEmberCharacter>(GetOwner()))
+    {
+        //if (AEmberWeaponBase* Weapon = Cast<AEmberWeaponBase>(OwnerChar->GetCurrentWeapon()))
+        {
+            //AEmberWeaponBase* Weapon; /* ì´ê±° ì§€ìš°ê³  ìœ„ì—êº¼ í™œì„±í™”.ìºë¦­í„° ìª½ì— ë“¤ê³ ìžˆëŠ” ë¬´ê¸° ê°€ì ¸ì˜¤ëŠ” í•¨ìˆ˜ ì¶”ê°€í•´ì•¼í•¨ */
+            //Weapon->ApplyRune(NewRune);
+        }
+    }
     return false;
 }
 
@@ -38,7 +48,7 @@ void URuneSystemComponent::RemoveRune(int32 SlotIndex)
         UE_LOG(LogTemp, Log, TEXT("Rune removed from slot %d: %s"), SlotIndex, *EquippedRunes[SlotIndex]->GetName());
         EquippedRunes[SlotIndex] = nullptr;
 
-        // È¿°ú Á¦°Åµµ ÇÊ¿äÇÏ¸é ¿©±â¿¡ Ãß°¡
+        // È¿ï¿½ï¿½ ï¿½ï¿½ï¿½Åµï¿½ ï¿½Ê¿ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½â¿¡ ï¿½ß°ï¿½
     }
 }
 
