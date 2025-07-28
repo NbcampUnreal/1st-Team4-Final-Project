@@ -3,6 +3,7 @@
 
 #include "MonsterAIController.h"
 
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Runtime/AIModule/Classes/Perception/AIPerceptionComponent.h"
 #include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
 #include "Utility/CHelpers.h"
@@ -11,12 +12,13 @@
 AMonsterAIController::AMonsterAIController()
 {
 	bWantsPlayerState = true;
-	PrimaryActorTick.bCanEverTick = false;
+	//PrimaryActorTick.bCanEverTick = false;
 
 	CHelpers::CreateActorComponent(this, &AISenseConfigSight, TEXT("AISenseConfigSight"));
 	AISenseConfigSight->SightRadius = DetectionRadius;
 	AISenseConfigSight->LoseSightRadius = LoseInterestRadius;
 	AISenseConfigSight->PeripheralVisionAngleDegrees = SightAngleDegree;
+	
 	
 	CHelpers::CreateActorComponent(this, &AIPerceptionComponent, TEXT("AIPerceptionComponent"));
 	AIPerceptionComponent->ConfigureSense(*AISenseConfigSight);
@@ -29,13 +31,33 @@ void AMonsterAIController::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AMonsterAIController::OnPossess(APawn* Possessed)
+{
+	Super::OnPossess(Possessed);
+
+	RunBehaviorTree(BTAsset);
+}
+
+void AMonsterAIController::OnUnPossess()
+{
+	AIPerceptionComponent->OnTargetPerceptionUpdated.RemoveDynamic(this, &ThisClass::OnTargetPerceptionUpdated);
+	
+	Super::OnUnPossess();
+}
+
 FGenericTeamId AMonsterAIController::GetGenericTeamId() const
 {
 	return FGenericTeamId((uint8)EGameTeamID::Monster);
 }
 
-void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
-{
-	CLog::DebugLogD("");
-}
+void AMonsterAIController::OnTargetPerceptionUpdated(AActor* PerceivedActor, FAIStimulus Stimulus)
+ {
+	if (PerceivedActor && Stimulus.WasSuccessfullySensed())
+	{
+		if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
+		{
+			BlackboardComponent->SetValueAsObject(FName("TargetActor"), PerceivedActor);
+		}
+	}
+ }
 

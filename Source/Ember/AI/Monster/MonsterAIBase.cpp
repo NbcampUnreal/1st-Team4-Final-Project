@@ -7,7 +7,7 @@
 
 AMonsterAIBase::AMonsterAIBase()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	//PrimaryActorTick.bCanEverTick = false;
 	AIControllerClass = AMonsterAIController::StaticClass();
 }
 
