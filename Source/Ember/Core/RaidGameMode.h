@@ -8,6 +8,7 @@
 #include "RaidGameMode.generated.h"
 
 class ARaidGameState;
+
 UCLASS()
 class EMBER_API ARaidGameMode : public AGameMode
 {
@@ -15,22 +16,34 @@ class EMBER_API ARaidGameMode : public AGameMode
 
 public:
 	ARaidGameMode();
+	
 	virtual void BeginPlay() override;
 
-protected:
+public:
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Weather")
+	void OnWeatherChanged();
+	
 	void UpdateWeather();
+	
 	void PlayerDamage();
-	void SpawnSnowFX();
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite ,Category = "FX")
+	EWeatherType CurrentWeather;
 private:
+	
+	
 	UPROPERTY(EditAnywhere)
 	float WeatherTerm;
-	UPROPERTY(EditDefaultsOnly, Category = "Weather")
-	TSubclassOf<AActor> SnowFXClass;
 
 	float GameTime; //게임내시간
+	
 	float Temperature; //서버 온도
 
+	bool IsOnFX;
 	ARaidGameState* RaidGameState;
-	EWeatherType CurrentWeather; //서버 날씨상태
+	
+	
+	
 	FTimerHandle GameTimer;
 };
