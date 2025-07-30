@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "WeaponStruct.h"
 #include "EmberWeaponDataAsset.generated.h"
 
+class UWeaponData;
 /**
  * 
  */
@@ -14,54 +16,44 @@ class EMBER_API UWeaponDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 public:
-	FORCEINLINE class AEmberWeaponBase* GetWeapon() { return Weapon; }
-	FORCEINLINE bool GetCanMove() { return bCanMove; }
-	FORCEINLINE UAnimMontage* GetAttackMontage() { return AttackMontage; }
+	FORCEINLINE FDoActionData& GetActionData(int32 InIndex) { return ActionDatas[InIndex]; }
+	FORCEINLINE int32 GetDoActionCount() { return ActionDatas.Num(); }
+	FORCEINLINE FString GetMontageSectionNamePrefix() {return MontageSectionNamePrefix;}
+	FORCEINLINE float GetFrameRate() { return FrameRate; }
+	FORCEINLINE float GetEffectiveFrameCount(int32 InIndex) { return EffectiveFrameCount[InIndex]; }
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AEmberWeaponBase> WeaponClass;
-	/* 데미지 */
-	UPROPERTY(EditAnywhere, Category="Weapon|Stats", meta=(ClampMin="0.0"))
-	float Damage = 10.0f;
+	UPROPERTY(EditAnywhere, Category = "Weapon|Animation")
+	FString MontageSectionNamePrefix;
+	UPROPERTY(EditAnywhere, Category = "Weapon|Animation")
+	float FrameRate;
+	UPROPERTY(EditAnywhere, Category = "Weapon|Animation")
+	TArray<float> EffectiveFrameCount;
+	UPROPERTY(EditAnywhere)
+	TArray<FDoActionData> ActionDatas;
 
-	/* 쿨다운 */
-	UPROPERTY(EditAnywhere, Category="Weapon|Stats", meta=(ClampMin="0.0"))
-	float Cooldown = 1.0f;
+	///* 데미지 */
+	//UPROPERTY(EditAnywhere, Category="Weapon|Stats", meta=(ClampMin="0.0"))
+	//float Damage = 10.0f;
 
-	/* 공격범위 */
-	UPROPERTY(EditAnywhere, Category="Weapon|Stats", meta=(ClampMin="0.0"))
-	float AttackRange = 200.0f;
+	///* 쿨다운 */
+	//UPROPERTY(EditAnywhere, Category="Weapon|Stats", meta=(ClampMin="0.0"))
+	//float Cooldown = 1.0f;
 
-	/* 투사체 스피드 */
-	UPROPERTY(EditAnywhere, Category="Weapon|Stats")
-	float ProjectileSpeed = 2000.0f;
+	///* 공격범위 */
+	//UPROPERTY(EditAnywhere, Category="Weapon|Stats", meta=(ClampMin="0.0"))
+	//float AttackRange = 200.0f;
 
-	/* 최대 내구도 */
-	UPROPERTY(EditAnywhere, Category="Weapon|Stats", meta=(ClampMin="0.0"))
-	float Durability = 100.0f;
+	///* 투사체 스피드 */
+	//UPROPERTY(EditAnywhere, Category="Weapon|Stats")
+	//float ProjectileSpeed = 2000.0f;
 
-	/* 장착 애니메이션 몽타주 */
-	UPROPERTY(EditAnywhere, Category="Weapon|Animation")
-	UAnimMontage* EquipMontage;
-
-	/* 공격 애니메이션 몽타주 */
-	UPROPERTY(EditAnywhere, Category="Weapon|Animation")
-	UAnimMontage* AttackMontage;
-
-	/* 공격 사운드 */
-	UPROPERTY(EditAnywhere, Category="Weapon|SFX")
-	USoundBase* AttackSound;
-	
-	/* 공격시 스태미너 소모량 */
-	UPROPERTY(EditAnywhere, Category="Weapon|Cost", meta=(ClampMin="0.0"))
-	float StaminaCost = 5.0f;
-
-	UPROPERTY(EditAnywhere, Category="Weapon|Move")
-	bool bCanMove;
-private:
-	TObjectPtr<AEmberWeaponBase> Weapon;
+	///* 최대 내구도 */
+	//UPROPERTY(EditAnywhere, Category="Weapon|Stats", meta=(ClampMin="0.0"))
+	//float Durability = 100.0f;
 
 public:
 	UWeaponDataAsset();
-	void Beginplay(ACharacter* InOwner);
+	void Beginplay(ACharacter* InOwner, UWeaponData** OutWeaponData);
 };

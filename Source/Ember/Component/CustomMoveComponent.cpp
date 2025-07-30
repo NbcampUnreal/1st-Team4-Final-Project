@@ -66,8 +66,7 @@ void UCustomMoveComponent::SetSpeed(ESpeedType SpeedType)
 
 void UCustomMoveComponent::ShouldMove(bool InCanMove)
 {
-	bCanMove = InCanMove;
-	if (bCanMove == false)
+	if (InCanMove == false)
 		OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_None);
 	else
 		OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_Walking);

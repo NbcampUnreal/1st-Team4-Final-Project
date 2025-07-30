@@ -1,6 +1,7 @@
 #include "GAS/GameplayAbility/EmberAG_Attack.h"
 
 #include "EmberWeaponDataAsset.h"
+#include "WeaponStruct.h"
 #include "Character/EmberCharacter.h"
 #include "Component/CustomMoveComponent.h"
 #include "Component/WeaponComponent.h"
@@ -18,16 +19,16 @@ void UEmberAG_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
-	ACharacter* character = Cast<ACharacter>(ActorInfo->AvatarActor.Get());
+	PlayCurrentComboMontage();
+	/*ACharacter* character = Cast<ACharacter>(ActorInfo->AvatarActor.Get());
 	if (character == nullptr)
 	{
 		DebugLogE("character is null");
 		return;
 	}
 	UWeaponComponent* weapon = CHelpers::GetComponent<UWeaponComponent>(character);
-	CurrentComboData = weapon->GetWeaponData();
-	if (CurrentComboData.Get()->GetCanMove() == false)
+	CurrentComboData = weapon->GetWeaponAsset();
+	if (CurrentComboData.Get()->GetActionData(CurrentCombo).bCanMove == false)
 	{
 		UCustomMoveComponent* move = CHelpers::GetComponent<UCustomMoveComponent>(character);
 		if (move == nullptr)
@@ -36,21 +37,25 @@ void UEmberAG_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 			return;
 		}
 
-		move->ShouldMove(CurrentComboData.Get()->GetCanMove());
+		move->ShouldMove(CurrentComboData.Get()->GetActionData(CurrentCombo).bCanMove);
 	}
-	UAbilityTask_PlayMontageAndWait* attackMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Default"),CurrentComboData.Get()->GetAttackMontage(),1.0f);
+	UAbilityTask_PlayMontageAndWait* attackMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None,CurrentComboData.Get()->GetActionData(CurrentCombo).Montage, CurrentComboData.Get()->GetActionData(CurrentCombo).PlayRate);
 
 	attackMontage->OnCompleted.AddDynamic(this,&UEmberAG_Attack::OnCompleteCallback);
 	attackMontage->OnInterrupted.AddDynamic(this,&UEmberAG_Attack::OnInterruptedCallback);
 
 	attackMontage->ReadyForActivation();
 
+	StartComboTimer();*/
 }
 
 void UEmberAG_Attack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	CurrentComboData = nullptr;
+	CurrentCombo = 0;
+	bHasNextComboInput = false;
 	ACharacter* character = Cast<ACharacter>(ActorInfo->AvatarActor.Get());
 	if (character == nullptr)
 	{
@@ -58,7 +63,7 @@ void UEmberAG_Attack::EndAbility(const FGameplayAbilitySpecHandle Handle, const 
 		return;
 	}
 	UWeaponComponent* weapon = CHelpers::GetComponent<UWeaponComponent>(character);
-	CurrentComboData = weapon->GetWeaponData();
+	CurrentComboData = weapon->GetWeaponAsset();
 	
 	UCustomMoveComponent* move = CHelpers::GetComponent<UCustomMoveComponent>(character);
 	if (move == nullptr)
@@ -66,7 +71,7 @@ void UEmberAG_Attack::EndAbility(const FGameplayAbilitySpecHandle Handle, const 
 		DebugLogE("move component is null");
 		return;
 	}
-	move->ShouldMove(true);
+	move->ShouldMove(!CurrentComboData.Get()->GetActionData(CurrentCombo).bCanMove);
 }
 
 void UEmberAG_Attack::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
@@ -79,6 +84,11 @@ void UEmberAG_Attack::InputPressed(const FGameplayAbilitySpecHandle Handle, cons
 	const FGameplayAbilityActivationInfo ActivationInfo)
 {
 	Super::InputPressed(Handle, ActorInfo, ActivationInfo);
+	DebugLogW("Pressed");
+	if (ComboTimerHandle.IsValid() == false)
+		bHasNextComboInput = false;
+	else
+		bHasNextComboInput = true;
 }
 
 void UEmberAG_Attack::OnCompleteCallback()
@@ -96,15 +106,69 @@ void UEmberAG_Attack::OnInterruptedCallback()
 
 }
 
-FName UEmberAG_Attack::GetNextSection()
+void UEmberAG_Attack::PlayCurrentComboMontage()
 {
-	return "";
+	ACharacter* character = Cast<ACharacter>(CurrentActorInfo->AvatarActor.Get());
+	if (character == nullptr)
+	{
+		DebugLogE("character is null");
+		return;
+	}
+	UWeaponComponent* weapon = CHelpers::GetComponent<UWeaponComponent>(character);
+	CurrentComboData = weapon->GetWeaponAsset();
+	if (CurrentComboData.Get()->GetActionData(CurrentCombo).bCanMove == false)
+	{
+		UCustomMoveComponent* move = CHelpers::GetComponent<UCustomMoveComponent>(character);
+		if (move == nullptr)
+		{
+			DebugLogE("move component is null");
+			return;
+		}
+
+		move->ShouldMove(CurrentComboData.Get()->GetActionData(CurrentCombo).bCanMove);
+	}
+	UAbilityTask_PlayMontageAndWait* attackMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, CurrentComboData.Get()->GetActionData(CurrentCombo).Montage, CurrentComboData.Get()->GetActionData(CurrentCombo).PlayRate);
+
+	attackMontage->OnCompleted.AddDynamic(this, &UEmberAG_Attack::OnCompleteCallback);
+	attackMontage->OnInterrupted.AddDynamic(this, &UEmberAG_Attack::OnInterruptedCallback);
+
+	attackMontage->ReadyForActivation();
+
+	StartComboTimer();
 }
+
+//FName UEmberAG_Attack::GetNextSection()
+//{
+//	if (CurrentComboData.Get()->GetMontageSectionNamePrefix() == TEXT("Default"))
+//	{
+//		CurrentCombo += 1;
+//		return TEXT("Default");
+//	}
+//	CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, CurrentComboData.Get()->GetDoActionCount());
+//	FName next = *FString::Printf(TEXT("%s%d"),*CurrentComboData->GetMontageSectionNamePrefix(), CurrentCombo);
+//	return next;
+//}
 
 void UEmberAG_Attack::StartComboTimer()
 {
+	if (CurrentComboData.Get()->GetDoActionCount() < CurrentCombo)
+		return;
+	if (CurrentComboData->GetEffectiveFrameCount(CurrentCombo) <= 0)
+		return;
+	float comboEffectiveTime = CurrentComboData->GetEffectiveFrameCount(CurrentCombo) / CurrentComboData->GetFrameRate();
+	if (comboEffectiveTime > 0.0f)
+		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&UEmberAG_Attack::CheckComboInput, comboEffectiveTime,false);
 }
 
 void UEmberAG_Attack::CheckComboInput()
 {
+	ComboTimerHandle.Invalidate();
+	if (bHasNextComboInput == true)
+	{
+		PlayCurrentComboMontage();
+		//MontageJumpToSection(GetNextSection());
+		StartComboTimer();
+		CurrentCombo++;
+		bHasNextComboInput = false;
+	}
 }

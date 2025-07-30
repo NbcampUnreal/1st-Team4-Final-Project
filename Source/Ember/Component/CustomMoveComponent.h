@@ -38,6 +38,4 @@ public:
 private:
 	TObjectPtr<ACharacter> OwnerCharacter;
 	ESpeedType CurrentSpeedType;
-
-	bool bCanMove{};
 };

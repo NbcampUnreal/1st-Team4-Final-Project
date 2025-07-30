@@ -11,10 +11,14 @@ class EMBER_API UWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
 public:
-	FORCEINLINE UWeaponDataAsset* GetWeaponData() { return WeaponAsset; }
+	FORCEINLINE UWeaponDataAsset* GetWeaponAsset() { return WeaponAsset; }
+
 private:
 	UPROPERTY(EditAnywhere, Category="DataAsset")
 	UWeaponDataAsset* WeaponAsset;
+	UPROPERTY()
+	UWeaponData* WeaponData;
+
 public:	
 	UWeaponComponent();
 
@@ -25,7 +29,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	void DoAttack();
+	AEmberWeaponBase* GetWeapon();
 
 private:
 	ACharacter* OwnerCharacter;

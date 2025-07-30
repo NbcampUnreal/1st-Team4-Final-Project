@@ -30,7 +30,8 @@ protected:
 	void OnInterruptedCallback();
 
 protected:
-	FName GetNextSection();
+	//FName GetNextSection();
+	void PlayCurrentComboMontage();
 	void StartComboTimer();
 	void CheckComboInput();
 
