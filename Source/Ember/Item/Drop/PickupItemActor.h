@@ -37,4 +37,6 @@ protected:
 	// Èñ±Íµµº° ÀÌÆåÆ® ¸ÅÇÎ¿ë ¸Ê
 	UPROPERTY(EditDefaultsOnly, Category = "Effect")
 	TMap<EItemRarity, UNiagaraSystem*> RarityEffects;
+
+
 };

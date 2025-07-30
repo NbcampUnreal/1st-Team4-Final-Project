@@ -26,13 +26,13 @@ void ALootManagerActor::BeginPlay()
 	PrimaryActorTick.bCanEverTick = false;
 
 	// 타이머를 이용해 1초 후에 SimulateDeath 호출
-	GetWorld()->GetTimerManager().SetTimer(
+	/*GetWorld()->GetTimerManager().SetTimer(
 		SimulateDeathTimerHandle,
 		this,
 		&ALootManagerActor::SimulateDeath,
 		1.0f,
 		false
-	);
+	);*/
 }
 
 void ALootManagerActor::SimulateDeath()
