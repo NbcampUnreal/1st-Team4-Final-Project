@@ -16,22 +16,32 @@ class EMBER_API UWeaponDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 public:
+	FORCEINLINE UAnimMontage* GetAnimMontage() { return Montage; }
 	FORCEINLINE FDoActionData& GetActionData(int32 InIndex) { return ActionDatas[InIndex]; }
 	FORCEINLINE int32 GetDoActionCount() { return ActionDatas.Num(); }
 	FORCEINLINE FString GetMontageSectionNamePrefix() {return MontageSectionNamePrefix;}
+	FORCEINLINE uint8 GetMaxCount() { return MaxComboCount; }
+	FORCEINLINE FString GetTaskInstanceName() { return TaskInstanceName; }
 	FORCEINLINE float GetFrameRate() { return FrameRate; }
 	FORCEINLINE float GetEffectiveFrameCount(int32 InIndex) { return EffectiveFrameCount[InIndex]; }
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AEmberWeaponBase> WeaponClass;
+	UPROPERTY(EditAnywhere)
+	TArray<FDoActionData> ActionDatas;
+	UPROPERTY(EditAnywhere, Category = "Weapon|Animation")
+	UAnimMontage* Montage;
+	UPROPERTY(EditAnywhere, Category = "Weapon|Animation")
+	FString TaskInstanceName;
 	UPROPERTY(EditAnywhere, Category = "Weapon|Animation")
 	FString MontageSectionNamePrefix;
+	UPROPERTY(EditAnywhere, Category = "Weapon|Animation")
+	uint8 MaxComboCount;
 	UPROPERTY(EditAnywhere, Category = "Weapon|Animation")
 	float FrameRate;
 	UPROPERTY(EditAnywhere, Category = "Weapon|Animation")
 	TArray<float> EffectiveFrameCount;
-	UPROPERTY(EditAnywhere)
-	TArray<FDoActionData> ActionDatas;
+	
 
 	///* 데미지 */
 	//UPROPERTY(EditAnywhere, Category="Weapon|Stats", meta=(ClampMin="0.0"))

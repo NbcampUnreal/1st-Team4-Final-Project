@@ -2,14 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
-#include "EmberAG_Attack.generated.h"
+#include "EmberGA_Attack.generated.h"
 
 UCLASS()
-class EMBER_API UEmberAG_Attack : public UGameplayAbility
+class EMBER_API UEmberGA_Attack : public UGameplayAbility
 {
 	GENERATED_BODY()
 public:
-	UEmberAG_Attack();
+	UEmberGA_Attack();
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
@@ -30,8 +30,7 @@ protected:
 	void OnInterruptedCallback();
 
 protected:
-	//FName GetNextSection();
-	void PlayCurrentComboMontage();
+	FName GetNextSection();
 	void StartComboTimer();
 	void CheckComboInput();
 

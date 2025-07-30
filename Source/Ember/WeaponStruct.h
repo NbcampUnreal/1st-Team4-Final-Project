@@ -9,8 +9,8 @@ struct FDoActionData
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* Montage;
+	//UPROPERTY(EditAnywhere)
+	//UAnimMontage* Montage;
 	UPROPERTY(EditAnywhere)
 	float PlayRate = 1.0f;
 	UPROPERTY(EditAnywhere)
