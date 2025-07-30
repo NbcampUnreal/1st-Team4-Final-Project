@@ -11,12 +11,12 @@ APickupItemActor::APickupItemActor()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	
 	// 물리 및 충돌 설정
-	MeshComponent->SetSimulatePhysics(true);
-	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	MeshComponent->SetCollisionObjectType(ECC_PhysicsBody);
-	MeshComponent->SetNotifyRigidBodyCollision(true);
-	MeshComponent->SetLinearDamping(20.0f); // 속도 감쇠: 높을수록 빨리 멈춤
-	MeshComponent->SetAngularDamping(1000.0f); // 회전 감쇠
+	MeshComponent->SetSimulatePhysics(false);               // 물리 시뮬레이션 OFF
+	MeshComponent->SetEnableGravity(false);                 // 중력 적용 X
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly); // 물리 충돌 무효
+	MeshComponent->SetCollisionObjectType(ECC_WorldDynamic);
+	MeshComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap); // 캐릭터와는 겹치기만
 }
 
 void APickupItemActor::BeginPlay()

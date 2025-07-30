@@ -2,7 +2,8 @@
 
 #include "CoreMinimal.h"
 
-enum class EWeatherType
+UENUM(BlueprintType)
+enum class EWeatherType : uint8
 {
 	Clear UMETA(DisplayName = "CLEAR"),
 	Snow UMETA(DisplayName = "SNOW"),

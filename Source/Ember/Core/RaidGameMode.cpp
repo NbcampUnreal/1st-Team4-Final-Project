@@ -1,13 +1,15 @@
 #include "Core/RaidGameMode.h"
 #include "Core/RaidGameState.h"
 #include "Character/EmberCharacter.h"
+#include "Character/EmberPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "Utility/CLog.h"
 #include "EngineUtils.h"
-#include "SNegativeActionButton.h"
-#include "kismet/GameplayStatics.h"
+
 
 ARaidGameMode::ARaidGameMode()
 {
+	IsOnFX = false;
 	CurrentWeather = EWeatherType::Clear;
 	WeatherTerm = 5.0f;
 }
@@ -16,29 +18,35 @@ void ARaidGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	RaidGameState = GetGameState<ARaidGameState>();
-	GetWorld()->GetTimerManager().SetTimer(GameTimer, this, &ARaidGameMode::UpdateWeather, WeatherTerm);
+	GetWorld()->GetTimerManager().SetTimer(GameTimer, this, &ARaidGameMode::UpdateWeather, WeatherTerm, true);
 }
 
 void ARaidGameMode::UpdateWeather()
 {
-	if (RaidGameState)
+	if (!IsOnFX)
 	{
-		switch (RaidGameState->CurrentWeather)
-		{
-		case EWeatherType::Clear:
-			CLog::Log("Weather: Snow", ELogVerbosity::Type::Warning);
-			RaidGameState->CurrentWeather = EWeatherType::Snow;
-			SpawnSnowFX();
-			break;
-		case EWeatherType::Snow:
-			CLog::Log("Weather: Storm", ELogVerbosity::Type::Warning);
-			RaidGameState->CurrentWeather = EWeatherType::Storm;
-			break;
-		case EWeatherType::Storm:
-			CLog::Log("Weather: Clear", ELogVerbosity::Type::Warning);
-			RaidGameState->CurrentWeather = EWeatherType::Clear;
-		default: break;
-		}
+		OrderSpawnSnowFX();
+		// RaidGameState->SpawnSnowFX();
+		IsOnFX = true;
+	}
+	switch (CurrentWeather)
+	{
+	case EWeatherType::Clear:
+		CurrentWeather = EWeatherType::Snow;
+		UE_LOG(LogTemp, Warning, TEXT("Weather: %s"), *UEnum::GetValueAsString(CurrentWeather));
+		OnWeatherChanged();
+		break;
+	case EWeatherType::Snow:
+		CurrentWeather = EWeatherType::Storm;
+		UE_LOG(LogTemp, Warning, TEXT("Weather: %s"), *UEnum::GetValueAsString(CurrentWeather));
+		OnWeatherChanged();
+		break;
+	case EWeatherType::Storm:
+		CurrentWeather = EWeatherType::Clear;
+		UE_LOG(LogTemp, Warning, TEXT("Weather: %s"), *UEnum::GetValueAsString(CurrentWeather));
+		OnWeatherChanged();
+		break;
+	default: break;
 	}
 }
 
@@ -52,21 +60,14 @@ void ARaidGameMode::PlayerDamage()
 	}
 }
 
-void ARaidGameMode::SpawnSnowFX()
+void ARaidGameMode::OrderSpawnSnowFX()
 {
-	if (!SnowFXClass) return;
-
-	ACharacter* Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	if (!Player) return;
-
-	FVector SpawnLocation = Player->GetActorLocation();
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	AActor* SnowFXActor = GetWorld()->SpawnActor<
-		AActor>(SnowFXClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
-
-	// 플레이어에 붙이기 (FX가 따라다니게)
-	SnowFXActor->AttachToActor(Player, FAttachmentTransformRules::KeepRelativeTransform);
-	SnowFXActor->GetRootComponent()->SetRelativeLocation(FVector(0, 0, 200)); // 머리 위로 띄우기
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		AEmberPlayerController* Controller = Cast<AEmberPlayerController>(*It);
+		if (Controller)
+		{
+			Controller->SpawnSnowFX(); // 클라이언트에서 자기 FX 생성
+		}
+	}
 }
