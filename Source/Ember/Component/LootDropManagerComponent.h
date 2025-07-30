@@ -35,4 +35,10 @@ protected:
 	/** 드롭되는 아이템 액터 클래스 */
 	UPROPERTY(EditDefaultsOnly, Category = "Loot")
 	TSubclassOf<APickupItemActor> PickupItemActorClass;
+	// 피직스용 함수 및 해당 내용에서 쓸 TMap
+	UFUNCTION()
+	void OnLootItemHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	TMap<UPrimitiveComponent*, APickupItemActor*> ActiveLootMap;
+
 };

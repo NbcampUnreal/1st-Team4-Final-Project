@@ -144,7 +144,7 @@ void ULootDropManagerComponent::HandleMonsterDied(const FMonsterDiedMessage& Mes
 
 			if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, Params))
 			{
-				SpawnLocation.Z = HitResult.ImpactPoint.Z + 100.0f;
+				SpawnLocation.Z = HitResult.ImpactPoint.Z + 30.0f;
 			}
 
 			FTransform SpawnTransform(FRotator::ZeroRotator, SpawnLocation);
@@ -187,7 +187,7 @@ void ULootDropManagerComponent::HandleMonsterDied(const FMonsterDiedMessage& Mes
 
 					// Impulse 적용
 					FVector ImpulseDir = UKismetMathLibrary::RandomUnitVector();
-					ImpulseDir.Z = FMath::Clamp(ImpulseDir.Z, 0.3f, 0.8f);
+					ImpulseDir.Z = FMath::Clamp(ImpulseDir.Z, 0.3f, 0.6f);
 					const float ImpulseStrength = 500.f;
 					MeshComp->AddImpulse(ImpulseDir * ImpulseStrength, NAME_None, true);
 				}
