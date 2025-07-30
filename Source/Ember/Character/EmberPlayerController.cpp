@@ -1,13 +1,18 @@
 #include "EmberPlayerController.h"
+
+#include "EmberCharacter.h"
 #include "Utility/CLog.h"
 #include "EnhancedInputSubsystems.h"
+#include "kismet/GameplayStatics.h"
 #include "InputMappingContext.h"
+
+
 
 void AEmberPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// LocalPlayer¿Í PawnÀÌ À¯È¿ÇÑ ½ÃÁ¡±îÁö ±â´Ù¸²
+	// LocalPlayerï¿½ï¿½ Pawnï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ù¸ï¿½
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEmberPlayerController::SetupInputMapping, 0.1f, false);
 }
@@ -35,4 +40,20 @@ void AEmberPlayerController::SetupInputMapping()
 	}
 
 	subsystem->AddMappingContext(DefaultMappingContext, 0);
+}
+
+void AEmberPlayerController::SpawnSnowFX_Implementation()
+{
+	if (!SnowFXClass) return;
+	
+	AEmberCharacter* EmCharacter = Cast<AEmberCharacter>(GetPawn());
+	FVector EmSpawnLocation = EmCharacter->GetActorLocation();
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	AActor* SnowFXActor = GetWorld()->SpawnActor<AActor>(
+				SnowFXClass, EmSpawnLocation, FRotator::ZeroRotator, SpawnParams);
+	
+	SnowFXActor->AttachToActor(EmCharacter, FAttachmentTransformRules::KeepRelativeTransform);
+	SnowFXActor->GetRootComponent()->SetRelativeLocation(FVector(0, 0, 200));
 }

@@ -1,10 +1,11 @@
 #include "Core/RaidGameMode.h"
 #include "Core/RaidGameState.h"
 #include "Character/EmberCharacter.h"
+#include "Character/EmberPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "Utility/CLog.h"
 #include "EngineUtils.h"
-#include "SNegativeActionButton.h"
-#include "kismet/GameplayStatics.h"
+
 
 ARaidGameMode::ARaidGameMode()
 {
@@ -24,7 +25,8 @@ void ARaidGameMode::UpdateWeather()
 {
 	if (!IsOnFX)
 	{
-		RaidGameState->SpawnSnowFX();
+		OrderSpawnSnowFX();
+		// RaidGameState->SpawnSnowFX();
 		IsOnFX = true;
 	}
 	switch (CurrentWeather)
@@ -40,9 +42,10 @@ void ARaidGameMode::UpdateWeather()
 		OnWeatherChanged();
 		break;
 	case EWeatherType::Storm:
-		CurrentWeather = EWeatherType::Storm;
+		CurrentWeather = EWeatherType::Clear;
 		UE_LOG(LogTemp, Warning, TEXT("Weather: %s"), *UEnum::GetValueAsString(CurrentWeather));
 		OnWeatherChanged();
+		break;
 	default: break;
 	}
 }
@@ -54,5 +57,17 @@ void ARaidGameMode::PlayerDamage()
 	{
 		AEmberCharacter* Player = *It;
 		if (!Player) continue;
+	}
+}
+
+void ARaidGameMode::OrderSpawnSnowFX()
+{
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		AEmberPlayerController* Controller = Cast<AEmberPlayerController>(*It);
+		if (Controller)
+		{
+			Controller->SpawnSnowFX(); // 클라이언트에서 자기 FX 생성
+		}
 	}
 }

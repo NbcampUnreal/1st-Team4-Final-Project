@@ -6,15 +6,14 @@
 void ARaidGameState::SpawnSnowFX_Implementation()
 {
 	if (!SnowFXClass) return;
-	if (IsNetMode(NM_Client))
-	{
-		
-		UE_LOG(LogTemp, Error, TEXT("Client: SpawnSnowFX triggered"));
-	}
-	else if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Error, TEXT("Server: SpawnSnowFX triggered"));
-	}
+	// if (IsNetMode(NM_Client))
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("Client: SpawnSnowFX triggered"));
+	// }
+	// else if (HasAuthority())
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("Server: SpawnSnowFX triggered"));
+	// }
 
 	// 월드 내 모든 EmberCharacter 찾기
 	TArray<AActor*> FoundCharacters;

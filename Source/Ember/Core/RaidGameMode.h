@@ -22,12 +22,14 @@ public:
 public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weather")
-	void OnWeatherChanged();
+	void OnWeatherChanged(); //날씨변경됨에 따른 비쥬얼 변경
 	
-	void UpdateWeather();
+	void UpdateWeather(); //날씨가 변경됨에 따른 전체적 설정
 	
-	void PlayerDamage();
+	void PlayerDamage(); //미구현
 
+	void OrderSpawnSnowFX(); //최초한번만 vfx를 스폰
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite ,Category = "FX")
 	EWeatherType CurrentWeather;
 private:
@@ -41,7 +43,7 @@ private:
 	float Temperature; //서버 온도
 
 	bool IsOnFX;
-	ARaidGameState* RaidGameState;
+	TObjectPtr<ARaidGameState> RaidGameState;
 	
 	
 	
