@@ -20,7 +20,8 @@ public class Ember : ModuleRules
 			"AIModule",
 			"GameplayAbilities",
 			"GamePlayTags",
-			"GamePlayTasks"
+			"GamePlayTasks",
+			"Niagara"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {"GameFeatures","GameplayAbilities","GameplayTasks","GameplayTags"});
