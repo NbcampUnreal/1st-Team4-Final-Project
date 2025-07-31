@@ -10,7 +10,18 @@ public class Ember : ModuleRules
 
 		PublicIncludePaths.Add(ModuleDirectory);
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "AIModule" });
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"EnhancedInput", 
+			"AIModule",
+			"GameplayAbilities",
+			"GamePlayTags",
+			"GamePlayTasks"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {"GameFeatures","GameplayAbilities","GameplayTasks","GameplayTags"});
 

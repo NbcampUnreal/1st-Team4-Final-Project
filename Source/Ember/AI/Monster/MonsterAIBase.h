@@ -3,11 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "MonsterAIBase.generated.h"
 
-UCLASS(Abstract)
-class EMBER_API AMonsterAIBase : public ACharacter
+class AMonsterAIWeapon;
+class UMonsterAIAttributeSet;
+class UMonsterAbilitySystemComponent;
+class UMonsterGameplayEffectComponent;
+
+UCLASS(Abstract, Blueprintable)
+class EMBER_API AMonsterAIBase : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -15,5 +21,29 @@ public:
 	AMonsterAIBase();
 
 protected:
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
+	
+public:
+	//~ IAbilitySystemInterface interface
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	UMonsterAbilitySystemComponent* GetMonsterAbilitySystemComponent() const;
+	//~ End of IAbilitySystemInterface
+
+public:
+	AMonsterAIWeapon* GetWeapon() { return WeaponActor; }
+
+private:
+	void InitializeMonsterAI();
+	
+protected:
+	UPROPERTY()
+	TObjectPtr<UMonsterAbilitySystemComponent> ASC;
+
+	UPROPERTY()
+	TObjectPtr<UMonsterAIAttributeSet> AttributeSet;
+	
+private:
+	UPROPERTY()
+	TObjectPtr<AMonsterAIWeapon> WeaponActor;
 };

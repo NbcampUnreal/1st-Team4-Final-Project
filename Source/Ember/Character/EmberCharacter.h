@@ -66,7 +66,6 @@ protected:
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-/* 팀 설정 */
 public:
 	//~ IGenericTeamAgentInterface interface
 	virtual FGenericTeamId GetGenericTeamId() const override;

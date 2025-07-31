@@ -1,0 +1,20 @@
+﻿#pragma once
+
+#include "EmberGameplayTags.h"
+
+namespace EmberGameplayTags
+{
+	// AI Ability
+	UE_DEFINE_GAMEPLAY_TAG(AI_Ability_HitReact,								"AI.Ability.HitReact");
+	UE_DEFINE_GAMEPLAY_TAG(AI_Ability_Attack,								"AI.Ability.Attack");
+	UE_DEFINE_GAMEPLAY_TAG(AI_Ability_Attack_Normal,						"AI.Ability.Attack.Normal");
+
+	// Status
+	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact,									"Status.HitReact");
+	
+	// Gameplay Event
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_HitReact,							"GameplayEvent.HitReact");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_Begin,						"GameplayEvent.Montage.Begin");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Montage_End,						"GameplayEvent.Montage.End");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Trace,								"GameplayEvent.Trace");
+}
