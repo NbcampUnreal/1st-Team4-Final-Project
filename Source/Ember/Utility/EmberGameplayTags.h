@@ -1,0 +1,19 @@
+﻿#pragma once
+#include "NativeGameplayTags.h"
+
+namespace EmberGameplayTags
+{
+	// Ability
+	EMBER_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(AI_Ability_HitReact);
+	EMBER_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(AI_Ability_Attack);
+	EMBER_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(AI_Ability_Attack_Normal);
+
+	// Status
+	EMBER_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_HitReact);
+	
+	// Gameplay Event
+	EMBER_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_HitReact);
+	EMBER_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_Begin);
+	EMBER_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Montage_End);
+	EMBER_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Trace);
+};
