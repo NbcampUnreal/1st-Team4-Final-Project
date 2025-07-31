@@ -14,6 +14,14 @@ class EMBER_API AEmberPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
+
+	//Spawn SnowFX
+	UFUNCTION(Client, reliable)
+	void SpawnSnowFX();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	TSubclassOf<AActor> SnowFXClass;
+	
 	// Enhanced Input Mapping Context
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
@@ -25,9 +33,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr< UInputAction> JumpAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* AttackAction;
+	TObjectPtr<UInputAction> AttackAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	class UInputAction* SprintAction;
+	TObjectPtr<UInputAction> SprintAction;
 
 protected:
 	virtual void BeginPlay() override;

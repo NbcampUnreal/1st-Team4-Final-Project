@@ -1,5 +1,7 @@
 #include "Component/WeaponComponent.h"
 
+#include "EmberWeaponBase.h"
+#include "WeaponData.h"
 #include "GameFramework/Character.h"
 #include "Utility/CLog.h"
 
@@ -25,11 +27,22 @@ void UWeaponComponent::BeginPlay()
 		DebugLogE("Weapon Data is null");
 		return;
 	}
-	WeaponAsset->Beginplay(OwnerCharacter);
+	WeaponAsset->Beginplay(OwnerCharacter,&WeaponData);
 }
 
 void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
+AEmberWeaponBase* UWeaponComponent::GetWeapon()
+{
+	if (WeaponData == nullptr)
+	{
+		DebugLogE("Weapon Data is null");
+		return nullptr;
+	}
+
+	return WeaponData->GetWeapon();
 }
 

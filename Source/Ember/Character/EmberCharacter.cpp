@@ -123,24 +123,32 @@ void AEmberCharacter::SetupGASInputComponent()
 		input->BindAction(PlayerController.Get()->JumpAction, ETriggerEvent::Completed,this,&AEmberCharacter::GASInputReleased, 0);
 		input->BindAction(PlayerController.Get()->SprintAction,ETriggerEvent::Triggered,this, &AEmberCharacter::GASInputPressed,1);
 		input->BindAction(PlayerController.Get()->SprintAction,ETriggerEvent::Completed,this, &AEmberCharacter::GASInputReleased,1);
+		input->BindAction(PlayerController.Get()->AttackAction, ETriggerEvent::Triggered, this, &AEmberCharacter::GASInputPressed, 2);
 	}
 }
 
 void AEmberCharacter::GASInputPressed(int32 Input)
 {
+	UE_LOG(LogTemp, Warning, TEXT("=== GASInputPressed Called, Input: %d ==="), Input);
+
 	FGameplayAbilitySpec* spec = ASC->FindAbilitySpecFromInputID(Input);
-	if (spec == nullptr)
+	if (spec != nullptr)
 	{
-		DebugLogE("spec is null");
-		return;
+		UE_LOG(LogTemp, Warning, TEXT("Spec Found, IsActive: %s"), spec->IsActive() ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogTemp, Warning, TEXT("InputPressed was: %s"), spec->InputPressed ? TEXT("True") : TEXT("False"));
+
+		spec->InputPressed = true;
+		if (spec->IsActive() == true)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Calling AbilitySpecInputPressed"));
+			ASC->AbilitySpecInputPressed(*spec);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Calling TryActivateAbility"));
+			ASC->TryActivateAbility(spec->Handle);
+		}
 	}
-
-	spec->InputPressed = true;
-
-	if (spec->IsActive() == true)
-		ASC->AbilitySpecInputPressed(*spec);
-	else
-		ASC->TryActivateAbility(spec->Handle);
 }
 
 void AEmberCharacter::GASInputReleased(int32 Input)

@@ -14,6 +14,16 @@ class EMBER_API ARaidGameState : public AGameState
 	GENERATED_BODY()
 	public:
 	
+	UFUNCTION(NetMulticast, reliable)
+	void SpawnSnowFX();
+
+	UPROPERTY(EditDefaultsOnly, Category = "FX")
+	TSubclassOf<AActor> SnowFXClass;
+
+	// UFUNCTION(BlueprintImplementableEvent, Category = "Weather")
+	// void OnWeatherChanged();
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite ,Category = "FX")
 	EWeatherType CurrentWeather;
 	EWorldTimeState CurrentTimeOfDay;
 };
