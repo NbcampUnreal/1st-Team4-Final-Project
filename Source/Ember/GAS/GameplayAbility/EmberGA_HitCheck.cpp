@@ -5,12 +5,15 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GAS/AbilityTask/EmberAT_Trace.h"
+#include "GAS/Attribute/EmberAS_Player.h"
 #include "GAS/TargetActor/EmberTA_Trace.h"
+#include "Tag/EmberGameplayTag.h"
 #include "Utility/CLog.h"
 
 UEmberGA_HitCheck::UEmberGA_HitCheck()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	CurrentLevel = 1.0f;
 }
 
 void UEmberGA_HitCheck::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -31,7 +34,24 @@ void UEmberGA_HitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDataHa
 		if (UAbilitySystemBlueprintLibrary::TargetDataHasHitResult(TargetDataHandle, i) == true)
 		{
 			FHitResult result = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetDataHandle,i);
-			DebugLogE(result.GetActor()->GetName());
+			DebugLogW(result.GetActor()->GetName());
+
+			UAbilitySystemComponent* sourceASC = GetAbilitySystemComponentFromActorInfo_Checked();
+			if (sourceASC == nullptr)
+			{
+				DebugLogE("source ASC is null");
+				return;
+			}
+			const UEmberAS_Player* sourceAttribute = sourceASC->GetSet<UEmberAS_Player>();
+			FGameplayEffectSpecHandle effectHandle = MakeOutgoingGameplayEffectSpec(AttackDamageEffect,CurrentLevel);
+			if (effectHandle == nullptr)
+			{
+				DebugLogE("effect handle is null");
+				return;
+			}
+
+			effectHandle.Data->SetSetByCallerMagnitude(ABTAG_DATA_DAMAGE, - sourceAttribute->GetAttackDamage());
+			ApplyGameplayEffectSpecToTarget(CurrentSpecHandle,CurrentActorInfo,CurrentActivationInfo,effectHandle,TargetDataHandle);
 		}
 	}
 	bool bReplicateEndAbility = true;

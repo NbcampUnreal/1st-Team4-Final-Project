@@ -3,11 +3,13 @@
 
 #include "GAS/TargetActor/EmberTA_Trace.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EmberWeaponBase.h"
 #include "Abilities/GameplayAbility.h"
 #include "Component/WeaponComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
+#include "GAS/Attribute/EmberAS_Player.h"
 #include "Utility/CLog.h"
 
 AEmberTA_Trace::AEmberTA_Trace()
@@ -37,9 +39,23 @@ void AEmberTA_Trace::ConfirmTargetingAndContinue()
 FGameplayAbilityTargetDataHandle AEmberTA_Trace::MakeTargetData() const
 {
 	ACharacter* character = Cast<ACharacter>(SourceActor);
+	UAbilitySystemComponent* asc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor);
+	if (asc == nullptr)
+	{
+		DebugLogE("asc is null");
+		return FGameplayAbilityTargetDataHandle();
+	}
+	const UEmberAS_Player* attribute = asc->GetSet<UEmberAS_Player>();
+	if (attribute == nullptr)
+	{
+		DebugLogE("attribute is null");
+		return FGameplayAbilityTargetDataHandle();
+	}
+
 	TArray<FHitResult> results;
-	float attackRange = 100.0f;
-	float attackRadius = 50.0f;
+	const float attackRange = attribute->GetAttackRange();
+	const float attackRadius = attribute->GetAttackRadius();
+
 	FCollisionQueryParams params(SCENE_QUERY_STAT(AEmberTA_Trace),false,character);
 	FVector forward = character->GetActorForwardVector();
 	FVector start = character->GetActorLocation() + forward * character->GetCapsuleComponent()->GetScaledCapsuleRadius();

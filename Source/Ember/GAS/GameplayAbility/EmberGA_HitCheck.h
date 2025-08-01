@@ -21,4 +21,10 @@ protected:
 
 	UFUNCTION()
 	void OnTraceResultCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle);
+
+protected:
+	UPROPERTY(EditAnywhere, Category="GAS")
+	TSubclassOf<UGameplayEffect> AttackDamageEffect;
+
+	float CurrentLevel;
 };
