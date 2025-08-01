@@ -3,15 +3,18 @@
 
 #include "EmberWeaponBase.h"
 
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "Item/RuneItem.h"
+#include "Utility/CHelpers.h"
 #include "Utility/CLog.h"
 
 // Sets default values
 AEmberWeaponBase::AEmberWeaponBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+ 	PrimaryActorTick.bCanEverTick = true;
+	CHelpers::CreateComponent(this,&MeshComp,TEXT("Mesh"));
+	CHelpers::CreateComponent(this, &Collision, TEXT("Collision"), MeshComp);
 	Cooldown = 1.0f;
 	//Durability = 100.0f;
 }
@@ -38,18 +41,18 @@ void AEmberWeaponBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AEmberWeaponBase::Attack()
-{
-	if (!CanAttack())
-	{
-		return;	
-	}
-
-	LastAttackTime = GetWorld()->TimeSeconds; /*  */
-
-	OnAttack();
-
-}
+//void AEmberWeaponBase::Attack()
+//{
+//	if (!CanAttack())
+//	{
+//		return;	
+//	}
+//
+//	LastAttackTime = GetWorld()->TimeSeconds; /*  */
+//
+//	OnAttack();
+//
+//}
 
 void AEmberWeaponBase::AttachTo(FName InSocketName)
 {
@@ -63,11 +66,11 @@ void AEmberWeaponBase::AttachTo(FName InSocketName)
 }
 
 
-bool AEmberWeaponBase::CanAttack() const
-{
-	float TimeSinceLast = GetWorld()->TimeSeconds - LastAttackTime;
-	return (TimeSinceLast >= Cooldown) && (Cooldown > 0.0f);
-}
+//bool AEmberWeaponBase::CanAttack() const
+//{
+//	float TimeSinceLast = GetWorld()->TimeSeconds - LastAttackTime;
+//	return (TimeSinceLast >= Cooldown) && (Cooldown > 0.0f);
+//}
 
 // Called every frame
 void AEmberWeaponBase::Tick(float DeltaTime)
