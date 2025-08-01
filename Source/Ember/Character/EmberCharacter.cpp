@@ -30,7 +30,8 @@ AEmberCharacter::AEmberCharacter()
 	CHelpers::CreateComponent(this, &SpringArm, "SpringArm", RootComponent);
 	SpringArm->TargetArmLength = 300.f; // ī�޶� �Ÿ�
 	SpringArm->bUsePawnControlRotation = true; // ���콺�� ȸ��
-
+	SpringArm->bDoCollisionTest = false;
+	
 	CHelpers::CreateComponent(this, &Camera,"Camera", SpringArm);
 	Camera->bUsePawnControlRotation = false; // ī�޶�� �������Ͽ� ���� (���� ȸ�� X)
 
@@ -39,7 +40,7 @@ AEmberCharacter::AEmberCharacter()
 	CHelpers::CreateActorComponent(this, &WeaponComponent, "Weapon Component");
 
 	bUseControllerRotationYaw = false;
-
+	
 	GetCharacterMovement()->bOrientRotationToMovement = true;// �̵� �������� ĳ���� ȸ��
 }
 void AEmberCharacter::BeginPlay()

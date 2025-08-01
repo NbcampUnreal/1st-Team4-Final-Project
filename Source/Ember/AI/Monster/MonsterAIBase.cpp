@@ -10,6 +10,7 @@
 #include "AI/Data/MonsterAITemplate.h"
 #include "AI/Weapon/MonsterAIWeapon.h"
 #include "MonsterAIAttributeSet.h"
+#include "GAS/Attribute/EmberAS_Player.h"
 
 AMonsterAIBase::AMonsterAIBase()
 {
@@ -19,7 +20,7 @@ AMonsterAIBase::AMonsterAIBase()
 	ASC->SetIsReplicated(true);
 	ASC->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 	
-	AttributeSet = CreateDefaultSubobject<UMonsterAIAttributeSet>(TEXT("AttributeSet"));
+	AttributeSet = CreateDefaultSubobject<UEmberAS_Player>(TEXT("AttributeSet"));
 }
 
 void AMonsterAIBase::PostInitializeComponents()

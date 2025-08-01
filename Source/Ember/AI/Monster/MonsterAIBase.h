@@ -8,7 +8,7 @@
 #include "MonsterAIBase.generated.h"
 
 class AMonsterAIWeapon;
-class UMonsterAIAttributeSet;
+class UEmberAS_Player;
 class UMonsterAbilitySystemComponent;
 class UMonsterGameplayEffectComponent;
 
@@ -41,7 +41,7 @@ protected:
 	TObjectPtr<UMonsterAbilitySystemComponent> ASC;
 
 	UPROPERTY()
-	TObjectPtr<UMonsterAIAttributeSet> AttributeSet;
+	TObjectPtr<UEmberAS_Player> AttributeSet;
 	
 private:
 	UPROPERTY()
