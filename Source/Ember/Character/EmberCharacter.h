@@ -13,6 +13,7 @@
 #include "InputAction.h"
 #include "EmberCharacter.generated.h"
 
+class UGameplayAbility;
 class UWeaponComponent;
 
 UCLASS()
@@ -36,7 +37,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> ASC;
 	UPROPERTY(EditAnywhere, Category = "GAS")
-	TMap<int32, TSubclassOf<class UGameplayAbility>> GameAbilities;
+	TArray< TSubclassOf<UGameplayAbility >> InputAbilities;
+	UPROPERTY(EditAnywhere, Category = "GAS")
+	TMap<int32, TSubclassOf<UGameplayAbility>> GameAbilities;
 
 public:
 	AEmberCharacter();

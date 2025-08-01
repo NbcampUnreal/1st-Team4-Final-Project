@@ -51,6 +51,8 @@ void AEmberCharacter::BeginPlay()
 void AEmberCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+	TObjectPtr<APlayerController> controller = CastChecked<APlayerController>(NewController);
+	controller->ConsoleCommand(TEXT("showdebug abilitysystem"));
 	TObjectPtr<AEmberPlayerState> state = GetPlayerState<AEmberPlayerState>();
 	if (state == nullptr)
 	{
@@ -66,6 +68,11 @@ void AEmberCharacter::PossessedBy(AController* NewController)
 	}
 	ASC->InitAbilityActorInfo(state,this);
 
+	for (const TSubclassOf<UGameplayAbility>& inputAbility : InputAbilities)
+	{
+		FGameplayAbilitySpec spec(inputAbility);
+		ASC->GiveAbility(spec);
+	}
 	for (const auto& gameAbility : GameAbilities)
 	{
 		FGameplayAbilitySpec spec(gameAbility.Value);
