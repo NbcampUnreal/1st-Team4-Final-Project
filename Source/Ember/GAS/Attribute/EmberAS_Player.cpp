@@ -19,8 +19,15 @@ void UEmberAS_Player::PostGameplayEffectExecute(const FGameplayEffectModCallback
 {
 	Super::PostGameplayEffectExecute(Data);
 
-	if (Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
+	float minimumHealth = 0.0f;
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
+		UE_LOG(LogTemp,Log,TEXT("Health : %f"), GetHealth());
+		SetHealth(FMath::Clamp(GetHealth(), minimumHealth, GetMaxHealth()));
+	}
+	else if (Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
+	{
+		UE_LOG(LogTemp,Log,TEXT("Damge : %f"), GetMetaDamage());
 		SetHealth(FMath::Clamp(GetHealth() - GetMetaDamage(), 0.0f, GetMaxHealth()));
 		SetMetaDamage(0.0f);
 	}
