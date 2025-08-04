@@ -13,25 +13,30 @@ UCLASS()
 class EMBER_API AEmberPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
 public:
 
-	//Spawn SnowFX
-	UFUNCTION(Client, reliable)
-	void SpawnSnowFX();
+	void SpawnFX(); //VFX 스폰
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Weather")
+	void ChangeFX(); //VFX 변경
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
 	TSubclassOf<AActor> SnowFXClass;
-	
+
+	UPROPERTY(BlueprintReadOnly, Category = "FX")
+	AActor* SnowFXActor;
+
 	// Enhanced Input Mapping Context
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<class UInputAction> MoveAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr< UInputAction> LookAction;
+	TObjectPtr<UInputAction> LookAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr< UInputAction> JumpAction;
+	TObjectPtr<UInputAction> JumpAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> AttackAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -42,6 +47,4 @@ protected:
 
 	UFUNCTION()
 	void SetupInputMapping();
-
-
 };

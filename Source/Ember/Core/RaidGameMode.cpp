@@ -23,51 +23,33 @@ void ARaidGameMode::BeginPlay()
 
 void ARaidGameMode::UpdateWeather()
 {
-	if (!IsOnFX)
-	{
-		OrderSpawnSnowFX();
-		// RaidGameState->SpawnSnowFX();
-		IsOnFX = true;
-	}
-	switch (CurrentWeather)
+	switch (RaidGameState->CurrentWeather)
 	{
 	case EWeatherType::Clear:
-		CurrentWeather = EWeatherType::Snow;
-		UE_LOG(LogTemp, Warning, TEXT("Weather: %s"), *UEnum::GetValueAsString(CurrentWeather));
-		OnWeatherChanged();
+		RaidGameState->CurrentWeather = EWeatherType::Snow;
+		UE_LOG(LogTemp, Warning, TEXT("Weather: %s"), *UEnum::GetValueAsString(RaidGameState->CurrentWeather));
+		RaidGameState->OnReplicatedUse();
 		break;
 	case EWeatherType::Snow:
-		CurrentWeather = EWeatherType::Storm;
-		UE_LOG(LogTemp, Warning, TEXT("Weather: %s"), *UEnum::GetValueAsString(CurrentWeather));
-		OnWeatherChanged();
+		RaidGameState->CurrentWeather = EWeatherType::Storm;
+		UE_LOG(LogTemp, Warning, TEXT("Weather: %s"), *UEnum::GetValueAsString(RaidGameState->CurrentWeather));
+		RaidGameState->OnReplicatedUse();
 		break;
 	case EWeatherType::Storm:
-		CurrentWeather = EWeatherType::Clear;
-		UE_LOG(LogTemp, Warning, TEXT("Weather: %s"), *UEnum::GetValueAsString(CurrentWeather));
-		OnWeatherChanged();
+		RaidGameState->CurrentWeather = EWeatherType::Clear;
+		UE_LOG(LogTemp, Warning, TEXT("Weather: %s"), *UEnum::GetValueAsString(RaidGameState->CurrentWeather));
+		RaidGameState->OnReplicatedUse();
 		break;
 	default: break;
 	}
 }
 
-void ARaidGameMode::PlayerDamage()
+void ARaidGameMode::PlayerDamage() const
 {
 	// 월드에서 모든 EmberCharacter 찾기
 	for (TActorIterator<AEmberCharacter> It(GetWorld()); It; ++It)
 	{
 		AEmberCharacter* Player = *It;
 		if (!Player) continue;
-	}
-}
-
-void ARaidGameMode::OrderSpawnSnowFX()
-{
-	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
-	{
-		AEmberPlayerController* Controller = Cast<AEmberPlayerController>(*It);
-		if (Controller)
-		{
-			Controller->SpawnSnowFX(); // 클라이언트에서 자기 FX 생성
-		}
 	}
 }
