@@ -52,7 +52,7 @@ FGameplayAbilityTargetDataHandle AEmberTA_Trace::MakeTargetData() const
 		return FGameplayAbilityTargetDataHandle();
 	}
 
-	TArray<FHitResult> results;
+	FHitResult result;
 	const float attackRange = attribute->GetAttackRange();
 	const float attackRadius = attribute->GetAttackRadius();
 
@@ -60,16 +60,14 @@ FGameplayAbilityTargetDataHandle AEmberTA_Trace::MakeTargetData() const
 	FVector forward = character->GetActorForwardVector();
 	FVector start = character->GetActorLocation() + forward * character->GetCapsuleComponent()->GetScaledCapsuleRadius();
 	FVector end = start + forward * attackRange;
-	bool hit = GetWorld()->SweepMultiByChannel(results,start,end,FQuat::Identity,ECC_Pawn,FCollisionShape::MakeSphere(attackRadius),params);
+	bool hit = GetWorld()->SweepSingleByChannel(result,start,end,FQuat::Identity,ECC_Pawn,FCollisionShape::MakeSphere(attackRadius),params);
 	FGameplayAbilityTargetDataHandle handle;
 
 	if (hit == true)
 	{
-		for (const FHitResult& result : results)
-		{
-			FGameplayAbilityTargetData_SingleTargetHit* targetData = new FGameplayAbilityTargetData_SingleTargetHit(result);
-			handle.Add(targetData);
-		}
+		FGameplayAbilityTargetData_SingleTargetHit* targetData = new FGameplayAbilityTargetData_SingleTargetHit(result);
+		CLog::Print(result.GetActor()->GetName());
+		handle.Add(targetData);
 	}
 
 #if ENABLE_DRAW_DEBUG

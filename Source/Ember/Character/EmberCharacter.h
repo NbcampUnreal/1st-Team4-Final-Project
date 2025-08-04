@@ -13,6 +13,7 @@
 #include "InputAction.h"
 #include "EmberCharacter.generated.h"
 
+class UGameplayEffect;
 class UGameplayAbility;
 class UWeaponComponent;
 
@@ -40,7 +41,13 @@ protected:
 	TArray< TSubclassOf<UGameplayAbility >> InputAbilities;
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TMap<int32, TSubclassOf<UGameplayAbility>> GameAbilities;
-
+	UPROPERTY(EditAnywhere, Category = "GAS")
+	TSubclassOf<UGameplayEffect> GETemperature;
+	UPROPERTY(EditAnywhere, Category = "GAS|TemperaturLevel")
+	float TemperatureLeve = 1.0f;
+	UPROPERTY(EditAnywhere, Category = "GAS|TemperaturLevel")
+	int32 MaxCount = 10.0f;
+	int32 Count;
 public:
 	AEmberCharacter();
 
@@ -66,6 +73,8 @@ protected:
 	void GASInputPressed(int32 Input);
 	void GASInputReleased(int32 Input);
 
+	void DamageTemperature();
+
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
@@ -76,4 +85,6 @@ public:
 	
 private:
 	TObjectPtr<class AEmberPlayerController> PlayerController;
+
+	FTimerHandle Timer;
 };

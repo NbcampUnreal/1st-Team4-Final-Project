@@ -45,8 +45,11 @@ AEmberCharacter::AEmberCharacter()
 }
 void AEmberCharacter::BeginPlay()
 {
+	TemperatureLeve = 1.0f;
 	Super::BeginPlay();
 	MoveComponent->OnWalk();
+	float temperature = TemperatureLeve;
+	GetWorld()->GetTimerManager().SetTimer(Timer, this,&AEmberCharacter::DamageTemperature, 2,true,2);
 }
 
 void AEmberCharacter::PossessedBy(AController* NewController)
@@ -171,6 +174,24 @@ void AEmberCharacter::GASInputReleased(int32 Input)
 	spec->InputPressed = false;
 	if (spec->IsActive() == true)
 		ASC->AbilityLocalInputReleased(Input);
+}
+
+void AEmberCharacter::DamageTemperature()
+{
+	Count++;
+	if (MaxCount == Count)
+	{
+		TemperatureLeve++;
+		FMath::Clamp(TemperatureLeve,1,3);
+		Count = 0;
+	}
+	FGameplayEffectContextHandle contextHandle = ASC->MakeEffectContext();
+	contextHandle.AddSourceObject(this);
+	FGameplayEffectSpecHandle specHandle = ASC->MakeOutgoingSpec(GETemperature,TemperatureLeve,contextHandle);
+	if (specHandle.IsValid())
+	{
+		ASC->BP_ApplyGameplayEffectSpecToSelf(specHandle);
+	}
 }
 
 UAbilitySystemComponent* AEmberCharacter::GetAbilitySystemComponent() const
