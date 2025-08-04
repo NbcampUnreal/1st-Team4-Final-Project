@@ -7,6 +7,8 @@
 #include "GameFramework/PlayerState.h"
 #include "EmberPlayerState.generated.h"
 
+class UEmberAS_Player;
+
 UCLASS()
 class EMBER_API AEmberPlayerState : public APlayerState, public IAbilitySystemInterface
 {
@@ -18,4 +20,6 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, Category="GAS")
 	TObjectPtr<UAbilitySystemComponent> ASC;
+	UPROPERTY(EditAnywhere, Category="GAS")
+	TObjectPtr<UEmberAS_Player> AttributeSet;
 };
