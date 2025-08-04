@@ -1,40 +1,24 @@
 #include "RaidGameState.h"
 #include "Character/EmberCharacter.h"
+#include "Character/EmberPlayerController.h"
 #include "kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
-
-void ARaidGameState::SpawnSnowFX_Implementation()
+ARaidGameState::ARaidGameState()
 {
-	if (!SnowFXClass) return;
-	// if (IsNetMode(NM_Client))
-	// {
-	// 	UE_LOG(LogTemp, Error, TEXT("Client: SpawnSnowFX triggered"));
-	// }
-	// else if (HasAuthority())
-	// {
-	// 	UE_LOG(LogTemp, Error, TEXT("Server: SpawnSnowFX triggered"));
-	// }
+	bReplicates = true;
+	CurrentWeather = EWeatherType::Clear;
+}
 
-	// 월드 내 모든 EmberCharacter 찾기
-	TArray<AActor*> FoundCharacters;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEmberCharacter::StaticClass(), FoundCharacters);
+void ARaidGameState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	for (AActor* Actor : FoundCharacters)
-	{
-		AEmberCharacter* EmberChar = Cast<AEmberCharacter>(Actor);
-		if (!EmberChar) continue;
+	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, CurrentWeather, COND_None, REPNOTIFY_Always);
+}
 
-		FVector SpawnLocation = EmberChar->GetActorLocation();
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-		AActor* SnowFXActor = GetWorld()->SpawnActor<AActor>(
-			SnowFXClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
-
-		if (!SnowFXActor) continue;
-
-		// EmberCharacter에 FX 어태치
-		SnowFXActor->AttachToActor(EmberChar, FAttachmentTransformRules::KeepRelativeTransform);
-		SnowFXActor->GetRootComponent()->SetRelativeLocation(FVector(0, 0, 200));
-	}
+void ARaidGameState::OnReplicatedUse() const
+{
+	AEmberPlayerController* Controller = Cast<AEmberPlayerController>(GetWorld()->GetFirstPlayerController());
+	Controller->ChangeFX();
 }

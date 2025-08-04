@@ -12,18 +12,18 @@ UCLASS()
 class EMBER_API ARaidGameState : public AGameState
 {
 	GENERATED_BODY()
-	public:
-	
-	UFUNCTION(NetMulticast, reliable)
-	void SpawnSnowFX();
+
+public:
+	ARaidGameState();
+
+	UFUNCTION()
+	void OnReplicatedUse() const;
+
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "FX")
 	TSubclassOf<AActor> SnowFXClass;
 
-	// UFUNCTION(BlueprintImplementableEvent, Category = "Weather")
-	// void OnWeatherChanged();
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite ,Category = "FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", ReplicatedUsing=OnReplicatedUse)
 	EWeatherType CurrentWeather;
-	EWorldTimeState CurrentTimeOfDay;
 };
