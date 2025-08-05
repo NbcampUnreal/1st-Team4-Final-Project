@@ -5,11 +5,15 @@
 #include "AttributeSet.h"
 #include "EmberAS_Player.generated.h"
 
+struct FGameplayEffectSpec;
+
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
+
+DECLARE_MULTICAST_DELEGATE_SixParams(FEmberAttributeEvent, AActor* /*EffectInstigator*/, AActor* /*EffectCauser*/, const FGameplayEffectSpec* /*EffectSpec*/, float /*EffectMagnitude*/, float /*OldValue*/, float /*NewValue*/);
 
 UCLASS()
 class EMBER_API UEmberAS_Player : public UAttributeSet
@@ -34,11 +38,25 @@ public:
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, DamageTemperature)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MetaTemperature)
 
+	virtual void GetLifetimeReplicatedProps(TArray < FLifetimeProperty > & OutLifetimeProps) const override;
+	
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	//virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 	//virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;;
 
+public:
+	mutable FEmberAttributeEvent OnHealthChanged;
+	mutable FEmberAttributeEvent OnOutOfHealth;
+
+protected:
+	UFUNCTION()
+	void OnRep_Health(const FGameplayAttributeData& OldValue);
+
+private:
+	FORCEINLINE bool HasHealthChanged() const;
+	FORCEINLINE bool IsDead() const;
+	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="HP", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxHealth;
@@ -69,4 +87,8 @@ protected:
 	FGameplayAttributeData DamageTemperature;
 	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MetaTemperature;
+
+private:
+	bool bOutOfHealth;
+	float PreviousHealth;
 };
