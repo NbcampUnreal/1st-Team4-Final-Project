@@ -16,13 +16,9 @@
 #include "Component/LootDropManagerComponent.h"
 #include "EmberCharacter.generated.h"
 
-<<<<<<< HEAD
 
-
-=======
 class UGameplayEffect;
 class UGameplayAbility;
->>>>>>> ba365bd79a733d9559315d4f9eb1d1f97b323e73
 class UWeaponComponent;
 
 UCLASS()
@@ -63,12 +59,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> ASC;
 	UPROPERTY(EditAnywhere, Category = "GAS")
-<<<<<<< HEAD
 	TMap<int32, TSubclassOf<class UGameplayAbility>> GameAbilities;
-=======
 	TArray< TSubclassOf<UGameplayAbility >> InputAbilities;
-	UPROPERTY(EditAnywhere, Category = "GAS")
-	TMap<int32, TSubclassOf<UGameplayAbility>> GameAbilities;
+
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TSubclassOf<UGameplayEffect> GETemperature;
 	UPROPERTY(EditAnywhere, Category = "GAS|TemperaturLevel")
@@ -76,18 +69,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|TemperaturLevel")
 	int32 MaxCount = 10.0f;
 	int32 Count;
-public:
-	AEmberCharacter();
+
 
 protected:
->>>>>>> ba365bd79a733d9559315d4f9eb1d1f97b323e73
 	virtual void BeginPlay() override;
 	UFUNCTION()
 	void Attack();
 	void SetupGASInputComponent();
 	void GASInputPressed(int32 Input);
 	void GASInputReleased(int32 Input);
-<<<<<<< HEAD
 	UPROPERTY()
 	TArray<APickupItemActor*> OverlappingItems;
 	UFUNCTION()
@@ -103,18 +93,9 @@ protected:
 	float InteractDistance = 500.0f;
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	bool bDrawInteractionDebug = true;
-=======
 
 	void DamageTemperature();
 
-public:
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-public:
-	//~ IGenericTeamAgentInterface interface
-	virtual FGenericTeamId GetGenericTeamId() const override;
-	//~ End of IGenericTeamAgentInterface interface
->>>>>>> ba365bd79a733d9559315d4f9eb1d1f97b323e73
 	
 private:
 	TObjectPtr<class AEmberPlayerController> PlayerController;
