@@ -2,7 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Template/ItemTemplate.h"
+#include "Template/RuneItemTemplate.h"
 #include "LootResultData.generated.h"
+
 
 // 레어리티 직접 선언 (별도 파일 없이)
 UENUM(BlueprintType)
@@ -20,7 +22,9 @@ struct FLootResultData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loot")
-	TSubclassOf<UItemTemplate> ItemTemplateClass;
+	TSubclassOf<UItemTemplate> ItemTemplateClass;	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loot")
+	TSubclassOf<URuneItemTemplate> RuneTemplateClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loot")
 	int32 Quantity = 1;

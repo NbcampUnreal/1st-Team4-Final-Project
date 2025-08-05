@@ -28,6 +28,8 @@ public:
 	UInputAction* AttackAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* SprintAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* InteractAction;
 
 protected:
 	virtual void BeginPlay() override;

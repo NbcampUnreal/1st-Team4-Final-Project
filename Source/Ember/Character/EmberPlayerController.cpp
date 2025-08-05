@@ -10,29 +10,22 @@ void AEmberPlayerController::BeginPlay()
 	// LocalPlayer와 Pawn이 유효한 시점까지 기다림
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEmberPlayerController::SetupInputMapping, 0.1f, false);
+	SetupInputMapping();
 }
 
 void AEmberPlayerController::SetupInputMapping()
 {
-	TObjectPtr<ULocalPlayer> player = GetLocalPlayer();
-	if (player == nullptr)
-	{
-		DebugLogE("Local player is null");
-		return;
-	}
+	UE_LOG(LogTemp, Warning, TEXT("[Controller] SetupInputMapping() called"));
 
-	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> subsystem = player->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
-	if (subsystem == nullptr)
+	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
 	{
-		DebugLogE("subsystem is null");
-		return;
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		{
+			if (DefaultMappingContext)
+			{
+				Subsystem->AddMappingContext(DefaultMappingContext, 0);
+				UE_LOG(LogTemp, Warning, TEXT("[Controller] MappingContext added"));
+			}
+		}
 	}
-
-	if (DefaultMappingContext == nullptr)
-	{
-		DebugLogE("Input Mapping Context is null");
-		return;
-	}
-
-	subsystem->AddMappingContext(DefaultMappingContext, 0);
 }
