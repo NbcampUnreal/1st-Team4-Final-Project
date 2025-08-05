@@ -7,7 +7,7 @@
 
 class UNiagaraSystem;
 
-UCLASS(BlueprintType)
+UCLASS(BlueprintType, Blueprintable)
 
 class EMBER_API UItemTemplate : public UDataAsset
 {
@@ -25,7 +25,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 	UTexture2D* Icon;
-
+	// UItemTemplate.h
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
+	UStaticMesh* ItemMesh;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 	int32 MaxStackSize = 1;
 

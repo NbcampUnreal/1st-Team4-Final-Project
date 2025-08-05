@@ -1,58 +1,117 @@
 #include "RuneSystemComponent.h"
 #include "Character/EmberCharacter.h"
 #include "EmberWeaponBase.h"
+#include "AbilitySystemComponent.h"       // ✅ GAS 컴포넌트 정의
+#include "Item/RuneItem.h"                     // ✅ ARuneItem 정의
+#include "Character/EmberCharacter.h"     // ✅ 캐릭터 참조
 #include "Item/RuneItem.h"
 
 URuneSystemComponent::URuneSystemComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
 
-    // �ʱ�ȭ
-    EquippedRunes.SetNum(MaxRuneSlots);
+    RuneSlots.SetNum(MaxRuneSlots);
 }
 
-bool URuneSystemComponent::EquipRune(ARuneItem* NewRune)
+bool URuneSystemComponent::EquipRune(ARuneItem* NewRune, int32 SlotIndex)
 {
-    if (!NewRune) return false;
+    if (!NewRune || !RuneSlots.IsValidIndex(SlotIndex)) return false;
 
-    // ����ִ� ���Կ� ����
-    for (int32 i = 0; i < EquippedRunes.Num(); ++i)
+    FRuneSlot& Slot = RuneSlots[SlotIndex];
+
+    // 기존 룬 제거
+    if (Slot.Rune)
     {
-        if (!EquippedRunes[i])
-        {
-            EquippedRunes[i] = NewRune;
+        RemoveRune(SlotIndex); // 내부적으로 Ability / Effect 제거
+    }
 
-            // �� ȿ�� ������ ���⼭ (ex. �ɷ�ġ ����)
-            UE_LOG(LogTemp, Log, TEXT("Rune equipped in slot %d: %s"), i, *NewRune->GetName());
+    if (AEmberCharacter* OwnerChar = Cast<AEmberCharacter>(GetOwner()))
+    {
+        if (UAbilitySystemComponent* ASC = OwnerChar->GetASC())
+        {
+            Slot.Rune = NewRune;
+
+            if (NewRune->GetGrantedAbility())
+            {
+                FGameplayAbilitySpec Spec(NewRune->GetGrantedAbility(), 1);
+                Slot.AbilityHandle = ASC->GiveAbility(Spec);
+            }
+
+            if (NewRune->GetGrantedEffect())
+            {
+                FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+                Slot.EffectHandle = ASC->ApplyGameplayEffectToSelf(
+                    NewRune->GetGrantedEffect()->GetDefaultObject<UGameplayEffect>(), 1, Context);
+            }
+
+            UE_LOG(LogTemp, Log, TEXT("Rune equipped in slot %d: %s"), SlotIndex, *NewRune->GetName());
             return true;
         }
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("No empty rune slots available."));
-
-    if (AEmberCharacter* OwnerChar = Cast<AEmberCharacter>(GetOwner()))
-    {
-        //if (AEmberWeaponBase* Weapon = Cast<AEmberWeaponBase>(OwnerChar->GetCurrentWeapon()))
-        {
-            //AEmberWeaponBase* Weapon; /* 이거 지우고 위에꺼 활성화.캐릭터 쪽에 들고있는 무기 가져오는 함수 추가해야함 */
-            //Weapon->ApplyRune(NewRune);
-        }
-    }
     return false;
 }
 
+
+
 void URuneSystemComponent::RemoveRune(int32 SlotIndex)
 {
-    if (EquippedRunes.IsValidIndex(SlotIndex) && EquippedRunes[SlotIndex])
-    {
-        UE_LOG(LogTemp, Log, TEXT("Rune removed from slot %d: %s"), SlotIndex, *EquippedRunes[SlotIndex]->GetName());
-        EquippedRunes[SlotIndex] = nullptr;
+    if (!RuneSlots.IsValidIndex(SlotIndex)) return;
 
-        // ȿ�� ���ŵ� �ʿ��ϸ� ���⿡ �߰�
+    FRuneSlot& Slot = RuneSlots[SlotIndex];
+
+    if (!Slot.Rune) return;
+
+    if (AEmberCharacter* OwnerChar = Cast<AEmberCharacter>(GetOwner()))
+    {
+        UAbilitySystemComponent* ASC = OwnerChar->GetASC();
+        if (ASC)
+        {
+            if (Slot.AbilityHandle.IsValid())
+            {
+                ASC->ClearAbility(Slot.AbilityHandle);
+            }
+
+            if (Slot.EffectHandle.IsValid())
+            {
+                ASC->RemoveActiveGameplayEffect(Slot.EffectHandle);
+            }
+        }
     }
+
+    UE_LOG(LogTemp, Log, TEXT("Rune removed from slot %d: %s"), SlotIndex, *Slot.Rune->GetName());
+
+    Slot = FRuneSlot(); // 슬롯 초기화 (Rune=nullptr, 핸들 비움)
 }
+
 
 ARuneItem* URuneSystemComponent::GetRune(int32 SlotIndex) const
 {
-    return EquippedRunes.IsValidIndex(SlotIndex) ? EquippedRunes[SlotIndex] : nullptr;
+    return RuneSlots.IsValidIndex(SlotIndex) ? RuneSlots[SlotIndex].Rune : nullptr;
+}
+
+FRuneStat URuneSystemComponent::GetRuneStatAtSlot(int32 SlotIndex) const
+{
+    if (!RuneSlots.IsValidIndex(SlotIndex)) return FRuneStat();
+
+    const FRuneSlot& Slot = RuneSlots[SlotIndex];
+    return (Slot.Rune != nullptr) ? Slot.Rune->GetRuneStat() : FRuneStat();
+}
+
+bool URuneSystemComponent::IsBetterRune(int32 SlotIndex, const ARuneItem* NewRune) const
+{
+    if (!NewRune || !RuneSlots.IsValidIndex(SlotIndex)) return false;
+
+    const FRuneSlot& ExistingSlot = RuneSlots[SlotIndex];
+
+    if (!ExistingSlot.Rune)
+    {
+        // 빈 슬롯이면 무조건 새 룬이 낫다
+        return true;
+    }
+
+    const FRuneStat& OldStat = ExistingSlot.Rune->GetRuneStat();
+    const FRuneStat& NewStat = NewRune->GetRuneStat();
+
+    return NewStat.Power > OldStat.Power; // 단순 Power 비교 기준
 }

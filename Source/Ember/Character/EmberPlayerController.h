@@ -40,7 +40,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> AttackAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
+<<<<<<< HEAD
+	class UInputAction* SprintAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* InteractAction;
+=======
 	TObjectPtr<UInputAction> SprintAction;
+>>>>>>> ba365bd79a733d9559315d4f9eb1d1f97b323e73
 
 protected:
 	virtual void BeginPlay() override;

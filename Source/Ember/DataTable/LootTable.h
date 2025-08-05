@@ -4,7 +4,9 @@
 #include "Engine/DataTable.h"
 #include "Item/LootResultData.h" // 여기서 enum 포함됨
 #include "Template/ItemTemplate.h"
+#include "Template/RuneItemTemplate.h"
 #include "LootTable.generated.h"
+
 
 
 // 희귀도별 가중치 정보
@@ -28,7 +30,8 @@ struct FLootDropItem
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loot")
 	TSubclassOf<class UItemTemplate> ItemTemplateClass;
-
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URuneItemTemplate> RuneTemplateClass; // 추가
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loot")
 	float DropChance = 1.0f;
 
