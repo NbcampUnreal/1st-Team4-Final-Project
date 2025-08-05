@@ -32,6 +32,12 @@ public:
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, AttackDamage)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MetaDamage)
 
+	ATTRIBUTE_ACCESSORS(UEmberAS_Player, PlayerTemperature)
+	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MaxPlayerTemperature)
+	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MaxDamageTemperature)
+	ATTRIBUTE_ACCESSORS(UEmberAS_Player, DamageTemperature)
+	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MetaTemperature)
+
 	virtual void GetLifetimeReplicatedProps(TArray < FLifetimeProperty > & OutLifetimeProps) const override;
 	
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
@@ -54,7 +60,7 @@ private:
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="HP", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxHealth;
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="HP", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, Category="HP", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Health;
 	UPROPERTY(BlueprintReadOnly, Category="Attack", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxAttackRange;
@@ -70,6 +76,17 @@ protected:
 	FGameplayAttributeData AttackDamage;
 	UPROPERTY(BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MetaDamage;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData PlayerTemperature;
+	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData MaxPlayerTemperature;
+	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData MaxDamageTemperature;
+	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData DamageTemperature;
+	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData MetaTemperature;
 
 private:
 	bool bOutOfHealth;

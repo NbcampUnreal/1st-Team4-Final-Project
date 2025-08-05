@@ -1,4 +1,5 @@
 ﻿#include "Item/Drop/PickupItemActor.h"
+#include "Character/EmberCharacter.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "NiagaraFunctionLibrary.h" // Niagara 관련 함수들
@@ -8,15 +9,26 @@ APickupItemActor::APickupItemActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	
-	// 물리 및 충돌 설정
-	MeshComponent->SetSimulatePhysics(false);               // 물리 시뮬레이션 OFF
-	MeshComponent->SetEnableGravity(false);                 // 중력 적용 X
-	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly); // 물리 충돌 무효
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+
+	CollisionComponent->InitSphereRadius(100.f);
+	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CollisionComponent->SetCollisionObjectType(ECC_WorldDynamic);
+	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	CollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	CollisionComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	CollisionComponent->SetGenerateOverlapEvents(true);
+
+	RootComponent = CollisionComponent;
+
+	MeshComponent->SetupAttachment(RootComponent); // 충돌 위에 메쉬 배치
+	MeshComponent->SetSimulatePhysics(false);
+	MeshComponent->SetEnableGravity(false);
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	MeshComponent->SetCollisionObjectType(ECC_WorldDynamic);
 	MeshComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
-	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap); // 캐릭터와는 겹치기만
+	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
 void APickupItemActor::BeginPlay()
@@ -27,31 +39,64 @@ void APickupItemActor::BeginPlay()
 void APickupItemActor::InitializeLootDrop(const FLootResultData& InLootData)
 {
 	LootData = InLootData;
-	
 
-	// 여기서 아이템 외형/색상 등 적용 가능 (예: 희귀도 색상)
-	if (!LootData.ItemTemplateClass)
-		return;
+	UStaticMesh* TargetMesh = nullptr;
 
-	const UItemTemplate* TemplateCDO = LootData.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
-
-	// Niagara 이펙트가 설정되어 있을 경우
-	if (TemplateCDO && TemplateCDO->DropEffect)
+	// 아이템 메시 가져오기
+	if (LootData.ItemTemplateClass)
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAttached(
-			TemplateCDO->DropEffect,
-			RootComponent,            // 또는 MeshComponent
-			NAME_None,
-			FVector::ZeroVector,
-			FRotator::ZeroRotator,
-			EAttachLocation::KeepRelativeOffset,
-			true
-		);
+		const UItemTemplate* TemplateCDO = LootData.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
+		if (TemplateCDO)
+		{
+			TargetMesh = TemplateCDO->ItemMesh;
+		}
+	}
+	// 룬 메시 가져오기
+	else if (LootData.RuneTemplateClass)
+	{
+		const URuneItemTemplate* RuneCDO = LootData.RuneTemplateClass->GetDefaultObject<URuneItemTemplate>();
+		if (RuneCDO)
+		{
+			TargetMesh = RuneCDO->RuneMesh;
+		}
+	}
+
+	// 메시 적용
+	if (TargetMesh)
+	{
+		MeshComponent->SetStaticMesh(TargetMesh);
 	}
 }
 
+
+
 void APickupItemActor::OnPickedUp(AActor* Picker)
 {
-	// 인벤토리에 추가하거나, 메시 출력 등 로직
+	if (!Picker) return;
+
+	AEmberCharacter* Player = Cast<AEmberCharacter>(Picker);
+	if (!Player) return;
+
+	// 아이템 처리
+	FString ItemName;
+
+	if (LootData.ItemTemplateClass)
+	{
+		const UItemTemplate* Template = LootData.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
+		ItemName = Template ? Template->DisplayName.ToString() : TEXT("Unknown Item");
+	}
+	else if (LootData.RuneTemplateClass)
+	{
+		const URuneItemTemplate* Template = LootData.RuneTemplateClass->GetDefaultObject<URuneItemTemplate>();
+		ItemName = Template ? Template->RuneName.ToString() : TEXT("Unknown Rune");
+	}
+	else
+	{
+		ItemName = TEXT("Unnamed Loot");
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Picked up: %s x%d"), *ItemName, LootData.Quantity);
+
+
 	Destroy();
 }

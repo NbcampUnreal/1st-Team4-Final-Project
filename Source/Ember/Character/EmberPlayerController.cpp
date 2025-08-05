@@ -6,32 +6,46 @@
 #include "kismet/GameplayStatics.h"
 #include "InputMappingContext.h"
 
-
-
 void AEmberPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
 	// LocalPlayer�� Pawn�� ��ȿ�� �������� ��ٸ�
 	FTimerHandle TimerHandle;
+	FTimerHandle TimerHandle2;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEmberPlayerController::SetupInputMapping, 0.1f, false);
+<<<<<<< HEAD
+	SetupInputMapping();
+=======
+	if (IsLocalController())
+	{
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle2, this, &AEmberPlayerController::SpawnFX, 1.5f, false);
+	}
+>>>>>>> ba365bd79a733d9559315d4f9eb1d1f97b323e73
 }
 
 void AEmberPlayerController::SetupInputMapping()
 {
-	TObjectPtr<ULocalPlayer> player = GetLocalPlayer();
-	if (player == nullptr)
-	{
-		DebugLogE("Local player is null");
-		return;
-	}
+	UE_LOG(LogTemp, Warning, TEXT("[Controller] SetupInputMapping() called"));
 
-	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> subsystem = player->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+<<<<<<< HEAD
+	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
+=======
+	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> subsystem = player->GetSubsystem<
+		UEnhancedInputLocalPlayerSubsystem>();
 	if (subsystem == nullptr)
+>>>>>>> ba365bd79a733d9559315d4f9eb1d1f97b323e73
 	{
-		DebugLogE("subsystem is null");
-		return;
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		{
+			if (DefaultMappingContext)
+			{
+				Subsystem->AddMappingContext(DefaultMappingContext, 0);
+				UE_LOG(LogTemp, Warning, TEXT("[Controller] MappingContext added"));
+			}
+		}
 	}
+<<<<<<< HEAD
+=======
 
 	if (DefaultMappingContext == nullptr)
 	{
@@ -42,18 +56,19 @@ void AEmberPlayerController::SetupInputMapping()
 	subsystem->AddMappingContext(DefaultMappingContext, 0);
 }
 
-void AEmberPlayerController::SpawnSnowFX_Implementation()
+void AEmberPlayerController::SpawnFX()
 {
 	if (!SnowFXClass) return;
-	
+
 	AEmberCharacter* EmCharacter = Cast<AEmberCharacter>(GetPawn());
 	FVector EmSpawnLocation = EmCharacter->GetActorLocation();
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	
-	AActor* SnowFXActor = GetWorld()->SpawnActor<AActor>(
-				SnowFXClass, EmSpawnLocation, FRotator::ZeroRotator, SpawnParams);
-	
+
+	SnowFXActor = GetWorld()->SpawnActor<AActor>(
+		SnowFXClass, EmSpawnLocation, FRotator::ZeroRotator, SpawnParams);
+
 	SnowFXActor->AttachToActor(EmCharacter, FAttachmentTransformRules::KeepRelativeTransform);
 	SnowFXActor->GetRootComponent()->SetRelativeLocation(FVector(0, 0, 200));
+>>>>>>> ba365bd79a733d9559315d4f9eb1d1f97b323e73
 }
