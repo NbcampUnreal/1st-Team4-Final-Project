@@ -30,7 +30,8 @@ AEmberCharacter::AEmberCharacter()
 	CHelpers::CreateComponent(this, &SpringArm, "SpringArm", RootComponent);
 	SpringArm->TargetArmLength = 300.f; // ī�޶� �Ÿ�
 	SpringArm->bUsePawnControlRotation = true; // ���콺�� ȸ��
-
+	SpringArm->bDoCollisionTest = false;
+	
 	CHelpers::CreateComponent(this, &Camera,"Camera", SpringArm);
 	Camera->bUsePawnControlRotation = false; // ī�޶�� �������Ͽ� ���� (���� ȸ�� X)
 
@@ -39,7 +40,7 @@ AEmberCharacter::AEmberCharacter()
 	CHelpers::CreateActorComponent(this, &WeaponComponent, "Weapon Component");
 
 	bUseControllerRotationYaw = false;
-
+	
 	GetCharacterMovement()->bOrientRotationToMovement = true;// �̵� �������� ĳ���� ȸ��
 
 	PickupSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PickupSphere"));
@@ -55,6 +56,7 @@ AEmberCharacter::AEmberCharacter()
 }
 void AEmberCharacter::BeginPlay()
 {
+	TemperatureLeve = 1.0f;
 	Super::BeginPlay();
 	MoveComponent->OnWalk();
 
@@ -67,6 +69,8 @@ void AEmberCharacter::BeginPlay()
 void AEmberCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+	TObjectPtr<APlayerController> controller = CastChecked<APlayerController>(NewController);
+	controller->ConsoleCommand(TEXT("showdebug abilitysystem"));
 	TObjectPtr<AEmberPlayerState> state = GetPlayerState<AEmberPlayerState>();
 	if (state == nullptr)
 	{
@@ -82,6 +86,11 @@ void AEmberCharacter::PossessedBy(AController* NewController)
 	}
 	ASC->InitAbilityActorInfo(state,this);
 
+	for (const TSubclassOf<UGameplayAbility>& inputAbility : InputAbilities)
+	{
+		FGameplayAbilitySpec spec(inputAbility);
+		ASC->GiveAbility(spec);
+	}
 	for (const auto& gameAbility : GameAbilities)
 	{
 		FGameplayAbilitySpec spec(gameAbility.Value);
@@ -148,24 +157,32 @@ void AEmberCharacter::SetupGASInputComponent()
 		input->BindAction(PlayerController.Get()->JumpAction, ETriggerEvent::Completed,this,&AEmberCharacter::GASInputReleased, 0);
 		input->BindAction(PlayerController.Get()->SprintAction,ETriggerEvent::Triggered,this, &AEmberCharacter::GASInputPressed,1);
 		input->BindAction(PlayerController.Get()->SprintAction,ETriggerEvent::Completed,this, &AEmberCharacter::GASInputReleased,1);
+		input->BindAction(PlayerController.Get()->AttackAction, ETriggerEvent::Triggered, this, &AEmberCharacter::GASInputPressed, 2);
 	}
 }
 
 void AEmberCharacter::GASInputPressed(int32 Input)
 {
+	UE_LOG(LogTemp, Warning, TEXT("=== GASInputPressed Called, Input: %d ==="), Input);
+
 	FGameplayAbilitySpec* spec = ASC->FindAbilitySpecFromInputID(Input);
-	if (spec == nullptr)
+	if (spec != nullptr)
 	{
-		DebugLogE("spec is null");
-		return;
+		UE_LOG(LogTemp, Warning, TEXT("Spec Found, IsActive: %s"), spec->IsActive() ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogTemp, Warning, TEXT("InputPressed was: %s"), spec->InputPressed ? TEXT("True") : TEXT("False"));
+
+		spec->InputPressed = true;
+		if (spec->IsActive() == true)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Calling AbilitySpecInputPressed"));
+			ASC->AbilitySpecInputPressed(*spec);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Calling TryActivateAbility"));
+			ASC->TryActivateAbility(spec->Handle);
+		}
 	}
-
-	spec->InputPressed = true;
-
-	if (spec->IsActive() == true)
-		ASC->AbilitySpecInputPressed(*spec);
-	else
-		ASC->TryActivateAbility(spec->Handle);
 }
 
 void AEmberCharacter::GASInputReleased(int32 Input)
@@ -180,6 +197,24 @@ void AEmberCharacter::GASInputReleased(int32 Input)
 	spec->InputPressed = false;
 	if (spec->IsActive() == true)
 		ASC->AbilityLocalInputReleased(Input);
+}
+
+void AEmberCharacter::DamageTemperature()
+{
+	Count++;
+	if (MaxCount == Count)
+	{
+		TemperatureLeve++;
+		FMath::Clamp(TemperatureLeve,1,3);
+		Count = 0;
+	}
+	FGameplayEffectContextHandle contextHandle = ASC->MakeEffectContext();
+	contextHandle.AddSourceObject(this);
+	FGameplayEffectSpecHandle specHandle = ASC->MakeOutgoingSpec(GETemperature,TemperatureLeve,contextHandle);
+	if (specHandle.IsValid())
+	{
+		ASC->BP_ApplyGameplayEffectSpecToSelf(specHandle);
+	}
 }
 
 UAbilitySystemComponent* AEmberCharacter::GetAbilitySystemComponent() const

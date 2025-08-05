@@ -21,7 +21,11 @@ public:
 	AMonsterAIController();
 
 protected:
+	//~ AAIController Override
 	virtual void BeginPlay() override;
+	virtual void OnPossess(APawn* Possessed) override;
+	virtual void OnUnPossess() override;
+	//~ End of AAIController Override
 
 /* 팀 설정 */
 public:
@@ -32,7 +36,7 @@ public:
 /* AI 감지 */
 protected:
 	UFUNCTION()
-	virtual void OnTargetPerceptionUpdated(AActor* Actor, struct FAIStimulus Stimulus);
+	virtual void OnTargetPerceptionUpdated(AActor* PerceivedActor, struct FAIStimulus Stimulus);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -51,4 +55,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AI|Sight")
 	float SightAngleDegree = 60.f;
+
+/* Base */
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AI|Base")
+	TObjectPtr<UBehaviorTree> BTAsset;
 };

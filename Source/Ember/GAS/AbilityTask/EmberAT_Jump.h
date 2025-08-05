@@ -15,7 +15,6 @@ class EMBER_API UEmberAT_Jump : public UAbilityTask
 public:
 	UEmberAT_Jump();
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Jump", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-
 	static UEmberAT_Jump* CreateTask(UGameplayAbility* OwningAbility);
 
 protected:

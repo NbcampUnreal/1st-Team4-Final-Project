@@ -12,8 +12,18 @@ UCLASS()
 class EMBER_API ARaidGameState : public AGameState
 {
 	GENERATED_BODY()
-	public:
-	
+
+public:
+	ARaidGameState();
+
+	UFUNCTION()
+	void OnReplicatedUse() const;
+
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "FX")
+	TSubclassOf<AActor> SnowFXClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", ReplicatedUsing=OnReplicatedUse)
 	EWeatherType CurrentWeather;
-	EWorldTimeState CurrentTimeOfDay;
 };

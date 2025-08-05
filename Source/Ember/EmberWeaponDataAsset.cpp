@@ -4,6 +4,7 @@
 #include "EmberWeaponDataAsset.h"
 
 #include "EmberWeaponBase.h"
+#include "WeaponData.h"
 #include "GameFramework/Character.h"
 #include "Utility/CLog.h"
 
@@ -12,7 +13,7 @@ UWeaponDataAsset::UWeaponDataAsset()
 	WeaponClass = AEmberWeaponBase::StaticClass();
 }
 
-void UWeaponDataAsset::Beginplay(ACharacter* InOwner)
+void UWeaponDataAsset::Beginplay(ACharacter* InOwner, UWeaponData** OutWeaponData)
 {
 	AEmberWeaponBase* weapon{};
 
@@ -25,4 +26,7 @@ void UWeaponDataAsset::Beginplay(ACharacter* InOwner)
 	FActorSpawnParameters parames;
 	parames.Owner = InOwner;
 	weapon = InOwner->GetWorld()->SpawnActor<AEmberWeaponBase>(WeaponClass, parames);
+
+	*OutWeaponData = NewObject<UWeaponData>();
+	(*OutWeaponData)->WeaponBase = weapon;
 }

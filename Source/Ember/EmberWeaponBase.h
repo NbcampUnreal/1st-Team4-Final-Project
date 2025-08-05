@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "EmberWeaponBase.generated.h"
 
+class UCapsuleComponent;
+
 UCLASS()
 class EMBER_API AEmberWeaponBase : public AActor
 {
@@ -16,8 +18,8 @@ public:
 	AEmberWeaponBase();
 
 	/* 공격 */
-	UFUNCTION(BlueprintCallable, Category="Weapon")
-	void Attack();
+	/*UFUNCTION(BlueprintCallable, Category="Weapon")
+	void Attack();*/
 	UFUNCTION(BlueprintCallable)
 	void AttachTo(FName InSocketName);
 	/* 공격 쿨다운 (초) */
@@ -46,10 +48,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	float LastAttackTime; /* 쿨타임 체크용 */
-	bool CanAttack() const;
-	virtual void OnAttack() PURE_VIRTUAL(AEmberWeaponBase::OnAttack, );
+	/*bool CanAttack() const;
+	virtual void OnAttack() PURE_VIRTUAL(AEmberWeaponBase::OnAttack, );*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon|Mesh")
-	USkeletalMeshComponent* MeshComp;
+	TObjectPtr<USkeletalMeshComponent> MeshComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon|Mesh")
+	TObjectPtr<UCapsuleComponent> Collision;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
