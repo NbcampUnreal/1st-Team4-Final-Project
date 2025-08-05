@@ -17,7 +17,7 @@ class EMBER_API AMonsterAIWeapon : public AActor
 
 public:
 	AMonsterAIWeapon(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
+	
 protected:
 	virtual void BeginPlay() override;
 	
