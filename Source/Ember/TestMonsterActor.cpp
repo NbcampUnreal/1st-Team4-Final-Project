@@ -1,6 +1,7 @@
 #include "TestMonsterActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Interface/LootableInterface.h"
+#include "ALootManagerActor.h"
 
 ATestMonsterActor::ATestMonsterActor()
 {
@@ -21,16 +22,14 @@ void ATestMonsterActor::SimulateDeath()
 	Message.MonsterID = FName("Test");           // MasterLootTable에 "TestMonster" RowName 필요
 	Message.DeathLocation = GetActorLocation();
 
-	// 2. 월드에서 LootableInterface 구현체 탐색
-	TArray<AActor*> FoundLootables;
-	UGameplayStatics::GetAllActorsWithInterface(GetWorld(), ULootableInterface::StaticClass(), FoundLootables);
-
-	for (AActor* LootableActor : FoundLootables)
+	// 2. 싱글톤 LootManagerActor 가져오기
+	if (ALootManagerActor* LootManager = ALootManagerActor::GetLootManager(this))
 	{
-		if (LootableActor && LootableActor->GetClass()->ImplementsInterface(ULootableInterface::StaticClass()))
-		{
-			ILootableInterface::Execute_NotifyMonsterDied(LootableActor, Message);
-			UE_LOG(LogTemp, Log, TEXT("[Test] Sent MonsterDiedMessage to %s"), *LootableActor->GetName());
-		}
+		ILootableInterface::Execute_NotifyMonsterDied(LootManager, Message);
+		UE_LOG(LogTemp, Log, TEXT("[Test] Sent MonsterDiedMessage to %s"), *LootManager->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[Test] No ALootManagerActor found (singleton not initialized)"));
 	}
 }

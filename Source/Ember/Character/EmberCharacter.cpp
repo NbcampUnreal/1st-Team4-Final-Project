@@ -321,39 +321,45 @@ void AEmberCharacter::Attack()
 void AEmberCharacter::PickupItem()
 {
 	DrawDebugSphere(GetWorld(), PickupSphere->GetComponentLocation(), PickupSphere->GetScaledSphereRadius(), 32, FColor::Green, false, 5.f);
+
 	if (OverlappingItems.Num() == 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PickupItem - No overlapping items."));
 		return;
 	}
 
-	// 가장 가까운 아이템 선택
-	APickupItemActor* ClosestItem = nullptr;
-	float MinDistSq = TNumericLimits<float>::Max();
-	FVector MyLoc = GetActorLocation();
+	APickupItemActor* FocusedItem = nullptr;
+	float BestDot = -1.f;
+
+	const FVector ViewLocation = Camera->GetComponentLocation();
+	const FVector ViewDirection = Camera->GetForwardVector();
 
 	for (APickupItemActor* Item : OverlappingItems)
 	{
 		if (!IsValid(Item)) continue;
 
-		float DistSq = FVector::DistSquared(MyLoc, Item->GetActorLocation());
-		if (DistSq < MinDistSq)
+		const FVector ToItem = (Item->GetActorLocation() - ViewLocation).GetSafeNormal();
+		const float Dot = FVector::DotProduct(ViewDirection, ToItem);
+
+		if (Dot > BestDot)
 		{
-			MinDistSq = DistSq;
-			ClosestItem = Item;
+			BestDot = Dot;
+			FocusedItem = Item;
 		}
 	}
 
-	if (ClosestItem)
+	if (FocusedItem)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Picking up item: %s"), *ClosestItem->GetName());
-		ClosestItem->OnPickedUp(this);
+		UE_LOG(LogTemp, Warning, TEXT("Picking up item: %s"), *FocusedItem->GetName());
+		FocusedItem->OnPickedUp(this);
+		OverlappingItems.Remove(FocusedItem);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PickupItem - No valid closest item found."));
+		UE_LOG(LogTemp, Warning, TEXT("PickupItem - No item in focus."));
 	}
 }
+
 
 bool AEmberCharacter::TryEquipRune(ARuneItem* NewRune)
 {
@@ -405,4 +411,30 @@ void AEmberCharacter::OnPickupEndOverlap(UPrimitiveComponent* OverlappedComp, AA
 		OverlappingItems.Remove(Item);
 		// UI 제거 처리 등
 	}
+}
+APickupItemActor* AEmberCharacter::GetFocusedPickupItem() const
+{
+	if (OverlappingItems.Num() == 0) return nullptr;
+
+	const FVector ViewLocation = Camera->GetComponentLocation();
+	const FVector ViewDirection = Camera->GetForwardVector();
+
+	APickupItemActor* ClosestItem = nullptr;
+	float BestDot = -1.f;
+
+	for (APickupItemActor* Item : OverlappingItems)
+	{
+		if (!IsValid(Item)) continue;
+
+		const FVector ToItem = (Item->GetActorLocation() - ViewLocation).GetSafeNormal();
+		const float Dot = FVector::DotProduct(ViewDirection, ToItem); // 카메라 정면과 얼마나 일치하는지
+
+		if (Dot > BestDot)
+		{
+			BestDot = Dot;
+			ClosestItem = Item;
+		}
+	}
+
+	return ClosestItem;
 }
