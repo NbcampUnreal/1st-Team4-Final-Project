@@ -62,7 +62,7 @@ private:
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="HP", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxHealth;
-	UPROPERTY(BlueprintReadOnly, Category="HP", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "HP", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Health;
 	UPROPERTY(BlueprintReadOnly, Category="Attack", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxAttackRange;
