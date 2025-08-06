@@ -2,39 +2,49 @@
 #include "Character/EmberCharacter.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
-#include "NiagaraFunctionLibrary.h" // Niagara 관련 함수들
-#include "NiagaraComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
 
 APickupItemActor::APickupItemActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+	bReplicates = true; //  멀티플레이용
+	SetReplicateMovement(true);
 
+	// 컴포넌트 초기화
+	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	CollisionComponent->InitSphereRadius(100.f);
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	CollisionComponent->SetCollisionObjectType(ECC_WorldDynamic);
 	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 	CollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	CollisionComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
 	CollisionComponent->SetGenerateOverlapEvents(true);
+	CollisionComponent->SetIsReplicated(true); //  충돌 컴포넌트도 복제
 
 	RootComponent = CollisionComponent;
 
-	MeshComponent->SetupAttachment(RootComponent); // 충돌 위에 메쉬 배치
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	MeshComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetSimulatePhysics(false);
 	MeshComponent->SetEnableGravity(false);
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	MeshComponent->SetCollisionObjectType(ECC_WorldDynamic);
 	MeshComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	MeshComponent->SetIsReplicated(true);
 }
 
 void APickupItemActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (!HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[CLIENT] Dropped item appeared: %s"), *GetName());
+	}
 }
+
 
 void APickupItemActor::InitializeLootDrop(const FLootResultData& InLootData)
 {
@@ -42,7 +52,6 @@ void APickupItemActor::InitializeLootDrop(const FLootResultData& InLootData)
 
 	UStaticMesh* TargetMesh = nullptr;
 
-	// 아이템 메시 가져오기
 	if (LootData.ItemTemplateClass)
 	{
 		const UItemTemplate* TemplateCDO = LootData.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
@@ -51,7 +60,6 @@ void APickupItemActor::InitializeLootDrop(const FLootResultData& InLootData)
 			TargetMesh = TemplateCDO->ItemMesh;
 		}
 	}
-	// 룬 메시 가져오기
 	else if (LootData.RuneTemplateClass)
 	{
 		const URuneItemTemplate* RuneCDO = LootData.RuneTemplateClass->GetDefaultObject<URuneItemTemplate>();
@@ -61,23 +69,19 @@ void APickupItemActor::InitializeLootDrop(const FLootResultData& InLootData)
 		}
 	}
 
-	// 메시 적용
 	if (TargetMesh)
 	{
 		MeshComponent->SetStaticMesh(TargetMesh);
 	}
 }
 
-
-
 void APickupItemActor::OnPickedUp(AActor* Picker)
 {
-	if (!Picker) return;
+	if (!HasAuthority()) return; //  서버만 처리
 
 	AEmberCharacter* Player = Cast<AEmberCharacter>(Picker);
 	if (!Player) return;
 
-	// 아이템 처리
 	FString ItemName;
 
 	if (LootData.ItemTemplateClass)
@@ -97,6 +101,14 @@ void APickupItemActor::OnPickedUp(AActor* Picker)
 
 	UE_LOG(LogTemp, Warning, TEXT("Picked up: %s x%d"), *ItemName, LootData.Quantity);
 
+	// TODO: 인벤토리에 추가하는 로직 필요
 
-	Destroy();
+	Destroy(); //  서버에서 Destroy하면 클라이언트에서도 사라짐
+}
+
+void APickupItemActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APickupItemActor, LootData); //  구조체 복제
 }

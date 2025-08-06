@@ -14,7 +14,9 @@
 #include "Component/RuneSystemComponent.h"
 #include "Components/SphereComponent.h"
 #include "Component/LootDropManagerComponent.h"
+#include "Component/InteractionComponent.h"
 #include "EmberCharacter.generated.h"
+
 
 
 class UGameplayEffect;
@@ -41,7 +43,8 @@ public:
 	//룬 장착용 함수
 	UFUNCTION(BlueprintCallable, Category = "Rune")
 	bool TryEquipRune(class ARuneItem* NewRune);
-	
+	UFUNCTION(Server, Reliable)
+	void Server_RequestInteraction(UInteractionComponent* TargetInteraction);
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	TObjectPtr<class USpringArmComponent> SpringArm;
@@ -70,8 +73,6 @@ protected:
 	int32 MaxCount = 10.0f;
 	int32 Count;
 
-
-protected:
 	virtual void BeginPlay() override;
 	UFUNCTION()
 	void Attack();
@@ -96,6 +97,10 @@ protected:
 	bool bDrawInteractionDebug = true;
 
 	void DamageTemperature();
+
+	UFUNCTION(Server, Reliable)
+	void Server_PickupItem(APickupItemActor* TargetItem);
+
 
 protected:
 	UFUNCTION()

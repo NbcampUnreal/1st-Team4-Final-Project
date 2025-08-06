@@ -1,9 +1,9 @@
 #include "RuneSystemComponent.h"
 #include "Character/EmberCharacter.h"
 #include "EmberWeaponBase.h"
-#include "AbilitySystemComponent.h"       // ✅ GAS 컴포넌트 정의
-#include "Item/RuneItem.h"                     // ✅ ARuneItem 정의
-#include "Character/EmberCharacter.h"     // ✅ 캐릭터 참조
+#include "AbilitySystemComponent.h"       //  GAS 컴포넌트 정의
+#include "Item/RuneItem.h"                     //  ARuneItem 정의
+#include "Character/EmberCharacter.h"     //  캐릭터 참조
 #include "Item/RuneItem.h"
 
 URuneSystemComponent::URuneSystemComponent()
