@@ -59,9 +59,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> ASC;
 	UPROPERTY(EditAnywhere, Category = "GAS")
-	TMap<int32, TSubclassOf<class UGameplayAbility>> GameAbilities;
 	TArray< TSubclassOf<UGameplayAbility >> InputAbilities;
-
+	UPROPERTY(EditAnywhere, Category = "GAS")
+	TMap<int32, TSubclassOf<class UGameplayAbility>> GameAbilities;
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TSubclassOf<UGameplayEffect> GETemperature;
 	UPROPERTY(EditAnywhere, Category = "GAS|TemperaturLevel")
