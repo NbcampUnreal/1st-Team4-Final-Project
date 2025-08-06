@@ -24,24 +24,20 @@ void ALootTestActor::BeginPlay()
 
 void ALootTestActor::SendLootMessage()
 {
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALootManagerActor::StaticClass(), FoundActors);
-
-	if (FoundActors.Num() > 0)
+	if (ALootManagerActor* Manager = ALootManagerActor::GetLootManager(this))
 	{
-		ALootManagerActor* Manager = Cast<ALootManagerActor>(FoundActors[0]);
-
 		FMonsterDiedMessage Msg;
 		Msg.MonsterID = FName("Test");
 		Msg.DeathLocation = GetActorLocation();
 
 		UE_LOG(LogTemp, Warning, TEXT("[ALootTestActor] Sending Loot Message"));
 
+		// 인터페이스 방식으로 호출
 		ILootableInterface::Execute_NotifyMonsterDied(Manager, Msg);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ALootTestActor] No ALootManagerActor found"));
+		UE_LOG(LogTemp, Warning, TEXT("[ALootTestActor] No ALootManagerActor (Singleton) found"));
 	}
 
 	// 드롭 후 자기 자신 제거
