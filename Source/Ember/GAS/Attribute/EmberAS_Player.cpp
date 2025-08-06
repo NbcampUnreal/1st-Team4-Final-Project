@@ -26,7 +26,7 @@ void UEmberAS_Player::PreAttributeChange(const FGameplayAttribute& Attribute, fl
 		NewValue = NewValue < 0.0f ? 0.0f : NewValue;
 	else if (Attribute == GetMetaTemperatureAttribute())
 		NewValue = NewValue < 0.0f ? 0.0f : NewValue;
-	
+
 	PreviousHealth = GetHealth();
 }
 
@@ -38,13 +38,13 @@ void UEmberAS_Player::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		bHit = true;
-		UE_LOG(LogTemp,Log,TEXT("Health : %f"), GetHealth());
+		UE_LOG(LogTemp, Log, TEXT("Health : %f"), GetHealth());
 		SetHealth(FMath::Clamp(GetHealth(), minimumHealth, GetMaxHealth()));
 	}
 	else if (Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
 	{
 		bHit = true;
-		UE_LOG(LogTemp,Log,TEXT("Damge : %f"), GetMetaDamage());
+		UE_LOG(LogTemp, Log, TEXT("Damge : %f"), GetMetaDamage());
 		SetHealth(FMath::Clamp(GetHealth() - GetMetaDamage(), 0.0f, GetMaxHealth()));
 		SetMetaDamage(0.0f);
 	}
@@ -69,8 +69,13 @@ void UEmberAS_Player::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	{
 		OnOutOfHealth.Broadcast(Instigator, Causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude, PreviousHealth, GetHealth());
 	}
-	
+
 	bOutOfHealth = (GetHealth() <= 0.0f);
+
+	// 삭제 예정
+	if (bHit == true)
+		if (OnHitPlayer.IsBound() == true)
+			OnHitPlayer.Broadcast();
 }
 
 void UEmberAS_Player::OnRep_Health(const FGameplayAttributeData& OldValue)
@@ -79,14 +84,14 @@ void UEmberAS_Player::OnRep_Health(const FGameplayAttributeData& OldValue)
 
 	const float CurrentHealth = GetHealth();
 	const float EstimatedMagnitude = CurrentHealth - OldValue.GetCurrentValue();
-	
+
 	OnHealthChanged.Broadcast(nullptr, nullptr, nullptr, EstimatedMagnitude, OldValue.GetCurrentValue(), CurrentHealth);
 
 	if (IsDead())
 	{
 		OnOutOfHealth.Broadcast(nullptr, nullptr, nullptr, EstimatedMagnitude, OldValue.GetCurrentValue(), CurrentHealth);
 	}
-	
+
 	bOutOfHealth = (CurrentHealth <= 0.0f);
 }
 
@@ -100,8 +105,3 @@ bool UEmberAS_Player::IsDead() const
 	return (GetHealth() <= 0.0f) && bOutOfHealth == false;
 }
 
-	// 삭제 예정
-	if (bHit == true)
-		if (OnHitPlayer.IsBound() == true)
-			OnHitPlayer.Broadcast();
-}

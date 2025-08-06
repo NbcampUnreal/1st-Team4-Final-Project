@@ -159,6 +159,7 @@ void AEmberCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	// GAS 입력 제거: 일반 방식이므로 아래 2줄 삭제 또는 주석처리
 	// EnhancedInput->BindAction(PlayerController->InteractAction, ETriggerEvent::Triggered, this, &AEmberCharacter::GASInputPressed, 2);
 	// EnhancedInput->BindAction(PlayerController->InteractAction, ETriggerEvent::Completed, this, &AEmberCharacter::GASInputReleased, 2);
+	SetupGASInputComponent();
 }
 
 
@@ -190,7 +191,7 @@ void AEmberCharacter::GASInputPressed(int32 Input)
 		UE_LOG(LogTemp, Warning, TEXT("Spec Found, IsActive: %s"), spec->IsActive() ? TEXT("True") : TEXT("False"));
 		UE_LOG(LogTemp, Warning, TEXT("InputPressed was: %s"), spec->InputPressed ? TEXT("True") : TEXT("False"));
 
-		spec->InputPressed = true;
+		spec->InputPressed = true; 
 		if (spec->IsActive() == true)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Calling AbilitySpecInputPressed"));
