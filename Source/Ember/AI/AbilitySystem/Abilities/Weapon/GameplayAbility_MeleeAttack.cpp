@@ -16,7 +16,6 @@ UGameplayAbility_MeleeAttack::UGameplayAbility_MeleeAttack(const FObjectInitiali
 	NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ServerOnlyTermination;
 }
 
-PRAGMA_DISABLE_OPTIMIZATION
 void UGameplayAbility_MeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
@@ -74,4 +73,3 @@ void UGameplayAbility_MeleeAttack::OnMontageFinished()
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 	}
 }
-PRAGMA_ENABLE_OPTIMIZATION

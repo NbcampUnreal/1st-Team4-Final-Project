@@ -1,57 +1,114 @@
 ﻿#include "Item/Drop/PickupItemActor.h"
+#include "Character/EmberCharacter.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
-#include "NiagaraFunctionLibrary.h" // Niagara 관련 함수들
-#include "NiagaraComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
 
 APickupItemActor::APickupItemActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	
-	// 물리 및 충돌 설정
-	MeshComponent->SetSimulatePhysics(false);               // 물리 시뮬레이션 OFF
-	MeshComponent->SetEnableGravity(false);                 // 중력 적용 X
-	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly); // 물리 충돌 무효
+	bReplicates = true; //  멀티플레이용
+	SetReplicateMovement(true);
+
+	// 컴포넌트 초기화
+	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+	CollisionComponent->InitSphereRadius(100.f);
+	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CollisionComponent->SetCollisionObjectType(ECC_WorldDynamic);
+	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	CollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	CollisionComponent->SetGenerateOverlapEvents(true);
+	CollisionComponent->SetIsReplicated(true); //  충돌 컴포넌트도 복제
+
+	RootComponent = CollisionComponent;
+
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	MeshComponent->SetupAttachment(RootComponent);
+	MeshComponent->SetSimulatePhysics(false);
+	MeshComponent->SetEnableGravity(false);
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	MeshComponent->SetCollisionObjectType(ECC_WorldDynamic);
 	MeshComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
-	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap); // 캐릭터와는 겹치기만
+	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	MeshComponent->SetIsReplicated(true);
 }
 
 void APickupItemActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (!HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[CLIENT] Dropped item appeared: %s"), *GetName());
+	}
 }
+
 
 void APickupItemActor::InitializeLootDrop(const FLootResultData& InLootData)
 {
 	LootData = InLootData;
-	
 
-	// 여기서 아이템 외형/색상 등 적용 가능 (예: 희귀도 색상)
-	if (!LootData.ItemTemplateClass)
-		return;
+	UStaticMesh* TargetMesh = nullptr;
 
-	const UItemTemplate* TemplateCDO = LootData.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
-
-	// Niagara 이펙트가 설정되어 있을 경우
-	if (TemplateCDO && TemplateCDO->DropEffect)
+	if (LootData.ItemTemplateClass)
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAttached(
-			TemplateCDO->DropEffect,
-			RootComponent,            // 또는 MeshComponent
-			NAME_None,
-			FVector::ZeroVector,
-			FRotator::ZeroRotator,
-			EAttachLocation::KeepRelativeOffset,
-			true
-		);
+		const UItemTemplate* TemplateCDO = LootData.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
+		if (TemplateCDO)
+		{
+			TargetMesh = TemplateCDO->ItemMesh;
+		}
+	}
+	else if (LootData.RuneTemplateClass)
+	{
+		const URuneItemTemplate* RuneCDO = LootData.RuneTemplateClass->GetDefaultObject<URuneItemTemplate>();
+		if (RuneCDO)
+		{
+			TargetMesh = RuneCDO->RuneMesh;
+		}
+	}
+
+	if (TargetMesh)
+	{
+		MeshComponent->SetStaticMesh(TargetMesh);
 	}
 }
 
 void APickupItemActor::OnPickedUp(AActor* Picker)
 {
-	// 인벤토리에 추가하거나, 메시 출력 등 로직
-	Destroy();
+	if (!HasAuthority()) return; //  서버만 처리
+
+	AEmberCharacter* Player = Cast<AEmberCharacter>(Picker);
+	if (!Player) return;
+
+	FString ItemName;
+
+	if (LootData.ItemTemplateClass)
+	{
+		const UItemTemplate* Template = LootData.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
+		ItemName = Template ? Template->DisplayName.ToString() : TEXT("Unknown Item");
+	}
+	else if (LootData.RuneTemplateClass)
+	{
+		const URuneItemTemplate* Template = LootData.RuneTemplateClass->GetDefaultObject<URuneItemTemplate>();
+		ItemName = Template ? Template->RuneName.ToString() : TEXT("Unknown Rune");
+	}
+	else
+	{
+		ItemName = TEXT("Unnamed Loot");
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Picked up: %s x%d"), *ItemName, LootData.Quantity);
+
+	// TODO: 인벤토리에 추가하는 로직 필요
+
+	Destroy(); //  서버에서 Destroy하면 클라이언트에서도 사라짐
+}
+
+void APickupItemActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APickupItemActor, LootData); //  구조체 복제
 }

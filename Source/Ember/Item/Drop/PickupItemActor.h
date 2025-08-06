@@ -5,6 +5,9 @@
 #include "Item/LootResultData.h"
 #include "PickupItemActor.generated.h"
 
+class USphereComponent;
+class UStaticMeshComponent;
+
 UCLASS()
 class EMBER_API APickupItemActor : public AActor
 {
@@ -17,26 +20,19 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	// 드롭 데이터 초기화
 	void InitializeLootDrop(const FLootResultData& InLootData);
-
-	// 상호작용 처리용 함수 (예: 플레이어가 줍기)
-	UFUNCTION(BlueprintCallable)
 	void OnPickedUp(AActor* Picker);
 
+	// Replication
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USphereComponent* CollisionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* MeshComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
-	class USphereComponent* CollisionComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
+	UPROPERTY(Replicated)
 	FLootResultData LootData;
-
-	// 희귀도별 이펙트 매핑용 맵
-	UPROPERTY(EditDefaultsOnly, Category = "Effect")
-	TMap<EItemRarity, UNiagaraSystem*> RarityEffects;
-
-
 };

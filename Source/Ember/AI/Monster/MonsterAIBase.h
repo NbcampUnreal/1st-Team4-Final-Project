@@ -9,6 +9,7 @@
 
 class AMonsterAIWeapon;
 class UEmberAS_Player;
+class UHealthComponent;
 class UMonsterAbilitySystemComponent;
 class UMonsterGameplayEffectComponent;
 
@@ -19,10 +20,6 @@ class EMBER_API AMonsterAIBase : public ACharacter, public IAbilitySystemInterfa
 
 public:
 	AMonsterAIBase();
-
-protected:
-	virtual void PostInitializeComponents() override;
-	virtual void BeginPlay() override;
 	
 public:
 	//~ IAbilitySystemInterface interface
@@ -33,8 +30,14 @@ public:
 public:
 	AMonsterAIWeapon* GetWeapon() { return WeaponActor; }
 
+protected:
+	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
+
 private:
 	void InitializeMonsterAI();
+	void OnDeath();
+	void DisableMovementAndCollision();
 	
 protected:
 	UPROPERTY()
@@ -42,6 +45,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UEmberAS_Player> AttributeSet;
+
+	UPROPERTY()
+	TObjectPtr<UHealthComponent> HealthComponent;
 	
 private:
 	UPROPERTY()

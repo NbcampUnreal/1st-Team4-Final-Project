@@ -13,6 +13,7 @@ void AEmberPlayerController::BeginPlay()
 	FTimerHandle TimerHandle;
 	FTimerHandle TimerHandle2;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEmberPlayerController::SetupInputMapping, 0.1f, false);
+	SetupInputMapping();
 	if (IsLocalController())
 	{
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle2, this, &AEmberPlayerController::SpawnFX, 1.5f, false);
@@ -21,28 +22,23 @@ void AEmberPlayerController::BeginPlay()
 
 void AEmberPlayerController::SetupInputMapping()
 {
-	TObjectPtr<ULocalPlayer> player = GetLocalPlayer();
-	if (player == nullptr)
-	{
-		DebugLogE("Local player is null");
-		return;
-	}
+	UE_LOG(LogTemp, Warning, TEXT("[Controller] SetupInputMapping() called"));
 
-	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> subsystem = player->GetSubsystem<
-		UEnhancedInputLocalPlayerSubsystem>();
-	if (subsystem == nullptr)
-	{
-		DebugLogE("subsystem is null");
-		return;
-	}
+	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		{
+			if (DefaultMappingContext)
+			{
+				Subsystem->AddMappingContext(DefaultMappingContext, 0);
+				UE_LOG(LogTemp, Warning, TEXT("[Controller] MappingContext added"));
+			}
+		}
 
 	if (DefaultMappingContext == nullptr)
 	{
 		DebugLogE("Input Mapping Context is null");
 		return;
 	}
-
-	subsystem->AddMappingContext(DefaultMappingContext, 0);
 }
 
 void AEmberPlayerController::SpawnFX()

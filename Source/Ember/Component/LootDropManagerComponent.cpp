@@ -5,7 +5,8 @@
 #include "DataTable/LootTable.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DataTable.h"
-#include <Kismet/KismetMathLibrary.h>
+#include "GameFramework/Character.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ULootDropManagerComponent::ULootDropManagerComponent()
 {
@@ -84,9 +85,6 @@ void ULootDropManagerComponent::HandleMonsterDied(const FMonsterDiedMessage& Mes
 	{
 		if (FMath::FRand() < Drop.DropChance)
 		{
-			if (!Drop.ItemTemplateClass || Drop.QuantityRange.Y <= 0 || Drop.PossibleRarities.Num() == 0)
-				continue;
-
 			int32 Quantity = FMath::RandRange(Drop.QuantityRange.X, Drop.QuantityRange.Y);
 
 			EItemRarity FinalRarity = EItemRarity::Common;
@@ -98,7 +96,6 @@ void ULootDropManagerComponent::HandleMonsterDied(const FMonsterDiedMessage& Mes
 			}
 
 			float RarityRoll = FMath::FRand() * TotalWeight;
-
 			for (const FRarityDropInfo& RarityInfo : Drop.PossibleRarities)
 			{
 				if (RarityRoll < RarityInfo.Weight)
@@ -110,9 +107,17 @@ void ULootDropManagerComponent::HandleMonsterDied(const FMonsterDiedMessage& Mes
 			}
 
 			FLootResultData Result;
-			Result.ItemTemplateClass = Drop.ItemTemplateClass;
 			Result.Quantity = Quantity;
 			Result.Rarity = FinalRarity;
+
+			if (Drop.ItemTemplateClass)  // ⭐ 일반 아이템
+			{
+				Result.ItemTemplateClass = Drop.ItemTemplateClass;
+			}
+			else if (Drop.RuneTemplateClass) // ⭐ 룬 아이템
+			{
+				Result.RuneTemplateClass = Drop.RuneTemplateClass;
+			}
 
 			FinalLoots.Add(Result);
 		}
@@ -181,8 +186,9 @@ void ULootDropManagerComponent::HandleMonsterDied(const FMonsterDiedMessage& Mes
 					MeshComp->SetNotifyRigidBodyCollision(true);
 
 					// 바닥과 부딪히면 물리 꺼짐 (ActorHasTag 사용 X)
-					// ✅ 바닥 충돌 시 처리용 함수 바인딩
+					//  바닥 충돌 시 처리용 함수 바인딩
 					MeshComp->OnComponentHit.AddDynamic(this, &ULootDropManagerComponent::OnLootItemHit);
+					// 드롭된 아이템이 캐릭터와 충돌하지 않도록
 					ActiveLootMap.Add(MeshComp, LootActor); // (필요 시 활용)
 
 					// Impulse 적용
@@ -192,10 +198,28 @@ void ULootDropManagerComponent::HandleMonsterDied(const FMonsterDiedMessage& Mes
 					MeshComp->AddImpulse(ImpulseDir * ImpulseStrength, NAME_None, true);
 				}
 
-				UE_LOG(LogTemp, Log, TEXT("[LootDropManager] Dropped item: %s x%d (Rarity: %d)"),
-					*Loot.ItemTemplateClass->GetName(),
-					Loot.Quantity,
-					(int32)Loot.Rarity);
+				if (Loot.ItemTemplateClass)
+				{
+					const UItemTemplate* ItemTemplate = Loot.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
+					FString NameStr = ItemTemplate ? ItemTemplate->DisplayName.ToString() : TEXT("Unknown Item");
+					UE_LOG(LogTemp, Log, TEXT("[LootDropManager] Dropped item: %s x%d (Rarity: %d)"),
+						*NameStr,
+						Loot.Quantity,
+						(int32)Loot.Rarity);
+				}
+				else if (Loot.RuneTemplateClass)
+				{
+					const URuneItemTemplate* RuneTemplate = Loot.RuneTemplateClass->GetDefaultObject<URuneItemTemplate>();
+					FString NameStr = RuneTemplate ? RuneTemplate->RuneName.ToString() : TEXT("Unknown RUNE");
+					UE_LOG(LogTemp, Log, TEXT("[LootDropManager] Dropped RUNE: %s x%d (Rarity: %d)"),
+						*NameStr,
+						Loot.Quantity,
+						(int32)Loot.Rarity);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] Dropped item with no valid template!"));
+				}
 			}
 		}
 	}
