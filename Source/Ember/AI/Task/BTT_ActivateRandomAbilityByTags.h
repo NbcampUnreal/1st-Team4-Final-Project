@@ -2,11 +2,15 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "BTT_Base.h"
-#include "BTT_ActivateAbilityByTag.generated.h"
+#include "BTT_ActivateRandomAbilityByTags.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class EMBER_API UBTT_ActivateAbilityByTag : public UBTT_Base
+class EMBER_API UBTT_ActivateRandomAbilityByTags : public UBTT_Base
 {
 	GENERATED_BODY()
 
@@ -15,5 +19,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Ability", Meta = (Categories = "Ability.AI"))
-	FGameplayTag GameplayTag;
+	TArray<FGameplayTag> GameplayTags;
 };
