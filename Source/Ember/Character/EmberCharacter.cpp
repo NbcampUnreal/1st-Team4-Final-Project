@@ -20,6 +20,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Component/WeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GAS/Attribute/EmberAS_Player.h"
 
 // Sets default values
 AEmberCharacter::AEmberCharacter()
@@ -85,12 +86,30 @@ void AEmberCharacter::PossessedBy(AController* NewController)
 	}
 	
 	SetupGASInputComponent();
+	UEmberAS_Player* as = Cast<UEmberAS_Player>(state->GetAttributeSet());
+	if (as != nullptr)
+		as->OnHitPlayer.AddDynamic(this,&AEmberCharacter::HitPlayer);
 }
 
 
 FGenericTeamId AEmberCharacter::GetGenericTeamId() const
 {
 	return FGenericTeamId((uint8)EGameTeamID::Team1);
+}
+
+void AEmberCharacter::HitPlayer()
+{
+	AEmberPlayerState* state = Cast<AEmberPlayerState>(GetPlayerState());
+	UEmberAS_Player* as = Cast<UEmberAS_Player>(state->GetAttributeSet());
+	if (as->GetHealth() <= 0)
+		Dead();
+	else
+		PlayAnimMontage(montage);
+}
+
+void AEmberCharacter::Dead()
+{
+	Destroy();
 }
 
 void AEmberCharacter::Tick(float DeltaTime)
@@ -185,7 +204,13 @@ void AEmberCharacter::DamageTemperature()
 		FMath::Clamp(TemperatureLeve,1,3);
 		Count = 0;
 	}
+
 	FGameplayEffectContextHandle contextHandle = ASC->MakeEffectContext();
+	if (contextHandle.IsValid() == false)
+	{
+		DebugLogE("contexHandle is not found");
+		return;
+	}
 	contextHandle.AddSourceObject(this);
 	FGameplayEffectSpecHandle specHandle = ASC->MakeOutgoingSpec(GETemperature,TemperatureLeve,contextHandle);
 	if (specHandle.IsValid())

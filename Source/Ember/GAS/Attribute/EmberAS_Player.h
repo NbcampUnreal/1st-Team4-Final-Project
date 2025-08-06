@@ -11,6 +11,8 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHitPlayer);
+
 UCLASS()
 class EMBER_API UEmberAS_Player : public UAttributeSet
 {
@@ -69,4 +71,8 @@ protected:
 	FGameplayAttributeData DamageTemperature;
 	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MetaTemperature;
+
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnHitPlayer OnHitPlayer;
 };

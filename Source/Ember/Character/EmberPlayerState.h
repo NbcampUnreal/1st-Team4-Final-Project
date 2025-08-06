@@ -14,6 +14,8 @@ class EMBER_API AEmberPlayerState : public APlayerState, public IAbilitySystemIn
 {
 	GENERATED_BODY()
 public:
+	FORCEINLINE TObjectPtr<UEmberAS_Player> GetAttributeSet() { return AttributeSet; }
+public:
 	AEmberPlayerState();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
