@@ -15,6 +15,8 @@ struct FGameplayEffectSpec;
 
 DECLARE_MULTICAST_DELEGATE_SixParams(FEmberAttributeEvent, AActor* /*EffectInstigator*/, AActor* /*EffectCauser*/, const FGameplayEffectSpec* /*EffectSpec*/, float /*EffectMagnitude*/, float /*OldValue*/, float /*NewValue*/);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHitPlayer);
+
 UCLASS()
 class EMBER_API UEmberAS_Player : public UAttributeSet
 {
@@ -91,4 +93,9 @@ protected:
 private:
 	bool bOutOfHealth;
 	float PreviousHealth;
+
+	//삭제 예정
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnHitPlayer OnHitPlayer;
 };

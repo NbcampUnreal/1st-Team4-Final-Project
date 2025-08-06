@@ -96,9 +96,24 @@ protected:
 
 	void DamageTemperature();
 
+public:
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+public:
+	//~ IGenericTeamAgentInterface interface
+	virtual FGenericTeamId GetGenericTeamId() const override;
+	//~ End of IGenericTeamAgentInterface interface
+
+protected:
+	UFUNCTION()
+	void HitPlayer();
+	void Dead();
 	
 private:
 	TObjectPtr<class AEmberPlayerController> PlayerController;
 
 	FTimerHandle Timer;
+
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* montage;
 };

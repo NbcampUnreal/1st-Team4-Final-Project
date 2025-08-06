@@ -33,22 +33,23 @@ void UEmberAS_Player::PreAttributeChange(const FGameplayAttribute& Attribute, fl
 void UEmberAS_Player::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
-
+	bool bHit{};
 	float minimumHealth = 0.0f;
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
+		bHit = true;
 		UE_LOG(LogTemp,Log,TEXT("Health : %f"), GetHealth());
 		SetHealth(FMath::Clamp(GetHealth(), minimumHealth, GetMaxHealth()));
 	}
 	else if (Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
 	{
+		bHit = true;
 		UE_LOG(LogTemp,Log,TEXT("Damge : %f"), GetMetaDamage());
 		SetHealth(FMath::Clamp(GetHealth() - GetMetaDamage(), 0.0f, GetMaxHealth()));
 		SetMetaDamage(0.0f);
 	}
 	else if (Data.EvaluatedData.Attribute == GetMetaTemperatureAttribute())
 	{
-
 		DebugLogE(FString::Printf(TEXT("TemperatureAttribute : %f"), GetPlayerTemperature()));
 		SetPlayerTemperature(FMath::Clamp(GetPlayerTemperature() - GetMetaTemperature(), minimumHealth, GetMaxPlayerTemperature()));
 		SetMetaTemperature(0.0f);
@@ -97,4 +98,10 @@ bool UEmberAS_Player::HasHealthChanged() const
 bool UEmberAS_Player::IsDead() const
 {
 	return (GetHealth() <= 0.0f) && bOutOfHealth == false;
+}
+
+	// 삭제 예정
+	if (bHit == true)
+		if (OnHitPlayer.IsBound() == true)
+			OnHitPlayer.Broadcast();
 }
