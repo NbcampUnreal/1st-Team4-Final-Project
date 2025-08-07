@@ -12,12 +12,12 @@
 #include "InputMappingContext.h"
 #include "InputAction.h"
 #include "Component/RuneSystemComponent.h"
+#include "Template/RuneItemTemplate.h"
 #include "Components/SphereComponent.h"
 #include "Component/LootDropManagerComponent.h"
 #include "Component/InteractionComponent.h"
+#include "Component/QuickSlotComponent.h"
 #include "EmberCharacter.generated.h"
-
-
 
 class UGameplayEffect;
 class UGameplayAbility;
@@ -42,9 +42,19 @@ public:
 	void PickupItem();
 	//룬 장착용 함수
 	UFUNCTION(BlueprintCallable, Category = "Rune")
-	bool TryEquipRune(class ARuneItem* NewRune);
+	bool TryEquipRune(const URuneItemTemplate * NewRuneTemplate);
+	UQuickSlotComponent* GetQuickSlotComponent() const;
+	void ShowRuneComparisonUI(const URuneItemTemplate* NewRuneTemplate);
 	UFUNCTION(Server, Reliable)
 	void Server_RequestInteraction(UInteractionComponent* TargetInteraction);
+
+	UFUNCTION(Server, Reliable)
+	void Server_PickupItem(APickupItemActor* TargetItem);
+
+	UFUNCTION()
+	void AddOverlappingItem(APickupItemActor* Item);
+	UFUNCTION()
+	void RemoveOverlappingItem(APickupItemActor* Item);
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	TObjectPtr<class USpringArmComponent> SpringArm;
@@ -81,10 +91,7 @@ protected:
 	void GASInputReleased(int32 Input);
 	UPROPERTY()
 	TArray<APickupItemActor*> OverlappingItems;
-	UFUNCTION()
-	void OnPickupBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnPickupEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
 	APickupItemActor* GetFocusedPickupItem() const;
 	// 룬 시스템 선언
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -98,15 +105,15 @@ protected:
 
 	void DamageTemperature();
 
-	UFUNCTION(Server, Reliable)
-	void Server_PickupItem(APickupItemActor* TargetItem);
 
 
-protected:
+
 	UFUNCTION()
 	void HitPlayer();
 	void Dead();
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UQuickSlotComponent* QuickSlotComponent;
+
 private:
 	TObjectPtr<class AEmberPlayerController> PlayerController;
 

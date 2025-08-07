@@ -14,7 +14,9 @@ void ARuneItem::Use(AActor* User)
 {
     if (AEmberCharacter* Character = Cast<AEmberCharacter>(User))
     {
-        if (Character->TryEquipRune(this))
+        const URuneItemTemplate* Template = GetRuneTemplate();
+
+        if (Template && Character->TryEquipRune(Template))
         {
             Destroy(); // 장착 성공 시 제거
         }

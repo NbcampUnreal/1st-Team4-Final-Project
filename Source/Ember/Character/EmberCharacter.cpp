@@ -54,17 +54,15 @@ AEmberCharacter::AEmberCharacter()
 	PickupSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	PickupSphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap); // 추가
 	PickupSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore); // 필요 시 무시
+
+	QuickSlotComponent = CreateDefaultSubobject<UQuickSlotComponent>(TEXT("QuickSlotComponent"));
+
 }
 void AEmberCharacter::BeginPlay()
 {
 	TemperatureLeve = 1.0f;
 	Super::BeginPlay();
 	MoveComponent->OnWalk();
-
-	PickupSphere->OnComponentBeginOverlap.AddDynamic(this, &AEmberCharacter::OnPickupBeginOverlap);
-	PickupSphere->OnComponentEndOverlap.AddDynamic(this, &AEmberCharacter::OnPickupEndOverlap);
-	DrawDebugSphere(GetWorld(), PickupSphere->GetComponentLocation(), PickupSphere->GetScaledSphereRadius(), 32, FColor::Green, false, 5.f);
-
 }
 
 void AEmberCharacter::PossessedBy(AController* NewController)
@@ -382,57 +380,52 @@ void AEmberCharacter::PickupItem()
 }
 
 
-
-bool AEmberCharacter::TryEquipRune(ARuneItem* NewRune)
+bool AEmberCharacter::TryEquipRune(const URuneItemTemplate* NewRuneTemplate)
 {
-	if (!RuneSystem || !NewRune)
+	if (!RuneSystem || !NewRuneTemplate)
 		return false;
 
-	// 비어 있는 슬롯 먼저 탐색
-	for (int32 i = 0; i < RuneSystem->GetMaxRuneSlots(); ++i)
-	{
-		if (!RuneSystem->GetRune(i))
-		{
-			return RuneSystem->EquipRune(NewRune, i);
-		}
-	}
+	// ✅ 비교 UI 호출
+	ShowRuneComparisonUI(NewRuneTemplate);
 
-	// 빈 슬롯 없으면 비교해서 교체 가능한지 확인
-	for (int32 i = 0; i < RuneSystem->GetMaxRuneSlots(); ++i)
-	{
-		if (RuneSystem->IsBetterRune(i, NewRune))
-		{
-			return RuneSystem->EquipRune(NewRune, i);
-		}
-	}
-
-	UE_LOG(LogTemp, Log, TEXT("[Character] No slot available or new rune is not better."));
-	return false;
+	return true;
 }
 
-void AEmberCharacter::OnPickupBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	UE_LOG(LogTemp, Warning, TEXT("OnPickupBeginOverlap Called with %s"), *OtherActor->GetName());
 
-	if (APickupItemActor* Item = Cast<APickupItemActor>(OtherActor))
+void AEmberCharacter::ShowRuneComparisonUI(const URuneItemTemplate* NewRuneTemplate)
+{
+	if (!NewRuneTemplate || !RuneSystem) return;
+
+	const FRuneStat& NewStat = NewRuneTemplate->RuneStat;
+	const FRuneStat& CurrentStat = RuneSystem->GetRuneStatAtSlot(0);
+
+	UE_LOG(LogTemp, Log, TEXT("현재 룬 - Power: %.1f, CDR: %.1f, Element: %s"),
+		CurrentStat.Power, CurrentStat.CooldownReduction, *CurrentStat.Element);
+
+	UE_LOG(LogTemp, Log, TEXT("새 룬   - Power: %.1f, CDR: %.1f, Element: %s"),
+		NewStat.Power, NewStat.CooldownReduction, *NewStat.Element);
+
+	// UI 연결 예정 지점 (예: Widget에 넘기기)
+	//UE_LOG(LogTemp, Warning, TEXT("New Rune Name: %s"), *NewRuneTemplate->RuneName.ToString());
+}
+
+
+UQuickSlotComponent* AEmberCharacter::GetQuickSlotComponent() const
+{
+	return QuickSlotComponent;
+}
+
+void AEmberCharacter::AddOverlappingItem(APickupItemActor* Item)
+{
+	if (!OverlappingItems.Contains(Item))
 	{
-		if (!OverlappingItems.Contains(Item))
-		{
-			OverlappingItems.Add(Item);
-			UE_LOG(LogTemp, Warning, TEXT("PickupItem: %s overlapped!"), *Item->GetName());
-		}
+		OverlappingItems.Add(Item);
 	}
 }
 
-void AEmberCharacter::OnPickupEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AEmberCharacter::RemoveOverlappingItem(APickupItemActor* Item)
 {
-	if (APickupItemActor* Item = Cast<APickupItemActor>(OtherActor))
-	{
-		OverlappingItems.Remove(Item);
-		// UI 제거 처리 등
-	}
+	OverlappingItems.Remove(Item);
 }
 APickupItemActor* AEmberCharacter::GetFocusedPickupItem() const
 {
