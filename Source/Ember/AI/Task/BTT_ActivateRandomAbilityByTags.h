@@ -15,7 +15,7 @@ class EMBER_API UBTT_ActivateRandomAbilityByTags : public UBTT_Base
 	GENERATED_BODY()
 
 public:
-	virtual EBTNodeResult::Type Execu teTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Ability", Meta = (Categories = "Ability.AI"))
