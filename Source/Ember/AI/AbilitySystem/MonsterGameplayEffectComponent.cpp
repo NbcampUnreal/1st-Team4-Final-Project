@@ -6,7 +6,6 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
 #include "Abilities/GameplayAbilityTypes.h"
-#include "Utility/EmberGameplayTags.h"
 
 void UMonsterGameplayEffectComponent::OnGameplayEffectApplied(FActiveGameplayEffectsContainer& ActiveGEContainer,
                                                          FGameplayEffectSpec& GESpec, FPredictionKey& PredictionKey) const

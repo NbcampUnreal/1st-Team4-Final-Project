@@ -6,6 +6,7 @@
 #include "Utility/CLog.h"
 #include "Utility/EmberGameplayTags.h"
 #include "AbilitySystemComponent.h"
+#include "ALootManagerActor.h"
 #include "GAS/Attribute/EmberAS_Player.h"
 
 UHealthComponent::UHealthComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -67,6 +68,19 @@ void UHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* Damag
 			Payload.EventMagnitude = DamageMagnitude;
 			
 			ASC->HandleGameplayEvent(Payload.EventTag, &Payload);
+		}
+	}
+
+	/* 몬스터 아이템 드랍 */
+	if (ALootManagerActor* LootManager = ALootManagerActor::GetLootManager(this))
+	{
+		if (AActor* Owner = GetOwner())
+		{
+			FMonsterDiedMessage Msg;
+			Msg.MonsterID = FName("Test");
+			Msg.DeathLocation = Owner->GetActorLocation();
+			
+			ILootableInterface::Execute_NotifyMonsterDied(LootManager, Msg);
 		}
 	}
 
