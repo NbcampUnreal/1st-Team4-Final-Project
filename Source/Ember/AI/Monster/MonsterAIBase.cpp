@@ -14,7 +14,9 @@
 #include "AI/Components/HealthComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerState.h"
 #include "GAS/Attribute/EmberAS_Player.h"
+#include "Perception/AISense_Damage.h"
 
 AMonsterAIBase::AMonsterAIBase()
 {
@@ -52,11 +54,6 @@ void AMonsterAIBase::BeginPlay()
 	}
 }
 
-UMonsterAbilitySystemComponent* AMonsterAIBase::GetMonsterAbilitySystemComponent() const
-{
-	return Cast<UMonsterAbilitySystemComponent>(ASC);
-}
-
 void AMonsterAIBase::InitializeMonsterAI()
 {
 	const UMonsterAITemplate& MonsterAITemplate = UMonsterAIData::Get().FindMonsterAITemplateByClass(GetClass());
@@ -88,7 +85,41 @@ void AMonsterAIBase::InitializeMonsterAI()
 			ASC->GiveAbility(AbilitySpec);
 		}
 	}
+
+	if (HealthComponent)
+	{
+		HealthComponent->OnHealthChanged.AddDynamic(this, &ThisClass::HandleHealthChanged);
+	}
 }
+
+void AMonsterAIBase::HandleHealthChanged(UHealthComponent* InHealthComponent, float OldValue, float NewValue, AActor* DamageInstigator)
+{
+	if (DamageInstigator == nullptr)
+		return;
+
+	APlayerState* PS = Cast<APlayerState>(DamageInstigator);
+	if (PS == nullptr)
+		return;
+
+	APawn* InstigatorPawn = PS->GetPawn();
+	if (InstigatorPawn == nullptr)
+		return;
+	
+	if (AAIController* AIController = Cast<AAIController>(GetController()))
+	{
+		const float DamageAmount = OldValue - NewValue;
+		
+		UAISense_Damage::ReportDamageEvent(
+			GetWorld(),
+			this,
+			InstigatorPawn,
+			DamageAmount,
+			InstigatorPawn->GetActorLocation(),
+			GetActorLocation()
+		);
+	}
+}
+
 
 void AMonsterAIBase::OnDeath()
 {
@@ -129,4 +160,9 @@ void AMonsterAIBase::DisableMovementAndCollision()
 UAbilitySystemComponent* AMonsterAIBase::GetAbilitySystemComponent() const
 {
 	return ASC;
+}
+
+UMonsterAbilitySystemComponent* AMonsterAIBase::GetMonsterAbilitySystemComponent() const
+{
+	return Cast<UMonsterAbilitySystemComponent>(ASC);
 }
