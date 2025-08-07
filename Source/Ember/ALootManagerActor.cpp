@@ -48,7 +48,7 @@ void ALootManagerActor::BeginPlay()
 	*/
 }
 
-// ✅ 전역 접근용 정적 함수
+//  전역 접근용 정적 함수
 ALootManagerActor* ALootManagerActor::GetLootManager(const UObject* WorldContext)
 {
 	if (SingletonInstance.IsValid())

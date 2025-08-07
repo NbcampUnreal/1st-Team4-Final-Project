@@ -186,7 +186,7 @@ void ULootDropManagerComponent::HandleMonsterDied(const FMonsterDiedMessage& Mes
 					MeshComp->SetNotifyRigidBodyCollision(true);
 
 					// 바닥과 부딪히면 물리 꺼짐 (ActorHasTag 사용 X)
-					// ✅ 바닥 충돌 시 처리용 함수 바인딩
+					//  바닥 충돌 시 처리용 함수 바인딩
 					MeshComp->OnComponentHit.AddDynamic(this, &ULootDropManagerComponent::OnLootItemHit);
 					// 드롭된 아이템이 캐릭터와 충돌하지 않도록
 					ActiveLootMap.Add(MeshComp, LootActor); // (필요 시 활용)

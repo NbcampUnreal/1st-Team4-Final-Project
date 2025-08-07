@@ -153,7 +153,7 @@ void AEmberCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	EnhancedInput->BindAction(PlayerController->MoveAction, ETriggerEvent::Triggered, MoveComponent.Get(), &UCustomMoveComponent::Move);
 	EnhancedInput->BindAction(PlayerController->LookAction, ETriggerEvent::Triggered, CameraComponent.Get(), &UCustomCameraComponent::Look);
 
-	// ✅ 여기에서 F키(PickupItem) 바인딩
+	//  여기에서 F키(PickupItem) 바인딩
 	EnhancedInput->BindAction(PlayerController->InteractAction, ETriggerEvent::Started, this, &AEmberCharacter::PickupItem);
 
 	// GAS 입력 제거: 일반 방식이므로 아래 2줄 삭제 또는 주석처리
@@ -243,6 +243,8 @@ void AEmberCharacter::DamageTemperature()
 	}
 }
 
+
+
 UAbilitySystemComponent* AEmberCharacter::GetAbilitySystemComponent() const
 {
 	return ASC;
@@ -318,6 +320,21 @@ void AEmberCharacter::Attack()
 //		UE_LOG(LogTemp, Warning, TEXT("LineTrace MISS — nothing hit."));
 //	}
 //}
+void AEmberCharacter::Server_PickupItem_Implementation(APickupItemActor* TargetItem)
+{
+	if (TargetItem && HasAuthority())
+	{
+		TargetItem->OnPickedUp(this); // 서버에서만 실행
+	}
+}
+void AEmberCharacter::Server_RequestInteraction_Implementation(UInteractionComponent* TargetInteraction)
+{
+	if (TargetInteraction)
+	{
+		TargetInteraction->Interact(this); // 서버에서 다시 실행
+	}
+}
+
 void AEmberCharacter::PickupItem()
 {
 	DrawDebugSphere(GetWorld(), PickupSphere->GetComponentLocation(), PickupSphere->GetScaledSphereRadius(), 32, FColor::Green, false, 5.f);
@@ -350,8 +367,12 @@ void AEmberCharacter::PickupItem()
 
 	if (FocusedItem)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Picking up item: %s"), *FocusedItem->GetName());
-		FocusedItem->OnPickedUp(this);
+		UE_LOG(LogTemp, Warning, TEXT("Requesting pickup of item: %s"), *FocusedItem->GetName());
+
+		// ✅ 서버에 요청
+		Server_PickupItem(FocusedItem);
+
+		// ✅ 로컬에서 UI, 사운드 등 처리
 		OverlappingItems.Remove(FocusedItem);
 	}
 	else
@@ -359,6 +380,7 @@ void AEmberCharacter::PickupItem()
 		UE_LOG(LogTemp, Warning, TEXT("PickupItem - No item in focus."));
 	}
 }
+
 
 
 bool AEmberCharacter::TryEquipRune(ARuneItem* NewRune)
