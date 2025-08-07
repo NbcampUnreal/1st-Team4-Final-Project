@@ -22,7 +22,7 @@ public:
     const FRuneStat& GetRuneStat() const { return RuneStat; }
     TSubclassOf<UGameplayAbility> GetGrantedAbility() const { return GrantedAbility; }
     TSubclassOf<UGameplayEffect> GetGrantedEffect() const { return GrantedEffect; }
-
+    URuneItemTemplate* GetRuneTemplate() const { return TemplateAsset; }
 protected:
     UPROPERTY()
     TObjectPtr<URuneItemTemplate> TemplateAsset;
