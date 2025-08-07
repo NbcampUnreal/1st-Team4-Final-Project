@@ -47,6 +47,7 @@ void UHealthComponent::InitializeWithAbilitySystem(UAbilitySystemComponent* InAS
 	if (Owner->HasAuthority())
 	{
 		HealthSet->OnOutOfHealth.AddUObject(this, &ThisClass::HandleOutOfHealth);
+		HealthSet->OnHealthChanged.AddUObject(this, &ThisClass::HandleHealthChanged);
 	}
 }
 
@@ -86,6 +87,12 @@ void UHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* Damag
 
 	StartDeath();
 #endif
+}
+
+void UHealthComponent::HandleHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,
+	const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue)
+{
+	OnHealthChanged.Broadcast(this, OldValue, NewValue, DamageInstigator);
 }
 
 void UHealthComponent::StartDeath_Implementation()

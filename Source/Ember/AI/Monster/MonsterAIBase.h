@@ -31,9 +31,13 @@ public:
 	AMonsterAIWeapon* GetWeapon() { return WeaponActor; }
 
 protected:
-	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
+	UFUNCTION()
+	virtual void HandleHealthChanged(UHealthComponent* InHealthComponent, float OldValue, float NewValue, AActor* DamageInstigator);
+
+	
 private:
 	void InitializeMonsterAI();
 	void OnDeath();

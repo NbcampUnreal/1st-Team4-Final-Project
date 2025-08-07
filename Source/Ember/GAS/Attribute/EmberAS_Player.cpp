@@ -26,8 +26,16 @@ void UEmberAS_Player::PreAttributeChange(const FGameplayAttribute& Attribute, fl
 		NewValue = NewValue < 0.0f ? 0.0f : NewValue;
 	else if (Attribute == GetMetaTemperatureAttribute())
 		NewValue = NewValue < 0.0f ? 0.0f : NewValue;
+}
 
+bool UEmberAS_Player::PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data)
+{
+	if (Super::PreGameplayEffectExecute(Data) == false)
+		return false;
+	
 	PreviousHealth = GetHealth();
+
+	return true;
 }
 
 void UEmberAS_Player::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -97,7 +105,7 @@ void UEmberAS_Player::OnRep_Health(const FGameplayAttributeData& OldValue)
 
 bool UEmberAS_Player::HasHealthChanged() const
 {
-	return !FMath::IsNearlyEqual(GetHealth(), PreviousHealth);
+	return FMath::IsNearlyEqual(GetHealth(), PreviousHealth) == false;
 }
 
 bool UEmberAS_Player::IsDead() const
