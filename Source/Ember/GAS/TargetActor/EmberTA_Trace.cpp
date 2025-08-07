@@ -4,7 +4,7 @@
 #include "GAS/TargetActor/EmberTA_Trace.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "EmberWeaponBase.h"
+#include "Weapon/EmberWeaponBase.h"
 #include "Abilities/GameplayAbility.h"
 #include "Component/WeaponComponent.h"
 #include "Components/CapsuleComponent.h"

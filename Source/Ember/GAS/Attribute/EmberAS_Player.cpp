@@ -71,11 +71,6 @@ void UEmberAS_Player::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	}
 
 	bOutOfHealth = (GetHealth() <= 0.0f);
-
-	// 삭제 예정
-	if (bHit == true)
-		if (OnHitPlayer.IsBound() == true)
-			OnHitPlayer.Broadcast();
 }
 
 void UEmberAS_Player::OnRep_Health(const FGameplayAttributeData& OldValue)

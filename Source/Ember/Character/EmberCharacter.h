@@ -18,7 +18,7 @@
 #include "EmberCharacter.generated.h"
 
 
-
+class UMontageComponent;
 class UGameplayEffect;
 class UGameplayAbility;
 class UWeaponComponent;
@@ -57,6 +57,8 @@ protected:
 	TObjectPtr<class UCustomCameraComponent> CameraComponent;
 	UPROPERTY(VisibleAnywhere, Category = Component)
 	TObjectPtr<UWeaponComponent> WeaponComponent;
+	UPROPERTY(VisibleAnywhere, Category = Component)
+	TObjectPtr<UMontageComponent> MontageComponent;
 
 	//GAS
 	UPROPERTY(EditAnywhere, Category = "GAS")
@@ -103,9 +105,7 @@ protected:
 
 
 protected:
-	UFUNCTION()
-	void HitPlayer();
-	void Dead();
+	void Dead(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
 	
 private:
 	TObjectPtr<class AEmberPlayerController> PlayerController;
