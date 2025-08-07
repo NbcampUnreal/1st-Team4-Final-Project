@@ -6,9 +6,11 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
 #include "Abilities/GameplayAbilityTypes.h"
+#include "GAS/Attribute/EmberAS_Player.h"
+#include "Utility/CLog.h"
 
 void UMonsterGameplayEffectComponent::OnGameplayEffectApplied(FActiveGameplayEffectsContainer& ActiveGEContainer,
-                                                         FGameplayEffectSpec& GESpec, FPredictionKey& PredictionKey) const
+	FGameplayEffectSpec& GESpec, FPredictionKey& PredictionKey) const
 {
 	UAbilitySystemComponent* ASC = ActiveGEContainer.Owner;
 	if (ensure(ASC) == false)
@@ -19,7 +21,8 @@ void UMonsterGameplayEffectComponent::OnGameplayEffectApplied(FActiveGameplayEff
 		FGameplayEventData Payload;
 		Payload.Instigator = GESpec.GetEffectContext().GetInstigator();
 		Payload.ContextHandle = GESpec.GetEffectContext();
-		
+
 		ASC->HandleGameplayEvent(ActivateAbilityConfig.AbilityEventTag, &Payload);
 	}
 }
+

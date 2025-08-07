@@ -1,7 +1,7 @@
 #include "GAS/GameplayAbility/EmberGA_Attack.h"
 
-#include "EmberWeaponDataAsset.h"
-#include "WeaponStruct.h"
+#include "Weapon/EmberWeaponDataAsset.h"
+#include "Weapon/WeaponStruct.h"
 #include "Character/EmberCharacter.h"
 #include "Component/CustomMoveComponent.h"
 #include "Component/WeaponComponent.h"

@@ -24,6 +24,7 @@ public:
 	FORCEINLINE FString GetTaskInstanceName() { return TaskInstanceName; }
 	FORCEINLINE float GetFrameRate() { return FrameRate; }
 	FORCEINLINE float GetEffectiveFrameCount(int32 InIndex) { return EffectiveFrameCount[InIndex]; }
+
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AEmberWeaponBase> WeaponClass;

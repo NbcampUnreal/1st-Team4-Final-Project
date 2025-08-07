@@ -1,7 +1,7 @@
 #include "Component/WeaponComponent.h"
 
-#include "EmberWeaponBase.h"
-#include "WeaponData.h"
+#include "Weapon/EmberWeaponBase.h"
+#include "Weapon/WeaponData.h"
 #include "GameFramework/Character.h"
 #include "Utility/CLog.h"
 

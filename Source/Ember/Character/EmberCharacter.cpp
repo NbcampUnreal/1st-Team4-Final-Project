@@ -16,11 +16,13 @@
 #include "Camera/CameraComponent.h"
 #include "Component/CustomCameraComponent.h"
 #include "Component/CustomMoveComponent.h"
+#include "Component/MontageComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Component/WeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/Attribute/EmberAS_Player.h"
 #include "Item/Drop/PickupItemActor.h"
+#include "Utility/EmberGameplayTags.h"
 
 // Sets default values
 AEmberCharacter::AEmberCharacter()
@@ -39,6 +41,7 @@ AEmberCharacter::AEmberCharacter()
 	CHelpers::CreateActorComponent(this, &MoveComponent, "Movement Component");
 	CHelpers::CreateActorComponent(this, &CameraComponent, "Camera Component");
 	CHelpers::CreateActorComponent(this, &WeaponComponent, "Weapon Component");
+	CHelpers::CreateActorComponent<UMontageComponent>(this, &MontageComponent, "Montage Component");
 
 	bUseControllerRotationYaw = false;
 	
@@ -100,7 +103,7 @@ void AEmberCharacter::PossessedBy(AController* NewController)
 	SetupGASInputComponent();
 	UEmberAS_Player* as = Cast<UEmberAS_Player>(state->GetAttributeSet());
 	if (as != nullptr)
-		as->OnHitPlayer.AddDynamic(this,&AEmberCharacter::HitPlayer);
+		as->OnOutOfHealth.AddUObject(this,&AEmberCharacter::Dead);
 }
 
 
@@ -109,19 +112,16 @@ FGenericTeamId AEmberCharacter::GetGenericTeamId() const
 	return FGenericTeamId((uint8)EGameTeamID::Team1);
 }
 
-void AEmberCharacter::HitPlayer()
+void AEmberCharacter::Dead(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, 
+	float DamageMagnitude, float OldValue, float NewValue)
 {
-	AEmberPlayerState* state = Cast<AEmberPlayerState>(GetPlayerState());
-	UEmberAS_Player* as = Cast<UEmberAS_Player>(state->GetAttributeSet());
-	if (as->GetHealth() <= 0)
-		Dead();
-	else
-		PlayAnimMontage(montage);
-}
+	FGameplayEventData Payload;
+	Payload.EventTag = EmberGameplayTags::GameplayEvent_Death;
+	Payload.Instigator = DamageInstigator;
+	Payload.Target = ASC->GetAvatarActor();
+	Payload.EventMagnitude = DamageMagnitude;
 
-void AEmberCharacter::Dead()
-{
-	Destroy();
+	ASC->HandleGameplayEvent(Payload.EventTag, &Payload);
 }
 
 void AEmberCharacter::Tick(float DeltaTime)
@@ -223,7 +223,7 @@ void AEmberCharacter::DamageTemperature()
 	if (MaxCount == Count)
 	{
 		TemperatureLeve++;
-		FMath::Clamp(TemperatureLeve,1,3);
+		FMath::Clamp(TemperatureLeve, 1, 3);
 		Count = 0;
 	}
 
@@ -234,14 +234,12 @@ void AEmberCharacter::DamageTemperature()
 		return;
 	}
 	contextHandle.AddSourceObject(this);
-	FGameplayEffectSpecHandle specHandle = ASC->MakeOutgoingSpec(GETemperature,TemperatureLeve,contextHandle);
+	FGameplayEffectSpecHandle specHandle = ASC->MakeOutgoingSpec(GETemperature, TemperatureLeve, contextHandle);
 	if (specHandle.IsValid())
 	{
 		ASC->BP_ApplyGameplayEffectSpecToSelf(specHandle);
 	}
 }
-
-
 
 UAbilitySystemComponent* AEmberCharacter::GetAbilitySystemComponent() const
 {
