@@ -33,7 +33,7 @@ protected:
 public:
 	FMontageData* GetHitData();
 	FMontageData* GetDeadData();
-	FMontageData* GetRollData(FGameplayTag InTag);
+	FMontageData* GetAvoidData(FGameplayTag InTag);
 
 public:
 	UPROPERTY(EditAnywhere, Category="Data Table")

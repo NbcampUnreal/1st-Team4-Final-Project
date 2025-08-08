@@ -106,16 +106,16 @@ protected:
 	float InteractDistance = 500.0f;
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	bool bDrawInteractionDebug = true;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UQuickSlotComponent* QuickSlotComponent;
 	void DamageTemperature();
-
-
-
 
 protected:
 	void Dead(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UQuickSlotComponent* QuickSlotComponent;
+
+public:
+	void SetIgnoreCollision(bool bIgnore);
+
 private:
 	TObjectPtr<class AEmberPlayerController> PlayerController;
 

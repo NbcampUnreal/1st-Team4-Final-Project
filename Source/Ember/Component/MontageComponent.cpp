@@ -41,8 +41,16 @@ FMontageData* UMontageComponent::GetDeadData()
 	return nullptr;
 }
 
-FMontageData* UMontageComponent::GetRollData(FGameplayTag InTag)
+FMontageData* UMontageComponent::GetAvoidData(FGameplayTag InTag)
 {
+	//switch (InTag.GetTagName())
+	//{
+	//	
+	//}
+
+	for (auto data : MontageData)
+		if (data != nullptr && data->StateTag == InTag)
+			return data;
 	return nullptr;
 }
 

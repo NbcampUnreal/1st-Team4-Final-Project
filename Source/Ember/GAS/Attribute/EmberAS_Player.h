@@ -37,6 +37,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MaxDamageTemperature)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, DamageTemperature)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MetaTemperature)
+	ATTRIBUTE_ACCESSORS(UEmberAS_Player, Invincible);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
@@ -88,6 +89,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MetaTemperature;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData Invincible;
 private:
 	bool bOutOfHealth;
 	float PreviousHealth;

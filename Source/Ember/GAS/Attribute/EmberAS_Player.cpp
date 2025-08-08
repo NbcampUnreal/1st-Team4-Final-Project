@@ -7,7 +7,7 @@ UEmberAS_Player::UEmberAS_Player()
 	:MaxHealth(100.0f), MaxAttackRange(300.0f), AttackRange(50.0f),
 	MaxAttackRadius(300.0f), AttackRadius(50.0f), MaxAttackDamage(500.0f),
 	AttackDamage(10.0f), MetaDamage(0.0f), MaxPlayerTemperature(100.0f),
-	MaxDamageTemperature(100.0f), DamageTemperature(1.0f), PreviousHealth(0.0f)
+	MaxDamageTemperature(100.0f), DamageTemperature(1.0f), PreviousHealth(0.0f), Invincible(0.0f)
 {
 	InitHealth(GetMaxHealth());
 	InitPlayerTemperature(GetMaxPlayerTemperature());
@@ -41,17 +41,16 @@ bool UEmberAS_Player::PreGameplayEffectExecute(FGameplayEffectModCallbackData& D
 void UEmberAS_Player::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
-	bool bHit{};
+	if (Data.EvaluatedData.Attribute == GetInvincibleAttribute())
+		return;
 	float minimumHealth = 0.0f;
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
-		bHit = true;
 		UE_LOG(LogTemp, Log, TEXT("Health : %f"), GetHealth());
 		SetHealth(FMath::Clamp(GetHealth(), minimumHealth, GetMaxHealth()));
 	}
 	else if (Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
 	{
-		bHit = true;
 		UE_LOG(LogTemp, Log, TEXT("Damge : %f"), GetMetaDamage());
 		SetHealth(FMath::Clamp(GetHealth() - GetMetaDamage(), 0.0f, GetMaxHealth()));
 		SetMetaDamage(0.0f);

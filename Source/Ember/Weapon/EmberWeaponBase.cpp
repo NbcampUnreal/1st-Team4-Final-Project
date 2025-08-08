@@ -16,6 +16,7 @@ AEmberWeaponBase::AEmberWeaponBase()
 	CHelpers::CreateComponent(this,&MeshComp,TEXT("Mesh"));
 	CHelpers::CreateComponent(this, &Collision, TEXT("Collision"), MeshComp);
 	Cooldown = 1.0f;
+	Collision->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
 	//Durability = 100.0f;
 }
 

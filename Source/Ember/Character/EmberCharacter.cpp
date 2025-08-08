@@ -124,6 +124,11 @@ void AEmberCharacter::Dead(AActor* DamageInstigator, AActor* DamageCauser, const
 	ASC->HandleGameplayEvent(Payload.EventTag, &Payload);
 }
 
+void AEmberCharacter::SetIgnoreCollision(bool bIgnore)
+{
+	
+}
+
 void AEmberCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -154,9 +159,6 @@ void AEmberCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	//  여기에서 F키(PickupItem) 바인딩
 	EnhancedInput->BindAction(PlayerController->InteractAction, ETriggerEvent::Started, this, &AEmberCharacter::PickupItem);
 
-	// GAS 입력 제거: 일반 방식이므로 아래 2줄 삭제 또는 주석처리
-	// EnhancedInput->BindAction(PlayerController->InteractAction, ETriggerEvent::Triggered, this, &AEmberCharacter::GASInputPressed, 2);
-	// EnhancedInput->BindAction(PlayerController->InteractAction, ETriggerEvent::Completed, this, &AEmberCharacter::GASInputReleased, 2);
 	SetupGASInputComponent();
 }
 
@@ -176,6 +178,8 @@ void AEmberCharacter::SetupGASInputComponent()
 		input->BindAction(PlayerController.Get()->SprintAction,ETriggerEvent::Triggered,this, &AEmberCharacter::GASInputPressed,1);
 		input->BindAction(PlayerController.Get()->SprintAction,ETriggerEvent::Completed,this, &AEmberCharacter::GASInputReleased,1);
 		input->BindAction(PlayerController.Get()->AttackAction, ETriggerEvent::Triggered, this, &AEmberCharacter::GASInputPressed, 2);
+		input->BindAction(PlayerController.Get()->Avoid, ETriggerEvent::Triggered, this, &AEmberCharacter::GASInputPressed, 3);
+		input->BindAction(PlayerController.Get()->JumpAction, ETriggerEvent::Completed,this,&AEmberCharacter::GASInputReleased, 3);
 	}
 }
 
