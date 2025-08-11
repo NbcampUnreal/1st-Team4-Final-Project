@@ -15,8 +15,6 @@ struct FGameplayEffectSpec;
 
 DECLARE_MULTICAST_DELEGATE_SixParams(FEmberAttributeEvent, AActor* /*EffectInstigator*/, AActor* /*EffectCauser*/, const FGameplayEffectSpec* /*EffectSpec*/, float /*EffectMagnitude*/, float /*OldValue*/, float /*NewValue*/);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHitPlayer);
-
 UCLASS()
 class EMBER_API UEmberAS_Player : public UAttributeSet
 {
@@ -39,12 +37,13 @@ public:
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MaxDamageTemperature)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, DamageTemperature)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MetaTemperature)
+	ATTRIBUTE_ACCESSORS(UEmberAS_Player, Invincible);
 
-	virtual void GetLifetimeReplicatedProps(TArray < FLifetimeProperty > & OutLifetimeProps) const override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	//virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
-	//virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data) override;
+	virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;;
 
 public:
@@ -62,7 +61,7 @@ private:
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="HP", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxHealth;
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "HP", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="HP", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Health;
 	UPROPERTY(BlueprintReadOnly, Category="Attack", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxAttackRange;
@@ -90,12 +89,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MetaTemperature;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData Invincible;
 private:
 	bool bOutOfHealth;
 	float PreviousHealth;
-
-	//삭제 예정
-public:
-	UPROPERTY(BlueprintAssignable)
-	FOnHitPlayer OnHitPlayer;
 };

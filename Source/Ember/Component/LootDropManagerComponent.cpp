@@ -164,6 +164,7 @@ void ULootDropManagerComponent::HandleMonsterDied(const FMonsterDiedMessage& Mes
 
 			if (LootActor)
 			{
+				LootActor->SetReplicates(true);
 				LootActor->InitializeLootDrop(Loot);
 				LootActor->FinishSpawning(SpawnTransform);
 

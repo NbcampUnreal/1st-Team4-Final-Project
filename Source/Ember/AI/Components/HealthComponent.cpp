@@ -6,6 +6,7 @@
 #include "Utility/CLog.h"
 #include "Utility/EmberGameplayTags.h"
 #include "AbilitySystemComponent.h"
+#include "ALootManagerActor.h"
 #include "GAS/Attribute/EmberAS_Player.h"
 
 UHealthComponent::UHealthComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -46,6 +47,7 @@ void UHealthComponent::InitializeWithAbilitySystem(UAbilitySystemComponent* InAS
 	if (Owner->HasAuthority())
 	{
 		HealthSet->OnOutOfHealth.AddUObject(this, &ThisClass::HandleOutOfHealth);
+		HealthSet->OnHealthChanged.AddUObject(this, &ThisClass::HandleHealthChanged);
 	}
 }
 
@@ -70,8 +72,27 @@ void UHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* Damag
 		}
 	}
 
+	/* 몬스터 아이템 드랍 */
+	if (ALootManagerActor* LootManager = ALootManagerActor::GetLootManager(this))
+	{
+		if (AActor* Owner = GetOwner())
+		{
+			FMonsterDiedMessage Msg;
+			Msg.MonsterID = FName("Test");
+			Msg.DeathLocation = Owner->GetActorLocation();
+			
+			ILootableInterface::Execute_NotifyMonsterDied(LootManager, Msg);
+		}
+	}
+
 	StartDeath();
 #endif
+}
+
+void UHealthComponent::HandleHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,
+	const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue)
+{
+	OnHealthChanged.Broadcast(this, OldValue, NewValue, DamageInstigator);
 }
 
 void UHealthComponent::StartDeath_Implementation()

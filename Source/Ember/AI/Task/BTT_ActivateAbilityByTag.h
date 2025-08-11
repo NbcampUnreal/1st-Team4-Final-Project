@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "BTTask_Base.h"
+#include "BTT_Base.h"
 #include "BTT_ActivateAbilityByTag.generated.h"
 
 UCLASS()
-class EMBER_API UBTT_ActivateAbilityByTag : public UBTTask_Base
+class EMBER_API UBTT_ActivateAbilityByTag : public UBTT_Base
 {
 	GENERATED_BODY()
 

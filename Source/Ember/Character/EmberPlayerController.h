@@ -43,7 +43,8 @@ public:
 	class UInputAction* SprintAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* InteractAction;
-
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* Avoid;
 protected:
 	virtual void BeginPlay() override;
 

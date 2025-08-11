@@ -47,6 +47,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UAISenseConfig_Sight> AISenseConfigSight;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<class UAISenseConfig_Damage> AISenseConfigDamage;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AI|Sight")
 	float DetectionRadius = 1500.f;
 

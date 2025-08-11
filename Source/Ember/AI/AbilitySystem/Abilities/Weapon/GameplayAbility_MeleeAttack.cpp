@@ -14,6 +14,8 @@ UGameplayAbility_MeleeAttack::UGameplayAbility_MeleeAttack(const FObjectInitiali
 {
 	bServerRespectsRemoteAbilityCancellation = false;
 	NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ServerOnlyTermination;
+	
+	ActivationOwnedTags.AddTag(EmberGameplayTags::Status_Attack);
 }
 
 void UGameplayAbility_MeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

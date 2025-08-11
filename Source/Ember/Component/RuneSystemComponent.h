@@ -53,6 +53,16 @@ struct FRuneStat
             && FMath::IsNearlyEqual(CooldownReduction, Other.CooldownReduction)
             && Element == Other.Element;
     }
+
+    bool IsBetterThan(const FRuneStat& Other) const
+    {
+        if (Power > Other.Power)
+            return true;
+        if (FMath::IsNearlyEqual(Power, Other.Power) && CooldownReduction > Other.CooldownReduction)
+            return true;
+
+        return false;
+    }
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))

@@ -1,0 +1,32 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "BTT_ActivateRandomAbilityByTags.h"
+
+#include "AI/AbilitySystem/MonsterAbilitySystemComponent.h"
+#include "AI/Monster/MonsterAIBase.h"
+
+EBTNodeResult::Type UBTT_ActivateRandomAbilityByTags::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
+
+	if (ActorOwner == nullptr)
+	{
+		return EBTNodeResult::Failed;
+	}
+	
+	if (UMonsterAbilitySystemComponent* ASC = Cast<UMonsterAbilitySystemComponent>(ActorOwner->GetAbilitySystemComponent()))
+	{
+		if (GameplayTags.IsEmpty() == false)
+		{
+			int32 SelectedIndex = FMath::RandRange(0, GameplayTags.Num() - 1);
+			
+			if (ASC->TryActivateAbilityByTag(GameplayTags[SelectedIndex]) == false)
+			{
+				Result = EBTNodeResult::Failed;
+			}
+		}
+	}
+	
+	return Result;
+}

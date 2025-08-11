@@ -4,6 +4,7 @@
 #include "MonsterAIController.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Perception/AISenseConfig_Damage.h"
 #include "Runtime/AIModule/Classes/Perception/AIPerceptionComponent.h"
 #include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
 #include "Utility/CHelpers.h"
@@ -18,10 +19,12 @@ AMonsterAIController::AMonsterAIController()
 	AISenseConfigSight->SightRadius = DetectionRadius;
 	AISenseConfigSight->LoseSightRadius = LoseInterestRadius;
 	AISenseConfigSight->PeripheralVisionAngleDegrees = SightAngleDegree;
-	
+
+	CHelpers::CreateActorComponent(this, &AISenseConfigDamage, TEXT("AISenseConfigDamage"));
 	
 	CHelpers::CreateActorComponent(this, &AIPerceptionComponent, TEXT("AIPerceptionComponent"));
 	AIPerceptionComponent->ConfigureSense(*AISenseConfigSight);
+	AIPerceptionComponent->ConfigureSense(*AISenseConfigDamage);
 	AIPerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &ThisClass::OnTargetPerceptionUpdated);
 }

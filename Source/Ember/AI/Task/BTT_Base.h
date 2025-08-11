@@ -3,17 +3,17 @@
 #pragma once
 
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_Base.generated.h"
+#include "BTT_Base.generated.h"
 
 class AMonsterAIBase;
 
 UCLASS()
-class EMBER_API UBTTask_Base : public UBTTask_BlackboardBase
+class EMBER_API UBTT_Base : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
 public:
-	UBTTask_Base(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UBTT_Base(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	
 protected:
 	virtual void SetOwner(AActor* InActorOwner) override;
