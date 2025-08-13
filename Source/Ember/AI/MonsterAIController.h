@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Runtime/AIModule/Classes/AIController.h"
 #include "MonsterAIController.generated.h"
 
@@ -58,9 +57,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AI|Sight")
 	float SightAngleDegree = 60.f;
-
-/* Base */
-protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AI|Base")
-	TObjectPtr<UBehaviorTree> BTAsset;
 };
