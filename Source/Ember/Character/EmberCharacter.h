@@ -57,6 +57,7 @@ public:
 	void AddOverlappingItem(APickupItemActor* Item);
 	UFUNCTION()
 	void RemoveOverlappingItem(APickupItemActor* Item);
+	void SetIgnoreCollision(bool bIgnore);
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	TObjectPtr<class USpringArmComponent> SpringArm;
@@ -110,11 +111,15 @@ protected:
 	UQuickSlotComponent* QuickSlotComponent;
 	void DamageTemperature();
 
-protected:
 	void Dead(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
+	
+	UFUNCTION(Server, Reliable)
+	void Server_UseQuickSlot(int32 Index);
 
-public:
-	void SetIgnoreCollision(bool bIgnore);
+	void UseQuickSlot1(); void UseQuickSlot2(); void UseQuickSlot3(); void UseQuickSlot4(); void UseQuickSlot5();
+	void UseQuickSlot(int32 Index);
+
+
 
 private:
 	TObjectPtr<class AEmberPlayerController> PlayerController;

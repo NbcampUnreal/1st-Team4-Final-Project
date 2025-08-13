@@ -57,15 +57,26 @@ void UQuickSlotComponent::UseQuickSlot(int32 Index)
 	const UItemTemplate* Template = Slot.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
 	if (!Template) return;
 
-	// TODO: 효과 적용 (예: 회복)
-	UE_LOG(LogTemp, Log, TEXT("Used item: %s"), *Template->DisplayName.ToString());
+	UE_LOG(LogTemp, Log, TEXT("[QuickSlot] Used item: %s from Slot[%d] (Before: %d)"),
+		*Template->DisplayName.ToString(), Index, Slot.Quantity);
 
-	Slot.Quantity--;
+	// TODO: 여기에 실제 효과 적용(GAS) 나중에 추가
+	// ex) ASC->ApplyGameplayEffectToSelf(Template->ConsumableEffect ...);
+
+	Slot.Quantity = FMath::Max(0, Slot.Quantity - 1);
 	if (Slot.Quantity <= 0)
 	{
 		Slot.ItemTemplateClass = nullptr;
+		UE_LOG(LogTemp, Log, TEXT("[QuickSlot] Slot[%d] now empty"), Index);
 	}
+
+	// UI 갱신 훅
+	// UpdateQuickSlotUI(Index);
+
+	// 상태 로그
+	LogQuickSlotState();
 }
+
 
 const FQuickSlot* UQuickSlotComponent::GetSlot(int32 Index) const
 {
