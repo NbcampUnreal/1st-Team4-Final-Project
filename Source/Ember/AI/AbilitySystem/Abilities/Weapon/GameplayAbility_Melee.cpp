@@ -47,7 +47,6 @@ void UGameplayAbility_Melee::ParseTargetData(const FGameplayAbilityTargetDataHan
 	}
 }
 
-PRAGMA_DISABLE_OPTIMIZATION
 void UGameplayAbility_Melee::ProcessHitResult(FHitResult HitResult, float Damage, bool bBlockingHit,
 	UAnimMontage* BackwardMontage, AMonsterAIWeapon* WeaponActor)
 {
@@ -66,4 +65,3 @@ void UGameplayAbility_Melee::ProcessHitResult(FHitResult HitResult, float Damage
 		ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, EffectSpecHandle, TargetDataHandle);
 	}
 }
-PRAGMA_ENABLE_OPTIMIZATION

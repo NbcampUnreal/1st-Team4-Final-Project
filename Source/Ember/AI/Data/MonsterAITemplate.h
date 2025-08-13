@@ -4,6 +4,8 @@
 #include "GameplayTagContainer.h"
 #include "MonsterAITemplate.generated.h"
 
+class AAIController;
+class UBehaviorTree;
 class AMonsterAIBase;
 class AMonsterAIWeapon;
 class UMonsterGameplayAbility;
@@ -43,6 +45,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Base")
 	TSubclassOf<AMonsterAIBase> MonsterClass;
 
+	/* AIController */
+	UPROPERTY(EditDefaultsOnly, Category = "AIController")
+	TSubclassOf<AAIController> AIControllerClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AIController")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+	
 	/* Weapon */
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<AMonsterAIWeapon> WeaponClass;

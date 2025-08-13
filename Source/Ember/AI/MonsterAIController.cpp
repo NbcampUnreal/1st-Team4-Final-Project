@@ -4,16 +4,17 @@
 #include "MonsterAIController.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Data/MonsterAIData.h"
+#include "Data/MonsterAITemplate.h"
 #include "Perception/AISenseConfig_Damage.h"
 #include "Runtime/AIModule/Classes/Perception/AIPerceptionComponent.h"
 #include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
 #include "Utility/CHelpers.h"
-#include "Utility/CLog.h"
 
 AMonsterAIController::AMonsterAIController()
 {
 	bWantsPlayerState = true;
-	//PrimaryActorTick.bCanEverTick = false;
+	// PrimaryActorTick.bCanEverTick = false;
 
 	CHelpers::CreateActorComponent(this, &AISenseConfigSight, TEXT("AISenseConfigSight"));
 	AISenseConfigSight->SightRadius = DetectionRadius;
@@ -38,7 +39,11 @@ void AMonsterAIController::OnPossess(APawn* Possessed)
 {
 	Super::OnPossess(Possessed);
 
-	RunBehaviorTree(BTAsset);
+	if (Possessed == nullptr)
+		return;
+
+	const UMonsterAITemplate& MonsterAITemplate = UMonsterAIData::Get().FindMonsterAITemplateByClass(Possessed->GetClass());
+	RunBehaviorTree(MonsterAITemplate.BehaviorTree);
 }
 
 void AMonsterAIController::OnUnPossess()
