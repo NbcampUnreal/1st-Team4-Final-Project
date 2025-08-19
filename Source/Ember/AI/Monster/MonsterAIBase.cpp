@@ -9,7 +9,7 @@
 #include "AI/Data/MonsterAITemplate.h"
 #include "AI/Weapon/MonsterAIWeapon.h"
 #include "MonsterAIAttributeSet.h"
-#include "AI/Components/HealthComponent.h"
+#include "Component/HealthComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerState.h"

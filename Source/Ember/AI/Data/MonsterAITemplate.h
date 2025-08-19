@@ -22,6 +22,16 @@ struct FEmberAbilitySet_GameplayAbility
 	FGameplayTag GameplayTag;
 };
 
+USTRUCT(BlueprintType)
+struct FMontage
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UAnimMontage> Montage;
+	UPROPERTY(EditAnywhere)
+	float PlayRate;
+};
 
 UCLASS(Blueprintable, Const, Abstract)
 class UMonsterAITemplate : public UObject
@@ -78,4 +88,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAnimMontage> RightHitMontage;
+	UPROPERTY(EditAnywhere)
+	TMap<FGameplayTag, FMontage> MontageDatas;
 };

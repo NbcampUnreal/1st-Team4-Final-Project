@@ -3,7 +3,7 @@
 
 #include "EmberBaseCharacter.h"
 
-#include "AI/Components/HealthComponent.h"
+#include "Component/HealthComponent.h"
 #include "GAS/EmberAbilitySystemComponent.h"
 
 // Sets default values
