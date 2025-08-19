@@ -16,9 +16,11 @@ class EMBER_API AEmberPlayerController : public APlayerController
 
 public:
 
+	//Snow VFX
+	
 	void SpawnFX(); //VFX 스폰
 	
-	UFUNCTION(BlueprintImplementableEvent, Category = "Weather")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Weather") //블루프린트 구현
 	void ChangeFX(); //VFX 변경
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
