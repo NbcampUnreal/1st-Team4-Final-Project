@@ -20,6 +20,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Component/WeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GAS/EmberAbilitySystemComponent.h"
 #include "GAS/Attribute/EmberAS_Player.h"
 #include "Item/Drop/PickupItemActor.h"
 #include "Utility/EmberGameplayTags.h"
@@ -27,7 +28,7 @@
 // Sets default values
 AEmberCharacter::AEmberCharacter()
 {
-	ASC == nullptr;
+	//ASC == nullptr;
 	PrimaryActorTick.bCanEverTick = true;
 
 	CHelpers::CreateComponent(this, &SpringArm, "SpringArm", RootComponent);
@@ -80,7 +81,7 @@ void AEmberCharacter::PossessedBy(AController* NewController)
 		return;
 	}
 
-	ASC = state->GetAbilitySystemComponent();
+	ASC = Cast< UEmberAbilitySystemComponent>(state->GetAbilitySystemComponent());
 	if (ASC == nullptr)
 	{
 		DebugLogE("ASC is null");
@@ -273,10 +274,10 @@ void AEmberCharacter::DamageTemperature()
 	}
 }
 
-UAbilitySystemComponent* AEmberCharacter::GetAbilitySystemComponent() const
-{
-	return ASC;
-}
+//UAbilitySystemComponent* AEmberCharacter::GetAbilitySystemComponent() const
+//{
+//	return ASC;
+//}
 
 void AEmberCharacter::Attack()
 {

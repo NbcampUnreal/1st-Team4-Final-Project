@@ -35,25 +35,11 @@ void AEmberWeaponBase::ApplyRune(ARuneItem* Rune)
 	//UE_LOG(LogTemp, Log, TEXT("Rune Class: %s"), Rune->GetName() );
 }
 
-// Called when the game starts or when spawned
 void AEmberWeaponBase::BeginPlay()
 {
 	OwnerCharacter = CastChecked<ACharacter>(GetOwner());
 	Super::BeginPlay();
 }
-
-//void AEmberWeaponBase::Attack()
-//{
-//	if (!CanAttack())
-//	{
-//		return;	
-//	}
-//
-//	LastAttackTime = GetWorld()->TimeSeconds; /*  */
-//
-//	OnAttack();
-//
-//}
 
 void AEmberWeaponBase::AttachTo(FName InSocketName)
 {
@@ -65,18 +51,3 @@ void AEmberWeaponBase::AttachTo(FName InSocketName)
 	
 	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), InSocketName);
 }
-
-
-//bool AEmberWeaponBase::CanAttack() const
-//{
-//	float TimeSinceLast = GetWorld()->TimeSeconds - LastAttackTime;
-//	return (TimeSinceLast >= Cooldown) && (Cooldown > 0.0f);
-//}
-
-// Called every frame
-void AEmberWeaponBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

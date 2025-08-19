@@ -1,10 +1,8 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿#include "MonsterAIBase.h"
 
-
-#include "MonsterAIBase.h"
-
+#include "ALootManagerActor.h"
 #include "AI/MonsterAIController.h"
-#include "AI/AbilitySystem/MonsterAbilitySystemComponent.h"
+#include "GAS/EmberAbilitySystemComponent.h"
 #include "AI/AbilitySystem/MonsterGameplayEffectComponent.h"
 #include "AI/AbilitySystem/Abilities/MonsterGameplayAbility.h"
 #include "AI/Data/MonsterAIData.h"
@@ -22,36 +20,52 @@ AMonsterAIBase::AMonsterAIBase()
 {
 	AIControllerClass = AMonsterAIController::StaticClass();
 
-	ASC = CreateDefaultSubobject<UMonsterAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	ASC->SetIsReplicated(true);
-	ASC->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
-	
+	if (!ASC)
+	{
+		ASC = CreateDefaultSubobject<UEmberAbilitySystemComponent>(TEXT("MonsterASC"));
+		ASC->SetIsReplicated(true);
+		ASC->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+	}
+
 	AttributeSet = CreateDefaultSubobject<UEmberAS_Player>(TEXT("AttributeSet"));
 
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	UE_LOG(LogTemp, Warning, TEXT("EmberBaseCharacter Constructor - ASC: %s"),
+		ASC ? *ASC->GetName() : TEXT("Null"));
+	UE_LOG(LogTemp, Warning, TEXT("EmberBaseCharacter Constructor - this: %s"),
+		*GetName());
+	//HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 }
 
 void AMonsterAIBase::PostInitializeComponents()
 {
+	UE_LOG(LogTemp, Warning, TEXT("MonsterAIBase PostInitializeComponents START - ASC: %s"),
+		ASC ? TEXT("Valid") : TEXT("Null"));
 	Super::PostInitializeComponents();
-
-	ASC->InitAbilityActorInfo(this, this);
-	HealthComponent->InitializeWithAbilitySystem(ASC);
+	UE_LOG(LogTemp, Warning, TEXT("MonsterAIBase PostInitializeComponents END - ASC: %s"),
+		ASC ? TEXT("Valid") : TEXT("Null"));
 }
 
 void AMonsterAIBase::BeginPlay()
 {
+	UE_LOG(LogTemp, Warning, TEXT("MonsterAIBase BeginPlay START - ASC: %s"),
+		ASC ? TEXT("Valid") : TEXT("Null"));
 	Super::BeginPlay();
-	
+	UE_LOG(LogTemp, Warning, TEXT("MonsterAIBase BeginPlay AFTER Super - ASC: %s"),
+		ASC ? TEXT("Valid") : TEXT("Null"));
+	if (ASC)
+	{
+		ASC->InitAbilityActorInfo(this, this);
+		UE_LOG(LogTemp, Warning, TEXT("ASC Valid"));
+	}
 	if (HasAuthority())
 	{
 		InitializeMonsterAI();
 	}
 
-	if (HealthComponent)
+	/*if (HealthComponent)
 	{
 		HealthComponent->OnDeath.BindUObject(this, &ThisClass::OnDeath);
-	}
+	}*/
 }
 
 void AMonsterAIBase::InitializeMonsterAI()
@@ -129,6 +143,17 @@ void AMonsterAIBase::OnDeath()
 		{
 			WeaponActor->Destroy();
 		}
+
+		///* 몬스터 아이템 드랍 */
+		if (ALootManagerActor* LootManager = ALootManagerActor::GetLootManager(this))
+		{
+			FMonsterDiedMessage Msg;
+			Msg.MonsterID = FName("Test");
+			Msg.DeathLocation = GetActorLocation();
+			
+			ILootableInterface::Execute_NotifyMonsterDied(LootManager, Msg);
+		
+		}
 	}
 	
 	DisableMovementAndCollision();
@@ -158,14 +183,4 @@ void AMonsterAIBase::DisableMovementAndCollision()
 		MonsterAIMovement->Velocity = FVector(0.f, 0.f, MonsterAIMovement->Velocity.Z);
 		MonsterAIMovement->UpdateComponentVelocity();
 	}
-}
-
-UAbilitySystemComponent* AMonsterAIBase::GetAbilitySystemComponent() const
-{
-	return ASC;
-}
-
-UMonsterAbilitySystemComponent* AMonsterAIBase::GetMonsterAbilitySystemComponent() const
-{
-	return Cast<UMonsterAbilitySystemComponent>(ASC);
 }

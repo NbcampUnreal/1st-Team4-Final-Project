@@ -27,7 +27,7 @@ bool URuneSystemComponent::EquipRune(ARuneItem* NewRune, int32 SlotIndex)
 
     if (AEmberCharacter* OwnerChar = Cast<AEmberCharacter>(GetOwner()))
     {
-        if (UAbilitySystemComponent* ASC = OwnerChar->GetASC())
+        if (UAbilitySystemComponent* ASC = OwnerChar->GetAbilitySystemComponent())
         {
             Slot.Rune = NewRune;
 
@@ -64,7 +64,7 @@ void URuneSystemComponent::RemoveRune(int32 SlotIndex)
 
     if (AEmberCharacter* OwnerChar = Cast<AEmberCharacter>(GetOwner()))
     {
-        UAbilitySystemComponent* ASC = OwnerChar->GetASC();
+        UAbilitySystemComponent* ASC = OwnerChar->GetAbilitySystemComponent();
         if (ASC)
         {
             if (Slot.AbilityHandle.IsValid())

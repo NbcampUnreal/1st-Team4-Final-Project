@@ -72,19 +72,6 @@ void UHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* Damag
 		}
 	}
 
-	/* 몬스터 아이템 드랍 */
-	if (ALootManagerActor* LootManager = ALootManagerActor::GetLootManager(this))
-	{
-		if (AActor* Owner = GetOwner())
-		{
-			FMonsterDiedMessage Msg;
-			Msg.MonsterID = FName("Test");
-			Msg.DeathLocation = Owner->GetActorLocation();
-			
-			ILootableInterface::Execute_NotifyMonsterDied(LootManager, Msg);
-		}
-	}
-
 	StartDeath();
 #endif
 }
