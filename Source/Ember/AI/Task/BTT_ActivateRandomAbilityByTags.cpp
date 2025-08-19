@@ -8,7 +8,7 @@
 
 EBTNodeResult::Type UBTT_ActivateRandomAbilityByTags::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
+	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	if (ActorOwner == nullptr)
 	{
@@ -23,10 +23,10 @@ EBTNodeResult::Type UBTT_ActivateRandomAbilityByTags::ExecuteTask(UBehaviorTreeC
 			
 			if (ASC->TryActivateAbilityByTag(GameplayTags[SelectedIndex]) == false)
 			{
-				Result = EBTNodeResult::Failed;
+				return EBTNodeResult::Failed;
 			}
 		}
 	}
 	
-	return Result;
+	return EBTNodeResult::InProgress;
 }

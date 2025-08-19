@@ -125,7 +125,10 @@ void AMonsterAIBase::OnDeath()
 {
 	if (HasAuthority())
 	{
-		WeaponActor->Destroy();
+		if (WeaponActor)
+		{
+			WeaponActor->Destroy();
+		}
 	}
 	
 	DisableMovementAndCollision();

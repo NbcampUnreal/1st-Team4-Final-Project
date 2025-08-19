@@ -155,13 +155,41 @@ void AEmberCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	// 일반 액션 바인딩
 	EnhancedInput->BindAction(PlayerController->MoveAction, ETriggerEvent::Triggered, MoveComponent.Get(), &UCustomMoveComponent::Move);
 	EnhancedInput->BindAction(PlayerController->LookAction, ETriggerEvent::Triggered, CameraComponent.Get(), &UCustomCameraComponent::Look);
-
+	EnhancedInput->BindAction(PlayerController->Quick1Action, ETriggerEvent::Started, this, &AEmberCharacter::UseQuickSlot1);
+	EnhancedInput->BindAction(PlayerController->Quick2Action, ETriggerEvent::Started, this, &AEmberCharacter::UseQuickSlot2);
+	EnhancedInput->BindAction(PlayerController->Quick3Action, ETriggerEvent::Started, this, &AEmberCharacter::UseQuickSlot3);
+	EnhancedInput->BindAction(PlayerController->Quick4Action, ETriggerEvent::Started, this, &AEmberCharacter::UseQuickSlot4);
+	EnhancedInput->BindAction(PlayerController->Quick5Action, ETriggerEvent::Started, this, &AEmberCharacter::UseQuickSlot5);
 	//  여기에서 F키(PickupItem) 바인딩
 	EnhancedInput->BindAction(PlayerController->InteractAction, ETriggerEvent::Started, this, &AEmberCharacter::PickupItem);
 
 	SetupGASInputComponent();
 }
+void AEmberCharacter::UseQuickSlot1() { UseQuickSlot(0); }
+void AEmberCharacter::UseQuickSlot2() { UseQuickSlot(1); }
+void AEmberCharacter::UseQuickSlot3() { UseQuickSlot(2); }
+void AEmberCharacter::UseQuickSlot4() { UseQuickSlot(3); }
+void AEmberCharacter::UseQuickSlot5() { UseQuickSlot(4); }
 
+void AEmberCharacter::UseQuickSlot(int32 Index)
+{
+	if (!QuickSlotComponent) return;
+
+	if (HasAuthority())
+	{
+		QuickSlotComponent->UseQuickSlot(Index);          // ✅ 네가 만든 함수 재사용
+	}
+	else
+	{
+		Server_UseQuickSlot(Index);                       // ✅ 서버로 권한 위임
+	}
+}
+
+void AEmberCharacter::Server_UseQuickSlot_Implementation(int32 Index)
+{
+	if (QuickSlotComponent)
+		QuickSlotComponent->UseQuickSlot(Index);          // ✅ 서버에서 실행
+}
 
 void AEmberCharacter::SetupGASInputComponent()
 {

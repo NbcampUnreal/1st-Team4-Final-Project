@@ -47,6 +47,16 @@ public:
 	class UInputAction* InteractAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	class UInputAction* Avoid;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* Quick1Action;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* Quick2Action;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* Quick3Action;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* Quick4Action;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	class UInputAction* Quick5Action;
 protected:
 	virtual void BeginPlay() override;
 
