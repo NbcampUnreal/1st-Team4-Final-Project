@@ -67,8 +67,11 @@ void UEmberGA_Avoid::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		//else
 		//	DirectionTag = TAG_Dodge_ForwardLeft;   // ¢Ø
 	}
+	if (data->Montage == nullptr)
+		OnCancelledCallback();
 	UAbilityTask_PlayMontageAndWait* avoid = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, "Avoid", data->Montage, data->PlayRate);
 	avoid->OnCompleted.AddDynamic(this,&UEmberGA_Avoid::OnCompleteCallback);
+	avoid->OnCancelled.AddDynamic(this,&UEmberGA_Avoid::OnCancelledCallback);
 	avoid->ReadyForActivation();
 }
 
@@ -81,6 +84,11 @@ void UEmberGA_Avoid::EndAbility(const FGameplayAbilitySpecHandle Handle, const F
 void UEmberGA_Avoid::OnCompleteCallback()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo,CurrentActivationInfo,true, false);
+}
+
+void UEmberGA_Avoid::OnCancelledCallback()
+{
+	EndAbility(CurrentSpecHandle,CurrentActorInfo,CurrentActivationInfo,true,true);
 }
 
 void UEmberGA_Avoid::OnInterruptedCallback()
