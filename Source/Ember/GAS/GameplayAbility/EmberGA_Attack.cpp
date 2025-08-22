@@ -1,7 +1,6 @@
 #include "GAS/GameplayAbility/EmberGA_Attack.h"
 
 #include "Weapon/EmberWeaponDataAsset.h"
-#include "Weapon/WeaponStruct.h"
 #include "Character/EmberCharacter.h"
 #include "Component/CustomMoveComponent.h"
 #include "Component/WeaponComponent.h"
@@ -28,7 +27,7 @@ void UEmberGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 	UWeaponComponent* weapon = CHelpers::GetComponent<UWeaponComponent>(character);
 	CurrentComboData = weapon->GetWeaponAsset();
-	if (CurrentComboData.Get()->GetActionData(CurrentCombo).bCanMove == false)
+	if (CurrentComboData.Get()->GetCanMove()== false)
 	{
 		UCustomMoveComponent* move = CHelpers::GetComponent<UCustomMoveComponent>(character);
 		if (move == nullptr)
@@ -37,9 +36,9 @@ void UEmberGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 			return;
 		}
 
-		move->ShouldMove(CurrentComboData.Get()->GetActionData(CurrentCombo).bCanMove);
+		move->ShouldMove(CurrentComboData.Get()->GetCanMove());
 	}
-	UAbilityTask_PlayMontageAndWait* attackMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, *CurrentComboData.Get()->GetTaskInstanceName(), CurrentComboData.Get()->GetAnimMontage(), CurrentComboData.Get()->GetActionData(CurrentCombo).PlayRate, GetNextSection());
+	UAbilityTask_PlayMontageAndWait* attackMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, *CurrentComboData.Get()->GetTaskInstanceName(), CurrentComboData.Get()->GetAnimMontage(), 1.0f, GetNextSection());
 
 	attackMontage->OnCompleted.AddDynamic(this,&UEmberGA_Attack::OnCompleteCallback);
 	attackMontage->OnInterrupted.AddDynamic(this,&UEmberGA_Attack::OnInterruptedCallback);
@@ -72,7 +71,7 @@ void UEmberGA_Attack::EndAbility(const FGameplayAbilitySpecHandle Handle, const 
 		DebugLogE("move component is null");
 		return;
 	}
-	move->ShouldMove(!CurrentComboData.Get()->GetActionData(CurrentCombo).bCanMove);
+	move->ShouldMove(!CurrentComboData.Get()->GetCanMove());
 }
 
 void UEmberGA_Attack::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
@@ -122,8 +121,6 @@ void UEmberGA_Attack::StartComboTimer()
 {
 	DebugLogE("start combo");
 	int32 comboIndex = CurrentCombo - 1;
-	if (CurrentComboData.Get()->GetDoActionCount() < comboIndex)
-		return;
 	if (CurrentComboData->GetEffectiveFrameCount(comboIndex) <= 0)
 		return;
 	float comboEffectiveTime = CurrentComboData->GetEffectiveFrameCount(comboIndex) / CurrentComboData->GetFrameRate();
