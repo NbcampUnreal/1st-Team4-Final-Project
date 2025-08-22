@@ -9,7 +9,6 @@ UMontageComponent::UMontageComponent()
 
 }
 
-
 // Called when the game starts
 void UMontageComponent::BeginPlay()
 {

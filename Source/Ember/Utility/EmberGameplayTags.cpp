@@ -10,11 +10,13 @@ namespace EmberGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(AI_Ability_Attack,								"AI.Ability.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(AI_Ability_Attack_Normal,						"AI.Ability.Attack.Normal");
 	UE_DEFINE_GAMEPLAY_TAG(AI_Ability_Attack_Heavy,							"AI.Ability.Attack.Heavy");
+	UE_DEFINE_GAMEPLAY_TAG(AI_Ability_Phase,								"AI.Ability.Phase");
 
 	// Status
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack,									"Status.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact,									"Status.HitReact");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Death,									"Status.Death");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Phase,									"Status.Phasew");
 	
 	// Gameplay Event
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Death,								"GameplayEvent.Death");

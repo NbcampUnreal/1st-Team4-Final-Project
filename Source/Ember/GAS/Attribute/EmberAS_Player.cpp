@@ -13,6 +13,16 @@ UEmberAS_Player::UEmberAS_Player()
 	InitPlayerTemperature(GetMaxPlayerTemperature());
 }
 
+float UEmberAS_Player::GetHealthRatio() const
+{
+	if (FMath::IsNearlyZero(GetHealth()))
+	{
+		return 0.f;
+	}
+
+	return (GetHealth() / GetMaxHealth()) * 100;
+}
+
 void UEmberAS_Player::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

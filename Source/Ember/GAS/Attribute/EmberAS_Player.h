@@ -22,6 +22,10 @@ class EMBER_API UEmberAS_Player : public UAttributeSet
 public:
 	UEmberAS_Player();
 
+public:
+	float GetHealthRatio() const;
+
+public:
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player,MaxHealth);
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player,Health);
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MaxAttackRange);

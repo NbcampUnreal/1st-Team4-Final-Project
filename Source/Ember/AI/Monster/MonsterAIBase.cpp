@@ -19,53 +19,35 @@
 AMonsterAIBase::AMonsterAIBase()
 {
 	AIControllerClass = AMonsterAIController::StaticClass();
-
-	if (!ASC)
-	{
-		ASC = CreateDefaultSubobject<UEmberAbilitySystemComponent>(TEXT("MonsterASC"));
-		ASC->SetIsReplicated(true);
-		ASC->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
-	}
+	
+	ASC = CreateDefaultSubobject<UEmberAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	ASC->SetIsReplicated(true);
+	ASC->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
 	AttributeSet = CreateDefaultSubobject<UEmberAS_Player>(TEXT("AttributeSet"));
 
-	UE_LOG(LogTemp, Warning, TEXT("EmberBaseCharacter Constructor - ASC: %s"),
-		ASC ? *ASC->GetName() : TEXT("Null"));
-	UE_LOG(LogTemp, Warning, TEXT("EmberBaseCharacter Constructor - this: %s"),
-		*GetName());
-	//HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 0.0f, 180.f);
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
 }
 
 void AMonsterAIBase::PostInitializeComponents()
 {
-	UE_LOG(LogTemp, Warning, TEXT("MonsterAIBase PostInitializeComponents START - ASC: %s"),
-		ASC ? TEXT("Valid") : TEXT("Null"));
 	Super::PostInitializeComponents();
-	UE_LOG(LogTemp, Warning, TEXT("MonsterAIBase PostInitializeComponents END - ASC: %s"),
-		ASC ? TEXT("Valid") : TEXT("Null"));
 }
 
 void AMonsterAIBase::BeginPlay()
 {
-	UE_LOG(LogTemp, Warning, TEXT("MonsterAIBase BeginPlay START - ASC: %s"),
-		ASC ? TEXT("Valid") : TEXT("Null"));
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Warning, TEXT("MonsterAIBase BeginPlay AFTER Super - ASC: %s"),
-		ASC ? TEXT("Valid") : TEXT("Null"));
-	if (ASC)
-	{
-		ASC->InitAbilityActorInfo(this, this);
-		UE_LOG(LogTemp, Warning, TEXT("ASC Valid"));
-	}
+	
+	ASC->InitAbilityActorInfo(this, this);
+	
 	if (HasAuthority())
 	{
 		InitializeMonsterAI();
 	}
-
-	/*if (HealthComponent)
-	{
-		HealthComponent->OnDeath.BindUObject(this, &ThisClass::OnDeath);
-	}*/
 }
 
 void AMonsterAIBase::InitializeMonsterAI()
@@ -118,20 +100,16 @@ void AMonsterAIBase::HandleHealthChanged(UHealthComponent* InHealthComponent, fl
 	APawn* InstigatorPawn = PS->GetPawn();
 	if (InstigatorPawn == nullptr)
 		return;
-	
-	if (AAIController* AIController = Cast<AAIController>(GetController()))
-	{
-		const float DamageAmount = OldValue - NewValue;
-		
-		UAISense_Damage::ReportDamageEvent(
-			GetWorld(),
-			this,
-			InstigatorPawn,
-			DamageAmount,
-			InstigatorPawn->GetActorLocation(),
-			GetActorLocation()
-		);
-	}
+
+	float DamageAmount = OldValue - NewValue;
+	UAISense_Damage::ReportDamageEvent(
+		GetWorld(),
+		this,
+		InstigatorPawn,
+		DamageAmount,
+		InstigatorPawn->GetActorLocation(),
+		GetActorLocation()
+	);
 }
 
 
