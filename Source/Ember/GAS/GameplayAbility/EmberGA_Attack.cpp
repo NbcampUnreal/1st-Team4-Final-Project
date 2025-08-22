@@ -1,7 +1,6 @@
 #include "GAS/GameplayAbility/EmberGA_Attack.h"
 
 #include "Weapon/EmberWeaponDataAsset.h"
-#include "Weapon/WeaponStruct.h"
 #include "Character/EmberCharacter.h"
 #include "Component/CustomMoveComponent.h"
 #include "Component/WeaponComponent.h"
@@ -39,7 +38,6 @@ void UEmberGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 		move->ShouldMove(CurrentComboData.Get()->GetCanMove());
 	}
-	//UAbilityTask_PlayMontageAndWait* attackMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, *CurrentComboData.Get()->GetTaskInstanceName(), CurrentComboData.Get()->GetAnimMontage(), CurrentComboData.Get()->GetActionData(CurrentCombo).PlayRate, GetNextSection());
 	UAbilityTask_PlayMontageAndWait* attackMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, *CurrentComboData.Get()->GetTaskInstanceName(), CurrentComboData.Get()->GetAnimMontage(), 1.0f, GetNextSection());
 
 	attackMontage->OnCompleted.AddDynamic(this,&UEmberGA_Attack::OnCompleteCallback);
@@ -123,8 +121,6 @@ void UEmberGA_Attack::StartComboTimer()
 {
 	DebugLogE("start combo");
 	int32 comboIndex = CurrentCombo - 1;
-	//if (CurrentComboData.Get()->GetDoActionCount() < comboIndex)
-	//	return;
 	if (CurrentComboData->GetEffectiveFrameCount(comboIndex) <= 0)
 		return;
 	float comboEffectiveTime = CurrentComboData->GetEffectiveFrameCount(comboIndex) / CurrentComboData->GetFrameRate();
