@@ -1,30 +1,19 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
-
-#include "AbilitySystemInterface.h"
-#include "GameFramework/Character.h"
+﻿#pragma once
+#include "EmberBaseCharacter.h"
 #include "MonsterAIBase.generated.h"
 
 class AMonsterAIWeapon;
 class UEmberAS_Player;
 class UHealthComponent;
-class UMonsterAbilitySystemComponent;
 class UMonsterGameplayEffectComponent;
 
 UCLASS(Abstract, Blueprintable)
-class EMBER_API AMonsterAIBase : public ACharacter, public IAbilitySystemInterface
+class EMBER_API AMonsterAIBase : public AEmberBaseCharacter
 {
 	GENERATED_BODY()
 
 public:
 	AMonsterAIBase();
-	
-public:
-	//~ IAbilitySystemInterface interface
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UMonsterAbilitySystemComponent* GetMonsterAbilitySystemComponent() const;
-	//~ End of IAbilitySystemInterface
 
 public:
 	AMonsterAIWeapon* GetWeapon() { return WeaponActor; }
@@ -39,19 +28,13 @@ protected:
 	
 private:
 	void InitializeMonsterAI();
-	void OnDeath();
+	virtual void OnDeath() override;
 	void DisableMovementAndCollision();
 	
 protected:
 	UPROPERTY()
-	TObjectPtr<UMonsterAbilitySystemComponent> ASC;
-
-	UPROPERTY()
 	TObjectPtr<UEmberAS_Player> AttributeSet;
 
-	UPROPERTY()
-	TObjectPtr<UHealthComponent> HealthComponent;
-	
 private:
 	UPROPERTY()
 	TObjectPtr<AMonsterAIWeapon> WeaponActor;

@@ -1,19 +1,19 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MonsterAbilitySystemComponent.h"
+#include "EmberAbilitySystemComponent.h"
 
-UMonsterAbilitySystemComponent::UMonsterAbilitySystemComponent()
+UEmberAbilitySystemComponent::UEmberAbilitySystemComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UMonsterAbilitySystemComponent::BeginPlay()
+void UEmberAbilitySystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-bool UMonsterAbilitySystemComponent::TryActivateAbilityByTag(const FGameplayTag& GameplayTag)
+bool UEmberAbilitySystemComponent::TryActivateAbilityByTag(const FGameplayTag& GameplayTag)
 {
 	if (GetOwner()->HasAuthority() == false)
 		return false;

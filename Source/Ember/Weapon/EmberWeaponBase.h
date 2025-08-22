@@ -54,8 +54,4 @@ protected:
 	TObjectPtr<USkeletalMeshComponent> MeshComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon|Mesh")
 	TObjectPtr<UCapsuleComponent> Collision;
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 };

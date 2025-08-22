@@ -23,5 +23,4 @@ public:
 
 private:
 	TObjectPtr<AEmberWeaponBase> WeaponBase;
-
 };

@@ -13,7 +13,7 @@ AEmberPlayerState::AEmberPlayerState()
 	AttributeSet = CreateDefaultSubobject<UEmberAS_Player>("Attribute Set");
 }
 
-UAbilitySystemComponent* AEmberPlayerState::GetAbilitySystemComponent() const
+UEmberAbilitySystemComponent* AEmberPlayerState::GetAbilitySystemComponent() const
 {
 	return  ASC;
 }
