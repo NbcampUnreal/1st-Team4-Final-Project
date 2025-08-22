@@ -15,8 +15,7 @@ public:
 	float PlayRate = 1.0f;
 	UPROPERTY(EditAnywhere)
 	float Stamina{};
-	UPROPERTY(EditAnywhere)
-	bool bCanMove{};
+	
 	UPROPERTY(EditAnywhere)
 	bool bFixedCamera{};
 	UPROPERTY(EditAnywhere, Category = "Weapon|SFX")

@@ -43,11 +43,6 @@ FMontageData* UMontageComponent::GetDeadData()
 
 FMontageData* UMontageComponent::GetAvoidData(FGameplayTag InTag)
 {
-	//switch (InTag.GetTagName())
-	//{
-	//	
-	//}
-
 	for (auto data : MontageData)
 		if (data != nullptr && data->StateTag == InTag)
 			return data;

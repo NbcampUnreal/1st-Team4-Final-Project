@@ -36,13 +36,11 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	/*UAbilitySystemComponent* GetASC() const { return ASC; }
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;*/
+
 	/* 팀 설정 */
-		//~| IGenericTeamAgentInterface interface
 	virtual FGenericTeamId GetGenericTeamId() const override;
-	//~ End of IGenericTeamAgentInterface interface
 	void PickupItem();
+
 	//룬 장착용 함수
 	UFUNCTION(BlueprintCallable, Category = "Rune")
 	bool TryEquipRune(const URuneItemTemplate * NewRuneTemplate);
@@ -75,8 +73,6 @@ protected:
 	TObjectPtr<UMontageComponent> MontageComponent;
 
 	//GAS
-	/*UPROPERTY(EditAnywhere, Category = "GAS")
-	TObjectPtr<UAbilitySystemComponent> ASC;*/
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TArray< TSubclassOf<UGameplayAbility >> InputAbilities;
 	UPROPERTY(EditAnywhere, Category = "GAS")
@@ -90,8 +86,6 @@ protected:
 	int32 Count;
 
 	virtual void BeginPlay() override;
-	UFUNCTION()
-	void Attack();
 	void SetupGASInputComponent();
 	void GASInputPressed(int32 Input);
 	void GASInputReleased(int32 Input);

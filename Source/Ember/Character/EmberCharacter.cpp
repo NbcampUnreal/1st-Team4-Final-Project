@@ -279,11 +279,6 @@ void AEmberCharacter::DamageTemperature()
 //	return ASC;
 //}
 
-void AEmberCharacter::Attack()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Attack triggered!"));
-}
-
 //void AEmberCharacter::PickupItem()
 //{
 //	FVector Start = Camera->GetComponentLocation() + Camera->GetForwardVector() * 30.f;
