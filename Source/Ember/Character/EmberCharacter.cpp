@@ -20,6 +20,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Component/WeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GAS/EmberAbilitySystemComponent.h"
 #include "GAS/Attribute/EmberAS_Player.h"
 #include "Item/Drop/PickupItemActor.h"
 #include "Utility/EmberGameplayTags.h"
@@ -29,6 +30,9 @@ AEmberCharacter::AEmberCharacter()
 {
 
 	ASC == nullptr;
+
+
+
 	PrimaryActorTick.bCanEverTick = true;
 
 	CHelpers::CreateComponent(this, &SpringArm, "SpringArm", RootComponent);
@@ -74,8 +78,11 @@ void AEmberCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
+
 	// (디버그 콘솔/로그 등)
 	if (AEmberPlayerState* PS = GetPlayerState<AEmberPlayerState>())
+	ASC = Cast< UEmberAbilitySystemComponent>(state->GetAbilitySystemComponent());
+	if (ASC == nullptr)
 	{
 		ASC = PS->GetAbilitySystemComponent();
 		if (!ASC)
@@ -298,15 +305,10 @@ void AEmberCharacter::DamageTemperature()
 	}
 }
 
-UAbilitySystemComponent* AEmberCharacter::GetAbilitySystemComponent() const
-{
-	return ASC;
-}
-
-void AEmberCharacter::Attack()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Attack triggered!"));
-}
+//UAbilitySystemComponent* AEmberCharacter::GetAbilitySystemComponent() const
+//{
+//	return ASC;
+//}
 
 //void AEmberCharacter::PickupItem()
 //{

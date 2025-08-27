@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
-#include "MonsterAbilitySystemComponent.generated.h"
+#include "EmberAbilitySystemComponent.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class EMBER_API UMonsterAbilitySystemComponent : public UAbilitySystemComponent
+class EMBER_API UEmberAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
 
 public:
-	UMonsterAbilitySystemComponent();
+	UEmberAbilitySystemComponent();
 
 protected:
 	virtual void BeginPlay() override;

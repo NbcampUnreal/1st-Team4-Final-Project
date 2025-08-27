@@ -24,5 +24,7 @@ protected:
 	UFUNCTION()
 	void OnCompleteCallback();
 	UFUNCTION()
+	void OnCancelledCallback();
+	UFUNCTION()
 	void OnInterruptedCallback();
 };

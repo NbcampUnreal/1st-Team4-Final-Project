@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "EmberBaseCharacter.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "EnhancedInputComponent.h"
@@ -26,7 +27,7 @@ class UGameplayAbility;
 class UWeaponComponent;
 
 UCLASS()
-class EMBER_API AEmberCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface
+class EMBER_API AEmberCharacter : public AEmberBaseCharacter,  public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -35,13 +36,11 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	UAbilitySystemComponent* GetASC() const { return ASC; }
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
 	/* 팀 설정 */
-		//~| IGenericTeamAgentInterface interface
 	virtual FGenericTeamId GetGenericTeamId() const override;
-	//~ End of IGenericTeamAgentInterface interface
 	void PickupItem();
+
 	//룬 장착용 함수
 	UFUNCTION(BlueprintCallable)
 	bool TryEquipRune(const URuneItemTemplate* Template, int32 PreferredSlotIndex);
@@ -93,8 +92,6 @@ protected:
 
 	//GAS
 	UPROPERTY(EditAnywhere, Category = "GAS")
-	TObjectPtr<UAbilitySystemComponent> ASC;
-	UPROPERTY(EditAnywhere, Category = "GAS")
 	TArray< TSubclassOf<UGameplayAbility >> InputAbilities;
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TMap<int32, TSubclassOf<class UGameplayAbility>> GameAbilities;
@@ -107,8 +104,6 @@ protected:
 	int32 Count;
 
 	virtual void BeginPlay() override;
-	UFUNCTION()
-	void Attack();
 	void SetupGASInputComponent();
 	void GASInputPressed(int32 Input);
 	void GASInputReleased(int32 Input);

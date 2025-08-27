@@ -44,6 +44,7 @@ UAbilitySystemComponent* URuneSystemComponent::GetASC() const
     // ✅ 그 외에는 컴포넌트로 붙은 ASC 탐색
     if (const AActor* Owner = GetOwner())
     {
+
         if (UActorComponent* Comp = Owner->FindComponentByClass(UAbilitySystemComponent::StaticClass()))
         {
             return Cast<UAbilitySystemComponent>(Comp);
@@ -99,6 +100,9 @@ bool URuneSystemComponent::RemoveRune(int32 SlotIndex)
         FRuneSlot& Slot = RuneSlots[SlotIndex];
 
         if (Slot.AbilityHandle.IsValid())
+
+        UAbilitySystemComponent* ASC = OwnerChar->GetAbilitySystemComponent();
+        if (ASC)
         {
             ASC->ClearAbility(Slot.AbilityHandle);
             Slot.AbilityHandle = FGameplayAbilitySpecHandle();

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/PlayerState.h"
+#include "GAS/EmberAbilitySystemComponent.h"
 #include "EmberPlayerState.generated.h"
 
 class UEmberAS_Player;
@@ -17,11 +18,11 @@ public:
 	FORCEINLINE TObjectPtr<UEmberAS_Player> GetAttributeSet() { return AttributeSet; }
 public:
 	AEmberPlayerState();
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual UEmberAbilitySystemComponent* GetAbilitySystemComponent() const;
 
 protected:
 	UPROPERTY(EditAnywhere, Category="GAS")
-	TObjectPtr<UAbilitySystemComponent> ASC;
+	TObjectPtr<UEmberAbilitySystemComponent> ASC;
 	UPROPERTY(EditAnywhere, Category="GAS")
 	TObjectPtr<UEmberAS_Player> AttributeSet;
 };

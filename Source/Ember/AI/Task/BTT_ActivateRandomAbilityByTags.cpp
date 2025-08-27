@@ -3,7 +3,7 @@
 
 #include "BTT_ActivateRandomAbilityByTags.h"
 
-#include "AI/AbilitySystem/MonsterAbilitySystemComponent.h"
+#include "GAS/EmberAbilitySystemComponent.h"
 #include "AI/Monster/MonsterAIBase.h"
 
 EBTNodeResult::Type UBTT_ActivateRandomAbilityByTags::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -15,7 +15,7 @@ EBTNodeResult::Type UBTT_ActivateRandomAbilityByTags::ExecuteTask(UBehaviorTreeC
 		return EBTNodeResult::Failed;
 	}
 	
-	if (UMonsterAbilitySystemComponent* ASC = Cast<UMonsterAbilitySystemComponent>(ActorOwner->GetAbilitySystemComponent()))
+	if (UEmberAbilitySystemComponent* ASC = Cast<UEmberAbilitySystemComponent>(ActorOwner->GetAbilitySystemComponent()))
 	{
 		if (GameplayTags.IsEmpty() == false)
 		{
@@ -28,5 +28,5 @@ EBTNodeResult::Type UBTT_ActivateRandomAbilityByTags::ExecuteTask(UBehaviorTreeC
 		}
 	}
 	
-	return EBTNodeResult::InProgress;
+	return EBTNodeResult::Succeeded;
 }
