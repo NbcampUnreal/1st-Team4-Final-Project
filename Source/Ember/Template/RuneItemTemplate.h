@@ -1,9 +1,7 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "GameplayEffectTypes.h"
-#include "Component/RuneSystemComponent.h"
 #include "NiagaraSystem.h"
 #include "RuneItemTemplate.generated.h"
 
@@ -11,35 +9,47 @@ class ARuneItem;
 class UGameplayAbility;
 class UGameplayEffect;
 class UNiagaraSystem;
+class UStaticMesh;
 
-UCLASS(BlueprintType, Blueprintable)
+UCLASS(BlueprintType) // DataAssetì€ BlueprintTypeë§Œìœ¼ë¡œ ì¶©ë¶„
 class EMBER_API URuneItemTemplate : public UDataAsset
 {
     GENERATED_BODY()
 
 public:
+    /** (ì˜µì…˜) ë£¬ ì•¡í„° í´ë˜ìŠ¤ë¥¼ ë³„ë„ë¡œ ì“°ì‹¤ ê±°ë©´ ìœ ì§€, 2ì•ˆì—ì„œëŠ” ë³´í†µ ë¶ˆí•„ìš” */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rune")
     TSubclassOf<ARuneItem> RuneItemClass;
 
+    /** ë¶€ì—¬í•  Ability/Effect */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rune")
     TSubclassOf<UGameplayAbility> GrantedAbility;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rune")
-    TSubclassOf<UGameplayEffect> GrantedEffect;
+    TSubclassOf<UGameplayEffect>  GrantedEffect;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rune")
-    FRuneStat RuneStat;
 
+    /** í…œí”Œë¦¿ ìŠ¤íƒ¯(ì›ì‹œ í•„ë“œ) â€” ì»´í¬ë„ŒíŠ¸ì—ì„œ FRuneStatë¡œ ì¡°ë¦½ */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rune|Stat")
+    float BasePower = 0.f;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rune|Stat")
+    float BaseCooldownReduction = 0.f;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rune|Stat")
+    FString BaseElement;
+
+    /** í‘œì‹œìš© í…ìŠ¤íŠ¸/ì„¤ëª… */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rune")
     FText RuneName;
-    
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
-    UStaticMesh* RuneMesh;
-   
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rune")
     FText Description;
 
-    // ¾ÆÀÌÅÛ ¿ÜÇü¿¡ »ç¿ëÇÒ ÀÌÆåÆ® (Èñ±Íµµ¿¡ µû¶ó ´Ù¸¦ ¼ö ÀÖÀ½)
+    /** ë¹„ì£¼ì–¼(ë©”ì‹œ/ì´í™íŠ¸) */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
-    UNiagaraSystem* DropEffect;
+    UStaticMesh* RuneMesh = nullptr;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
+    UNiagaraSystem* DropEffect = nullptr;
 };

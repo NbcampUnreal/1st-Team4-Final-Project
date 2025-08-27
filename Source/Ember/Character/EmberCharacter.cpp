@@ -28,7 +28,11 @@
 // Sets default values
 AEmberCharacter::AEmberCharacter()
 {
-	//ASC == nullptr;
+
+	ASC == nullptr;
+
+
+
 	PrimaryActorTick.bCanEverTick = true;
 
 	CHelpers::CreateComponent(this, &SpringArm, "SpringArm", RootComponent);
@@ -61,6 +65,7 @@ AEmberCharacter::AEmberCharacter()
 
 	QuickSlotComponent = CreateDefaultSubobject<UQuickSlotComponent>(TEXT("QuickSlotComponent"));
 
+	RuneSystem = CreateDefaultSubobject<URuneSystemComponent>(TEXT("RuneSystem"));
 }
 void AEmberCharacter::BeginPlay()
 {
@@ -72,41 +77,67 @@ void AEmberCharacter::BeginPlay()
 void AEmberCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	TObjectPtr<APlayerController> controller = CastChecked<APlayerController>(NewController);
-	controller->ConsoleCommand(TEXT("showdebug abilitysystem"));
-	TObjectPtr<AEmberPlayerState> state = GetPlayerState<AEmberPlayerState>();
-	if (state == nullptr)
-	{
-		DebugLogE("player state is null");
-		return;
-	}
 
+
+	// (디버그 콘솔/로그 등)
+	if (AEmberPlayerState* PS = GetPlayerState<AEmberPlayerState>())
 	ASC = Cast< UEmberAbilitySystemComponent>(state->GetAbilitySystemComponent());
 	if (ASC == nullptr)
 	{
-		DebugLogE("ASC is null");
-		return;
-	}
-	ASC->InitAbilityActorInfo(state,this);
+		ASC = PS->GetAbilitySystemComponent();
+		if (!ASC)
+		{
+			DebugLogE("ASC is null in PossessedBy");
+			return;
+		}
 
-	for (const TSubclassOf<UGameplayAbility>& inputAbility : InputAbilities)
-	{
-		FGameplayAbilitySpec spec(inputAbility);
-		ASC->GiveAbility(spec);
+		ASC->InitAbilityActorInfo(PS, this);
+
+		// 입력 어빌리티/게임 어빌리티 부여
+		for (const TSubclassOf<UGameplayAbility>& InputAbility : InputAbilities)
+		{
+			FGameplayAbilitySpec Spec(InputAbility);
+			ASC->GiveAbility(Spec);
+		}
+		for (const auto& GA : GameAbilities)
+		{
+			FGameplayAbilitySpec Spec(GA.Value);
+			Spec.InputID = GA.Key;
+			ASC->GiveAbility(Spec);
+		}
+
+		SetupGASInputComponent();
+
+		if (UEmberAS_Player* Attr = Cast<UEmberAS_Player>(PS->GetAttributeSet()))
+		{
+			Attr->OnOutOfHealth.AddUObject(this, &AEmberCharacter::Dead);
+		}
 	}
-	for (const auto& gameAbility : GameAbilities)
-	{
-		FGameplayAbilitySpec spec(gameAbility.Value);
-		spec.InputID = gameAbility.Key;
-		ASC->GiveAbility(spec);
-	}
-	
-	SetupGASInputComponent();
-	UEmberAS_Player* as = Cast<UEmberAS_Player>(state->GetAttributeSet());
-	if (as != nullptr)
-		as->OnOutOfHealth.AddUObject(this,&AEmberCharacter::Dead);
 }
+void AEmberCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
 
+	if (AEmberPlayerState* PS = GetPlayerState<AEmberPlayerState>())
+	{
+		ASC = PS->GetAbilitySystemComponent();
+		if (!ASC)
+		{
+			DebugLogE("ASC is null in OnRep_PlayerState");
+			return;
+		}
+
+		ASC->InitAbilityActorInfo(PS, this);
+
+		// 클라에서도 입력 바인딩/어빌리티 핸드오프가 필요하면(프로젝트 정책에 따라):
+		SetupGASInputComponent();
+
+		if (UEmberAS_Player* Attr = Cast<UEmberAS_Player>(PS->GetAttributeSet()))
+		{
+			Attr->OnOutOfHealth.AddUObject(this, &AEmberCharacter::Dead);
+		}
+	}
+}
 
 FGenericTeamId AEmberCharacter::GetGenericTeamId() const
 {
@@ -406,33 +437,164 @@ void AEmberCharacter::PickupItem()
 }
 
 
-bool AEmberCharacter::TryEquipRune(const URuneItemTemplate* NewRuneTemplate)
+bool AEmberCharacter::TryEquipRune(const URuneItemTemplate* Template, int32 PreferredSlotIndex)
 {
-	if (!RuneSystem || !NewRuneTemplate)
-		return false;
+	UE_LOG(LogTemp, Log, TEXT("[TryEquipRune] HasAuth=%d Template=%s PrefSlot=%d"),
+		HasAuthority(), Template ? *Template->GetName() : TEXT("NULL"), PreferredSlotIndex);
 
-	// ✅ 비교 UI 호출
-	ShowRuneComparisonUI(NewRuneTemplate);
+	if (!Template) return false;
 
+	if (!HasAuthority())
+	{
+		Server_TryEquipRune(Template, PreferredSlotIndex);
+		return false; // 서버 확정 전에는 성공 처리 금지
+	}
+
+	URuneSystemComponent* RuneComp = FindComponentByClass<URuneSystemComponent>();
+	if (!RuneComp) return false;
+
+	// 서버 직접 호출 경로(싱글/리스닝 등)
+	UAbilitySystemComponent* ASC_Local = GetAbilitySystemComponent();
+	if (!ASC_Local) return false;
+
+	const float Old_AD = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackDamageAttribute());
+	const float Old_MaxAD = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetMaxAttackDamageAttribute());
+	const float Old_Range = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackRangeAttribute());
+	const float Old_Radius = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackRadiusAttribute());
+	const float Old_Meta = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetMetaDamageAttribute());
+
+	int32 ResolvedSlot = INDEX_NONE;
+	const bool bEquipped = RuneComp->EquipRuneFromTemplate(Template, PreferredSlotIndex, /*out*/ResolvedSlot);
+	UE_LOG(LogTemp, Warning, TEXT("[Server] EquipRuneFromTemplate result=%d (Slot=%d)"), bEquipped, ResolvedSlot);
+	if (!bEquipped) return false;
+
+	const float New_AD = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackDamageAttribute());
+	const float New_MaxAD = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetMaxAttackDamageAttribute());
+	const float New_Range = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackRangeAttribute());
+	const float New_Radius = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackRadiusAttribute());
+	const float New_Meta = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetMetaDamageAttribute());
+
+	const float dAD = New_AD - Old_AD;
+	const float dMaxAD = New_MaxAD - Old_MaxAD;
+	const float dRange = New_Range - Old_Range;
+	const float dRadius = New_Radius - Old_Radius;
+	const float dMeta = New_Meta - Old_Meta;
+
+	Multicast_OnRuneEquippedDetailed(
+		Template->RuneName, ResolvedSlot,
+		New_AD, dAD,
+		New_MaxAD, dMaxAD,
+		New_Range, dRange,
+		New_Radius, dRadius,
+		New_Meta, dMeta
+	);
 	return true;
 }
 
+void AEmberCharacter::Server_TryEquipRune_Implementation(const URuneItemTemplate* Template, int32 PreferredSlotIndex)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[RPC] Server_TryEquipRune_Implementation Template=%s PrefSlot=%d"),
+		Template ? *Template->GetName() : TEXT("NULL"), PreferredSlotIndex);
 
+	if (!Template) return;
+
+	URuneSystemComponent* RuneComp = FindComponentByClass<URuneSystemComponent>();
+	UAbilitySystemComponent* ASC_Local = GetAbilitySystemComponent();
+	if (!RuneComp || !ASC_Local) return;
+
+	const float Old_AD = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackDamageAttribute());
+	const float Old_MaxAD = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetMaxAttackDamageAttribute());
+	const float Old_Range = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackRangeAttribute());
+	const float Old_Radius = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackRadiusAttribute());
+	const float Old_Meta = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetMetaDamageAttribute());
+
+	int32 ResolvedSlot = INDEX_NONE;
+	const bool bEquipped = RuneComp->EquipRuneFromTemplate(Template, PreferredSlotIndex, /*out*/ResolvedSlot);
+	UE_LOG(LogTemp, Warning, TEXT("[Server] EquipRuneFromTemplate result=%d (Slot=%d)"), bEquipped, ResolvedSlot);
+	if (!bEquipped) return;
+
+	const float New_AD = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackDamageAttribute());
+	const float New_MaxAD = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetMaxAttackDamageAttribute());
+	const float New_Range = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackRangeAttribute());
+	const float New_Radius = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetAttackRadiusAttribute());
+	const float New_Meta = ASC_Local->GetNumericAttribute(UEmberAS_Player::GetMetaDamageAttribute());
+
+	const float dAD = New_AD - Old_AD;
+	const float dMaxAD = New_MaxAD - Old_MaxAD;
+	const float dRange = New_Range - Old_Range;
+	const float dRadius = New_Radius - Old_Radius;
+	const float dMeta = New_Meta - Old_Meta;
+
+	Multicast_OnRuneEquippedDetailed(
+		Template->RuneName, ResolvedSlot,
+		New_AD, dAD,
+		New_MaxAD, dMaxAD,
+		New_Range, dRange,
+		New_Radius, dRadius,
+		New_Meta, dMeta
+	);
+}
+void AEmberCharacter::Multicast_OnRuneEquippedDetailed_Implementation(
+    const FText& RuneName, int32 SlotIndex,
+    float New_AD,    float dAD,
+    float New_MaxAD, float dMaxAD,
+    float New_Range, float dRange,
+    float New_Radius,float dRadius,
+    float New_Meta,  float dMeta)
+{
+    UE_LOG(LogTemp, Warning, TEXT("[Rune Equipped] %s | Slot=%d"), *RuneName.ToString(), SlotIndex);
+    UE_LOG(LogTemp, Warning, TEXT("  - AttackDamage     : %+0.1f (Now: %.1f)"), dAD,     New_AD);
+    UE_LOG(LogTemp, Warning, TEXT("  - MaxAttackDamage  : %+0.1f (Now: %.1f)"), dMaxAD,  New_MaxAD);
+    UE_LOG(LogTemp, Warning, TEXT("  - AttackRange      : %+0.1f (Now: %.1f)"), dRange,  New_Range);
+    UE_LOG(LogTemp, Warning, TEXT("  - AttackRadius     : %+0.1f (Now: %.1f)"), dRadius, New_Radius);
+    UE_LOG(LogTemp, Warning, TEXT("  - MetaDamage       : %+0.1f (Now: %.1f)"), dMeta,   New_Meta);
+}
+void AEmberCharacter::Multicast_OnRuneEquipped_Implementation(const URuneItemTemplate* Template, int32 SlotIndex)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[Multicast] Equipped confirmed: %s (Slot %d)"),
+		Template ? *Template->GetName() : TEXT("NULL"), SlotIndex);
+
+	// 여기에서 UI 갱신, 소모/파괴 처리(픽업 액터가 있다면) 등 확정 후 처리를 하세요.
+	// ex) OnRuneEquipped 델리게이트 브로드캐스트, 위젯 업데이트 등
+}
+bool AEmberCharacter::TryEquipRuneAuto(const URuneItemTemplate* Template)
+{
+	return TryEquipRune(Template, -1);
+}
 void AEmberCharacter::ShowRuneComparisonUI(const URuneItemTemplate* NewRuneTemplate)
 {
-	if (!NewRuneTemplate || !RuneSystem) return;
+	if (!NewRuneTemplate) return;
 
-	const FRuneStat& NewStat = NewRuneTemplate->RuneStat;
-	const FRuneStat& CurrentStat = RuneSystem->GetRuneStatAtSlot(0);
+	// 컴포넌트 핸들 확보
+	URuneSystemComponent* RS = (RuneSystem.Get() != nullptr)
+		? RuneSystem.Get()
+		: FindComponentByClass<URuneSystemComponent>();
 
-	UE_LOG(LogTemp, Log, TEXT("현재 룬 - Power: %.1f, CDR: %.1f, Element: %s"),
-		CurrentStat.Power, CurrentStat.CooldownReduction, *CurrentStat.Element);
+	if (!RS) return;
 
-	UE_LOG(LogTemp, Log, TEXT("새 룬   - Power: %.1f, CDR: %.1f, Element: %s"),
+	// 템플릿 원시값 -> FRuneStat 조립
+	FRuneStat NewStat;
+	NewStat.Power = NewRuneTemplate->BasePower;
+	NewStat.CooldownReduction = NewRuneTemplate->BaseCooldownReduction;
+	NewStat.Element = NewRuneTemplate->BaseElement;
+
+	// 비교할 슬롯(필요하면 바꾸세요)
+	const int32 SlotIndex = 0;
+	const FRuneStat CurrentStat = RS->GetRuneStatAtSlot(SlotIndex);
+
+	// 로그 출력
+	UE_LOG(LogTemp, Log, TEXT("현재 룬[%d] - Power: %.1f, CDR: %.1f, Element: %s"),
+		SlotIndex, CurrentStat.Power, CurrentStat.CooldownReduction, *CurrentStat.Element);
+
+	UE_LOG(LogTemp, Log, TEXT("새 룬     - Power: %.1f, CDR: %.1f, Element: %s"),
 		NewStat.Power, NewStat.CooldownReduction, *NewStat.Element);
 
-	// UI 연결 예정 지점 (예: Widget에 넘기기)
-	//UE_LOG(LogTemp, Warning, TEXT("New Rune Name: %s"), *NewRuneTemplate->RuneName.ToString());
+	// 차이도 보여주고 싶으면:
+	const float dP = NewStat.Power - CurrentStat.Power;
+	const float dCDR = NewStat.CooldownReduction - CurrentStat.CooldownReduction;
+	UE_LOG(LogTemp, Log, TEXT("변화량    - ΔPower: %+0.1f, ΔCDR: %+0.1f"), dP, dCDR);
+
+	// TODO: 위 값들을 위젯에 전달하여 UI 갱신
 }
 
 
