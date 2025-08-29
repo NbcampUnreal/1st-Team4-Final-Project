@@ -39,21 +39,6 @@
 		{
 			"Name": "OnlineSubsystemSteam",
 			"Enabled": true
-		},
-		{
-			"Name": "GameFeatures",
-			"Enabled": true
 		}
-	],
-	"DisabledPlugins": [
-		{
- 			"Name": "OnlineSubsystemEOS"
-		},
-		{
-			"Name": "OnlineServicesEOS"
-		},
-		{
-    			"Name": "OnlineServicesCommon"
-  		}
 	]
 }

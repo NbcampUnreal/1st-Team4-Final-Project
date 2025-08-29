@@ -29,7 +29,7 @@ void UEmberGameInstance::OnCreateSessionComplete(FName ServerName, bool Succeede
 	if (Succeeded)
 	{
 		//play level reference
-		GetWorld()->ServerTravel("/Game/Maps/GameLobbyLevel?listen");
+		GetWorld()->ServerTravel("/Game/Maps/TestLevel?listen");
 	}
 }
 
@@ -92,7 +92,8 @@ void UEmberGameInstance::CreateServer(FString ServerName, FString HostName)
 	SessionSettings.bAllowJoinInProgress = true;
 	SessionSettings.bIsDedicated = false;
 	
-	if (Online::GetSubsystem(GetWorld())->GetSubsystemName() != "NULL")
+	IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
+	if (Subsystem && Subsystem->GetSubsystemName() != NAME_None)
 	{
 		SessionSettings.bIsLANMatch = false;
 	}
@@ -103,7 +104,9 @@ void UEmberGameInstance::CreateServer(FString ServerName, FString HostName)
 	
 	SessionSettings.bShouldAdvertise = true;
 	SessionSettings.bUsesPresence = true;
+	SessionSettings.bUseLobbiesIfAvailable = true;
 	SessionSettings.NumPublicConnections = 5;
+	SessionSettings.BuildUniqueId = 0x12345678;
 
 	SessionSettings.Set(FName("SERVER_NAME_KEY"), ServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 	SessionSettings.Set(FName("SERVER_HOSTNAME_KEY"), HostName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
@@ -116,7 +119,9 @@ void UEmberGameInstance::FindServer()
 	UE_LOG(LogTemp, Warning, TEXT("FindServers"));
 
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
-	if (Online::GetSubsystem(GetWorld())->GetSubsystemName() != "NULL")
+
+	IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
+	if (Subsystem && Subsystem->GetSubsystemName() != NAME_None)
 	{
 		SessionSearch->bIsLanQuery = false;
 	}
@@ -126,7 +131,8 @@ void UEmberGameInstance::FindServer()
 	}
 
 	SessionSearch->MaxSearchResults = 10;
-	SessionSearch->QuerySettings.Set(FName(TEXT("PRESENCESEARCH")), true, EOnlineComparisonOp::Equals);
+	SessionSearch->QuerySettings.Set(FName(TEXT("PRESENCE")), true, EOnlineComparisonOp::Equals);
+	SessionSearch->QuerySettings.Set(FName(TEXT("SEARCH_BUILD_UNIQUE_ID")), 0x12345678, EOnlineComparisonOp::Equals);
 
 	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 }
