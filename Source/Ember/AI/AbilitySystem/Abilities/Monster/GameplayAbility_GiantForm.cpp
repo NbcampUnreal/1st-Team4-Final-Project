@@ -1,22 +1,22 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameplayAbility_NextPhase.h"
+#include "GameplayAbility_GiantForm.h"
 
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Utility/EmberGameplayTags.h"
 
-UGameplayAbility_NextPhase::UGameplayAbility_NextPhase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UGameplayAbility_GiantForm::UGameplayAbility_GiantForm(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	bServerRespectsRemoteAbilityCancellation = true;
 	bRetriggerInstancedAbility = true;
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
-	AbilityTags.AddTag(EmberGameplayTags::AI_Ability_Phase);
-	ActivationOwnedTags.AddTag(EmberGameplayTags::Status_Phase);
+	AbilityTags.AddTag(EmberGameplayTags::AI_Ability_GiantForm);
+	ActivationOwnedTags.AddTag(EmberGameplayTags::Status_GiantForm);
 }
 
-void UGameplayAbility_NextPhase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void UGameplayAbility_GiantForm::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
@@ -24,7 +24,7 @@ void UGameplayAbility_NextPhase::ActivateAbility(const FGameplayAbilitySpecHandl
 }
 
 
-void UGameplayAbility_NextPhase::PlayNextStep()
+void UGameplayAbility_GiantForm::PlayNextStep()
 {
 	StepIndex++;
 
@@ -52,12 +52,12 @@ void UGameplayAbility_NextPhase::PlayNextStep()
 }
 
 
-void UGameplayAbility_NextPhase::OnMontageFinished()
+void UGameplayAbility_GiantForm::OnMontageFinished()
 {
 	PlayNextStep();
 }
 
-void UGameplayAbility_NextPhase::OnMontageInterrupted()
+void UGameplayAbility_GiantForm::OnMontageInterrupted()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }

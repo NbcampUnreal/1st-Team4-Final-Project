@@ -9,20 +9,54 @@
 
 EBTNodeResult::Type UBTT_ActivateAbilityByTag::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
+	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	if (ActorOwner == nullptr)
 	{
 		return EBTNodeResult::Failed;
 	}
-	
-	if (UEmberAbilitySystemComponent* ASC = Cast<UEmberAbilitySystemComponent>(ActorOwner->GetAbilitySystemComponent()))
+
+	CachedOwnerComp = OwnerComp;
+
+	CachedASC = Cast<UEmberAbilitySystemComponent>(ActorOwner->GetAbilitySystemComponent());
+	if (UEmberAbilitySystemComponent* ASC = CachedASC.Get())
 	{
-		if (ASC->TryActivateAbilityByTag(GameplayTag) == false)
+		if (ASC->TryActivateAbilityByTag(GameplayTag))
 		{
-			Result = EBTNodeResult::Failed;
+			ASC->OnAbilityEnded.AddUObject(this, &ThisClass::OnAbilityEnd);
+		}
+		else
+		{
+			return EBTNodeResult::Failed;
 		}
 	}
 
-	return Result;
+	return EBTNodeResult::InProgress;
+}
+
+void UBTT_ActivateAbilityByTag::OnAbilityEnd(const FAbilityEndedData& AbilityEndedData)
+{
+	const UGameplayAbility* Ability = AbilityEndedData.AbilityThatEnded;
+	
+	if (Ability->AbilityTags.HasTag(GameplayTag))
+	{
+		if (UEmberAbilitySystemComponent* ASC = CachedASC.Get())
+		{
+			ASC->OnAbilityEnded.RemoveAll(this);
+		}
+		
+		FinishLatentTask(*CachedOwnerComp ,EBTNodeResult::Succeeded);
+	}
+}
+
+void UBTT_ActivateAbilityByTag::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
+	EBTNodeResult::Type TaskResult)
+{
+	if (UAbilitySystemComponent* ASC = CachedASC.Get())
+	{
+		if (AbilityEndHandle.IsValid())
+		{
+			ASC->RegisterGameplayTagEvent(GameplayTag, EGameplayTagEventType::NewOrRemoved).Remove(AbilityEndHandle);
+		}
+	}
 }

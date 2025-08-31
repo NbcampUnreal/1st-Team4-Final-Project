@@ -3,7 +3,7 @@
 #pragma once
 
 #include "AI/AbilitySystem/Abilities/MonsterGameplayAbility.h"
-#include "GameplayAbility_NextPhase.generated.h"
+#include "GameplayAbility_GiantForm.generated.h"
 
 class UAnimMontage;
 
@@ -20,12 +20,12 @@ struct FMontageStep
 };
 
 UCLASS()
-class EMBER_API UGameplayAbility_NextPhase : public UMonsterGameplayAbility
+class EMBER_API UGameplayAbility_GiantForm : public UMonsterGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UGameplayAbility_NextPhase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UGameplayAbility_GiantForm(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

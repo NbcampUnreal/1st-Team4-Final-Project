@@ -10,7 +10,6 @@ class EMBER_API UGameplayAbility_HitReact : public UMonsterGameplayAbility
 {
 	GENERATED_BODY()
 
-public:
 	UGameplayAbility_HitReact(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:

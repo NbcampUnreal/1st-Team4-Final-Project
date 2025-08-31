@@ -19,4 +19,5 @@ protected:
 
 public:
 	bool TryActivateAbilityByTag(const FGameplayTag& GameplayTag);
+	FGameplayAbilitySpec* FindActivateAbilityByTag(const FGameplayTag& GameplayTag);
 };
