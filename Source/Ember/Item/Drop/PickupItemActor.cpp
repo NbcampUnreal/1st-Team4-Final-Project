@@ -105,43 +105,66 @@ void APickupItemActor::InitializeLootDrop(const FLootResultData& InLootData)
 
 void APickupItemActor::OnPickedUp(AActor* Picker)
 {
-	if (!HasAuthority()) return; // 서버에서만 처리
+	if (!HasAuthority()) return;
 
 	AEmberCharacter* Player = Cast<AEmberCharacter>(Picker);
 	if (!Player) return;
 
-	FString ItemName;
+	FString ItemName = TEXT("Unnamed Loot");
+	bool bConsumed = false;
 
-	// 아이템 처리
+	// 일반 아이템
 	if (LootData.ItemTemplateClass)
 	{
-		// 퀵슬롯 추가
-		if (UQuickSlotComponent* QuickSlot = Player->GetQuickSlotComponent())
-		{
-			QuickSlot->AddItemToQuickSlot(LootData.ItemTemplateClass, LootData.Quantity);
-		}
+		const UItemTemplate* T = LootData.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
+		ItemName = T ? T->DisplayName.ToString() : TEXT("Unknown Item");
 
-		// 아이템 이름 가져오기
-		const UItemTemplate* Template = LootData.ItemTemplateClass->GetDefaultObject<UItemTemplate>();
-		ItemName = Template ? Template->DisplayName.ToString() : TEXT("Unknown Item");
+		if (UQuickSlotComponent* QS = Player->GetQuickSlotComponent())
+		{
+			QS->AddItemToQuickSlot(LootData.ItemTemplateClass, LootData.Quantity);
+			bConsumed = true;
+		}
 	}
+	// 룬
 	else if (LootData.RuneTemplateClass)
 	{
-		const URuneItemTemplate* Template = LootData.RuneTemplateClass->GetDefaultObject<URuneItemTemplate>();
-		ItemName = Template ? Template->RuneName.ToString() : TEXT("Unknown Rune");
+		const URuneItemTemplate* T = LootData.RuneTemplateClass->GetDefaultObject<URuneItemTemplate>();
+		ItemName = T ? T->RuneName.ToString() : TEXT("Unknown Rune");
 
-		Player->TryEquipRune(Template);
+		if (T)
+		{
+			//  자동 장착 시도(서버 확정 bool)
+			const bool bEquipped = Player->TryEquipRune(T, /*PreferredSlotIndex=*/-1);
+			UE_LOG(LogTemp, Warning, TEXT("[Pickup] TryEquipRune returned=%d (server)"), bEquipped);
+
+			if (bEquipped)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[Pickup] Rune auto-equipped: %s"), *ItemName);
+				bConsumed = true; // 장착 성공일 때만 consume
+			}
+			else
+			{
+				// 실패 시에는 '보관만' 하고 파괴 여부는 정책에 따라
+				if (UQuickSlotComponent* QS = Player->GetQuickSlotComponent())
+				{
+					QS->AddRuneToQuickSlot(LootData.RuneTemplateClass, /*Qty=*/1);
+					// 권장: 여기서는 파괴하지 말고 남겨 두거나, UI에서 확인 후 정리
+					// bConsumed = true;  // ← 지금은 지양 (장착 실패 디버그 용이)
+					UE_LOG(LogTemp, Warning, TEXT("[Pickup] Rune stored (not destroyed): %s"), *ItemName);
+				}
+			}
+		}
 	}
-	else
+
+	UE_LOG(LogTemp, Warning, TEXT("Picked up: %s x%d (consumed=%s)"),
+		*ItemName, LootData.Quantity, bConsumed ? TEXT("true") : TEXT("false"));
+
+	if (bConsumed)
 	{
-		ItemName = TEXT("Unnamed Loot");
+		Destroy(); // 서버에서 파괴 → 클라 동기화
 	}
-
-	// 공통 로그 출력
-	UE_LOG(LogTemp, Warning, TEXT("Picked up: %s x%d"), *ItemName, LootData.Quantity);
-
-	Destroy(); // 서버에서 Destroy → 클라에서도 사라짐
 }
+
 
 void APickupItemActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

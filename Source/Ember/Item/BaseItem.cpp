@@ -1,4 +1,4 @@
-#include "BaseItem.h"
+ï»¿#include "BaseItem.h"
 #include "Character/EmberCharacter.h"
 #include "Item/Drop/PickupItemActor.h"
 #include "Component/InteractionComponent.h"
@@ -13,30 +13,23 @@ ABaseItem::ABaseItem()
 
 	InteractionComp = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 
-	// ³×Æ®¿öÅ© »óÈ£ÀÛ¿ëÀ» À§ÇÑ ¼³Á¤
+	// ë„¤íŠ¸ì›Œí¬ ìƒí˜¸ì‘ìš©ì„ ìœ„í•œ ì„¤ì •
 	SetReplicates(true);
 }
 void ABaseItem::Use(AActor* User)
 {
-	if (AEmberCharacter* Character = Cast<AEmberCharacter>(User))
-	{
-		// ¸ÕÀú ÀÌ ¾ÆÀÌÅÛÀÌ PickupItemActorÀÎÁö È®ÀÎ
-		if (APickupItemActor* PickupItem = Cast<APickupItemActor>(this))
-		{
-			if (Character->HasAuthority())
-			{
-				// ¼­¹ö¶ó¸é ¹Ù·Î Ã³¸®
-				PickupItem->OnPickedUp(Character);
-			}
-			else
-			{
-				// Å¬¶óÀÌ¾ğÆ®¶ó¸é ¼­¹ö¿¡ ¿äÃ»
-				Character->Server_PickupItem(PickupItem);
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Use() called on non-pickup item."));
-		}
-	}
+    // ì¸ë²¤í† ë¦¬ì—ì„œ ì•„ì´í…œì„ 'ì‚¬ìš©'í•  ë•Œë§Œ ì§„ì…
+    AEmberCharacter* Character = Cast<AEmberCharacter>(User);
+    if (!Character)
+    {
+        return;
+    }
+
+    // âš ï¸ ì£¼ì˜: ì›”ë“œì—ì„œ 'ì¤ê¸°'ëŠ” ì—¬ê¸°ì„œ ì²˜ë¦¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
+    // APickupItemActor::OnPickedUpì—ì„œ ì„œë²„ ê¶Œí•œìœ¼ë¡œë§Œ ìˆ˜í–‰í•˜ì„¸ìš”.
+    // (í˜•ì œ íƒ€ì… ê°„ Cast<APickupItemActor>(this) ê°™ì€ ì½”ë“œëŠ” ì œê±°)
+
+    // ê¸°ë³¸ ë™ì‘ ì—†ìŒ â€” íŒŒìƒ í´ë˜ìŠ¤ì—ì„œ ì˜¤ë²„ë¼ì´ë“œí•˜ì—¬ ì‹¤ì œ íš¨ê³¼ë¥¼ êµ¬í˜„í•˜ì„¸ìš”.
+    // ì˜ˆ: ARuneItem::Useì—ì„œ TryEquipRune(Template, -1) í˜¸ì¶œ
+    UE_LOG(LogTemp, Verbose, TEXT("ABaseItem::Use: %s (inventory use only)"), *GetName());
 }

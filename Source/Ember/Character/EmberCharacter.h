@@ -42,10 +42,18 @@ public:
 	void PickupItem();
 
 	//룬 장착용 함수
-	UFUNCTION(BlueprintCallable, Category = "Rune")
-	bool TryEquipRune(const URuneItemTemplate * NewRuneTemplate);
+	UFUNCTION(BlueprintCallable)
+	bool TryEquipRune(const URuneItemTemplate* Template, int32 PreferredSlotIndex);
+	UFUNCTION(BlueprintCallable)
+	bool TryEquipRuneAuto(const URuneItemTemplate* Template); // 내부에서 PreferredSlotIndex=-1 전달
+	UFUNCTION(Server, Reliable)
+	void Server_TryEquipRune(const URuneItemTemplate* Template, int32 PreferredSlotIndex);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnRuneEquipped(const URuneItemTemplate* Template, int32 SlotIndex);
 	UQuickSlotComponent* GetQuickSlotComponent() const;
 	void ShowRuneComparisonUI(const URuneItemTemplate* NewRuneTemplate);
+	void EquipRune(const URuneItemTemplate* NewRuneTemplate, int32 SlotIndex);
 	UFUNCTION(Server, Reliable)
 	void Server_RequestInteraction(UInteractionComponent* TargetInteraction);
 
@@ -57,6 +65,16 @@ public:
 	UFUNCTION()
 	void RemoveOverlappingItem(APickupItemActor* Item);
 	void SetIgnoreCollision(bool bIgnore);
+	// 수정: UFUNCTION 매크로 추가
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnRuneEquippedDetailed(
+		const FText& RuneName, int32 SlotIndex,
+		float New_AD, float dAD,
+		float New_MaxAD, float dMaxAD,
+		float New_Range, float dRange,
+		float New_Radius, float dRadius,
+		float New_Meta, float dMeta
+	);
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	TObjectPtr<class USpringArmComponent> SpringArm;
@@ -113,7 +131,7 @@ protected:
 
 	void UseQuickSlot1(); void UseQuickSlot2(); void UseQuickSlot3(); void UseQuickSlot4(); void UseQuickSlot5();
 	void UseQuickSlot(int32 Index);
-
+	virtual void OnRep_PlayerState() override;
 
 
 private:

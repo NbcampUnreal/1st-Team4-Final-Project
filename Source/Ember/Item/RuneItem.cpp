@@ -14,15 +14,23 @@ void ARuneItem::Use(AActor* User)
 {
     if (AEmberCharacter* Character = Cast<AEmberCharacter>(User))
     {
-        const URuneItemTemplate* Template = GetRuneTemplate();
-
-        if (Template && Character->TryEquipRune(Template))
+        if (const URuneItemTemplate* Template = GetRuneTemplate())
         {
-            Destroy(); // 장착 성공 시 제거
+            const bool bWasServer = HasAuthority();
+
+            // 클라면 서버 RPC로 넘어가고, 서버면 바로 처리됩니다.
+            // 자동 슬롯 선택: PreferredSlotIndex = -1
+            Character->TryEquipRune(Template, -1);
+
+            // 파괴는 반드시 서버에서만!
+            if (bWasServer)
+            {
+                Destroy();
+            }
         }
         else
         {
-            UE_LOG(LogTemp, Warning, TEXT("[RuneItem] Failed to equip rune."));
+            UE_LOG(LogTemp, Warning, TEXT("[RuneItem] No Template set."));
         }
     }
 }
@@ -32,16 +40,20 @@ void ARuneItem::InitializeFromTemplate(URuneItemTemplate* InTemplate)
 
     TemplateAsset = InTemplate;
 
-    // GAS 관련
+    // Ability / Effect
     GrantedAbility = InTemplate->GrantedAbility;
     GrantedEffect = InTemplate->GrantedEffect;
-    RuneStat = InTemplate->RuneStat;
 
-    // 이름/설명
+    // 템플릿의 '원시 필드'를 사용해서 RuneStat 조립 (FRuneStat 그대로 쓰는 구조)
+    RuneStat.Power = InTemplate->BasePower;
+    RuneStat.CooldownReduction = InTemplate->BaseCooldownReduction;
+    RuneStat.Element = InTemplate->BaseElement;
+
+    // 표시용 텍스트
     RuneName = InTemplate->RuneName;
     Description = InTemplate->Description;
 
-    // 이펙트 생성 (옵션)
+    // (옵션) 비주얼 이펙트
     if (InTemplate->DropEffect)
     {
         UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
@@ -51,8 +63,8 @@ void ARuneItem::InitializeFromTemplate(URuneItemTemplate* InTemplate)
             FVector::ZeroVector,
             FRotator::ZeroRotator,
             EAttachLocation::SnapToTargetIncludingScale,
-            true);
-
+            true
+        );
         DropEffectComponent = NiagaraComp;
     }
 

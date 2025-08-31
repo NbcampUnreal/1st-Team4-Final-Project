@@ -1,5 +1,5 @@
 #include "QuickSlotComponent.h"
-
+#include "Template/RuneItemTemplate.h"     
 UQuickSlotComponent::UQuickSlotComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -75,6 +75,19 @@ void UQuickSlotComponent::UseQuickSlot(int32 Index)
 
 	// 상태 로그
 	LogQuickSlotState();
+}
+void UQuickSlotComponent::AddRuneToQuickSlot(TSubclassOf<URuneItemTemplate> RuneTemplateClass, int32 Quantity)
+{
+	if (!*RuneTemplateClass || Quantity <= 0) return;
+
+	int32& Count = RuneStacks.FindOrAdd(RuneTemplateClass);
+	Count += Quantity;
+
+	UE_LOG(LogTemp, Log, TEXT("[QuickSlot] Added RUNE %s x%d (total=%d)"),
+		*RuneTemplateClass->GetName(), Quantity, Count);
+	// 상태 로그
+	LogQuickSlotState();
+	// TODO: 여기서 UI 갱신 브로드캐스트가 있다면 호출
 }
 
 
