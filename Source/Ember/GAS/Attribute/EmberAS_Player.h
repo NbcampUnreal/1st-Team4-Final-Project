@@ -14,6 +14,7 @@ struct FGameplayEffectSpec;
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 DECLARE_MULTICAST_DELEGATE_SixParams(FEmberAttributeEvent, AActor* /*EffectInstigator*/, AActor* /*EffectCauser*/, const FGameplayEffectSpec* /*EffectSpec*/, float /*EffectMagnitude*/, float /*OldValue*/, float /*NewValue*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FEmberAttributeEventTwoParams, float /*OldValue*/, float /*NewValue*/);
 
 UCLASS()
 class EMBER_API UEmberAS_Player : public UAttributeSet
@@ -22,6 +23,10 @@ class EMBER_API UEmberAS_Player : public UAttributeSet
 public:
 	UEmberAS_Player();
 
+public:
+	float GetHealthRatio() const;
+
+public:
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player,MaxHealth);
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player,Health);
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MaxAttackRange);
@@ -32,12 +37,15 @@ public:
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, AttackDamage)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MetaDamage)
 
+	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MoveSpeed);
+	
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, PlayerTemperature)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MaxPlayerTemperature)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MaxDamageTemperature)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, DamageTemperature)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, MetaTemperature)
 	ATTRIBUTE_ACCESSORS(UEmberAS_Player, Invincible);
+	
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
@@ -49,7 +57,8 @@ public:
 public:
 	mutable FEmberAttributeEvent OnHealthChanged;
 	mutable FEmberAttributeEvent OnOutOfHealth;
-
+	mutable FEmberAttributeEventTwoParams OnMoveSpeedChanged;
+	
 protected:
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldValue);
@@ -77,6 +86,9 @@ protected:
 	FGameplayAttributeData AttackDamage;
 	UPROPERTY(BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MetaDamage;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData MoveSpeed;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Temperature", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData PlayerTemperature;

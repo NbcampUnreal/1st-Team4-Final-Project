@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "EmberBaseCharacter.generated.h"
@@ -23,7 +22,7 @@ protected:
 
 private:
 	UFUNCTION()
-	virtual void OnDeath() PURE_VIRTUAL(UEmberBaseCharacter::OnDeath);
+	virtual void OnDeath();
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = GAS)

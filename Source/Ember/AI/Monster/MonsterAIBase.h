@@ -25,12 +25,15 @@ protected:
 	UFUNCTION()
 	virtual void HandleHealthChanged(UHealthComponent* InHealthComponent, float OldValue, float NewValue, AActor* DamageInstigator);
 
+private:
+	//~ AEmberBaseCharacter Overrides
+	virtual void OnDeath() override;
+	//~ End of AEmberBaseCharacter Overrides
 	
 private:
 	void InitializeMonsterAI();
-	virtual void OnDeath() override;
 	void DisableMovementAndCollision();
-	
+
 protected:
 	UPROPERTY()
 	TObjectPtr<UEmberAS_Player> AttributeSet;

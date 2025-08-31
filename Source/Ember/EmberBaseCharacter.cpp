@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "EmberBaseCharacter.h"
 
 #include "Component/HealthComponent.h"
@@ -9,15 +8,7 @@
 // Sets default values
 AEmberBaseCharacter::AEmberBaseCharacter()
 {
-	PrimaryActorTick.bCanEverTick = true;
-	ASC = CreateDefaultSubobject<UEmberAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	ASC->SetIsReplicated(true);
-	ASC->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
-
-	UE_LOG(LogTemp, Warning, TEXT("EmberBaseCharacter Constructor - ASC: %s"),
-		ASC ? *ASC->GetName() : TEXT("Null"));
-	UE_LOG(LogTemp, Warning, TEXT("EmberBaseCharacter Constructor - this: %s"),
-		*GetName());
+	PrimaryActorTick.bCanEverTick = false;
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 }
 
@@ -43,6 +34,10 @@ void AEmberBaseCharacter::BeginPlay()
 	{
 		HealthComponent->OnDeath.BindUObject(this, &ThisClass::OnDeath);
 	}
+}
+
+void AEmberBaseCharacter::OnDeath()
+{
 }
 
 void AEmberBaseCharacter::PostInitializeComponents()

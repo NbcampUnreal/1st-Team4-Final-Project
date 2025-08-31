@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
 #include "EmberAbilitySystemComponent.generated.h"
 
@@ -20,4 +19,5 @@ protected:
 
 public:
 	bool TryActivateAbilityByTag(const FGameplayTag& GameplayTag);
+	FGameplayAbilitySpec* FindActivateAbilityByTag(const FGameplayTag& GameplayTag);
 };

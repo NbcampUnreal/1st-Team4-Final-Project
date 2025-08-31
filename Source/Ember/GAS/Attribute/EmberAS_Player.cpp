@@ -7,10 +7,20 @@ UEmberAS_Player::UEmberAS_Player()
 	:MaxHealth(100.0f), MaxAttackRange(300.0f), AttackRange(50.0f),
 	MaxAttackRadius(300.0f), AttackRadius(50.0f), MaxAttackDamage(500.0f),
 	AttackDamage(10.0f), MetaDamage(0.0f), MaxPlayerTemperature(100.0f),
-	MaxDamageTemperature(100.0f), DamageTemperature(1.0f), PreviousHealth(0.0f), Invincible(0.0f)
+	MaxDamageTemperature(100.0f), DamageTemperature(1.0f), PreviousHealth(0.0f), Invincible(0.0f), MoveSpeed(1.0f)
 {
 	InitHealth(GetMaxHealth());
 	InitPlayerTemperature(GetMaxPlayerTemperature());
+}
+
+float UEmberAS_Player::GetHealthRatio() const
+{
+	if (FMath::IsNearlyZero(GetHealth()))
+	{
+		return 0.f;
+	}
+
+	return (GetHealth() / GetMaxHealth()) * 100;
 }
 
 void UEmberAS_Player::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

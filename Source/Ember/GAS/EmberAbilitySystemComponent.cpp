@@ -1,6 +1,5 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "EmberAbilitySystemComponent.h"
 
 UEmberAbilitySystemComponent::UEmberAbilitySystemComponent()
@@ -32,4 +31,23 @@ bool UEmberAbilitySystemComponent::TryActivateAbilityByTag(const FGameplayTag& G
 	}
 
 	return bSuccess;
+}
+
+FGameplayAbilitySpec* UEmberAbilitySystemComponent::FindActivateAbilityByTag(const FGameplayTag& GameplayTag)
+{
+	if (GetOwner()->HasAuthority() == false)
+		return nullptr;
+	
+	if (GameplayTag.IsValid())
+	{
+		for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+		{
+			if (AbilitySpec.Ability && (AbilitySpec.DynamicAbilityTags.HasTagExact(GameplayTag)))
+			{
+				return const_cast<FGameplayAbilitySpec*>(&AbilitySpec);
+			}
+		}
+	}
+
+	return nullptr;
 }
